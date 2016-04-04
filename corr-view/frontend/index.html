@@ -2,10 +2,10 @@
 <html lang="en">
 
 <!--================================================================================
-    Item Name: CoRR - Cloud of Reproducible Records
-    Version: 0.1
-    Authors: Faical Yannick P. Congo & Daniel Wheeler
-    Authors URL: https://github.com/usnistgov/corr
+    Item Name: Materialize - Material Design Admin Template
+    Version: 1.0
+    Author: GeeksLabs
+    Author URL: http://www.themeforest.net/user/geekslabs
 ================================================================================ -->
 
 <head>
@@ -13,17 +13,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="msapplication-tap-highlight" content="no">
-    <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
-    <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
-    <title>CoRR - Cloud of Reproducible Records</title>
+    <meta name="description" content="DDSM is a cloud service for simulation execution record atoms. ">
+    <meta name="keywords" content="simulation, cloud, service, record, atom, metadata,">
+    <title>DDSM - Data Driven Simulation Management</title>
 
     <!-- Favicons-->
-    <link rel="icon" href="images/logo.png" sizes="32x32">
+    <link rel="icon" href="images/favicon/favicon-32x32.png" sizes="32x32">
     <!-- Favicons-->
-    <link rel="apple-touch-icon-precomposed" href="images/logo.png" sizes="152x152">
+    <link rel="apple-touch-icon-precomposed" href="images/favicon/apple-touch-icon-152x152.png">
     <!-- For iPhone -->
     <meta name="msapplication-TileColor" content="#00bcd4">
-    <meta name="msapplication-TileImage" content="images/logo.png" sizes="144x144">
+    <meta name="msapplication-TileImage" content="images/favicon/mstile-144x144.png">
     <!-- For Windows Phone -->
 
 
@@ -58,35 +58,21 @@
         <div class="navbar-fixed">
             <nav class="cyan">
                 <div class="nav-wrapper">
-                    <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
-                    <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                    <h1 class="logo-wrapper cd-headline letters type"><a href="./" id="nav-home" class="brand-logo darken-1"><span>I Want To</span> <span class="cd-words-wrapper waiting"><b class="is-visible">Simulate</b><b>Repeat</b><b>Reproduce</b><b>Share</b></span><!--img src="images/materialize-logo.png" alt="materialize logo"--></a> <!--span class="logo-text">Materialize</span--></h1>
+                    <ul class="nav-bar right hide-on-med-and-down">
                         <li class="search-out">
                             <input type="text" class="search-out-text">
                         </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">    
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
-                                <i class=" nav-action mdi-action-search"></i>
-                            </a>                              
+                        <li>    
+                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search"><i class=" nav-action mdi-action-search"></i></a>                              
                         </li>
-                        <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="fullscreen">
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen">
-                                <i class="nav-action mdi-action-settings-overscan"></i>
-                            </a>
-                        </li> -->
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
-                            <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
-                                <i class="nav-action nav-action mdi-action-home"></i>
-                            </a>
+                        <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="nav-action mdi-action-settings-overscan"></i></a>
                         </li>
-                        <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                            <a href="./api" id= "nav-api" class="waves-effect waves-block waves-light">
-                                <i class="nav-action mdi-communication-live-help"></i>
-                            </a>
+                        <li><a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-home"></i></a>
+                        </li>
+                        <li><a href="./api" id= "nav-api" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-description"></i></a>
                         </li>                       
-                        <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
-                            <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
-                                <i class="nav-action nav-action mdi-navigation-menu"></i>
-                            </a>
+                        <li id="nav-login"><a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="nav-action nav-action mdi-navigation-menu"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -130,12 +116,12 @@
                                     <label for="login-password">Password</label>
                                   </div>
                                 </div>
-                                <!-- <div class="row">          
+                                <div class="row">          
                                   <div class="input-field col s12 m12 l12  login-text">
                                       <input type="checkbox" id="remember-me" onkeypress="loginKeyPress(event);"/>
                                       <label for="remember-me">Remember me</label>
                                   </div>
-                                </div> -->
+                                </div>
                                 <div class="row">
                                   <div class="input-field col s12">
                                     <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
@@ -146,13 +132,13 @@
                         <li>
                             <div class="collapsible-header light-blue white-text"><i class="mdi-action-input"></i>Register</div>
                             <div class="collapsible-body sales-repoart">
-                                <!-- <div class="row margin">
+                                <div class="row margin">
                                   <div class="input-field col s12">
                                     <i class="mdi-social-person-outline prefix"></i>
                                     <input id="register-username" type="text" onkeypress="registerKeyPress(event);">
                                     <label for="register-username" class="center-align">Username</label>
                                   </div>
-                                </div> -->
+                                </div>
                                 <div class="row margin">
                                   <div class="input-field col s12">
                                     <i class="mdi-communication-email prefix"></i>
@@ -182,28 +168,28 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
-                            <div class="collapsible-body recent-activity">
+                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i>Contact us</div>
+                            <div class="collapsible-body favorite-associates">
                                 <div class="row margin">
                                   <div class="input-field col s12">
-                                    <i class="mdi-social-person-outline prefix"></i>
-                                    <input id="recover-email" type="email" onkeypress="recoverKeyPress(event);">
-                                    <label for="recover-email" class="center-align">Email</label>
+                                    <i class="mdi-communication-email prefix"></i>
+                                    <input id="contactus-email" type="email" onkeypress="emailKeyPress(event);">
+                                    <label for="contactus-email" class="center-align">Email</label>
+                                  </div>
+                                </div>
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-image-edit prefix"></i>
+                                    <input id="contactus-message" type="text" onkeypress="emailKeyPress(event);">
+                                    <label for="contactus-message" class="center-align">Message</label>
                                   </div>
                                 </div>
                                 <div class="row">
                                   <div class="input-field col s12">
-                                    <a id="buttonRecover" onclick="return user.recover();" class="btn login-button waves-effect waves-light green col s12">Request</a>
+                                    <a id="buttonEmail" onclick="return user.contactus();" class="btn waves-effect waves-light red col s12">Send</a>
                                   </div>
                                 </div>
                             </div>
-                        </li>
-                        <li>
-                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
-                            
-                        </li>
-                        <li>
-                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
                         </li>
                         </ul>
                     </li>
@@ -273,22 +259,22 @@
                 <div  class="col s12 m4 l4 container valign-wrapper z-depth-4">
                     <div class="center promo promo-example">
                         <i class="mdi-image-flash-on"></i>
-                        <h5 class="promo-caption">Integration</h5>
-                        <p class="light center">CoRR would like to place itself in front of the existing Simulation Management (SM) tools. By providing a robust and flexible API, CoRR opens a space of cloud federation for SM tools where scientits would have cloud spaces to store the records produces with these SM tools.</p>
+                        <h5 class="promo-caption">Speeds up science</h5>
+                        <p class="light center">DDSM provides a scheme for scoping your computational experiments. It will allow you to wrap your simulation into a repeatable and reproducible artifact.</p>
                     </div>
                 </div>
                 <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
                     <div class="center promo promo-example">
                         <i class="mdi-social-group"></i>
-                        <h5 class="promo-caption">Collaboration</h5>
-                        <p class="light center">The core survival of a scientific investigation is in its management. By providing various ways to record scientific investigations (Web, Tools), CoRR is designed on top of a data model scheme tailored in relationships that is focused on maximizing the ease of managment for scientists. The CoRR frontend is implemented to deliver as much user experience as possible with a material design.</p>
+                        <h5 class="promo-caption">Improves collaboration</h5>
+                        <p class="light center">From his local machine environments, users can push their simulations executions metada to the DDSM cloud infrastructure. From DDSM, the metadata is bundeled into an collaborative artifact that can be manipulated, distributed and pulled.</p>
                     </div>
                 </div>
                 <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
                     <div class="center promo promo-example">
                         <i class="mdi-device-devices"></i>
-                        <h5 class="promo-caption">Management</h5>
-                        <p class="light center">Scientists registered in CoRR will be able to collaborate on records. Many schemes of collaborations are available. Starting from making a private record public to actually producing collaboration meta-data from interactions between scientists in CoRR.</p>
+                        <h5 class="promo-caption">Fully responsive</h5>
+                        <p class="light center">DDSM cloud platform allows the users to access a web frontend from any browser on any device that has internet connection.</p>
                     </div>
                 </div>
             </div>
@@ -322,84 +308,57 @@
                     <!--card stats start-->
                     <div id="card-stats">
                         <div class="row">
-                            <div class="col s12 m6 l2">
+                            <div class="col s12 m6 l3">
                                 <div class="card">
                                     <div class="card-content  green white-text">
-                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Total Users</p>
+                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Toatl Users</p>
                                         <h4 class="card-stats-number" id="total-users">N/A</h4>
-                                       <!--  <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
-                                        </p> -->
+                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
+                                        </p>
                                     </div>
-                                    <!-- <div class="card-action  green darken-2">
+                                    <div class="card-action  green darken-2">
                                         <div id="clients-bar"></div>
-                                    </div> -->
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col s12 m6 l2">
+                            <div class="col s12 m6 l3">
                                 <div class="card">
                                     <div class="card-content purple white-text">
-                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Total Applications</p>
-                                        <h4 class="card-stats-number" id="total-apps">N/A</h4>
-                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
-                                        </p> -->
-                                    </div>
-                                    <!-- <div class="card-action purple darken-2">
-                                        <div id="sales-compositebar"></div>
-
-                                    </div> -->
-                                </div>
-                            </div>  
-                            <div class="col s12 m6 l2">
-                                <div class="card">
-                                    <div class="card-content brown white-text">
                                         <p class="card-stats-title"><i class="mdi-file-folder"></i> Total Projects</p>
                                         <h4 class="card-stats-number" id="total-projects">N/A</h4>
-                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
-                                        </p> -->
+                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
+                                        </p>
                                     </div>
-                                    <!-- <div class="card-action purple darken-2">
+                                    <div class="card-action purple darken-2">
                                         <div id="sales-compositebar"></div>
 
-                                    </div> -->
+                                    </div>
                                 </div>
                             </div>                            
-                            <div class="col s12 m6 l2">
+                            <div class="col s12 m6 l3">
                                 <div class="card">
                                     <div class="card-content blue-grey white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Total Records</p>
+                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Today Records</p>
                                         <h4 class="card-stats-number" id="total-records">N/A</h4>
-                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
-                                        </p> -->
+                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
+                                        </p>
                                     </div>
-                                    <!-- <div class="card-action blue-grey darken-2">
+                                    <div class="card-action blue-grey darken-2">
                                         <div id="profit-tristate"></div>
-                                    </div> -->
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col s12 m6 l2">
+                            <div class="col s12 m6 l3">
                                 <div class="card">
-                                    <div class="card-content red white-text">
+                                    <div class="card-content deep-purple white-text">
                                         <p class="card-stats-title"><i class="mdi-device-storage"></i> Total Storage</p>
                                         <h4 class="card-stats-number" id="total-storage">N/A</h4>
-                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
-                                        </p> -->
+                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
+                                        </p>
                                     </div>
-                                    <!-- <div class="card-action  deep-purple darken-2">
+                                    <div class="card-action  deep-purple darken-2">
                                         <div id="invoice-line"></div>
-                                    </div> -->
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l2">
-                                <div class="card">
-                                    <div class="card-content orange white-text">
-                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Total Traffic</p>
-                                        <h4 class="card-stats-number" id="total-traffic">N/A</h4>
-                                        <!-- <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
-                                        </p> -->
                                     </div>
-                                    <!-- <div class="card-action  deep-purple darken-2">
-                                        <div id="invoice-line"></div>
-                                    </div> -->
                                 </div>
                             </div>
 
@@ -411,64 +370,78 @@
         </div>
     <!-- </footer> -->
 
-    <div id="account-modal" class="modal login-form">
+    <div id="view-modal" class="modal login-form">
         <div class="modal-content">
           <!-- <form class="login-form"> -->
             <div class="row">
               <div class="input-field col s12 center">
-                <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
+                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
               </div>
             </div>
             <div class="divider"></div>
-            <!-- <div class="row margin">
+            <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-social-person-outline prefix"></i>
                 <input disabled id="view-username" type="text">
                 <label id="view-username-value" for="view-username" class="center-align">Username</label>
               </div>
-            </div> -->
+            </div>
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-communication-email prefix"></i>
-                <input readonly id="view-email" type="email">
+                <input disabled id="view-email" type="email">
                 <label id="view-email-value" for="view-email">Email</label>
               </div>
             </div>
-
             <div class="row margin">
               <div class="input-field col s12">
                 <i class="mdi-communication-vpn-key prefix"></i>
-                <input readonly id="view-api" type="text">
+                <input disabled id="view-api" type="text">
                 <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
               </div>
             </div>
 
             <div class="row margin">
               <div class="input-field col s12">
-                <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button>
+                <a onclick="user.copy_api()" class="btn waves-effect waves-light col s12">Copy Token</a>
               </div>
             </div>
 
-            <div class="row margin">
-              <div class="input-field col s12">
-                <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
-              </div>
+          <!-- </form> -->
+        </div>
+        <div class="modal-footer teal lighten-4">
+            
+            <div class="footer-copyright">
+                <span >Last updated</span>
+                <span class="right">06/23/2015 5:49:23 PM</span>
             </div>
         </div>
     </div>
 
-    <div id="account-update-modal" class="modal login-form">
+    <div id="edit-modal" class="modal login-form">
         <div class="modal-content">
           <!-- <form class="login-form"> -->
-            <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
-                <label for="picture-input">
-                    <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
-                </label>
-
-                <input id="picture-input" type="file" style="display: none;"/>
-                
+            <div class="row">
+              <div class="input-field col s12 center">
+                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
                 <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row margin">
+              <div class="input-field col s12">
+                <i class="mdi-social-person-outline prefix"></i>
+                <input id="username" type="text">
+                <label for="username" class="center-align">Username</label>
+              </div>
+            </div>
+            <div class="row margin">
+              <div class="input-field col s12">
+                <i class="mdi-action-lock-outline prefix"></i>
+                <input id="edit-old-password" type="password">
+                <label for="edit-old-password">Current Password</label>
+              </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
@@ -486,62 +459,20 @@
             </div>
             <div class="row margin">
               <div class="input-field col s12">
-                <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
-              </div>
-            </div>
-
-          <!-- </form> -->
-        </div>
-    </div>
-
-    <div id="profile-modal" class="modal login-form">
-        <div class="modal-content">
-          <!-- <form class="login-form"> -->
-            <div class="row">
-              <div class="input-field col s12 center">
-                <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
-                <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
+                <i class="mdi-communication-vpn-key prefix"></i>
+                <input id="view-api" type="text">
+                <label for="view-api">Api Key</label>
               </div>
             </div>
             <div class="divider"></div>
             <div class="row margin">
               <div class="input-field col s12">
-                <i class="mdi-action-perm-identity prefix"></i>
-                <input id="view-fname" type="text">
-                <label id="view-fname-value" for="view-fname">First Name</label>
+                <a onclick="user.renew()" class="btn waves-effect waves-light col s12">Renew Api</a>
               </div>
             </div>
             <div class="row margin">
               <div class="input-field col s12">
-                <i class="mdi-action-assignment-ind prefix"></i>
-                <input id="view-lname" type="text">
-                <label id="view-lname-value" for="view-lname">Last Name</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-home prefix"></i>
-                <input id="view-org" type="text">
-                <label id="view-org-value" for="view-org">Organisation</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-assignment prefix"></i>
-                <textarea id="view-about" class="materialize-textarea"></textarea>
-                <label id="view-about-value" for="view-about">About</label>
-              </div>
-            </div>
-            <!-- <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-communication-vpn-key prefix"></i>
-                <input id="view-api" type="text">
-                <label for="view-api">Api Key</label>
-              </div>
-            </div> -->
-            <div class="row margin">
-              <div class="input-field col s12">
-                <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+                <a href="index.html" class="btn waves-effect waves-light col s12">Update Account</a>
               </div>
             </div>
 
@@ -552,8 +483,8 @@
     <footer class="page-footer">
         <div class="footer-copyright">
           <div class="container">
-            <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
-            <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
+            <span>Copyright © 2015 <a class="grey-text text-lighten-4" href="https://github.com/faical-yannick-congo/ddsm-cloud" target="_blank">DDSM</a> All rights reserved.</span>
+            <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="https://www.linkedin.com/pub/yannick-congo/60/16/411">Faical Yannick Palingwende Congo</a></span>
             </div>
         </div>
     </footer>
@@ -594,16 +525,11 @@
     <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="js/init.js"></script>
     <script src="js/cloud.js"></script>
-    <script src="js/clipboard.min.js"></script>
 
      <script type="text/javascript">
-        $(document).ready(function(){
-            $('.tooltipped').tooltip({delay: 50});
-            new Clipboard('.btn');
-        });
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v0.1/public/user/home");
+        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v1/public/user/home");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -612,13 +538,10 @@
                 console.log(xmlhttp.responseText);
                 var response = JSON.parse(xmlhttp.responseText);
                 console.log(response);
-                var version = response["version"];
                 var users = response["users"];
                 var projects = response["projects"];
                 var records = response["records"];
                 var storage = response["storage"];
-                var apps = response["apps"];
-                var traffic = response["traffic"];
 
                 // console.log("Total Users:"+document.getElementById("total-users").value);
 
@@ -626,26 +549,16 @@
                 document.getElementById("total-projects").innerHTML = projects["number"];
                 document.getElementById("total-records").innerHTML = records["number"];
                 document.getElementById("total-storage").innerHTML = storage["size"];
-                console.log("Version: "+version);
-                document.getElementById("footer-version").innerHTML = version;
-                document.getElementById("total-apps").innerHTML = apps["size"];
-                document.getElementById("total-traffic").innerHTML = traffic["size"];
 
                 console.log("Total Users:"+users["number"]);
                 console.log("Total Projects:"+projects["number"]);
                 console.log("Total Records:"+records["number"]);
                 console.log("Total Storage:"+storage["size"]);
-                console.log("CoRR Version:"+version);
-                console.log("Total Apps:"+apps["size"]);
-                console.log("Total Traffic:"+traffic["size"]);
 
                 console.log("++Total Users:"+document.getElementById("total-users").value);
                 console.log("++Total Projects:"+document.getElementById("total-projects").value);
                 console.log("++Total Records:"+document.getElementById("total-records").value);
                 console.log("++Total Stage:"+document.getElementById("total-storage").value);
-                console.log("++CoRR Version:"+document.getElementById("footer-version").value);
-                console.log("++Total Apps:"+document.getElementById("total-apps").value);
-                console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
             } else {
                 console.log("Cannot reach the cloud!");
                 // Materialize.toast('<span>Cannot reach the cloud!</span>', 3000);
@@ -662,16 +575,8 @@
             document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
             document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
             document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-login").remove();
-            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"
-            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"account\"
-            // class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"profile\"
-            document.getElementById("nav-base").innerHTML += "<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"dashboard\"><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li class=\"tooltipped\" data-position=\"bottom\" data-delay=\"50\" data-tooltip=\"logout\"><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"settings\"><i class=\"mdi-action-settings\"></i></a><ul><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"account\"><a href=\"#account-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-communication-vpn-key\"></i></a></li><li class=\"tooltipped\" data-position=\"left\" data-delay=\"50\" data-tooltip=\"profile\"><a href=\"#profile-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-action-account-circle\"></i></a></li></ul>";
-            
-            document.getElementById('account-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-            document.getElementById('update-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-            document.getElementById('profile-user-picture').src = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
+            document.getElementById("nav-login").innerHTML = "<li><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
+            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan\"><img src=\"images/avatar.jpg\" alt=\"\" class=\"circle responsive-img valign profile-image\"></a><ul><li><a href=\"#view-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-action-visibility\"></i></a></li><li><a href=\"#edit-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-editor-mode-edit\"></i></a></li></ul>";
             // document.getElementById("view-username").value = user.username;
             // document.getElementById("view-email").value = user.email;
             // document.getElementById("view-api").value = user.api;
@@ -694,23 +599,6 @@
                 document.getElementById('buttonLogin').click();
             }
         }
-
-         function recoverKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
-            {
-                document.getElementById('buttonRecover').click();
-            }
-        }
-
-        // document.getElementById('profile-modal').click(function() {
-        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-        // });
-
-        // document.getElementById('edit-modal').click(function() {
-        //   document.getElementById('user-picture').href = "http://0.0.0.0:5200/cloud/v0.1/private/"+user.session+"/user/picture";
-        // });
 
         function registerKeyPress(e)
         {

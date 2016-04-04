@@ -1,12 +1,6 @@
 # import jinja2
 import flask as fk
 from corrdb.common.core import setup_app
-from corrdb.common.models import UserModel
-from corrdb.common.models import ProjectModel
-from corrdb.common.models import ApplicationModel
-from corrdb.common.models import TrafficModel
-from corrdb.common.models import StatModel  
-from corrdb.common.models import AccessModel
 import tarfile
 from StringIO import StringIO
 from io import BytesIO
@@ -14,14 +8,7 @@ import zipfile
 import json
 import time
 import boto3
-import traceback 
-import datetime
-
-import requests
-from datetime import date, timedelta
-from functools import update_wrapper
-from calendar import monthrange
-import time
+import traceback
 
 app = setup_app(__name__)
 
@@ -204,12 +191,6 @@ def delete_project_files(project):
             s3_bundles.delete_key(_environment.bundle["location"])
         del _environment
 
-def cloud_response(code, title, content):
-    import flask as fk
-    response = {'code':code, 'title':title, 'content':content}
-    # print response
-    return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-
 def delete_record_files(record):
     s3_files = s3.Bucket('reproforge-pictures')
 
@@ -224,61 +205,6 @@ def delete_record_file(record_file):
     s3_files = s3.Bucket('reproforge-pictures')
 
     s3_files.delete_key(record_file.location)
-
-def s3_get_file(group='', key=''):
-    file_buffer = StringIO()
-    try:
-        obj = None
-        if key != '':
-            obj = s3.Object(bucket_name='corr-%ss'%group, key=key)
-        else:
-            if group == 'picture' or group == 'logo':
-                obj = s3.Object(bucket_name='corr-%ss'%group, key='default-%s.png'%group)
-    except:
-        if group == 'picture' or group == 'logo':
-            obj = s3.Object(bucket_name='corr-logos', key='default-%s.png'%group)
-
-    try:
-        res = obj.get()
-        file_buffer.write(res['Body'].read())
-        file_buffer.seek(0)
-        return file_buffer
-    except:
-        return None
-
-def s3_upload_file(file_meta=None, file_obj=None):
-    if file_meta != None and file_obj != None:
-        if file_meta.location == 'local':
-            dest_filename = file_meta.storage
-            try:
-                group = 'corr-resources'
-                if file_meta.group != 'descriptive':
-                    group = 'corr-%ss'%file_meta.group
-                print group
-                s3_files = s3.Bucket(group)
-                s3_files.put_object(Key=dest_filename, Body=file_obj.read())
-                return [True, "File uploaded successfully"]
-            except:
-                return [False, traceback.format_exc()]
-        else:
-            return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
-    else:
-        return [False, "file meta data does not exist or file content is empty."]
-
-def s3_delete_file(group='', key=''):
-    deleted = False
-    if key not in ["default-logo.png", "default-picture.png"]:
-        s3_files = s3.Bucket('corr-%ss'%group)
-        for _file in s3_files.objects.all():
-            if _file.key == key: 
-                _file.delete()
-                print "File deleted!"
-                deleted = True
-                break
-        if not deleted:
-            print "File not deleted"
-    return deleted
-
 
 
 def load_file(file_model):
@@ -343,93 +269,7 @@ def upload_picture(current_user, file_obj):
         return False
         print traceback.print_exc()
 
-def logTraffic(endpoint=''):
-    # created_at=datetime.datetime.utcnow()
-    (traffic, created) = TrafficModel.objects.get_or_create(service="cloud", endpoint="%s%s"%(CLOUD_URL, endpoint))
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
-    else:
-        traffic.interactions = 1
-        traffic.save()
-
-def logAccess(scope='root', endpoint=''):
-    (traffic, created) = AccessModel.objects.get_or_create(scope=scope, endpoint="%s%s"%(CLOUD_URL, endpoint))
-
-
-def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
-    category = ''
-    periode = ''
-    traffic = 0
-    interval = ''
-    today = datetime.date.today()
-    last_day = monthrange(today.year, today.month)[1]
-
-    if user != None:
-        category = 'user'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if project != None:
-        category = 'project'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if application != None:
-        category = 'application'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if message != None:
-        category = 'message'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if record != None:
-        category = 'record'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if diff != None:
-        category = 'collaboration'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-    if file_obj != None:
-        category = 'storage'
-        periode = 'daily'
-        traffic = file_obj.size * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if comment != None:
-        category = 'comment'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    #created_at=datetime.datetime.utcnow()
-    (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
-    print "Stat Traffic {0}".format(traffic)
-    if not created:
-        print "Not created stat"
-        if (stat.traffic + traffic) >= 0:
-            stat.traffic += traffic
-        stat.save()
-    else:
-        print "Created stat"
-        stat.traffic = traffic
-        stat.save()
-
-CLOUD_VERSION = 0.1
+CLOUD_VERSION = 1
 CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 from . import views

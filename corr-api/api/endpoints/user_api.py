@@ -383,7 +383,7 @@ def user_search(api_token, app_token, key_words):
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_status(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/user/status')
+    logTraffic(endpoint='<api_token>/<app_token>/user/status')
     current_user = check_api(api_token)
     current_app = check_app(app_token)
     if current_user ==None:
@@ -392,7 +392,7 @@ def user_status(api_token, app_token):
         if current_app ==None:
         	return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token><app_token>/user/status')
+            logAccess(current_app,'api', '<api_token>/<app_token>/user/status')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s credentials are authorized'%str(current_user.id), current_user.info())
             else:
@@ -400,7 +400,7 @@ def user_status(api_token, app_token):
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/connectivity', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def user_app_connectivity(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/connectivity')
+    logTraffic(endpoint='<api_token>/<app_token>/connectivity')
     current_user = check_api(api_token)
     current_app = check_app(app_token)
     if current_user ==None:
@@ -409,12 +409,57 @@ def user_app_connectivity(api_token, app_token):
         if current_app ==None:
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<app_token>/connectivity')
+            logAccess(current_app,'api', '/<app_token>/connectivity')
             if fk.request.method == 'GET':
                 name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
                 return api_response(200, 'Application %s is accessible'%name, current_app.info())
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+# @app.route(API_URL + '/private/<api_token>/<app_token>/user/search/<user_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# def user_search(api_token, app_token, user_name):
+#     logTraffic(endpoint='<api_token>/<app_token>/user/search/<user_name>')
+#     current_user = check_api(api_token)
+#     current_app = check_app(app_token)
+#     if current_user ==None:
+#         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
+#     else:
+#         if current_app ==None:
+#             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
+#         else:
+#             logAccess(current_app,'api', '<api_token>/<app_token>/user/search/<user_name>')
+#             if fk.request.method == 'GET':
+#                 names = user_name.split('-')
+#                 users = []
+#                 for user in UserModel.objects():
+#                     exists = [False for name in names]
+#                     condition = [True for name in names]
+#                     profile = ProfileModel.objects(user=user).first()
+#                     index = 0
+#                     for name in names:
+#                         if name != '':
+#                             if profile != None:
+#                                 if name in profile.fname or name in profile.lname:
+#                                     exists[index] = True
+#                         else:
+#                             exists[index] = True
+#                         index += 1
+#                     if exists == condition:
+#                         users.append(user)
+
+#                 # for name in names:
+#                 #     users_1 = ProfileModel.objects(fname__icontains=name)
+#                 #     for pf in users_1:
+#                 #         if pf.user not in users:
+#                 #             users.append(pf.user)
+#                 #     users_2 = ProfileModel.objects(lname__icontains=name)
+#                 #     for pf in users_2:
+#                 #         if pf.user not in users:
+#                 #             users.append(pf.user)
+#                 users_dict = {'total_users':len(users), 'users':[user.info() for user in users]}
+#                 return api_response(200, 'Search results for user with name containing: %s'%user_name.split('-'), users_dict)
+#             else:
+#                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
@@ -438,13 +483,7 @@ def user_picture(api_token, app_token):
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
                     picture = profile.picture
-                    if picture == None:
-                        picture_buffer = s3_get_file('picture', 'default-picture.png')
-                        if picture_buffer == None:
-                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
-                        else:
-                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                    elif picture.location == 'local' and 'http://' not in picture.storage:
+                    if picture.location == 'local' and 'http://' not in picture.storage:
                         picture_buffer = s3_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
@@ -488,7 +527,7 @@ def user_picture(api_token, app_token):
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_home(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/user/home')
+    logTraffic(endpoint='<api_token>/<app_token>/user/home')
     current_user = check_api(api_token)
     current_app = check_app(app_token)
     if current_user ==None:
@@ -497,7 +536,7 @@ def user_home(api_token, app_token):
         if current_app ==None:
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token><app_token>/user/home')
+            logAccess(current_app,'api', '<api_token>/<app_token>/user/home')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s Home'%str(current_user.id), current_user.home())
             else:
@@ -507,7 +546,7 @@ def user_home(api_token, app_token):
 @app.route(API_URL + '/private/<api_token>/<app_token>/profile/show', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_user_profile_show(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/profile/show')
+    logTraffic(endpoint='<api_token>/<app_token>/profile/show')
     current_user = check_api(api_token)
     current_app = check_app(app_token)
     if current_user ==None:
@@ -516,7 +555,7 @@ def user_user_profile_show(api_token, app_token):
         if current_app ==None:
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token><app_token>/profile/show')
+            logAccess(current_app,'api', '<api_token>/<app_token>/profile/show')
             if fk.request.method == 'GET':
                 profile = ProfileModel.objects(user=current_user).first()
                 if profile == None:

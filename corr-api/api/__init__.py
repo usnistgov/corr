@@ -26,9 +26,16 @@ from functools import update_wrapper
 from calendar import monthrange
 import time
 
+# from difflib_data import *
+
 app = setup_app(__name__)
 
 s3 =  boto3.resource('s3')
+
+
+# from flask.ext.stormpath import StormpathManager
+
+# stormpath_manager = StormpathManager(app)
 
 def check_api(token):
     for user in UserModel.objects():
@@ -47,6 +54,178 @@ def check_admin(token):
     else:
         print user_model.group
         return user_model if user_model.group == "admin" else None
+
+# def docker_gen(current_user, project):
+#     docker_tar = tarfile.open("/tmp/"+str(current_user.id)+"-"+project.name+"-docker.tar", "w")
+#     # print project.docker
+#     # print project.requirements
+#     if project.docker != "":
+#         dockerfile = open("/tmp/"+str(current_user.id)+"-"+project.name+"-Dockerfile", "w")
+#         dockerfile.write(project.docker)
+#         dockerfile.close()
+#         docker_tar.add("/tmp/"+str(current_user.id)+"-"+project.name+"-Dockerfile", "Dockerfile")
+#     if project.requirements != "":
+#         required_libs = open("/tmp/"+str(current_user.id)+"-"+project.name+"-requirements.txt", "w")
+#         required_libs.write(project.requirements)
+#         required_libs.close()
+#         docker_tar.add("/tmp/"+str(current_user.id)+"-"+project.name+"-requirements.txt", "requirements.txt")
+#     docker_tar.close()
+#     try:
+#       os.remove("/tmp/"+str(current_user.id)+"-"+project.name+"-Dockerfile")
+#       os.remove("/tmp/"+str(current_user.id)+"-"+project.name+"-requirements.txt")
+#     except:
+#       pass
+
+#     comp_buffer = StringIO()
+#     with open("/tmp/"+str(current_user.id)+"-"+project.name+"-docker.tar", 'rb') as fh:
+#         comp_buffer.write(fh.read())
+#     comp_buffer.seek(0)
+#     return [comp_buffer, "/tmp/"+str(current_user.id)+"-"+project.name+"-docker.tar"]
+
+# def upload_image(current_user, container, file_obj):
+#     dest_filename = str(current_user.id)+"-"+str(container.id)+"_%s"%file_obj.filename #kind is record| signature
+
+#     print "About to write..."
+#     # with open(dest_filename, 'wb') as fh:
+#     #     # print "Content: %s" %file_obj.read()
+#     #     # file_obj.seek(0)
+#     #     fh.write(file_obj.read())
+
+#     try:
+#         s3.Bucket('reproforge-images').put_object(Key=str(current_user.id)+"-"+str(container.id)+"_%s"%file_obj.filename, Body=file_obj.read())
+#         container.image['location'] = dest_filename
+#         container.image['size'] = file_obj.tell()
+#         print "%s saving..."%file_obj.filename
+#         container.save()
+#         return True
+#         # s3_client = boto3.client('s3')
+#         # print s3_client.get_bucket_location(Bucket='ddsm-bucket')
+#         # s3_client.put_object(Bucket='ddsm-bucket', Key=str(current_user.id)+"-"+str(container.id)+"-%s.tar"%kind, Body=file_obj.read())
+#     except:
+#         return False
+#         print traceback.print_exc()
+
+    # container.image['location'] = dest_filename
+    # container.image['size'] = file_obj.tell()
+    # if kind == "binary":
+    #     record.image['binary'] = {'type':'executable', 'location':dest_filename, 'size':os.path.getsize(dest_filename)}
+    # if kind == "source":
+    #     record.image['source'] = {'type':'code', 'location':dest_filename, 'size':os.path.getsize(dest_filename)}
+    # if kind == "signature":
+    #     record.signature = {'location':dest_filename, 'size':os.path.getsize(dest_filename)}
+    # print "%s saving..."%kind
+    # container.save()
+
+# def upload_file(current_user, file_model, file_obj):
+#     dest_filename = str(current_user.id)+"-"+str(file_model.record.id)+"_%s"%file_obj.filename #kind is record| signature
+
+#     print "About to write..."
+#     # with open(dest_filename, 'wb') as fh:
+#     #     # print "Content: %s" %file_obj.read()
+#     #     # file_obj.seek(0)
+#     #     fh.write(file_obj.read())
+
+#     try:
+#         s3.Bucket('reproforge-files').put_object(Key=str(current_user.id)+"-"+str(record.id)+"_%s"%file_obj.filename, Body=file_obj.read())
+#         file_model.location = dest_filename
+#         file_model.size = file_obj.tell()
+#         print "%s saving..."%file_obj.filename
+#         container.save()
+#         # s3_client = boto3.client('s3')
+#         # print s3_client.get_bucket_location(Bucket='ddsm-bucket')
+#         # s3_client.put_object(Bucket='ddsm-bucket', Key=str(current_user.id)+"-"+str(container.id)+"-%s.tar"%kind, Body=file_obj.read())
+#         return True
+#     except:
+#         return False
+#         print traceback.print_exc()
+
+# def upload_picture(current_user, file_obj):
+#     dest_filename = str(current_user.id)+".%s"%file_obj.filename.split('.')[1] #kind is record| signature
+
+#     print "About to write..."
+#     # with open(dest_filename, 'wb') as fh:
+#     #     # print "Content: %s" %file_obj.read()
+#     #     # file_obj.seek(0)
+#     #     fh.write(file_obj.read())
+
+#     try:
+#         s3.Bucket('reproforge-pictures').put_object(Key=str(current_user.id)+".%s"%file_obj.filename.split('.')[1], Body=file_obj.read())
+#         print "%s saving..."%file_obj.filename
+#         container.save()
+#         # s3_client = boto3.client('s3')
+#         # print s3_client.get_bucket_location(Bucket='ddsm-bucket')
+#         # s3_client.put_object(Bucket='ddsm-bucket', Key=str(current_user.id)+"-"+str(container.id)+"-%s.tar"%kind, Body=file_obj.read())
+#         return True
+#     except:
+#         return False
+        # print traceback.print_exc()
+
+# def against_handler(current_user, record, file_obj):
+#     ref_name = os.path.join('/tmp/', record.project.name+"-"+str(record.id)+"-against-"+hashlib.sha256(b'Against%s_%s'%(str(record.id), str(datetime.datetime.now))).hexdigest()+".tar")
+#     with open(ref_name, 'wb') as fh:
+#         fh.write(file_obj.read())
+
+#     ref_tar = tarfile.open(ref_name)
+#     base_tar = tarfile.open(record.signature['location'])
+#     exploded = {}
+#     exploded["reference"] = validate_signature(ref_tar)
+#     exploded["base"] = validate_signature(base_tar)
+#     print str(exploded)
+
+#     base_signature = load_signature(record)
+#     base_signature[0].seek(0)
+#     # print "Base: %s"%base_signature[0].read()
+#     ref_buffer = StringIO()
+#     with open(ref_name, 'rb') as fh:
+#         ref_buffer.write(fh.read())
+#     ref_buffer.seek(0)
+#     # print "Reference: %s"%ref_buffer.read() 
+    
+
+#     # d = difflib.Differ()
+#     # diff = difflib.unified_diff(base, ref)
+
+#     ratio = difflib.SequenceMatcher(None, base_signature[0].readlines(), ref_buffer.readlines()).ratio()
+
+#     if ratio == 1.0:
+#         record.repeated = record.repeated + 1
+#         record.save()
+#         return json.dumps({'conclusion':'repeated', 'distance': ratio})
+#     else:
+#         print "More complicated. We need to split the tar file compare the inputs and the outputs and generate the matrix or reproducibility."
+#         # record.repeated = record.repeated + 1 if same input, same output
+#         # record.reproduced = record.reproduced + 1 if different input, same output
+
+#         # record.repeated = -1 if same input, different output
+#         # print '\n'.join(list(diff))
+    
+#         return json.dumps({'conclusion':'complex', 'distance': ratio})
+
+# def load_image(container):
+#     image_buffer = StringIO()
+#     with open(container.image['location'], 'rb') as fh:
+#         image_buffer.write(fh.read())
+#     image_buffer.seek(0)
+#     return [image_buffer, container.image['location']]
+
+# def load_signature(record):
+#     signature_buffer = StringIO()
+#     with open(record.signature['location'], 'rb') as fh:
+#         signature_buffer.write(fh.read())
+#     signature_buffer.seek(0)
+#     return [signature_buffer, record.signature['location']]
+
+# def validate_signature(tar):
+#     members = []
+#     for member in tar.getmembers():
+#         f=tar.extractfile(member)
+#         content=f.read()
+#         members.append({"name":member.name, "content":content})
+#         print "%s has %d newlines" %(member, content.count("\n"))
+#         print "%s has %d spaces" % (member,content.count(" "))
+#         print "%s has %d characters" % (member, len(content))
+#     tar.close()
+#     return members
 
 def load_bundle(record):
     # Include record files later.
@@ -440,7 +619,9 @@ def prepare_record(record=None):
 
     return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
 
-def crossdomain(origin=None, methods=None, headers=None, max_age=21600, attach_to_all=True, automatic_options=True):
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
     if headers is not None and not isinstance(headers, basestring):
@@ -577,6 +758,32 @@ def s3_delete_file(group='', key=''):
                 _file.delete()
                 break
 
+# def s3_delete_logo(key=''):
+#     s3_files = s3.Bucket('corr-logos')
+#     s3_files.delete_key(key)
+
+# def s3_get_logo(key=''):
+#     logo_buffer = StringIO()
+#     try:
+#         if key != '':
+#             obj = s3.Object(bucket_name='corr-logos', key=key)
+#         else:
+#             obj = s3.Object(bucket_name='corr-logos', key='app-default-logo.png')
+#     except:
+#         obj = s3.Object(bucket_name='corr-logos', key='app-default-logo.png')
+
+#     try:
+#         res = obj.get()
+#         logo_buffer.write(res['Body'].read())
+#         logo_buffer.seek(0)
+#         return logo_buffer
+#     except:
+#         return None
+
+# def s3_delete_picture(key=''):
+#     s3_files = s3.Bucket('corr-pictures')
+#     s3_files.delete_key(key)
+
 def data_pop(data=None, element=''):
     if data != None:
         try:
@@ -593,6 +800,26 @@ def merge_dicts(*dict_args):
     for dictionary in dict_args:
         result.update(dictionary)
     return result
+
+# def s3_get_picture(key=''):
+#     picture_buffer = StringIO()
+#     try:
+#         if key != '':
+#             obj = s3.Object(bucket_name='corr-pictures', key=key)
+#         else:
+#             obj = s3.Object(bucket_name='corr-pictures', key='user-default-picture.png')
+#     except:
+#         obj = s3.Object(bucket_name='corr-pictures', key='user-default-picture.png')
+
+#     if obj.get()['Body'].read() == None:
+#         obj = s3.Object(bucket_name='corr-pictures', key='user-default-picture.png')
+#     try:
+#         res = obj.get()
+#         picture_buffer.write(res['Body'].read())
+#         picture_buffer.seek(0)
+#         return picture_buffer
+#     except:
+#         return None
 
 def web_get_file(url):
     try:
@@ -681,14 +908,11 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
 
     #created_at=datetime.datetime.utcnow()
     (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
-    print "Stat Traffic {0}".format(traffic)
     if not created:
-        print "Not created stat"
         if (stat.traffic + traffic) >= 0:
             stat.traffic += traffic
         stat.save()
     else:
-        print "Created stat"
         stat.traffic = traffic
         stat.save()
 

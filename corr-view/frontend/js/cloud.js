@@ -1,6 +1,5 @@
-var client = new XMLHttpRequest();
 var user = {
-    url: "http://0.0.0.0:5200/cloud/v0.1",
+    url: "http://0.0.0.0:5200/cloud/v1",
     username:"",
     email: "",
     api: "",
@@ -23,9 +22,8 @@ var user = {
                 
                 window.location.replace("http://0.0.0.0:5000/?session="+this.session);
             } else {
-                console.log(xmlhttp.responseText);
-                Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                // console.log(xmlhttp.responseText);
+                Materialize.toast('<span>Login failed</span>', 3000);
+                console.log("Login failed");
                 // window.location.replace("http://0.0.0.0:5000/error-500/");
             }
         }
@@ -33,33 +31,27 @@ var user = {
     },
     register: function() {
         // document.getElementById("myText").value
-        var username = document.getElementById("register-email").value;
+        var username = document.getElementById("register-username").value;
         var email = document.getElementById("register-email").value;
         var password = document.getElementById("register-password").value;
         var password_again = document.getElementById("register-password-again").value;
 
         if(password == password_again){
-            console.log(username+" -- "+email+" -- "+password);
+            console.log(username+" -- "+email+" -- "+password)
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/public/user/register");
-            var request = { 'email': email, 'password': password, 'username':username };
+            var request = { 'email': email, 'password': password, 'username':username }
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     var response = JSON.parse(xmlhttp.responseText);
-                    this.session = response['session'];
-                    console.log(this.session);
+                    this.session = response['session']
+                    console.log(this.session)
                     window.location.replace("http://0.0.0.0:5000/?session="+this.session);
                 } else {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
-                    console.log("Registration failed");
-                    if(response == ""){
-                        Materialize.toast('<span>Register failed: Unknown reason.</span>', 3000);
-                    }else{
-                        Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
-                    }
+                    console.log("Registration failed failed");
+                    Materialize.toast('<span>Register failed</span>', 3000);
                     // window.location.replace("http://0.0.0.0:5000/error-500/");
                 }
             }
@@ -72,7 +64,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/logout");
+        xmlhttp.open("GET", this.url+"/"+this.session+"/user/logout");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -89,122 +81,25 @@ var user = {
     },
     update: function() {
         // document.getElementById("myText").value
+        var email = document.getElementById("login-email").value;
+        var password = document.getElementById("login-password").value;
+        console.log(email+" -- "+password)
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        xmlhttp.open("POST", this.url+"/private/"+this.session+"/user/update");
-        var pwd = document.getElementById('edit-new-password').value;
-        var pwd_2 = document.getElementById('edit-new-password-again').value;
-        if(pwd != pwd_2){
-            console.log("Passwords mismatch");
-            Materialize.toast('<span>Passwords mismatch</span>', 3000);
-        }else{
-            var fname = document.getElementById('view-fname').value;
-            var lname = document.getElementById('view-lname').value;
-            var org = document.getElementById('view-org').value;
-            var about = document.getElementById('view-about').value;
-            if(fname == "None"){
-                fname = ""
-            }
-            if(lname == "None"){
-                lname = ""
-            }
-            if(org == "None"){
-                org = ""
-            }
-            if(about == "None"){
-                about = ""
-            }
-            console.log("Fname: "+fname);
-            console.log("Lname: "+lname);
-            var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
-            xmlhttp.send(JSON.stringify(request));
-            xmlhttp.onreadystatechange=function()
-            {
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
-                    var file = document.getElementById("picture-input");
-                    if (file.files.length > 0) {
-                        user.upload_file(file, 'picture', 'none');
-                    }else{
-                        console.log("No picture to change");
-                        window.location.replace("http://0.0.0.0:5000/?session="+user.session);
-                    }
-                    Materialize.toast('<span>Update succeeded</span>', 3000);
-                    // window.location.replace("http://0.0.0.0:5000/?session="+user.session);
-                } else {
-                    console.log("Update failed");
-                    Materialize.toast('<span>Update failed</span>', 3000);
-                    // window.location.replace("http://0.0.0.0:5000/page-500.html");
-                }
-            }
-        }
-    },
-
-    upload_file: function(file, group, item_id) {
-        // document.getElementById("myText").value
-        // debugger;
-        console.log("File: "+file.files[0].name);
-        var formData = new FormData();
-        formData.append("file", file.files[0], file.files[0].name);
-        console.log(formData);
-        // var xmlhttp = new XMLHttpRequest();
-        // xmlhttp.open("POST", this.url+"/private/"+this.session+"/file/upload/"+group+"/"+item_id, true);
-        // xmlhttp.setRequestHeader("Content-Type", "multipart/form-data");
-        // xmlhttp.addEventListener("load", function (e) {
-        //     // file upload is complete
-        //     console.log(xmlhttp.responseText.toString);
-        //     // window.location.replace("http://0.0.0.0:5000/?session="+user.session);
-        // });
-        // xmlhttp.send(formData);
-
-        $.ajax({
-            url        : this.url+"/private/"+this.session+"/file/upload/"+group+"/"+item_id,
-            type       : "POST",
-            data       : formData, 
-            async      : true,
-            cache      : false,
-            processData: false,
-            contentType: false,
-            success    : function(callback){
-               console.log(xmlhttp.responseText.toString);
-               window.location.replace("http://0.0.0.0:5000/?session="+user.session);
-            }
-         });
-         event.preventDefault();
-
-        // xmlhttp.onreadystatechange=function()
-        // {
-        //     if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-        //         var response = xmlhttp.responseText;
-        //         console.log(response)
-        //         Materialize.toast('<span>Upload succeeded</span>', 3000);
-        //         // window.location.replace("http://0.0.0.0:5000/?session="+user.session);
-        //     } else {
-        //         var response = xmlhttp.responseText;
-        //         console.log(response)
-        //         Materialize.toast('<span>Upload failed</span>', 3000);
-        //     }
-        // }
-        
-    },
-
-    recover: function() {
-        // document.getElementById("myText").value
-        var email = document.getElementById("recover-email").value;
-        console.log(email+" -- recover")
-        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        xmlhttp.open("POST", this.url+"/public/user/recover");
-        var request = { 'email': email}
+        xmlhttp.open("POST", this.url+"/public/user/login");
+        var request = { 'email': email, 'password': password }
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                console.log(xmlhttp.responseText);                
-                Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                // window.location.replace("http://0.0.0.0:5000/?action=message_sent");
+                var response = JSON.parse(xmlhttp.responseText);
+                this.session = response['session']
+                console.log(this.session)
+                // document.getElementById("nav-login").innerHTML = "<li><a href=\"index.html\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
+                
+                window.location.replace("http://0.0.0.0:5000/?session="+this.session);
             } else {
-                console.log(xmlhttp.responseText);                
-                Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                console.log("Update failed");
+                Materialize.toast('<span>Update failed</span>', 3000);
                 // window.location.replace("http://0.0.0.0:5000/page-500.html");
             }
         }
@@ -217,7 +112,7 @@ var user = {
         var message = document.getElementById("contactus-message").value;
         console.log(email+" -- "+message)
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        xmlhttp.open("POST", this.url+"/public/user/contactus");
+        xmlhttp.open("POST", this.url+"public/user/contactus");
         var request = { 'email': email, 'message': message }
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -238,7 +133,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/trusted");
+        xmlhttp.open("GET", this.url+"/"+this.session+"/user/trusted");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -255,7 +150,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/profile");
+        xmlhttp.open("GET", this.url+"/"+this.session+"/user/profile");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -265,10 +160,8 @@ var user = {
                 // return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'picture':profile_model.picture, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
                 this.email = response['email'];
-                this.fname = response['fname']
-                this.lname = response['lname'];
+                this.username = response['fname']+' '+response['lname'];
                 this.organisation = response['organisation']
-                this.about = response['about']
                 this.api = response['api'];
 
                 // document.getElementById("view-username-value").value = this.username;
@@ -276,13 +169,8 @@ var user = {
                 // document.getElementById("view-api-value").value = this.api;
 
                 $('#view-username-value').text(this.username);
-                document.getElementById('view-email').value = this.email;
-                document.getElementById('view-api').value = this.api;
-
-                document.getElementById('view-fname').value = this.fname;
-                document.getElementById('view-lname').value = this.lname;
-                document.getElementById('view-org').value = this.organisation;
-                document.getElementById('view-about').value = this.about;
+                $('#view-email-value').text(this.email);
+                $('#view-api-value').text(this.api);
 
 
                 // if(this.username.length > 18){
@@ -312,7 +200,7 @@ var user = {
         // document.getElementById("myText").value
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/renew");
+        xmlhttp.open("GET", this.url+"/"+this.session+"/user/renew");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -345,14 +233,14 @@ var user = {
 }
 
 var Space = function (session){
-    var url = "http://0.0.0.0:5200/cloud/v0.1";
+    var url = "http://0.0.0.0:5200/cloud/v1";
     this.session = session;
     this.dash_content = "";
 
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/"+this.session+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -422,7 +310,7 @@ var Space = function (session){
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project name: "+project_name);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/project/record/"+project_name);
+        xmlhttp.open("GET", url+"/"+this.session+"/project/record/"+project_name);
         console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -505,7 +393,7 @@ var Space = function (session){
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/"+this.session+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -540,11 +428,11 @@ var Space = function (session){
     this.pull = function(project_name, record_id) {
         // var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         // console.log("Project name: "+project_name);
-        // xmlhttp.open("GET", url+"/private/"+this.session+"/record/pull/"+project_name+"/"+record_id);
-        // console.log(url+"/private/"+this.session+"/record/pull/"+project_name+"/"+record_id);
+        // xmlhttp.open("GET", url+"/"+this.session+"/record/pull/"+project_name+"/"+record_id);
+        // console.log(url+"/"+this.session+"/record/pull/"+project_name+"/"+record_id);
         // console.log(this.session);
         // xmlhttp.responseType = 'blob';
-        window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
+        window.location.replace(url+"/"+this.session+"/record/pull"+"/"+record_id);
         // xmlhttp.send();
         // xmlhttp.onreadystatechange=function()
         // {
@@ -573,4 +461,4 @@ var Space = function (session){
         //   }, onError);
         // }
     }
-};
+}

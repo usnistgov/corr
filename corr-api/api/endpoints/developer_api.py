@@ -15,11 +15,11 @@ import traceback
 
 # In 0.1 allow user to have same privileges as developer
 
-@app.route(API_URL + '/developer/<api_token>/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/<api_token>/developer/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
-        logTraffic(endpoint='/developer/<api_token>/apps')
+        logTraffic(endpoint='/<api_token>/developer/apps')
         print current_user.group
         if current_user.group == "developer" or current_user.group == "user":
             if fk.request.method == 'GET':
@@ -41,12 +41,12 @@ def apps_get(api_token):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/developer/<api_token>/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/<api_token>/developer/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_logo(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/logo/<app_id>')
+            logTraffic(endpoint='/<api_token>/developer/app/logo/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -99,12 +99,12 @@ def app_logo(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/developer/<api_token>/app/access/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/<api_token>/developer/app/access/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_access(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/access/<app_id>')
+            logTraffic(endpoint='/<api_token>/developer/app/access/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -124,12 +124,12 @@ def app_access(api_token, app_id):
     else:
         return api_response(401, 'Unauthorized access to the API', 'This API token is not authorized.')
 
-@app.route(API_URL + '/developer/<api_token>/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/<api_token>/developer/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def app_search(api_token, app_name):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/search/<app_name>')
+            logTraffic(endpoint='/<api_token>/developer/app/search/<app_name>')
             if fk.request.method == 'GET':
                 apps = ApplicationModel.objects(name__icontains=app_name)
                 apps_dict = {'total_apps':0, 'apps':[]}

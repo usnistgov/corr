@@ -3,7 +3,7 @@ import json
 
 # conn = httplib.HTTPSConnection("http://0.0.0.0:5100")
 # Root CoRR api token.
-base = "/api/v0.1/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073"
+base = "/api/v0.1/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin"
 headers = {"Accept": "application/json"}
 
 def app_create(data={}):
