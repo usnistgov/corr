@@ -24,7 +24,7 @@ import mimetypes
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/create', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/create', methods=['POST'])
 @crossdomain(origin='*')
 def diff_create(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/create")
@@ -80,7 +80,7 @@ def diff_create(hash_session, diff_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/remove/<diff_id>', methods=['DELETE'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/remove/<diff_id>', methods=['DELETE'])
 @crossdomain(origin='*')
 def diff_remove(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/remove/<diff_id>")
@@ -109,7 +109,7 @@ def diff_remove(hash_session, diff_id):
     else:
        return fk.redirect('http://0.0.0.0:5000/error-405/')
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/comment/<diff_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/comment/<diff_id>', methods=['POST'])
 @crossdomain(origin='*')
 def diff_comment(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/comment/<diff_id>")
@@ -149,7 +149,7 @@ def diff_comment(hash_session, diff_id):
     else:
        return fk.redirect('http://0.0.0.0:5000/error-405/')  
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/view/<diff_id>', methods=['GET'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/view/<diff_id>', methods=['GET'])
 @crossdomain(origin='*')
 def diff_view(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/view/<diff_id>")
@@ -178,7 +178,7 @@ def diff_view(hash_session, diff_id):
     else:
         return fk.redirect('http://0.0.0.0:5000/error-405/')      
 
-@app.route(CLOUD_URL + '/<hash_session>/diff/edit/<diff_id>', methods=['POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/edit/<diff_id>', methods=['POST'])
 @crossdomain(origin='*')
 def diff_edit(hash_session, diff_id):
     (traffic, created) = TrafficModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), service="cloud", endpoint="/private/diff/edit/<diff_id>")

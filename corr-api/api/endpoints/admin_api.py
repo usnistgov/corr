@@ -30,9 +30,9 @@ import string
 import os
 import thread
 
-@app.route(API_URL + '/<api_token>/admin/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def admin_search(api_token, key_words):
-    logTraffic(endpoint='/<api_token>/admin/search/<key_words>')
+    logTraffic(endpoint='/admin/<api_token>/search/<key_words>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -376,7 +376,7 @@ def admin_search(api_token, key_words):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 # admin stuff
-@app.route(API_URL + '/<api_token>/admin/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_stats(api_token):
     admin_user = check_admin(api_token)
@@ -392,7 +392,7 @@ def admin_stats(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_stats_clear(api_token):
     admin_user = check_admin(api_token)
@@ -407,7 +407,7 @@ def admin_stats_clear(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/traffic', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/traffic', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_traffic(api_token):
     admin_user = check_admin(api_token)
@@ -423,7 +423,7 @@ def admin_traffic(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/traffic/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/traffic/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_traffic_clear(api_token):
     admin_user = check_admin(api_token)
@@ -438,10 +438,26 @@ def admin_traffic_clear(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/comments', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/access', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(origin='*')
+def admin_access(api_token):
+    admin_user = check_admin(api_token)
+    if admin_user == None:
+        return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
+    else:
+        if fk.request.method == 'GET':
+            accesses = AccessModel.objects()
+            accesses_dict = {'total_accesses':len(accesses), 'accesses':[]}
+            for access in accesses:
+                accesses_dict['accesses'].append(access.extended())
+            return api_response(200, 'CoRR access', accesses_dict)
+        else:
+            return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+
+@app.route(API_URL + '/admin/<api_token>/comments', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comments(api_token):
-    logTraffic(endpoint='/<api_token>/admin/comments')
+    logTraffic(endpoint='/admin/<api_token>/comments')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -455,10 +471,10 @@ def admin_comments(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comments_clear(api_token):
-    logTraffic(endpoint='/<api_token>/admin/comments/clear')
+    logTraffic(endpoint='/admin/<api_token>/comments/clear')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -472,10 +488,10 @@ def admin_comments_clear(api_token):
 
 
 # admin comment
-@app.route(API_URL + '/<api_token>/admin/comment/<group>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comment/<group>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_send(group, api_token):
-    logTraffic(endpoint='/<api_token>/admin/comment/<group>')
+    logTraffic(endpoint='/admin/<api_token>/comment/<group>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -519,10 +535,10 @@ def admin_comment_send(group, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/comment/all/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comment/all/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_all(group, item_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/comment/<group>/<item_id>')
+    logTraffic(endpoint='/admin/<api_token>/comment/<group>/<item_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -551,10 +567,10 @@ def admin_comment_all(group, item_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/comment/update/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comment/update/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_update(comment_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/comment/update/<comment_id>')
+    logTraffic(endpoint='/admin/<api_token>/comment/update/<comment_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -576,10 +592,10 @@ def admin_comment_update(comment_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_show(comment_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/comment/show/<comment_id>')
+    logTraffic(endpoint='/admin/<api_token>/comment/show/<comment_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -593,10 +609,10 @@ def admin_comment_show(comment_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/comment/delete/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/comment/delete/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_comment_delete(comment_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/comment/delete/<comment_id>')
+    logTraffic(endpoint='/admin/<api_token>/comment/delete/<comment_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -612,10 +628,10 @@ def admin_comment_delete(comment_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 # admin developer apps
-@app.route(API_URL + '/<api_token>/admin/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_apps(api_token):
-    logTraffic(endpoint='/<api_token>/admin/apps')
+    logTraffic(endpoint='/admin/<api_token>/apps')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -629,10 +645,10 @@ def admin_apps(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/create')
+    logTraffic(endpoint='/admin/<api_token>/app/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -709,10 +725,10 @@ def admin_app_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_show(app_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/show/<app_id>')
+    logTraffic(endpoint='/admin/<api_token>/app/show/<app_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -726,10 +742,10 @@ def admin_app_show(app_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/app/delete/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/delete/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_delete(app_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/delete/<app_id>')
+    logTraffic(endpoint='/admin/<api_token>/app/delete/<app_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -748,10 +764,10 @@ def admin_app_delete(app_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/app/delete/all', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/delete/all', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_delete_all(api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/delete/all')
+    logTraffic(endpoint='/admin/<api_token>/app/delete/all')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -764,10 +780,10 @@ def admin_app_delete_all(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 
-@app.route(API_URL + '/<api_token>/admin/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_update(app_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/update/<app_id>')
+    logTraffic(endpoint='/admin/<api_token>/app/update/<app_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -862,10 +878,10 @@ def admin_app_update(app_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_app_logo(app_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/app/logo/<app_id>')
+    logTraffic(endpoint='/admin/<api_token>/app/logo/<app_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -919,10 +935,10 @@ def admin_app_logo(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 ### admin users
-@app.route(API_URL + '/<api_token>/admin/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_users(api_token):
-    logTraffic(endpoint='/<api_token>/admin/users')
+    logTraffic(endpoint='/admin/<api_token>/users')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -936,10 +952,10 @@ def admin_users(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/profiles/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/profiles/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_profiles_clear(api_token):
-    logTraffic(endpoint='/<api_token>/admin/profiles/clear')
+    logTraffic(endpoint='/admin/<api_token>/profiles/clear')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -953,12 +969,12 @@ def admin_profiles_clear(api_token):
 
 
 #@TODO
-# @app.route(API_URL + '/<api_token>/admin/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
-@app.route(API_URL + '/<api_token>/admin/user/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/create')
+    logTraffic(endpoint='/admin/<api_token>/user/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -981,16 +997,18 @@ def admin_user_create(api_token):
                         return api_response(302, 'User already exists', user.info())
                     else:
                         logStat(user=user)
+                        ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user, fname='', lname='', organisation='', about='')
+
                         return api_response(201, 'User account created', user.info())
             else:
                 return api_response(204, 'Nothing created', 'You must provide the file information.')
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_login(api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/login')
+    logTraffic(endpoint='/admin/<api_token>/user/login')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1018,10 +1036,10 @@ def admin_user_login(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/token/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/token/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_token_update(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/token/update/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/token/update/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1039,10 +1057,10 @@ def admin_user_token_update(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/logout/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/logout/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_logout(session_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/logout/<session_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/logout/<session_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1061,10 +1079,10 @@ def admin_user_logout(session_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/password/lost', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/password/lost', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_password_lost(api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/password/lost')
+    logTraffic(endpoint='/admin/<api_token>/user/password/lost')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1090,10 +1108,10 @@ def admin_user_password_lost(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/session/recover/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/session/recover/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_session_recover(session_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/session/recover/<session_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/session/recover/<session_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1112,10 +1130,10 @@ def admin_user_session_recover(session_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/profile/create/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/profile/create/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_profile_create(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/profile/create/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/profile/create/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1188,10 +1206,10 @@ def admin_user_profile_create(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_show(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/show/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/show/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1205,10 +1223,10 @@ def admin_user_show(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_profile_show(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/profile/show/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/profile/show/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1226,10 +1244,10 @@ def admin_user_profile_show(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/delete/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/delete/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_delete(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/delete/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/delete/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1250,10 +1268,10 @@ def admin_user_delete(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_update(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/update/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/update/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1281,10 +1299,10 @@ def admin_user_update(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/profile/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/profile/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_profile_update(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/profile/update/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/profile/update/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1372,10 +1390,10 @@ def admin_user_profile_update(user_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_user_picture(user_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/user/picture/<user_id>')
+    logTraffic(endpoint='/admin/<api_token>/user/picture/<user_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1392,7 +1410,13 @@ def admin_user_picture(user_id, api_token):
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
                     picture = profile.picture
-                    if picture.location == 'local' and 'http://' not in picture.storage:
+                    if picture == None:
+                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        if picture_buffer == None:
+                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        else:
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                    elif picture.location == 'local' and 'http://' not in picture.storage:
                         picture_buffer = s3_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
@@ -1437,10 +1461,10 @@ def admin_user_picture(user_id, api_token):
 
 
 ### admin projects
-@app.route(API_URL + '/<api_token>/admin/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_projects(api_token):
-    logTraffic(endpoint='/<api_token>/admin/projects')
+    logTraffic(endpoint='/admin/<api_token>/projects')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1454,10 +1478,10 @@ def admin_projects(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_projects_clear(api_token):
-    logTraffic(endpoint='/<api_token>/admin/projects/clear')
+    logTraffic(endpoint='/admin/<api_token>/projects/clear')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1469,10 +1493,10 @@ def admin_projects_clear(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_envs_clear(api_token):
-    logTraffic(endpoint='/<api_token>/admin/envs/clear')
+    logTraffic(endpoint='/admin/<api_token>/envs/clear')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1492,10 +1516,10 @@ def admin_envs_clear(api_token):
 # 566728709f9d5109b8de3f93
 # []
 
-# @app.route(API_URL + '/<api_token>/admin/projects/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/projects/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 # @crossdomain(origin='*')
 # def admin_projects_comments_clear(api_token):
-#     logTraffic(endpoint='/<api_token>/admin/comments/clear')
+#     logTraffic(endpoint='/admin/<api_token>/comments/clear')
 #     if fk.request.method == 'GET':
 #         projects = ProjectModel.objects()
 #         for project in projects:
@@ -1508,10 +1532,10 @@ def admin_envs_clear(api_token):
 #     else:
 #         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_comments(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/comments/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/comments/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1532,10 +1556,10 @@ def admin_project_comments(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/create')
+    logTraffic(endpoint='/admin/<api_token>/project/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1610,10 +1634,10 @@ def admin_project_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_records(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/records/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/records/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1632,10 +1656,10 @@ def admin_project_records(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 
-@app.route(API_URL + '/<api_token>/admin/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_show(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/show/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/show/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1649,10 +1673,10 @@ def admin_project_show(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_logo(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/logo/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/logo/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1704,10 +1728,10 @@ def admin_project_logo(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/delete/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/delete/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_delete(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/delete/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/delete/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1724,10 +1748,10 @@ def admin_project_delete(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/update/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/update/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_update(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/update/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/update/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1794,10 +1818,10 @@ def admin_project_update(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_download(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/download/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/download/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1816,10 +1840,10 @@ def admin_project_download(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 
-@app.route(API_URL + '/<api_token>/admin/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_envs(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/envs/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/envs/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1839,10 +1863,10 @@ def admin_project_envs(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_envs_head(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/envs/head')
+    logTraffic(endpoint='/admin/<api_token>/project/envs/head')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1859,10 +1883,10 @@ def admin_project_envs_head(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_env_show(project_id, env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/show/<project_id>/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/show/<project_id>/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1883,10 +1907,10 @@ def admin_project_env_show(project_id, env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_env_push(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/next/<project_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/next/<project_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -1950,10 +1974,10 @@ def admin_project_env_push(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/update/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/update/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_env_update(project_id, env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/update/<project_id>/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/update/<project_id>/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2011,10 +2035,10 @@ def admin_project_env_update(project_id, env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/update/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/update/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_env_update(env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/update/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/update/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2065,10 +2089,10 @@ def admin_env_update(env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/show/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/show/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_env_show(env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/show/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/show/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2082,10 +2106,10 @@ def admin_env_show(env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/delete/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/delete/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_env_delete(env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/delete/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/delete/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2104,10 +2128,10 @@ def admin_env_delete(env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/download/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/download/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_env_download(project_id, env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/download/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/download/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2125,10 +2149,10 @@ def admin_env_download(project_id, env_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_env_push(project_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/create')
+    logTraffic(endpoint='/admin/<api_token>/project/env/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2179,10 +2203,10 @@ def admin_env_push(project_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_project_env_download(project_id, env_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/project/env/download/<project_id>/<env_id>')
+    logTraffic(endpoint='/admin/<api_token>/project/env/download/<project_id>/<env_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2209,13 +2233,13 @@ def admin_project_env_download(project_id, env_id, api_token):
 
 # @TODO
 # Get a zip of any environment
-# @app.route(API_URL + '/<api_token>/admin/environment/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/environment/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 ### admin records
-@app.route(API_URL + '/<api_token>/admin/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_records(api_token):
-    logTraffic(endpoint='/<api_token>/admin/records')
+    logTraffic(endpoint='/admin/<api_token>/records')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2229,10 +2253,10 @@ def admin_records(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/records/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/records/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_records_clear(api_token):
-    logTraffic(endpoint='/<api_token>/admin/records/clear')
+    logTraffic(endpoint='/admin/<api_token>/records/clear')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2247,12 +2271,12 @@ def admin_records_clear(api_token):
 
 # @TODO
 # Get the record comments
-# @app.route(API_URL + '/<api_token>/admin/record/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/record/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
-@app.route(API_URL + '/<api_token>/admin/record/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/record/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_record_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/record/create')
+    logTraffic(endpoint='/admin/<api_token>/record/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2344,10 +2368,10 @@ def admin_record_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_record_show(record_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/record/show/<record_id>')
+    logTraffic(endpoint='/admin/<api_token>/record/show/<record_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2361,10 +2385,10 @@ def admin_record_show(record_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/record/delete/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/record/delete/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_record_delete(record_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/record/delete/<record_id>')
+    logTraffic(endpoint='/admin/<api_token>/record/delete/<record_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2381,10 +2405,10 @@ def admin_record_delete(record_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/record/update/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/record/update/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_record_update(record_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/record/update/<record_id>')
+    logTraffic(endpoint='/admin/<api_token>/record/update/<record_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2498,10 +2522,10 @@ def admin_record_update(record_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_record_download(project_id, record_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/record/download/<project_id>/<record_id>')
+    logTraffic(endpoint='/admin/<api_token>/record/download/<project_id>/<record_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2524,21 +2548,21 @@ def admin_record_download(project_id, record_id, api_token):
 
 # @TODO
 # Get a zip of the whole record
-# @app.route(API_URL + '/<api_token>/admin/record/download/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/record/download/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 # @TODO
 # Get a zip of the record environment
-# @app.route(API_URL + '/<api_token>/admin/record/env/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/record/env/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 # @TODO
 # Get a zip of the record files
-# @app.route(API_URL + '/<api_token>/admin/record/env/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/record/env/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 ### admin diffs
-@app.route(API_URL + '/<api_token>/admin/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_diffs(api_token):
-    logTraffic(endpoint='/<api_token>/admin/diffs')
+    logTraffic(endpoint='/admin/<api_token>/diffs')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2554,12 +2578,12 @@ def admin_diffs(api_token):
 
 # @TODO
 # Get the diff comments
-# @app.route(API_URL + '/<api_token>/admin/diff/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+# @app.route(API_URL + '/admin/<api_token>/diff/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
-@app.route(API_URL + '/<api_token>/admin/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_diff_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/diff/create')
+    logTraffic(endpoint='/admin/<api_token>/diff/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2599,10 +2623,10 @@ def admin_diff_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_diff_show(diff_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/diff/show/<diff_id>')
+    logTraffic(endpoint='/admin/<api_token>/diff/show/<diff_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2616,10 +2640,10 @@ def admin_diff_show(diff_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/diff/delete/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/diff/delete/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_diff_delete(diff_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/diff/delete/<diff_id>')
+    logTraffic(endpoint='/admin/<api_token>/diff/delete/<diff_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2636,10 +2660,10 @@ def admin_diff_delete(diff_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/diff/update/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/diff/update/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_diff_update(diff_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/diff/update/<diff_id>')
+    logTraffic(endpoint='/admin/<api_token>/diff/update/<diff_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2697,10 +2721,10 @@ def admin_diff_update(diff_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 ### admin files
-@app.route(API_URL + '/<api_token>/admin/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_files(api_token):
-    logTraffic(endpoint='/<api_token>/admin/files')
+    logTraffic(endpoint='/admin/<api_token>/files')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2715,10 +2739,10 @@ def admin_files(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 # @TODO
-@app.route(API_URL + '/<api_token>/admin/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_upload(group, item_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/upload/<group>/<item_id>')
+    logTraffic(endpoint='/admin/<api_token>/file/upload/<group>/<item_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2873,10 +2897,10 @@ def admin_file_upload(group, item_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 # @TODO
-@app.route(API_URL + '/<api_token>/admin/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_download(file_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/download/<file_id>')
+    logTraffic(endpoint='/admin/<api_token>/file/download/<file_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2949,10 +2973,10 @@ def admin_file_download(file_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/file/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/create')
+    logTraffic(endpoint='/admin/<api_token>/file/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -2989,10 +3013,10 @@ def admin_file_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_show(file_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/show/<file_id>')
+    logTraffic(endpoint='/admin/<api_token>/file/show/<file_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3006,10 +3030,10 @@ def admin_file_show(file_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_delete(item_id, file_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/delete/<item_id>/<file_id>')
+    logTraffic(endpoint='/admin/<api_token>/file/delete/<item_id>/<file_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3194,10 +3218,10 @@ def admin_file_delete(item_id, file_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/file/update/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/file/update/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_file_update(file_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/file/update/<file_id>')
+    logTraffic(endpoint='/admin/<api_token>/file/update/<file_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3240,10 +3264,10 @@ def admin_file_update(file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 ### admin messages
-@app.route(API_URL + '/<api_token>/admin/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_messages(api_token):
-    logTraffic(endpoint='/<api_token>/admin/messages')
+    logTraffic(endpoint='/admin/<api_token>/messages')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3257,10 +3281,10 @@ def admin_messages(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/message/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/message/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_message_create(api_token):
-    logTraffic(endpoint='/<api_token>/admin/message/create')
+    logTraffic(endpoint='/admin/<api_token>/message/create')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3295,10 +3319,10 @@ def admin_message_create(api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_message_show(message_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/message/show/<message_id>')
+    logTraffic(endpoint='/admin/<api_token>/message/show/<message_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3312,10 +3336,10 @@ def admin_message_show(message_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/message/delete/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/message/delete/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_message_delete(message_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/message/delete/<message_id>')
+    logTraffic(endpoint='/admin/<api_token>/message/delete/<message_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3332,10 +3356,10 @@ def admin_message_delete(message_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-@app.route(API_URL + '/<api_token>/admin/message/update/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/message/update/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_message_update(message_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/message/update/<message_id>')
+    logTraffic(endpoint='/admin/<api_token>/message/update/<message_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3378,10 +3402,10 @@ def admin_message_update(message_id, api_token):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
-@app.route(API_URL + '/<api_token>/admin/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(API_URL + '/admin/<api_token>/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def admin_resolve_item(item_id, api_token):
-    logTraffic(endpoint='/<api_token>/admin/resolve/<item_id>')
+    logTraffic(endpoint='/admin/<api_token>/resolve/<item_id>')
     admin_user = check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
@@ -3391,162 +3415,162 @@ def admin_resolve_item(item_id, api_token):
             if item_id == 'root':
                 resolution['type'] = 'User'
                 # Admin actions in this case.
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['status', '--st'], 'endpoint':'/<api_token>/admin/status'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/<api_token>/admin/profile/show'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/<api_token>/admin/user/picture'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/<api_token>/admin/projects'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/<api_token>/admin/records'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/<api_token>/admin/messages'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--cm'], 'endpoint':'/<api_token>/admin/comments'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/<api_token>/admin/diffs'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/<api_token>/admin/files'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/<api_token>/admin/search/<query>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search user', '--su'], 'endpoint':'/<api_token>/admin/user/search/<query>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search project', '--sp'], 'endpoint':'/<api_token>/admin/project/search/<query>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['status', '--st'], 'endpoint':'/admin/<api_token>/status'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/admin/<api_token>/profile/show'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/admin/<api_token>/user/picture'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/admin/<api_token>/projects'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/<api_token>/records'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/admin/<api_token>/messages'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--cm'], 'endpoint':'/admin/<api_token>/comments'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/admin/<api_token>/diffs'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/<api_token>/files'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search', '--se'], 'endpoint':'/admin/<api_token>/search/<query>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search user', '--su'], 'endpoint':'/admin/<api_token>/user/search/<query>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search project', '--sp'], 'endpoint':'/admin/<api_token>/project/search/<query>'})
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['search app', '--sa'], 'endpoint':'/public/app/search/<query>'})
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['users', '--us'], 'endpoint':'/public/users'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['home', '--ho'], 'endpoint':'/<api_token>/admin/user/home'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/<api_token>/admin/apps'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['home', '--ho'], 'endpoint':'/admin/<api_token>/user/home'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/admin/<api_token>/apps'})
 
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/<api_token>/admin/app/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'string', 'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/<api_token>/admin/file/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/<api_token>/admin/diff/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/<api_token>/admin/env/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/<api_token>/admin/record/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/<api_token>/admin/project/create'})
-                # resolution['endpoints'].append({'methods':['POST'], 'struct':{'title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/<group>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'string','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/<api_token>/admin/message/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-create', '--usc'], 'endpoint':'/<api_token>/admin/user/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/<api_token>/admin/user/profile/create/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/admin/<api_token>/app/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'string', 'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/admin/<api_token>/file/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/admin/<api_token>/diff/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/admin/<api_token>/env/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/admin/<api_token>/record/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/admin/<api_token>/project/create'})
+                # resolution['endpoints'].append({'methods':['POST'], 'struct':{'title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/<group>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'string','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/admin/<api_token>/message/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-create', '--usc'], 'endpoint':'/admin/<api_token>/user/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/admin/<api_token>/user/profile/create/<selected.id>'})
                 
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/<api_token>/admin/user/login'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/admin/<api_token>/user/login'})
 
                 return api_response(200, 'Root resolution results', resolution)
             item = UserModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'User'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/user/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/<api_token>/admin/user/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-update', '--uup'], 'endpoint':'/<api_token>/admin/user/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/<api_token>/admin/user/picture/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/<api_token>/admin/profile/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-update', '--pup'], 'endpoint':'/<api_token>/admin/user/profile/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token-update', '--tup'], 'endpoint':'/<api_token>/admin/user/token/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/<api_token>/admin/user/projects/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/<api_token>/admin/user/records/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/<api_token>/admin/user/comments/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/<api_token>/admin/user/messages/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/<api_token>/admin/user/apps/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/user/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/<api_token>/user/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-update', '--uup'], 'endpoint':'/admin/<api_token>/user/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['picture', '--pc'], 'endpoint':'/admin/<api_token>/user/picture/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/admin/<api_token>/profile/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-update', '--pup'], 'endpoint':'/admin/<api_token>/user/profile/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token-update', '--tup'], 'endpoint':'/admin/<api_token>/user/token/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['projects', '--pj'], 'endpoint':'/admin/<api_token>/user/projects/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/<api_token>/user/records/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/<api_token>/user/comments/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/admin/<api_token>/user/messages/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/admin/<api_token>/user/apps/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
                 
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'<selected.id>','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/<api_token>/admin/app/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'<selected.id>','encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/<api_token>/admin/file/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'<selected.session>','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/<api_token>/admin/diff/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/<api_token>/admin/env/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/<api_token>/admin/record/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'<selected.id>','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/<api_token>/admin/project/create'})
-                # resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/<group>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'<selected.id>','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/<api_token>/admin/message/create'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/<api_token>/admin/user/profile/create/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'<selected.id>','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/admin/<api_token>/app/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'<selected.id>','encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/admin/<api_token>/file/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'<selected.session>','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/admin/<api_token>/diff/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['env-create', '--enc'], 'endpoint':'/admin/<api_token>/env/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['record-create', '--rrc'], 'endpoint':'/admin/<api_token>/record/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'application':'string','owner':'<selected.id>','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['project-create', '--pjc'], 'endpoint':'/admin/<api_token>/project/create'})
+                # resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/<group>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'<selected.id>','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/admin/<api_token>/message/create'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/admin/<api_token>/user/profile/create/<selected.id>'})
 
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = MessageModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Message'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/message/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string', 'attachments':'list'}, 'meta':['show', '--up'], 'endpoint':'/<api_token>/admin/message/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/<api_token>/admin/message/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/message/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string', 'attachments':'list'}, 'meta':['show', '--up'], 'endpoint':'/admin/<api_token>/message/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/<api_token>/message/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = CommentModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Comment'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/comment/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string'}, 'meta':['show', '--up'], 'endpoint':'/<api_token>/admin/comment/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/<api_token>/admin/comment/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/comment/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'title':'string', 'content':'string'}, 'meta':['show', '--up'], 'endpoint':'/admin/<api_token>/comment/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['show', '--de'], 'endpoint':'/admin/<api_token>/comment/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = ProjectModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Project'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/project/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['update', '--up'], 'endpoint':'/<api_token>/admin/project/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET', 'DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/project/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/<api_token>/admin/project/envs/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['head', '--he'], 'endpoint':'/<api_token>/admin/project/env/head/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['next', '--ne'], 'endpoint':'/<api_token>/admin/project/env/next/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/<api_token>/admin/project/comments/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/<api_token>/admin/project/records/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/<api_token>/admin/project/files/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/<api_token>/admin/project/download/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/<api_token>/admin/project/logo/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/project'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/project/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'application':'string','owner':'string','name':'string','description':'string','goals':'string','tags':'list','access':'string','history':'list','original':'string','resources':'list','group':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/<api_token>/project/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET', 'DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/project/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['history', '--hi'], 'endpoint':'/admin/<api_token>/project/envs/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['head', '--he'], 'endpoint':'/admin/<api_token>/project/env/head/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['next', '--ne'], 'endpoint':'/admin/<api_token>/project/env/next/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/<api_token>/project/comments/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['records', '--re'], 'endpoint':'/admin/<api_token>/project/records/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/<api_token>/project/files/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/<api_token>/project/download/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/admin/<api_token>/project/logo/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/project'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = RecordModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Record'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/record/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['update', '--up'], 'endpoint':'/<api_token>/admin/record/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/record/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/<api_token>/admin/record/env/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/<api_token>/admin/record/comments/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/<api_token>/admin/record/diffs/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/<api_token>/admin/record/files/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/<api_token>/admin/record/download/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/record'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/record/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'project':'string','application':'string','parent':'string','label':'string','tags':'list','system':'dict','inputs':'list','outputs':'list','dependencies':'list','status':'string','environment':'string','cloned_from':'string','access':'string','resources':'list','rationels':'list'}, 'meta':['update', '--up'], 'endpoint':'/admin/<api_token>/record/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/record/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['env', '--en'], 'endpoint':'/admin/<api_token>/record/env/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/<api_token>/record/comments/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['diffs', '--di'], 'endpoint':'/admin/<api_token>/record/diffs/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/<api_token>/record/files/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/<api_token>/record/download/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/record'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = EnvironmentModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Environment'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/env/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['update', '--up'], 'endpoint':'/<api_token>/admin/env/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/env/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/<api_token>/admin/env/download/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/env'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/env/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST', 'UPDATE'], 'struct':{'group':'string', 'system':'string', 'specifics':'dict', 'version':'dict', 'bundle':'dict'}, 'meta':['update', '--up'], 'endpoint':'/admin/<api_token>/env/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/env/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/<api_token>/env/download/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/env'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = DiffModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Diff'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/diff/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'sender':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['update', '--up'], 'endpoint':'/<api_token>/admin/diff/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/diff/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/<api_token>/admin/diff/comments/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/<api_token>/admin/diff/files/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/<api_token>/admin/diff/download/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/diff'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/diff/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'sender':'string','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/<api_token>/diff/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET','DELETE'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/diff/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['comments', '--co'], 'endpoint':'/admin/<api_token>/diff/comments/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['files', '--fi'], 'endpoint':'/admin/<api_token>/diff/files/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/<api_token>/diff/download/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/diff'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = FileModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'File'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/file/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['update', '--ud'], 'endpoint':'/<api_token>/admin/file/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/file/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/<api_token>/admin/file/download/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/<api_token>/admin/comment/file'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/file/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['update', '--ud'], 'endpoint':'/admin/<api_token>/file/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET',], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/file/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['download', '--do'], 'endpoint':'/admin/<api_token>/file/download/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST'], 'struct':{'item':'<selected.id>','title':'string', 'content':'string'}, 'meta':['comment-create', '--coc'], 'endpoint':'/admin/<api_token>/comment/file'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             item = ApplicationModel.objects.with_id(item_id)
             if item != None:
                 resolution['type'] = 'Application'
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/<api_token>/admin/app/show/<selected.id>'})
-                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['update', '--up'], 'endpoint':'/<api_token>/admin/app/update/<selected.id>'})
-                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/<api_token>/admin/file/upload/<group>/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/<api_token>/admin/app/delete/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/<api_token>/admin/app/connectivity/<selected.id>'})
-                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/<api_token>/admin/app/logo/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['show', '--sh'], 'endpoint':'/admin/<api_token>/app/show/<selected.id>'})
+                resolution['endpoints'].append({'methods':['POST','UPDATE'], 'struct':{'developer':'string','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['update', '--up'], 'endpoint':'/admin/<api_token>/app/update/<selected.id>'})
+                resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['delete', '--de'], 'endpoint':'/admin/<api_token>/app/delete/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['connectivity', '--co'], 'endpoint':'/admin/<api_token>/app/connectivity/<selected.id>'})
+                resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['logo', '--lo'], 'endpoint':'/admin/<api_token>/app/logo/<selected.id>'})
                 return api_response(200, 'Item %s resolution results'%item_id, resolution)
 
             if item == None:

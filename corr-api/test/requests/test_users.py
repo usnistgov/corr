@@ -7,7 +7,7 @@ headers = {"Accept": "application/json"}
 
 def admin_user_create(data={}):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("POST","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/user/create"%base, json.dumps(data), headers)
+    conn.request("POST","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/user/create"%base, json.dumps(data), headers)
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -15,7 +15,7 @@ def admin_user_create(data={}):
 
 def admin_user_profile_create(user_id="", data={}):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("POST","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/user/profile/create/%s"%(base, user_id), json.dumps(data), headers)
+    conn.request("POST","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/user/profile/create/%s"%(base, user_id), json.dumps(data), headers)
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -23,7 +23,7 @@ def admin_user_profile_create(user_id="", data={}):
 
 def admin_user_profile_show(user_id=""):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("GET","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/user/profile/show/%s"%(base, user_id))
+    conn.request("GET","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/user/profile/show/%s"%(base, user_id))
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -31,7 +31,7 @@ def admin_user_profile_show(user_id=""):
 
 def admin_user_show(user_id=""):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("GET","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/user/show/%s"%(base, user_id))
+    conn.request("GET","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/user/show/%s"%(base, user_id))
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -72,7 +72,7 @@ def user_show(app_token="", api_token=""):
 # to be deprecated or reserved to admin.
 def admin_user_login(data={}):
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("POST","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/user/login"%base, json.dumps(data), headers)
+    conn.request("POST","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/user/login"%base, json.dumps(data), headers)
     response = conn.getresponse()
     data = response.read()
     conn.close()
@@ -80,7 +80,7 @@ def admin_user_login(data={}):
 
 def admin_get_users():
     conn = httplib.HTTPConnection("0.0.0.0", 5100)
-    conn.request("GET","%s/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/admin/users"%base)
+    conn.request("GET","%s/admin/87b7188171a6f6eed3ce7591ec175fe0e088e43cb282fa21a13a54d07826a073/users"%base)
     response = conn.getresponse()
     data = response.read()
     conn.close()
