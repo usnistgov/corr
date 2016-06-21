@@ -1732,7 +1732,7 @@ def user_project_update(api_token, app_token, project_id):
                             data = json.loads(fk.request.data)
                             # application_id = data.get('application', None)
                             owner_id = data.get('owner', None)
-                            name = data.get('name', project.name)
+                            # name = data.get('name', project.name)
                             description = data.get('description', project.description)
                             goals = data.get('goals', project.goals)
                             tags = data.get('tags', [])
@@ -1768,7 +1768,7 @@ def user_project_update(api_token, app_token, project_id):
 
                             # project.application = application
                             project.owner = owner
-                            project.name = name
+                            # project.name = name
                             project.description = description
                             project.goals = goals
                             project.tags.extend(tags)
@@ -2159,6 +2159,7 @@ def user_record_create(api_token, app_token, project_id):
                         data_pop(data, 'label')
                         tags = data.get('tags', [])
                         data_pop(data, 'tags')
+                        execution = data.get('execution', {})
                         system = data.get('system', {})
                         data_pop(data, 'system')
                         inputs = data.get('inputs', [])
@@ -2205,9 +2206,9 @@ def user_record_create(api_token, app_token, project_id):
                         #             resources.append(res)
                         # print resources
                         if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
                         else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
                         
                         if len(data) != 0:
                             body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
