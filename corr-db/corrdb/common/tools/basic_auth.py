@@ -1,5 +1,7 @@
-# This is taken from 
-# http://flask.pocoo.org/snippets/8/
+""" Authentification handling.
+This is taken from 
+http://flask.pocoo.org/snippets/8/
+"""
 
 from functools import wraps
 

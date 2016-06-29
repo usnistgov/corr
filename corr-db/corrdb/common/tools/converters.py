@@ -1,4 +1,7 @@
-# See http://flask.pocoo.org/snippets/106/
+""" Object id converter.
+This is taken from 
+http://flask.pocoo.org/snippets/106/
+"""
 
 from flask import Flask
 from werkzeug.routing import BaseConverter, ValidationError

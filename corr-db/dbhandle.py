@@ -1,3 +1,5 @@
+"""CoRR python client for mongodb instance management.
+"""
 import click
 import subprocess
 import pymongo
@@ -53,7 +55,7 @@ def dbdelete(client, dbname):
     click.echo('deleted the {0} database'.format(dbname))
 
 def dbsetup():
-    #Add some test data to the database
+    # TODO: Add some test data to the database
     pass
 
 def dbshutdown(dbpath):
@@ -72,6 +74,3 @@ def dbshutdown(dbpath):
 
 if __name__ == "__main__":
     handle()
-    
-
-# python dbhandle.py --run --dbpath=/home/fyc/Documents/Projects/NIST/CoRR/github/mongo-data/data

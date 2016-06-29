@@ -1,3 +1,4 @@
+"""CoRR inter-entity flask instance share."""
 from flask import Flask
 from .tools.converters import ObjectIDConverter
 from flask.ext.mongoengine import MongoEngine

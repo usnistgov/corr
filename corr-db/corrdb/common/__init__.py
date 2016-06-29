@@ -1,4 +1,5 @@
-# The common module
+"""CoRR common modules.
+"""
 import models
 import tools
 import core

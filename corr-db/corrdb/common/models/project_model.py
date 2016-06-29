@@ -4,13 +4,32 @@ from ..models import UserModel
 from ..models import FileModel
 from ..models import CommentModel
 from ..models import EnvironmentModel
-# from ..models import ApplicationModel
 import json
 from bson import ObjectId
           
 class ProjectModel(db.Document):
+    """CoRR backend project model.
+    This model represents how a project is stored in CoRR.
+
+    Attributes:
+        created_at: A string value of the creation timestamp.
+        logo: A reference to the project logo file.
+        owner: A reference to the creator of the project.
+        name: A string value for the project name.
+        description: A string value for the project description.
+        goals: A string value for the project goals.
+        tags: A list of strings that are considered as the project tags.
+        possible_access: A list of possible access state of the project.
+        access: A string of the project current state with private as default.
+        history: The list of environments references.
+        cloned_from: A string value of another project id in case of being cloned.
+        resources: A list of files references that are attached to the project meta-data.
+        possible_group: A list of possible group states regarding the nature of the project.
+        group: A string value of the project current group with undefined as default.
+        comments: A list of comments on the project resources.
+        extend: A dictionary of to add other fields to the profile model.
+    """
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
-    # application = db.ReferenceField(ApplicationModel)
     logo = db.ReferenceField(FileModel)
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE, required=True)
     name = db.StringField(required=True)
@@ -21,18 +40,24 @@ class ProjectModel(db.Document):
     access = db.StringField(default="private", choices=possible_access)
     history = db.ListField(db.StringField())
     cloned_from = db.StringField(max_length=256)
-    resources = db.ListField(db.StringField()) #files ids
+    resources = db.ListField(db.StringField())
     possible_group = ["computational", "experimental", "hybrid", "undefined"]
     group = db.StringField(default="undefined", choices=possible_group)
-    comments = db.ListField(db.StringField()) #comments ids
-    # TOREPLACE BY comments = db.ListField(db.StringField()) #comments ids
+    comments = db.ListField(db.StringField())
     extend = db.DictField()
 
     def save(self, *args, **kwargs):
-        # self.created_at = str(datetime.datetime.utcnow())
+        """Overwrite the project mongoengine save.
+        Returns:
+            The call to the mongoengine Document save function.
+        """
         return super(ProjectModel, self).save(*args, **kwargs)
 
     def _history(self):
+        """Gather the project environments history.
+        Returns:
+            The environments history.
+        """
         history = []
         for env_id in self.history:
             env = EnvironmentModel.objects.with_id(env_id)
@@ -41,6 +66,10 @@ class ProjectModel(db.Document):
         return history
 
     def _comments(self):
+        """Gather the project comments.
+        Returns:
+            The project comments.
+        """
         comments = []
         for com_id in self.comments:
             com = CommentModel.objects.with_id(com_id)
@@ -49,6 +78,10 @@ class ProjectModel(db.Document):
         return comments
 
     def _resources(self):
+         """Filter out the project resources files.
+        Returns:
+            The project files.
+        """
         resources = []
         for f_id in self.resources:
             f = FileModel.objects.with_id(f_id)
@@ -56,22 +89,16 @@ class ProjectModel(db.Document):
                 resources.append(f)
         return resources
 
-    def clone(self):
-        self.cloned_from = str(self.id)
-        del self.__dict__['_id']
-        del self.__dict__['_created']
-        del self.__dict__['_changed_fields']
-        self.id = ObjectId()
-
     def info(self):
+        """Build a dictionary structure of an project model instance content.
+        Returns:
+            The dictionary content of the project model.
+        """
         data = {'created':str(self.created_at), 'updated':str(self.last_updated), 'id': str(self.id), 
         'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
-        # if self.application != None:
-        #     data['application'] = str(self.application.id)
-        # else:
-        #     data['application'] = None
+
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
@@ -79,12 +106,11 @@ class ProjectModel(db.Document):
         return data
 
     def extended(self):
+        """Add the extend, goals, history, description, comments, resources fields to the built dictionary content.
+        Returns:
+            The augmented dictionary.
+        """
         data = self.info()
-        # if self.application != None:
-        #     data['application'] = self.application.info()
-        # else:
-        #     data['application'] = {}
-        # data['tags'] = self.tags
         data['goals'] = self.goals
         data['history'] = [env.extended() for env in self._history()]
         data['description'] = self.description
@@ -94,10 +120,18 @@ class ProjectModel(db.Document):
         return data
 
     def to_json(self):
+        """Transform the extended dictionary into a pretty json.
+        Returns:
+            The pretty json of the extended dictionary.
+        """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
     
     def summary_json(self):
+        """Transform the info dictionary with goals, description fields into a pretty json.
+        Returns:
+            The pretty json of the info dictionary.
+        """
         data = self.info()
         if self.goals != None:
             data['goals'] = self.goals[0:96]+"..." if len(self.goals) >=100 else self.goals
@@ -110,6 +144,10 @@ class ProjectModel(db.Document):
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def activity_json(self, public=False):
+        """Gather all the activity done on the project.
+        Returns:
+            The pretty json of the project activity.
+        """
         if not public:
             records_summary = [json.loads(r.summary_json()) for r in self.records]
             return json.dumps({'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
@@ -123,8 +161,11 @@ class ProjectModel(db.Document):
             else:
                 return json.dumps({}, sort_keys=True, indent=4, separators=(',', ': '))
 
-
     def compress(self):
+        """Extract out a 'compressed' structure of the project with its records and diffs.
+        Returns:
+            The dictionary of the augmented extended dictionary.
+        """
         data = self.extended()
         data['records'] = [record.extended() for record in self.records]
         data['diffs'] = [diff.extended() for diff in self.diffs]
@@ -132,10 +173,18 @@ class ProjectModel(db.Document):
 
     @property
     def record_count(self):
+        """Count the project's records.
+        Returns:
+            The number of records in the project.
+        """
         return self.records.count()
 
     @property
     def diff_count(self):
+        """Count the project's records' diffs
+        Returns:
+            The number of records' diffs in the project.
+        """
         from ..models import DiffModel
         diffs = []
         for diff in DiffModel.objects():
@@ -147,6 +196,10 @@ class ProjectModel(db.Document):
 
     @property
     def diffs(self):
+        """Gather all the project's records' diffs.
+        Returns:
+            All the project's records' diffs.
+        """
         from ..models import DiffModel
         diffs = []
         for diff in DiffModel.objects():
@@ -158,11 +211,19 @@ class ProjectModel(db.Document):
 
     @property
     def records(self):
+        """Gather all the project's records.
+        Returns:
+            The project's records.
+        """
         from ..models import RecordModel
         return RecordModel.objects(project=self).order_by('+created_at')
     
     @property
     def last_updated(self):
+        """Compute the last time the project was updated based on the records history.
+        Returns:
+            The most recent time a record in the project was record.
+        """
         if self.record_count >0:
             return self.records.order_by('-updated_at').limit(1).first().updated_at
         else:
@@ -170,20 +231,13 @@ class ProjectModel(db.Document):
 
     @property
     def duration(self):
+        """Compute the project duration from the creation stamp to the last updated.
+        Returns:
+            The duration of the project from its creation to its latest update.
+        """
         if self.records == None or len(self.records) == 0:
             return 0
         else:
             last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
             created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
-            # try:
-            #     last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
-            # except:
-            #     last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S')
-
-            # try:
-            #     created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
-            # except:
-            #     created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S')
-
-            # print "Duration: %s"%str(last_updated_strp-created_strp)
             return last_updated_strp-created_strp
