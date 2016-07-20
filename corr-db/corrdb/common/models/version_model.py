@@ -29,7 +29,7 @@ class VersionModel(db.Document):
         self.id = ObjectId()
 
     def info(self):
-         """Build a dictionary structure of an version model instance content.
+        """Build a dictionary structure of an version model instance content.
         Returns:
             The dictionary content of the version model.
         """
