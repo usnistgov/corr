@@ -1,4 +1,5 @@
-# The api module
+"""CoRR api module.
+"""
 import flask as fk
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
