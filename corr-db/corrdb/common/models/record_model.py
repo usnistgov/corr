@@ -205,7 +205,7 @@ class RecordModel(db.Document):
         return data
 
     def to_json(self):
-         """Transform the extended dictionary into a pretty json.
+        """Transform the extended dictionary into a pretty json.
         Returns:
             The pretty json of the extended dictionary.
         """

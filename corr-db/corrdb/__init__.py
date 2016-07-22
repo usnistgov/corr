@@ -4,10 +4,10 @@ import os
 import nose
 from nose.tools import nottest
 import corrdb.common
-import corrdb.tests
+import corrdb.test
 
 @nottest
-def test():
+def test_all():
     r"""
     Run all the doctests available.
     """

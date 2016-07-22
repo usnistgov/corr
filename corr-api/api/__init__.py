@@ -1,5 +1,4 @@
-"""CoRR api module.
-"""
+"""CoRR api module."""
 import flask as fk
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
@@ -27,18 +26,40 @@ from functools import update_wrapper
 from calendar import monthrange
 import time
 
+from flask.ext.restful import  Api
+from flask_restful_swagger import swagger
+
+# Flask app instance
 app = setup_app(__name__)
 
+# Boto s3 instance
 s3 =  boto3.resource('s3')
 
-S3_BUCKET = app.config['S3_BUCKET']
+# S3 bucket location
+try:
+    S3_BUCKET = app.config['S3_BUCKET']
+except:
+    S3_BUCKET = ""
+
+# The api's version
+API_VERSION = 0.1
+# The api base url
+API_URL = '/api/v{0}'.format(API_VERSION)
+
+api = swagger.docs(Api(app), apiVersion='{0}'.format(API_VERSION))
 
 def check_api(token):
-    for user in UserModel.objects():
-        print "%s -- %s." %(user.email, user.api_token)
+    """Get the user object instance from its api token.
+        Returns:
+            The user object instance.
+    """
     return UserModel.objects(api_token=token).first()
 
 def check_app(token):
+    """Get the application object instance from its api token.
+        Returns:
+            The application object instance.
+    """
     if token == "no-app":
         return None
     else:
@@ -47,6 +68,11 @@ def check_app(token):
         return ApplicationModel.objects(app_token=token).first()
 
 def check_admin(token):
+    """Check if a user is an admin from his token.
+        Returns:
+            - None if the user does not exist or not an Admin.
+            - Otherwise, return the user instance object.
+    """
     user_model = UserModel.objects(api_token=token).first()
     if user_model == None:
         return None
@@ -55,6 +81,10 @@ def check_admin(token):
         return user_model if user_model.group == "admin" else None
 
 def prepare_env(project=None, env=None):
+    """Bundle a project's environment.
+        Returns:
+            Zip file buffer of the environment's content.
+    """
     if project == None or env == None:
         return [None, '']
     else:
@@ -93,6 +123,10 @@ def prepare_env(project=None, env=None):
     return [memory_file, "project-%s-env-%s.zip"%(str(project.id), str(env.id))]
 
 def prepare_project(project=None):
+    """Bundle an entire project
+        Returns:
+            Zip file buffer of the project's content.
+    """
     if project == None:
         return [None, '']
     else:
@@ -193,6 +227,10 @@ def prepare_project(project=None):
     return [memory_file, "project-%s.zip"%str(project.id)]
 
 def prepare_record(record=None):
+    """Bundle a record.
+        Returns:
+            Zip file buffer of a record's content.
+    """
     if record == None:
         return [None, '']
     else:
@@ -401,6 +439,10 @@ def prepare_record(record=None):
     return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
 
 def crossdomain(origin=None, methods=None, headers=None, max_age=21600, attach_to_all=True, automatic_options=True):
+    """Allow crossdomain calls from other domains and port.
+        Returns:
+            decorator to wrap on the endpoints.
+    """
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
     if headers is not None and not isinstance(headers, basestring):
@@ -440,23 +482,21 @@ def crossdomain(origin=None, methods=None, headers=None, max_age=21600, attach_t
     return decorator
 
 def delete_project_files(project):
+    """Delete a project files.
+    """
     from corrdb.common.models import ProjectModel
     from corrdb.common.models import RecordModel
     from corrdb.common.models import EnvironmentModel
     from corrdb.common.models import FileModel
 
-    # print s3_files
-    # project resources
     for _file in project.resources:
         file_ = FileModel.objects.with_id(_file)
         if file_:
-            # print file_.to_json()
             result = s3_delete_file(file_.group, file_.storage)
             if result:
                 logStat(deleted=True, file_obj=file_)
                 file_.delete()
 
-    # project records resources
     for record in project.records:
         result = delete_record_files(record)
         if result:
@@ -478,8 +518,10 @@ def delete_project_files(project):
             _environment.delete()
 
 def delete_record_files(record):
-    # s3_files = s3.Bucket('reproforge-files')
-
+    """Delete a record files.
+        Returns:
+            True if all files are deleted.
+    """
     from corrdb.common.models import RecordModel
     from corrdb.common.models import FileModel
     final_result = True
@@ -491,6 +533,10 @@ def delete_record_files(record):
     return final_result
 
 def delete_record_file(record_file):
+    """Delete a record file and log the stats.
+        Returns:
+            Return of the s3_delete_file call.
+    """
     result = s3_delete_file(record_file.group, record_file.storage)
     if result:
         logStat(deleted=True, file_obj=record_file)
@@ -498,12 +544,20 @@ def delete_record_file(record_file):
     return result
 
 def api_response(code, title, content):
+    """Provides a common structure to represent the response
+    from any api's endpoints.
+        Returns:
+            Flask response with a prettified json content.
+    """
     import flask as fk
     response = {'code':code, 'title':title, 'content':content}
-    # print response
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
 def s3_get_file(group='', key=''):
+    """Retrive a file from the s3 bucket.
+        Returns:
+            File buffer.
+    """
     file_buffer = StringIO()
     try:
         obj = None
@@ -525,6 +579,12 @@ def s3_get_file(group='', key=''):
         return None
 
 def s3_upload_file(file_meta=None, file_obj=None):
+    """Upload a file into the s3 bucket.
+        Returns:
+            an array of two elements. one is the status
+            of the upload and the other is a message 
+            accompanying it.
+    """
     if file_meta != None and file_obj != None:
         if file_meta.location == 'local':
             dest_filename = file_meta.storage
@@ -544,6 +604,11 @@ def s3_upload_file(file_meta=None, file_obj=None):
         return [False, "file meta data does not exist or file content is empty."]
 
 def s3_delete_file(group='', key=''):
+    """Delete a file from the s3 bucket.
+        Returns:
+            The status of the deletion. True for success
+            and False for failure.
+    """
     deleted = False
     if key not in ["default-logo.png", "default-picture.png"]:
         s3_files = s3.Bucket(S3_BUCKET)
@@ -558,6 +623,8 @@ def s3_delete_file(group='', key=''):
     return deleted
 
 def data_pop(data=None, element=''):
+    """Pop an element of a dictionary.
+    """
     if data != None:
         try:
             del data[element]
@@ -565,31 +632,32 @@ def data_pop(data=None, element=''):
             pass
 
 def merge_dicts(*dict_args):
-    '''
+    """
     Given any number of dicts, shallow copy and merge into a new dict,
     precedence goes to key value pairs in latter dicts.
-    '''
+    """
     result = {}
     for dictionary in dict_args:
         result.update(dictionary)
     return result
 
 def web_get_file(url):
+    """Retrieve a externaly hosted file.
+        Returns:
+            File buffer.
+    """
     try:
         response = requests.get(url)
-        picture_buffer = StringIO(response.content)
-        picture_buffer.seek(0)
-        return picture_buffer
+        file_buffer = StringIO(response.content)
+        file_buffer.seek(0)
+        return file_buffer
     except:
         return None
 
 
-API_VERSION = 0.1
-API_URL = '/api/v{0}'.format(API_VERSION)
-
-
 def logTraffic(endpoint=''):
-    # created_at=datetime.datetime.utcnow()
+    """Log the traffic on an endpoint.
+    """
     (traffic, created) = TrafficModel.objects.get_or_create(service="api", endpoint="%s%s"%(API_URL, endpoint))
     if not created:
         traffic.interactions += 1 
@@ -599,9 +667,17 @@ def logTraffic(endpoint=''):
         traffic.save()
 
 def logAccess(app=None, scope='root', endpoint=''):
+    """Log the access to the backend.
+    """
     (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(API_URL, endpoint))
 
 def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
+    """Log various statistics about different objects:
+    number of users, number of projects, number of
+    applications, number of messages, number of records,
+    number of collaborations, storage usage and number
+    of comments. 
+    """
     category = ''
     periode = ''
     traffic = 0
@@ -659,8 +735,6 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
         traffic = 1 * (-1 if deleted else 1)
         interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
 
-
-    #created_at=datetime.datetime.utcnow()
     (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
     print "Stat Traffic {0}".format(traffic)
     if not created:
@@ -674,4 +748,5 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
         stat.save()
 
 
+# import all the api endpoints.
 import endpoints

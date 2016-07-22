@@ -3,7 +3,7 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, API_URL, check_api, check_app, api_response, s3_get_file, web_get_file, logTraffic, logAccess
+from api import app, swagger, api, API_URL, check_api, check_app, api_response, s3_get_file, web_get_file, logTraffic, logAccess
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import FileModel

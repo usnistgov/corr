@@ -78,7 +78,7 @@ class ProjectModel(db.Document):
         return comments
 
     def _resources(self):
-         """Filter out the project resources files.
+        """Filter out the project resources files.
         Returns:
             The project files.
         """

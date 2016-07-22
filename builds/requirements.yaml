@@ -19,3 +19,4 @@ dependencies:
     - flask-stormpath
     - hurry.filesize
     - uwsgi
+    - flask-restful-swagger==0.3.5

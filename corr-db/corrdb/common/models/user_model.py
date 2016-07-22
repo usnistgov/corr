@@ -188,7 +188,7 @@ class UserModel(db.Document):
 
     @property
     def records(self):
-         """Extract the user's projects' records.
+        """Extract the user's projects' records.
         Returns:
             The user records.
         """
@@ -199,7 +199,7 @@ class UserModel(db.Document):
 
     @property
     def quota(self):
-         """Compute the the user quota.
+        """Compute the the user quota.
         Returns:
             quota used by the user.
         """
