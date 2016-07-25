@@ -12,7 +12,7 @@ def test_all():
     Run all the doctests available.
     """
     path = os.path.split(__file__)[0]
-    print "Path: %s"%path
+    print "Path: {0}".format(path)
     nose.main(argv=['-w', path, '--with-doctest'])
 
 
