@@ -14,9 +14,8 @@ dependencies:
     - flask-mongoengine==0.7.1
     - flask-testing
     - click
-    - twill
     - flask-api
     - flask-stormpath
     - hurry.filesize
     - uwsgi
-    - flask-restful-swagger==0.3.5
+    - flask-restful-swagger
