@@ -89,14 +89,14 @@ class UserModel(db.Document):
     def renew(self, unic):
         """Renew the user session.
         """
-        print "connected_at: %s"%str(self.connected_at)
+        print("connected_at: %s"%str(self.connected_at))
         self.connected_at = str(datetime.datetime.utcnow())
-        print "connected_at: %s"%str(self.connected_at)
-        print "session: %s"%str(self.session)
+        print("connected_at: %s"%str(self.connected_at))
+        print("session: %s"%str(self.session))
         self.session = str(hashlib.sha256(b'CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).hexdigest())
         self.save()
-        print "connected_at: %s"%str(self.connected_at)
-        print "session: %s"%str(self.session)
+        print("connected_at: %s"%str(self.connected_at))
+        print("session: %s"%str(self.session))
 
     def retoken(self):
         """Renew the user api token.
@@ -109,10 +109,10 @@ class UserModel(db.Document):
         Returns:
             The hash of the allowence string content.
         """
-        print "connected_at: %s"%str(self.connected_at)
-        print "session: %s"%str(self.session)
+        print("connected_at: %s"%str(self.connected_at))
+        print("session: %s"%str(self.session))
         allowed = hashlib.sha256(b'CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).hexdigest()
-        print "allowed: %s"%str(allowed)
+        print("allowed: %s"%str(allowed))
         return str(allowed)
 
     def info(self):
