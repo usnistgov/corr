@@ -1,5 +1,5 @@
 """CoRR common modules.
 """
-import models
-import tools
-import core
+import corrdb.common.models
+import corrdb.common.tools
+import corrdb.common.core
