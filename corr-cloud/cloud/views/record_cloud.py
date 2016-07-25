@@ -37,13 +37,13 @@ def record_remove(hash_session, record_id):
         
     if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/record/remove/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -67,13 +67,13 @@ def record_comment(hash_session, record_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/record/comment/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -103,13 +103,13 @@ def record_comments(hash_session, record_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/record/comments/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None or (record != None and record.access != 'public'):
                 return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -126,13 +126,13 @@ def record_view(hash_session, record_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/record/view/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -152,18 +152,18 @@ def record_edit(hash_session, record_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/record/edit/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 try:
                     record = RecordModel.objects.with_id(record_id)
                 except:
-                    print str(traceback.print_exc())
+                    print(str(traceback.print_exc()))
                 if record is None:
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -179,7 +179,7 @@ def record_edit(hash_session, record_id):
                                     record.save()
                                     return fk.Response('Record edited', status.HTTP_200_OK)
                                 except:
-                                    print str(traceback.print_exc())
+                                    print(str(traceback.print_exc()))
                                     return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
@@ -197,25 +197,25 @@ def pull_record(hash_session, record_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/record/pull/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 try:
                     record = RecordModel.objects.with_id(record_id)
                 except:
                     record = None
-                    print str(traceback.print_exc())
+                    print(str(traceback.print_exc()))
                 if record is None:
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     prepared = prepare_record(record)
                     if prepared[0] == None:
-                        print "Unable to retrieve a record to download."
+                        print("Unable to retrieve a record to download.")
                         return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
@@ -234,7 +234,7 @@ def public_record_comments(record_id):
         try:
             record = RecordModel.objects.with_id(record_id)
         except:
-            print str(traceback.print_exc())
+            print(str(traceback.print_exc()))
         if record is None or (record != None and record.access != 'public'):
             return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -251,7 +251,7 @@ def public_record_view(record_id):
         try:
             record = RecordModel.objects.with_id(record_id)
         except:
-            print str(traceback.print_exc())
+            print(str(traceback.print_exc()))
         if record is None:
             return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -271,7 +271,7 @@ def public_pull_record(record_id):
         try:
             record = RecordModel.objects.with_id(record_id)
         except:
-            print str(traceback.print_exc())
+            print(str(traceback.print_exc()))
         if record is None:
             return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -289,10 +289,10 @@ def public_pull_record(record_id):
                             attachment_filename=str(record_user.id)+"-"+str(record.project.id)+"-"+str(record_id)+"-record.zip",
                         )
                     else:
-                        print "Failed because of environment bundle location not found."
+                        print("Failed because of environment bundle location not found.")
                         return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    print "No environment bundle."
+                    print("No environment bundle.")
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
@@ -315,7 +315,7 @@ def file_add(hash_session, record_id):
                 logAccess('cloud', '/private/<hash_session>/record/file/upload/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -356,7 +356,7 @@ def file_add(hash_session, record_id):
                                     else:
                                         file_model.delete()
                                         return fk.make_response("Could not upload the file.", status.HTTP_500_INTERNAL_SERVER_ERROR)
-                                except Exception, e:
+                                except Exception as e:
                                     return fk.make_response(str(traceback.print_exc()), status.HTTP_400_BAD_REQUEST)
                     else:
                         return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
@@ -377,13 +377,13 @@ def file_download(hash_session, file_id):
                 logAccess('cloud', '/private/<hash_session>/record/file/download/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record_file is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record_file.record.project.owner == current_user:
                     _file = load_file(record_file)
-                    print _file[1]
+                    print(_file[1])
                     return fk.send_file(
                         _file[0],
                         mimetypes.guess_type(_file[1])[0],
@@ -401,13 +401,13 @@ def file_remove(hash_session, file_id):
     logTraffic(endpoint='/private/<hash_session>/record/file/remove/<file_id>')
     if fk.request.method == 'DELETE':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/record/file/remove/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record_file is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:

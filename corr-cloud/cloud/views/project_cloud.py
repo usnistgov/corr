@@ -37,13 +37,13 @@ def project_sync(hash_session, project_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/project/sync/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 p = ProjectModel.objects.with_id(project_id)
                 if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
@@ -65,13 +65,13 @@ def project_view(hash_session, project_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/project/view/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 p = ProjectModel.objects.with_id(project_id)
                 if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
@@ -93,7 +93,7 @@ def project_remove(hash_session, project_id):
         
     if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             logAccess('cloud', '/private/<hash_session>/project/remove/<project_id>')
             # if project_name is not None:
@@ -124,7 +124,7 @@ def project_comment(hash_session, project_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             logAccess('cloud', '/private/<hash_session>/project/comment/<project_id>')
             # if project_name is not None:
@@ -156,13 +156,13 @@ def project_comments(hash_session, project_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=comments_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/project/comments/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 project = ProjectModel.objects.with_id(project_id)
                 # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
@@ -182,7 +182,7 @@ def project_edit(hash_session, project_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             logAccess('cloud', '/private/<hash_session>/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
@@ -220,7 +220,7 @@ def project_edit(hash_session, project_id):
                         project.save()
                         return fk.Response('Project updated', status.HTTP_200_OK)
                     except:
-                        print str(traceback.print_exc())
+                        print(str(traceback.print_exc()))
                         return fk.make_response("Could not edit the project.", status.HTTP_503_SERVICE_UNAVAILABLE)
                 else:
                     return fk.Response('Nothing to update', status.HTTP_200_OK)
@@ -237,13 +237,13 @@ def project_records(hash_session, project_name):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=records_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/project/record/<project_name>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 project = ProjectModel.objects(name=project_name).first()
                 # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()

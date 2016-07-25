@@ -1,5 +1,5 @@
 """CoRR api endpoints."""
-import public_api
-import developer_api
-import admin_api
-import user_api
+import api.endpoints.public_api
+import api.endpoints.developer_api
+import api.endpoints.admin_api
+import api.endpoints.user_api

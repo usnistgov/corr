@@ -34,12 +34,12 @@ def diff_create(hash_session, diff_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -90,12 +90,12 @@ def diff_remove(hash_session, diff_id):
         
     if fk.request.method == 'DELETE':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 diff = DiffModel.objects.with_id(diff_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if diff is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -119,12 +119,12 @@ def diff_comment(hash_session, diff_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 diff = DiffModel.objects.with_id(diff_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if diff is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -159,12 +159,12 @@ def diff_view(hash_session, diff_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 diff = DiffModel.objects.with_id(diff_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if diff is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -188,17 +188,17 @@ def diff_edit(hash_session, diff_id):
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 try:
                     diff = DiffModel.objects.with_id(diff_id)
                 except:
-                    print str(traceback.print_exc())
+                    print(str(traceback.print_exc()))
                 if diff is None:
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -215,7 +215,7 @@ def diff_edit(hash_session, diff_id):
                                 diff.save()
                                 return fk.Response('Diff edited', status.HTTP_200_OK)
                             except:
-                                print str(traceback.print_exc())
+                                print(str(traceback.print_exc()))
                                 return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         elif diff.target == current_user:
                             try:
@@ -224,7 +224,7 @@ def diff_edit(hash_session, diff_id):
                                 diff.save()
                                 return fk.Response('Diff edited', status.HTTP_200_OK)
                             except:
-                                print str(traceback.print_exc())
+                                print(str(traceback.print_exc()))
                                 return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.redirect('{0}:{1}/error-401/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
@@ -247,7 +247,7 @@ def public_diff_view(diff_id):
         try:
             diff = DiffModel.objects.with_id(diff_id)
         except:
-            print str(traceback.print_exc())
+            print(str(traceback.print_exc()))
         if diff is None:
             return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:

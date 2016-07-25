@@ -29,7 +29,7 @@ import datetime
 import random
 import string
 import os
-import thread
+import _thread
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def user_search(api_token, app_token, key_words):
@@ -398,7 +398,7 @@ def user_status(api_token, app_token):
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
         if current_app ==None and app_token != "no-app":
-        	return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
+            return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(current_app,'api', '/private/<api_token><app_token>/user/status')
             if fk.request.method == 'GET':
@@ -1017,8 +1017,8 @@ def user_file_download(api_token, app_token, file_id):
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
                 else:
                     info = file_meta.info()
-                    print info
-                    print str(current_user.id)
+                    print(info)
+                    print(str(current_user.id))
                     if info['owner'] != 'public' and info['owner'] != str(current_user.id):
                         return api_response(401, 'Unauthorized access', 'This file is private and you are not the owner.')
                     else:

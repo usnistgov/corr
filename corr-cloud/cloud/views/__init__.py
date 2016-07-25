@@ -1,7 +1,7 @@
 from cloud import app
 import flask as fk
-import dashboard_cloud
-import user_cloud
-import project_cloud
-import record_cloud
-import diff_cloud
+import cloud.views.dashboard_cloud
+import cloud.views.user_cloud
+import cloud.views.project_cloud
+import cloud.views.record_cloud
+import cloud.views.diff_cloud

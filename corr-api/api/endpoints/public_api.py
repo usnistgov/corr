@@ -28,7 +28,7 @@ import datetime
 import random
 import string
 import os
-import thread
+import _thread
 
 @app.route(API_URL + '/public/api/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
@@ -218,9 +218,9 @@ def public_user_picture(user_id):
 def public_user_projects(user_id):
     logTraffic(endpoint='/public/user/projects')
     if fk.request.method == 'GET':
-    	user = UserModel.objects.with_id(user_id)
-    	if user == None:
-    		return api_response(404, 'No user found', 'We could not fetch the user with id:%s.'%user_id)
+        user = UserModel.objects.with_id(user_id)
+        if user == None:
+            return api_response(404, 'No user found', 'We could not fetch the user with id:%s.'%user_id)
         projects = ProjectModel.objects(owner=user)
         projects_dict = {'total_projects':len(projects), 'projects':[]}
         for project in projects:

@@ -23,7 +23,7 @@ import hashlib
 from stormpath.error import Error
 import os
 import mimetypes
-from StringIO import StringIO
+from io import StringIO
 
 # CLOUD_VERSION = 1
 # CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
@@ -84,7 +84,7 @@ def user_register():
                     #     # "surname" : "Empty"
                     # })
                     if user_model == None:
-                        print "User Model does not exist."
+                        print("User Model does not exist.")
                         while True:
                             # Many trials because of API key generation failures some times.
                             try:
@@ -109,10 +109,10 @@ def user_register():
                                             return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                                             _account = None
                                     if _account != None:
-                                        print "created!!!"
+                                        print("created!!!")
                                         (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                     else:
-                                        print "Unauthorized account creation. Could not create user!"
+                                        print("Unauthorized account creation. Could not create user!")
                                         return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
                                 else:
                                 # # Many trials because of API key generation failures some times.
@@ -139,7 +139,7 @@ def user_register():
                                         if _account != None:
                                             (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
                                         else:
-                                            print "You are forbidden to do this."
+                                            print("You are forbidden to do this.")
                                             return fk.make_response('You are forbidden to do this.', status.HTTP_401_UNAUTHORIZED)
                                     else:
                                         if len(admin) != 0:
@@ -178,44 +178,44 @@ def user_register():
                                                         #     user_model.group = "admin"
                                                         #     user_model.save()
                                                     else:
-                                                        print "Unauthorized admin account creation. Could not create user!"
+                                                        print("Unauthorized admin account creation. Could not create user!")
                                                         return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
                                                 else:
-                                                    print "Unauthorized admin account creation. Referee is not an admin."
+                                                    print("Unauthorized admin account creation. Referee is not an admin.")
                                                     return fk.make_response('Unauthorized admin account creation. Referee is not an admin.', status.HTTP_401_UNAUTHORIZED)
                                             else:
-                                                print "Unauthorized admin account creation. Unknown admin referee."
+                                                print("Unauthorized admin account creation. Unknown admin referee.")
                                                 return fk.make_response('Unauthorized admin account creation. Unknown admin referee.', status.HTTP_401_UNAUTHORIZED)
                                         else:
-                                            print "Unauthorized admin account creation. No provided admin referee."
+                                            print("Unauthorized admin account creation. No provided admin referee.")
                                             return fk.make_response('Unauthorized admin account creation. No provided admin referee.', status.HTTP_401_UNAUTHORIZED)
                                 if created:
                                     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
                                 break
                             except:
-                                print str(traceback.print_exc())
+                                print(str(traceback.print_exc()))
                     else:
-                        print "This user already exists."
+                        print("This user already exists.")
                         return fk.make_response('This user already exists.', status.HTTP_401_UNAUTHORIZED)
 
-                    print "Token %s"%user_model.api_token
-                    print fk.request.headers.get('User-Agent')
-                    print fk.request.remote_addr
+                    print("Token %s"%user_model.api_token)
+                    print(fk.request.headers.get('User-Agent'))
+                    print(fk.request.remote_addr)
                     # print "Connected_at: %s"%str(user_model.connected_at)
                     # user_model.connected_at = datetime.datetime.utcnow()
                     # user_model.save()
                     user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     user_model.retoken()
                     # print "Connected_at: %s"%str(user_model.connected_at)
-                    print "Session: %s"%user_model.session
+                    print("Session: %s"%user_model.session)
 
                     logStat(user=user_model)
 
                     return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                     # return fk.redirect('{0}:{1}/{2}'.format(VIEW_HOST, VIEW_PORT, user_model.session)
                 except:
-                    print str(traceback.print_exc())
-                    print "This user already exists."
+                    print(str(traceback.print_exc()))
+                    print("This user already exists.")
                     return fk.make_response('This user already exists.', status.HTTP_401_UNAUTHORIZED)
         else:
             return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
@@ -229,7 +229,7 @@ def user_password_reset():
 
         
     if fk.request.method == 'POST':
-        print "Request: %s"%str(fk.request.data)
+        print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             application = stormpath_manager.application
@@ -252,7 +252,7 @@ def user_password_renew():
 
         
     if fk.request.method == 'POST':
-        print "Request: %s"%str(fk.request.data)
+        print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             application = stormpath_manager.application
@@ -279,14 +279,14 @@ def user_password_change():
         
     if fk.request.method == 'POST':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=change_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/password/change')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
                 application = stormpath_manager.application
@@ -317,7 +317,7 @@ def user_password_change():
 def user_login():
     logTraffic(endpoint='/public/user/login')
     if fk.request.method == 'POST':
-        print "Request: %s"%str(fk.request.data)
+        print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             application = stormpath_manager.application
@@ -332,7 +332,7 @@ def user_login():
                             email,
                             password,
                         ).account
-                        print "User is in stormpath!!!"
+                        print("User is in stormpath!!!")
                     except Error as re:
                         _user = None
                         print('Message: %s' %re.message)
@@ -344,9 +344,9 @@ def user_login():
                     
                     account = UserModel.objects(email=email).first()
                     if _user == None:
-                        print "User not in stormpath!!!"
+                        print("User not in stormpath!!!")
                     if account == None:
-                        print "User not in CoRR!!!"
+                        print("User not in CoRR!!!")
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
                         # account, created = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
@@ -374,11 +374,11 @@ def user_login():
                             print('Error Code: %s' %str(re.code))
                             return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                         if _account == None:
-                            print str(traceback.print_exc())
+                            print(str(traceback.print_exc()))
                             return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
-                    print "Token %s"%account.api_token
-                    print fk.request.headers.get('User-Agent')
-                    print fk.request.remote_addr
+                    print("Token %s"%account.api_token)
+                    print(fk.request.headers.get('User-Agent'))
+                    print(fk.request.remote_addr)
                     # print "Connected at %s"%str(account.connected_at)
                     # account.connected_at = datetime.datetime.utcnow()
                     # account.save()
@@ -387,7 +387,7 @@ def user_login():
                     return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                     # return fk.redirect('{0}:{1}/?session={2}'.format(VIEW_HOST, VIEW_PORT, account.session))
                 except:
-                    print str(traceback.print_exc())
+                    print(str(traceback.print_exc()))
                     return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
                     
         else:
@@ -403,7 +403,7 @@ def user_sync(hash_session):
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -421,14 +421,14 @@ def user_logout(hash_session):
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/user/logout')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
                 # user_model.connected_at = datetime.datetime.utcnow()
@@ -455,7 +455,7 @@ def user_unregister(hash_session):
             logAccess('cloud', '/private/<hash_session>/user/unregister')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
                 # logStat(deleted=True, user=user_model)
@@ -474,7 +474,7 @@ def user_dashboard(hash_session):
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -482,7 +482,7 @@ def user_dashboard(hash_session):
             profile_model = ProfileModel.objects(user=user_model).first()
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
                 dashboard = {}
@@ -496,7 +496,7 @@ def user_dashboard(hash_session):
                 if profile_model is not None:
                     dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
                 dashboard["version"] = version
-                print "Version {0}".format( dashboard["version"])
+                print("Version {0}".format( dashboard["version"]))
                 dashboard["records_total"] = 0
                 dashboard["projects_total"] = len(projects)
                 dashboard["records_total"] = 0
@@ -577,7 +577,7 @@ def user_update(hash_session):
                 data = json.loads(fk.request.data)
                 application = stormpath_manager.application
                 allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                print "Allowance: "+allowance
+                print("Allowance: {0}".format(allowance))
                 # print "Connected_at: %s"%str(user_model.connected_at)
                 if allowance == hash_session:
                     #Update stormpath user if password is affected
@@ -594,8 +594,8 @@ def user_update(hash_session):
                     if picture_link != "":
                         picture['location'] = picture_link
 
-                    print "Fname: %s"%fname
-                    print "Lname: %s"%lname
+                    print("Fname: %s"%fname)
+                    print("Lname: %s"%lname)
 
                     profile_model.fname = fname
                     profile_model.lname = lname
@@ -637,7 +637,7 @@ def user_file_upload(hash_session, group, item_id):
             else:
                 if group == "picture":
                     item_id = str(user_model.id)
-                print "item_id: %s"%item_id
+                print("item_id: %s"%item_id)
                 if fk.request.files:
                     file_obj = fk.request.files['file']
                     filename = '%s_%s'%(item_id, file_obj.filename)
@@ -645,7 +645,7 @@ def user_file_upload(hash_session, group, item_id):
                     if not created:
                         return cloud_response(200, 'File already exists with same name for this item', _file.info())
                     else:
-                        print "filename: %s"%filename
+                        print("filename: %s"%filename)
                         encoding = ''
                         if file_obj != None:
                             old_file_position = file_obj.tell()
@@ -731,10 +731,10 @@ def user_file_upload(hash_session, group, item_id):
                             description = '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
                             if item.picture != None:
                                 old_storage = item.picture.storage
-                                print "Old storage %s"%old_storage
+                                print("Old storage %s"%old_storage)
                                 _file.delete()
                                 _file = item.picture
-                            print '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
+                            print('%s is the picture file of the profile %s'%(file_obj.filename, str(item.id)))
                         elif 'logo' in group:
                             if 'app' in group:
                                 item = ApplicationModel.objects.with_id(item_id)
@@ -820,9 +820,9 @@ def user_file_upload(hash_session, group, item_id):
                                             if deleted:
                                                 logStat(deleted=True, file_obj=item.picture)
                                         else:
-                                            print "Old not deleted!"
+                                            print("Old not deleted!")
                                     else:
-                                        print "No picture"
+                                        print("No picture")
                                     if item != None:
                                         item.picture = _file
                                 elif 'logo' in group:
@@ -863,7 +863,7 @@ def user_contactus(): #Setup and start smtp server on the instance
                 s.quit()
                 return fk.Response('Message sent.', status.HTTP_200_OK)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
                 return fk.make_response("Could not send the email.", status.HTTP_503_SERVICE_UNAVAILABLE)
         else:
             return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
@@ -980,7 +980,7 @@ def user_truested(hash_session):
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.make_response('Trusting failed.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -1011,7 +1011,7 @@ def user_home():
         environments = EnvironmentModel.objects()
         apps = ApplicationModel.objects()
         traffic = TrafficModel.objects()
-        print fk.request.path
+        print(fk.request.path)
 
         users_stat = {"number":len(users)}
         users_stat["history"] = [json.loads(stat.to_json()) for stat in StatModel.objects(category="user")]
@@ -1064,7 +1064,7 @@ def user_profile(hash_session):
             if created:
                 profile_model.created_at=str(datetime.datetime.utcnow())
                 profile_model.save()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.make_response('profile get failed.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -1086,7 +1086,7 @@ def user_renew(hash_session):
     logTraffic(endpoint='/private/<hash_session>/user/renew')
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if user_model is None:
             return fk.make_response('Renew token failed.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -1131,7 +1131,7 @@ def cloud_public_user_recover():
                         print('Message message: %s' %re.message['message'])
                         return fk.make_response(re.message['message'], status.HTTP_400_BAD_REQUEST)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
                 return fk.make_response("Could not send the email.", status.HTTP_503_SERVICE_UNAVAILABLE)
         else:
             return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
@@ -1153,7 +1153,7 @@ def cloud_public_user_picture(user_id):
             elif profile_model.picture['scope'] == 'local':
                 if profile_model.picture['location']:
                     picture = load_picture(profile_model)
-                    print picture[1]
+                    print(picture[1])
                     return fk.send_file(
                         picture[0],
                         mimetypes.guess_type(picture[1])[0],
@@ -1161,7 +1161,7 @@ def cloud_public_user_picture(user_id):
                         attachment_filename=profile_model.picture['location'],
                     )
                 else:
-                    print "Failed because of picture location not found."
+                    print("Failed because of picture location not found.")
                     return fk.make_response('Empty location. Nothing to pull from here!', status.HTTP_204_NO_CONTENT)
     else:
         return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)

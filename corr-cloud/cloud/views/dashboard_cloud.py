@@ -24,13 +24,13 @@ def private_search(hash_session):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/dashboard/search')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 if fk.request.args:
                     query = fk.request.args.get("query").split(' ') #single word for now.
@@ -122,13 +122,13 @@ def project_dashboard(hash_session):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/dashboard/projects')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 projects = ProjectModel.objects(owner=current_user).order_by('+created_at')
                 version = 'N/A'
@@ -156,13 +156,13 @@ def dashboard_records(hash_session, project_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess('cloud', '/private/<hash_session>/dashboard/records/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 if project_id == "all":
                     projects = ProjectModel.objects(owner=current_user)
@@ -177,7 +177,7 @@ def dashboard_records(hash_session, project_id):
                     if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
                         return fk.redirect('{0}:{1}/?action=records_failed'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        print str(project.activity_json())
+                        print(str(project.activity_json()))
                         return fk.Response(project.activity_json(), mimetype='application/json')
                     # project = {"project":json.loads(p.summary_json())}
                     # records = RecordModel.objects(project=p)
@@ -217,16 +217,16 @@ def record_diff(hash_session, record_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             logAccess('cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print "Allowance: "+allowance
+            print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
                 try:
                     record = RecordModel.objects.with_id(record_id)
                 except:
-                    print str(traceback.print_exc())
+                    print(str(traceback.print_exc()))
                 if record is None:
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -259,13 +259,13 @@ def reproducibility_assess(hash_session, record_id):
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
-        print fk.request.path
+        print(fk.request.path)
         if current_user is not None:
             try:
                 logAccess('cloud', '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
-                print str(traceback.print_exc())
+                print(str(traceback.print_exc()))
             if record is None:
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -473,7 +473,7 @@ def public_record_diff(record_id):
         try:
             record = RecordModel.objects.with_id(record_id)
         except:
-            print str(traceback.print_exc())
+            print(str(traceback.print_exc()))
         if record is None:
             return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:

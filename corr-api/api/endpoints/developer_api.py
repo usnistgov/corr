@@ -20,7 +20,7 @@ def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
         logTraffic(endpoint='/developer/<api_token>/apps')
-        print current_user.group
+        print(current_user.group)
         if current_user.group == "developer" or current_user.group == "user":
             if fk.request.method == 'GET':
                 apps = ApplicationModel.objects(developer=current_user)

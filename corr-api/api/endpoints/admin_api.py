@@ -28,7 +28,7 @@ import datetime
 import random
 import string
 import os
-import thread
+import _thread
 
 @app.route(API_URL + '/admin/<api_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 def admin_search(api_token, key_words):
