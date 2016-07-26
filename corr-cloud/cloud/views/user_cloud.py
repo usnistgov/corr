@@ -110,7 +110,7 @@ def user_register():
                                             _account = None
                                     if _account != None:
                                         print("created!!!")
-                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                                     else:
                                         print("Unauthorized account creation. Could not create user!")
                                         return fk.make_response('Unauthorized admin account creation. Could not create user!', status.HTTP_401_UNAUTHORIZED)
@@ -137,7 +137,7 @@ def user_register():
                                                 return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                                                 _account = None
                                         if _account != None:
-                                            (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                            (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group="admin", api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                                         else:
                                             print("You are forbidden to do this.")
                                             return fk.make_response('You are forbidden to do this.', status.HTTP_401_UNAUTHORIZED)
@@ -172,7 +172,7 @@ def user_register():
                                                             return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                                                             _account = None
                                                     if _account != None:
-                                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                                                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group=group, api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                                                         # admin_model = UserModel.objects(email=admin["email"]).first()
                                                         # if admin_model.group == "admin":
                                                         #     user_model.group = "admin"
@@ -349,7 +349,7 @@ def user_login():
                         print("User not in CoRR!!!")
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
-                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                         if created:
                             (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
                         

@@ -73,17 +73,17 @@ class UserModel(db.Document):
             self.connected_at = str(datetime.datetime.utcnow())
 
         if not self.api_token:
-            self.api_token = hashlib.sha256(b'CoRRToken_%s'%(str(datetime.datetime.utcnow()))).hexdigest()
+            self.api_token = hashlib.sha256(('CoRRToken_%s'%(str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
 
         if not self.session:
-            self.session = hashlib.sha256(b'CoRRSession_%s'%(str(datetime.datetime.utcnow()))).hexdigest()
+            self.session = hashlib.sha256(('CoRRSession_%s'%(str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
 
         return super(UserModel, self).save(*args, **kwargs)
 
     def sess_sync(self, unic):
         """Update the user session.
         """
-        self.session = str(hashlib.sha256(b'CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).hexdigest())
+        self.session = str(hashlib.sha256(('CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).encode("ascii")).hexdigest())
         self.save()
 
     def renew(self, unic):
@@ -93,7 +93,7 @@ class UserModel(db.Document):
         self.connected_at = str(datetime.datetime.utcnow())
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
-        self.session = str(hashlib.sha256(b'CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).hexdigest())
+        self.session = str(hashlib.sha256(('CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).encode("ascii")).hexdigest())
         self.save()
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
@@ -101,7 +101,7 @@ class UserModel(db.Document):
     def retoken(self):
         """Renew the user api token.
         """
-        self.api_token = hashlib.sha256(b'CoRRToken_%s_%s'%(self.email, str(datetime.datetime.utcnow()))).hexdigest()
+        self.api_token = hashlib.sha256(('CoRRToken_%s_%s'%(self.email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
         self.save()
 
     def allowed(self, unic):
@@ -111,7 +111,7 @@ class UserModel(db.Document):
         """
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
-        allowed = hashlib.sha256(b'CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).hexdigest()
+        allowed = hashlib.sha256(('CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).encode("ascii")).hexdigest()
         print("allowed: %s"%str(allowed))
         return str(allowed)
 
