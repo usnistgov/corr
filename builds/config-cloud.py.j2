@@ -3,9 +3,9 @@ WTF_CSRF_ENABLED = True
 DEBUG = True
 
 MONGODB_SETTINGS = {
-    'db': 'corr-production',
+    'db': '{{hostvars['dbhost']['db_name']}}',
     'host': '{{ hostvars['dbhost']['ansible_ssh_host'] }}',
-    'port': 27017
+    'port': {{hostvars['dbhost']['mapped_port']}}
 }
 
 VIEW_SETTINGS = {
