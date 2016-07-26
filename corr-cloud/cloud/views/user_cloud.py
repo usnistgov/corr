@@ -349,12 +349,14 @@ def user_login():
                         print("User not in CoRR!!!")
                     if account == None and _user != None:
                         # Sync with stormpath here... :-)
-                        # account, created = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'DDSMSession_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
-                        # if created:
-                        #     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
+                        (user_model, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, api_token=hashlib.sha256(b'CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).hexdigest())
+                        if created:
+                            (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=account, fname="None", lname="None", organisation="None", about="None")
+                        
+                        return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                         # We do not allow this anymore. Registration handles this. Yet the account type has to be provided
                         # Because we have to make a difference between admin, developer and user later.
-                        return fk.make_response('Login failed. Account inconsistency. Register again with the same password.', status.HTTP_401_UNAUTHORIZED)
+                        # return fk.make_response('Login failed. Account inconsistency. Register again with the same password.', status.HTTP_401_UNAUTHORIZED)
                     if account != None and _user == None:
                         try:
                             _account = application.accounts.create({
@@ -375,7 +377,10 @@ def user_login():
                             return fk.make_response(re.message['message'], status.HTTP_401_UNAUTHORIZED)
                         if _account == None:
                             print(str(traceback.print_exc()))
-                            return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
+                            return fk.make_response('Login failed. A serious inconsistency between the SSO and this backend was found.', status.HTTP_401_UNAUTHORIZED)
+                    
+                    if account == None and _user == None:
+                        return fk.make_response('Unknown user account.', status.HTTP_401_UNAUTHORIZED)
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
