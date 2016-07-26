@@ -24,7 +24,7 @@
   register: corr_env_dir
 
 - name: create corr conda env
-  shell: "{{ conda }} create -y -n {{ corr_env }} python"
+  shell: "{{ conda }} create -y -n {{ corr_env }} python=3.5"
   when: corr_env_dir.stat.exists == False
 
 - name: install required corrdb packages
