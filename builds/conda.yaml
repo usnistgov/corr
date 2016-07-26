@@ -31,4 +31,4 @@
   shell: "{{ conda }} env update -n {{ corr_env }} --file {{ corr_path }}/builds/requirements.yaml"
 
 - name: enforce install python 3.5
-  shell: "{{ conda }} update -y -n {{ corr_env }} python"
+  shell: "{{ conda }} install -y -n {{ corr_env }} python==3.5"
