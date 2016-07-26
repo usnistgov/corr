@@ -10,7 +10,7 @@ from flask.ext.api import status
 import flask as fk
 from cloud import app, stormpath_manager, crossdomain, delete_project_files, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
 import datetime
-import json
+import simplejson as json
 import traceback
 import smtplib
 from email.mime.text import MIMEText

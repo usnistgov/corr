@@ -10,7 +10,7 @@ from corrdb.common.models import FileModel
 from corrdb.common.models import ApplicationModel
 
 import mimetypes
-import json
+import simplejson as json
 import traceback
 
 # In 0.1 allow user to have same privileges as developer

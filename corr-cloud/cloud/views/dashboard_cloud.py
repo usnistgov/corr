@@ -10,7 +10,7 @@ from flask.ext.stormpath import login_required
 import flask as fk
 from cloud import app, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
 import datetime
-import json
+import simplejson as json
 import traceback
 
 #Only redirects to pages that signify the state of the problem or the result.

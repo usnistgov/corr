@@ -13,7 +13,7 @@ from io import StringIO
 import zipfile
 from io import BytesIO
 import os
-import json
+import simplejson as json
 import difflib
 import hashlib
 import datetime

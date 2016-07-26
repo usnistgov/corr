@@ -23,7 +23,7 @@ from corrdb.common.models import BundleModel
 from corrdb.common.models import VersionModel
 
 import mimetypes
-import json
+import simplejson as json
 import traceback
 import datetime
 import random

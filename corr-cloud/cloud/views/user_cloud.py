@@ -14,7 +14,7 @@ from flask.ext.api import status
 import flask as fk
 from cloud import app, stormpath_manager, crossdomain, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
 import datetime
-import json
+import simplejson as json
 import traceback
 import smtplib
 from email.mime.text import MIMEText

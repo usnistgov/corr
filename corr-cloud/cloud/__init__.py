@@ -10,7 +10,7 @@ import tarfile
 from io import StringIO
 from io import BytesIO
 import zipfile
-import json
+import simplejson as json
 import time
 import boto3
 import traceback 

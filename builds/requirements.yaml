@@ -19,3 +19,4 @@ dependencies:
     - hurry.filesize
     - uwsgi
     - flask-restful-swagger
+    - simplejson
