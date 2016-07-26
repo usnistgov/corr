@@ -27,8 +27,8 @@
   shell: "{{ conda }} create -y -n {{ corr_env }} python"
   when: corr_env_dir.stat.exists == False
 
+- name: based install python 3.5
+  shell: "{{ conda }} install -y -n {{ corr_env }} python==3.5"
+
 - name: install required corrdb packages
   shell: "{{ conda }} env update -n {{ corr_env }} --file {{ corr_path }}/builds/requirements.yaml"
-
-- name: enforce install python 3.5
-  shell: "{{ conda }} install -y -n {{ corr_env }} python==3.5"
