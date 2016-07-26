@@ -11,8 +11,8 @@ dependencies:
   - node
   - gunicorn
   - pip:
-    - mongoengine
-    - flask-mongoengine
+    - mongoengine==0.8.7
+    - flask-mongoengine==0.7.1
     - flask-testing
     - click
     - flask-api
