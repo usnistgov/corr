@@ -1,7 +1,7 @@
 name: root
 dependencies:
-  - python>=3.5
-  - pymongo=3.0.3
+  - python=3.4
+  - pymongo=2.8
   - nose
   - flask
   - requests
