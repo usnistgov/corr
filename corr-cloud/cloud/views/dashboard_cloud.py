@@ -1,3 +1,4 @@
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
@@ -8,7 +9,7 @@ from corrdb.common.models import StatModel
 from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, storage_manager, access_manager, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT
 import datetime
 import simplejson as json
 import traceback
@@ -20,7 +21,7 @@ import traceback
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def private_search(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/dashboard/search')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/search')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -28,7 +29,7 @@ def private_search(hash_session):
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/dashboard/search')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/search')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -118,7 +119,7 @@ def private_search(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_dashboard(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/dashboard/projects')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/projects')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -126,7 +127,7 @@ def project_dashboard(hash_session):
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/dashboard/projects')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/projects')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -152,7 +153,7 @@ def project_dashboard(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def dashboard_records(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/dashboard/records/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/records/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -160,7 +161,7 @@ def dashboard_records(hash_session, project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=dashboard_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/dashboard/records/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/records/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -213,13 +214,13 @@ def dashboard_records(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_diff(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
-            logAccess('cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -255,14 +256,14 @@ def record_diff(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def reproducibility_assess(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -322,7 +323,7 @@ def reproducibility_assess(hash_session, record_id):
 @app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_search():
-    logTraffic(endpoint='/public/dashboard/search')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/search')
         
     if fk.request.method == 'GET':
         if fk.request.args:
@@ -411,7 +412,7 @@ def public_search():
 @app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_dashboard():
-    logTraffic(endpoint='/public/dashboard/projects')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
         
     if fk.request.method == 'GET':
         projects = ProjectModel.objects.order_by('+created_at')
@@ -432,7 +433,7 @@ def public_project_dashboard():
 @app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_dashboard_records(project_id):
-    logTraffic(endpoint='/public/dashboard/records/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/records/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
@@ -467,7 +468,7 @@ def public_dashboard_records(project_id):
 @app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_diff(record_id):
-    logTraffic(endpoint='/public/dashboard/record/diff/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/record/diff/<record_id>')
         
     if fk.request.method == 'GET':
         try:

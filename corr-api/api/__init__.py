@@ -6,9 +6,8 @@ from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel 
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel  
-from corrdb.common.models import AccessModel     
+from corrdb.common.models import AccessModel
 import tempfile
-import tarfile
 from io import StringIO
 import zipfile
 from io import BytesIO
@@ -17,7 +16,6 @@ import simplejson as json
 import difflib
 import hashlib
 import datetime
-import boto3
 import traceback
 
 import requests
@@ -26,27 +24,15 @@ from functools import update_wrapper
 from calendar import monthrange
 import time
 
-from flask.ext.restful import  Api
-from flask_restful_swagger import swagger
+import glob
 
 # Flask app instance
-app = setup_app(__name__)
-
-# Boto s3 instance
-s3 =  boto3.resource('s3')
-
-# S3 bucket location
-try:
-    S3_BUCKET = app.config['S3_BUCKET']
-except:
-    S3_BUCKET = ""
+app, storage_manager, access_manager = setup_app(__name__)
 
 # The api's version
 API_VERSION = 0.1
 # The api base url
-API_URL = '/api/v{0}'.format(API_VERSION)
-
-api = swagger.docs(Api(app), apiVersion='{0}'.format(API_VERSION))
+API_URL = '/corr/api/v{0}'.format(API_VERSION)
 
 def check_api(token):
     """Get the user object instance from its api token.
@@ -96,7 +82,7 @@ def prepare_env(project=None, env=None):
                     if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
                         bundle_buffer = web_get_file(env.bundle.location)
                     else:
-                        bundle_buffer = s3_get_file('bundle', env.bundle.location)
+                        bundle_buffer = storage_get_file('bundle', env.bundle.location)
 
                     data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
                     data.date_time = time.localtime(time.time())[:6]
@@ -408,7 +394,7 @@ def prepare_record(record=None):
                     if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
                         bundle_buffer = web_get_file(env.bundle.location)
                     else:
-                        bundle_buffer = s3_get_file('bundle', env.bundle.location)
+                        bundle_buffer = storage_get_file('bundle', env.bundle.location)
 
                     data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
                     data.date_time = time.localtime(time.time())[:6]
@@ -425,7 +411,7 @@ def prepare_record(record=None):
                         bundle_buffer = web_get_file(resource['storage'])
                         data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage'].split('/')[-1]))
                     else:
-                        bundle_buffer = s3_get_file(resource['group'], resource['storage'])
+                        bundle_buffer = storage_get_file(resource['group'], resource['storage'])
                         data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage']))
                     data.date_time = time.localtime(time.time())[:6]
                     data.compress_type = zipfile.ZIP_DEFLATED
@@ -481,67 +467,6 @@ def crossdomain(origin=None, methods=None, headers=None, max_age=21600, attach_t
         return update_wrapper(wrapped_function, f)
     return decorator
 
-def delete_project_files(project):
-    """Delete a project files.
-    """
-    from corrdb.common.models import ProjectModel
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import EnvironmentModel
-    from corrdb.common.models import FileModel
-
-    for _file in project.resources:
-        file_ = FileModel.objects.with_id(_file)
-        if file_:
-            result = s3_delete_file(file_.group, file_.storage)
-            if result:
-                logStat(deleted=True, file_obj=file_)
-                file_.delete()
-
-    for record in project.records:
-        result = delete_record_files(record)
-        if result:
-            logStat(deleted=True, record=record)
-            record.delete()
-
-    for environment_id in project.history:
-        _environment = EnvironmentModel.objects.with_id(environment_id)
-        if _environment.bundle["scope"] == "local":
-            s3_bundles.delete_key(_environment.bundle.location)
-            result = s3_delete_file('bundle', _environment.bundle.location)
-            if result:
-                logStat(deleted=True, bundle=_environment.bundle)
-                logStat(deleted=True, environment=_environment)
-                _environment.bundle.delete()
-                _environment.delete()
-        else:
-            logStat(deleted=True, environment=_environment)
-            _environment.delete()
-
-def delete_record_files(record):
-    """Delete a record files.
-        Returns:
-            True if all files are deleted.
-    """
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import FileModel
-    final_result = True
-    for _file_id in record.resources:
-        _file = FileModel.objects.with_id(_file_id)
-        result = delete_record_file(_file)
-        if not result:
-            final_result = result
-    return final_result
-
-def delete_record_file(record_file):
-    """Delete a record file and log the stats.
-        Returns:
-            Return of the s3_delete_file call.
-    """
-    result = s3_delete_file(record_file.group, record_file.storage)
-    if result:
-        logStat(deleted=True, file_obj=record_file)
-        record_file.delete()
-    return result
 
 def api_response(code, title, content):
     """Provides a common structure to represent the response
@@ -552,75 +477,6 @@ def api_response(code, title, content):
     import flask as fk
     response = {'code':code, 'title':title, 'content':content}
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-
-def s3_get_file(group='', key=''):
-    """Retrive a file from the s3 bucket.
-        Returns:
-            File buffer.
-    """
-    file_buffer = StringIO()
-    try:
-        obj = None
-        if key != '':
-            obj = s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/{1}'.format(group,key))
-        else:
-            if group == 'picture' or group == 'logo':
-                obj = s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/default-{1}.png'.format(group,key))
-    except:
-        if group == 'picture' or group == 'logo':
-            obj = s3.Object(bucket_name=S3_BUCKET, key='corr-logos/default-{0}.png'.format(group))
-
-    try:
-        res = obj.get()
-        file_buffer.write(res['Body'].read())
-        file_buffer.seek(0)
-        return file_buffer
-    except:
-        return None
-
-def s3_upload_file(file_meta=None, file_obj=None):
-    """Upload a file into the s3 bucket.
-        Returns:
-            an array of two elements. one is the status
-            of the upload and the other is a message 
-            accompanying it.
-    """
-    if file_meta != None and file_obj != None:
-        if file_meta.location == 'local':
-            dest_filename = file_meta.storage
-            try:
-                group = 'corr-resources'
-                if file_meta.group != 'descriptive':
-                    group = 'corr-%ss'%file_meta.group
-                print(group)
-                s3_files = s3.Bucket(S3_BUCKET)
-                s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
-                return [True, "File uploaded successfully"]
-            except:
-                return [False, traceback.format_exc()]
-        else:
-            return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
-    else:
-        return [False, "file meta data does not exist or file content is empty."]
-
-def s3_delete_file(group='', key=''):
-    """Delete a file from the s3 bucket.
-        Returns:
-            The status of the deletion. True for success
-            and False for failure.
-    """
-    deleted = False
-    if key not in ["default-logo.png", "default-picture.png"]:
-        s3_files = s3.Bucket(S3_BUCKET)
-        for _file in s3_files.objects.all():
-            if _file.key == 'corr-{0}s/{1}'.format(group, key): 
-                _file.delete()
-                print("File deleted!")
-                deleted = True
-                break
-        if not deleted:
-            print("File not deleted")
-    return deleted
 
 def data_pop(data=None, element=''):
     """Pop an element of a dictionary.
@@ -666,86 +522,7 @@ def logTraffic(endpoint=''):
         traffic.interactions = 1
         traffic.save()
 
-def logAccess(app=None, scope='root', endpoint=''):
-    """Log the access to the backend.
-    """
-    (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(API_URL, endpoint))
 
-def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
-    """Log various statistics about different objects:
-    number of users, number of projects, number of
-    applications, number of messages, number of records,
-    number of collaborations, storage usage and number
-    of comments. 
-    """
-    category = ''
-    periode = ''
-    traffic = 0
-    interval = ''
-    today = datetime.date.today()
-    last_day = monthrange(today.year, today.month)[1]
-
-    if user != None:
-        category = 'user'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if project != None:
-        category = 'project'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if application != None:
-        category = 'application'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if message != None:
-        category = 'message'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if record != None:
-        category = 'record'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if diff != None:
-        category = 'collaboration'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-    if file_obj != None:
-        category = 'storage'
-        periode = 'daily'
-        traffic = file_obj.size * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if comment != None:
-        category = 'comment'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-    (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
-    print("Stat Traffic {0}".format(traffic))
-    if not created:
-        print("Not created stat")
-        if (stat.traffic + traffic) >= 0:
-            stat.traffic += traffic
-        stat.save()
-    else:
-        print("Created stat")
-        stat.traffic = traffic
-        stat.save()
 
 
 # import all the api endpoints.

@@ -3,7 +3,8 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, swagger, api, API_URL, check_api, check_app, api_response, s3_get_file, web_get_file, logTraffic, logAccess
+from corrdb.common import logAccess, logStat, logTraffic
+from api import app, storage_manager, access_manager, API_URL, check_api, check_app, api_response
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import FileModel
@@ -19,7 +20,7 @@ import traceback
 def apps_get(api_token):
     current_user = check_api(api_token)
     if current_user is not None:
-        logTraffic(endpoint='/developer/<api_token>/apps')
+        logTraffic(API_URL, endpoint='/developer/<api_token>/apps')
         print(current_user.group)
         if current_user.group == "developer" or current_user.group == "user":
             if fk.request.method == 'GET':
@@ -46,24 +47,24 @@ def app_logo(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/logo/<app_id>')
+            logTraffic(API_URL, endpoint='/developer/<api_token>/app/logo/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
                     name = app.name if app.name != '' and app.name != None else 'unknown'
                     logo = app.logo
                     if logo.location == 'local' and 'http://' not in logo.storage:
-                        logo_buffer = s3_get_file('logo', logo.storage)
+                        logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                         else:
                             return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     elif logo.location == 'remote':
-                        logo_buffer = web_get_file(logo.storage)
+                        logo_buffer = storage_manager.web_get_file(logo.storage)
                         if logo_buffer != None:
                             return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                         else:
-                            logo_buffer = s3_get_file('logo', 'default-logo.png')
+                            logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                             else:
@@ -73,11 +74,11 @@ def app_logo(api_token, app_id):
                         if 'http://' in logo.storage:
                             logo.location = 'remote'
                             logo.save()
-                            logo_buffer = web_get_file(logo.storage)
+                            logo_buffer = storage_manager.web_get_file(logo.storage)
                             if logo_buffer != None:
                                 return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                             else:
-                                logo_buffer = s3_get_file('logo', 'default-logo.png')
+                                logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                                 if logo_buffer == None:
                                     return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                                 else:
@@ -85,7 +86,7 @@ def app_logo(api_token, app_id):
                         else:
                             logo.location = 'local'
                             logo.save()
-                            logo_buffer = s3_get_file('logo', logo.storage)
+                            logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                             else:
@@ -104,7 +105,7 @@ def app_access(api_token, app_id):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/access/<app_id>')
+            logTraffic(API_URL, endpoint='/developer/<api_token>/app/access/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -129,7 +130,7 @@ def app_search(api_token, app_name):
     current_user = check_api(api_token)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logTraffic(endpoint='/developer/<api_token>/app/search/<app_name>')
+            logTraffic(API_URL, endpoint='/developer/<api_token>/app/search/<app_name>')
             if fk.request.method == 'GET':
                 apps = ApplicationModel.objects(name__icontains=app_name)
                 apps_dict = {'total_apps':0, 'apps':[]}
@@ -154,7 +155,7 @@ def app_search(api_token, app_name):
 def app_connectivity(app_token):
     current_app = check_app(app_token)
     if current_app is not None:
-        logAccess(current_app,'api', '/<app_token>/app/connectivity')
+        logAccess(CLOUD_URL, current_app,'api', '/<app_token>/app/connectivity')
         if fk.request.method == 'GET':
             name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
             return api_response(200, 'Application %s is accessible'%name, current_app.info())

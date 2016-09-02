@@ -1,3 +1,4 @@
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
@@ -8,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, delete_project_files, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, storage_manager, access_manager, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT
 import datetime
 import simplejson as json
 import traceback
@@ -33,7 +34,7 @@ import mimetypes
 @app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_sync(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/sync/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/sync/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -41,7 +42,7 @@ def project_sync(hash_session, project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/project/sync/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/sync/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -61,7 +62,7 @@ def project_sync(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_view(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/view/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/view/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -69,7 +70,7 @@ def project_view(hash_session, project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=sync_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/project/view/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/view/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -89,27 +90,27 @@ def project_view(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_remove(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/remove/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/remove/<project_id>')
         
     if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
-            logAccess('cloud', '/private/<hash_session>/project/remove/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/remove/<project_id>')
             # if project_name is not None:
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
             if project ==  None or (project != None and project.owner != current_user):
                 return fk.redirect('{0}:{1}/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
             else:
-                delete_project_files(project)
+                storage_manager.delete_project_files(project)
                 project.delete()
                 logStat(deleted=True, project=project)
                 return fk.redirect('{0}:{1}/dashboard/?session={2}'.format(VIEW_HOST, VIEW_PORT, hash_session))
             # else:
             #     projects = ProjectModel.objects(owner=current_user)
             #     for project in projects:
-            #         delete_project_files(project)
+            #         storage_manager.delete_project_files(project)
             #         project.delete()
             #     return fk.Response('All projects deleted', status.HTTP_200_OK)
         else:
@@ -120,13 +121,13 @@ def project_remove(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comment(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/comment/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comment/<project_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
-            logAccess('cloud', '/private/<hash_session>/project/comment/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comment/<project_id>')
             # if project_name is not None:
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
@@ -152,7 +153,7 @@ def project_comment(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_comments(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/comments/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comments/<project_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -160,7 +161,7 @@ def project_comments(hash_session, project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=comments_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/project/comments/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comments/<project_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -178,13 +179,13 @@ def project_comments(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_edit(hash_session, project_id):
-    logTraffic(endpoint='/private/<hash_session>/project/edit/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/edit/<project_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
-            logAccess('cloud', '/private/<hash_session>/project/edit/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             # project = ProjectModel.objects(name=project_name, owner=current_user).first_or_404()
             if project ==  None or (project != None and project.owner != current_user):
@@ -233,7 +234,7 @@ def project_edit(hash_session, project_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def project_records(hash_session, project_name):
-    logTraffic(endpoint='/private/<hash_session>/project/record/<project_name>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/record/<project_name>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -241,7 +242,7 @@ def project_records(hash_session, project_name):
         if current_user is None:
             return fk.redirect('{0}:{1}/?action=records_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/project/record/<project_name>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/record/<project_name>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -261,7 +262,7 @@ def project_records(hash_session, project_name):
 @app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_sync(project_id):
-    logTraffic(endpoint='/public/project/sync/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/project/sync/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
@@ -282,7 +283,7 @@ def public_project_sync(project_id):
 @app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_records(hash_session, project_id):
-    logTraffic(endpoint='/public/project/record/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/project/record/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
@@ -296,7 +297,7 @@ def public_project_records(hash_session, project_id):
 @app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_comments(hash_session, project_id):
-    logTraffic(endpoint='/public/project/comments/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/project/comments/<project_id>')
         
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
@@ -310,7 +311,7 @@ def public_project_comments(hash_session, project_id):
 @app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_project_view(project_id):
-    logTraffic(endpoint='/public/project/view/<project_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/project/view/<project_id>')
         
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)

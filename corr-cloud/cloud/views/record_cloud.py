@@ -1,3 +1,4 @@
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
@@ -8,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, prepare_record, crossdomain, delete_record_files, delete_record_file, CLOUD_URL, VIEW_HOST, VIEW_PORT, s3_get_file, logStat, logTraffic, logAccess
+from cloud import app, storage_manager, access_manager, stormpath_manager, crossdomain, CLOUD_URL, VIEW_HOST, VIEW_PORT
 import datetime
 import simplejson as json
 import traceback
@@ -33,14 +34,14 @@ import mimetypes
 @app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_remove(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/remove/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/remove/<record_id>')
         
     if fk.request.method in ['GET', 'DELETE']:
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/remove/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/remove/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -48,7 +49,7 @@ def record_remove(hash_session, record_id):
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
-                    result = delete_record_files(record)
+                    result = storage_manager.delete_record_files(record)
                     if result:
                         logStat(deleted=True, record=record)
                         record.delete()
@@ -63,14 +64,14 @@ def record_remove(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_comment(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/comment/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/comment/<record_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/comment/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/comment/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -99,14 +100,14 @@ def record_comment(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_comments(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/comments/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/comments/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/comments/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/comments/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -122,14 +123,14 @@ def record_comments(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_view(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/view/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/view/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/view/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/view/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -148,7 +149,7 @@ def record_view(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def record_edit(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/edit/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/edit/<record_id>')
         
     if fk.request.method == 'POST':
         current_user = UserModel.objects(session=hash_session).first()
@@ -156,7 +157,7 @@ def record_edit(hash_session, record_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/record/edit/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/edit/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -193,7 +194,7 @@ def record_edit(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def pull_record(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/pull/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/pull/<record_id>')
         
     if fk.request.method == 'GET':
         current_user = UserModel.objects(session=hash_session).first()
@@ -201,7 +202,7 @@ def pull_record(hash_session, record_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/record/pull/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
             if allowance == hash_session:
@@ -213,7 +214,7 @@ def pull_record(hash_session, record_id):
                 if record is None:
                     return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    prepared = prepare_record(record)
+                    prepared = storage_manager.prepare_record(record)
                     if prepared[0] == None:
                         print("Unable to retrieve a record to download.")
                         return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
@@ -228,7 +229,7 @@ def pull_record(hash_session, record_id):
 @app.route(CLOUD_URL + '/public/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_comments(record_id):
-    logTraffic(endpoint='/public/record/comments/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/record/comments/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -245,7 +246,7 @@ def public_record_comments(record_id):
 @app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_record_view(record_id):
-    logTraffic(endpoint='/public/record/view/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/record/view/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -265,7 +266,7 @@ def public_record_view(record_id):
 @app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_pull_record(record_id):
-    logTraffic(endpoint='/public/record/pull/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/record/pull/<record_id>')
         
     if fk.request.method == 'GET':
         try:
@@ -304,7 +305,7 @@ def public_pull_record(record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/upload/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_add(hash_session, record_id):
-    logTraffic(endpoint='/private/<hash_session>/record/file/upload/<record_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/upload/<record_id>')
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
         return fk.redirect('{0}:{1}/?action=update_denied'.format(VIEW_HOST, VIEW_PORT))
@@ -312,7 +313,7 @@ def file_add(hash_session, record_id):
         if fk.request.method == 'POST':
             infos = {}
             try:
-                logAccess('cloud', '/private/<hash_session>/record/file/upload/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/file/upload/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -366,7 +367,7 @@ def file_add(hash_session, record_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_download(hash_session, file_id):
-    logTraffic(endpoint='/private/<hash_session>/record/file/download/<file_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/download/<file_id>')
         
     if fk.request.method == 'GET':
         user_model = UserModel.object.with_id(user_id)
@@ -374,7 +375,7 @@ def file_download(hash_session, file_id):
             return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
         else:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/file/download/<file_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/file/download/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print(str(traceback.print_exc()))
@@ -398,13 +399,13 @@ def file_download(hash_session, file_id):
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def file_remove(hash_session, file_id):
-    logTraffic(endpoint='/private/<hash_session>/record/file/remove/<file_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/remove/<file_id>')
     if fk.request.method == 'DELETE':
         current_user = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if current_user is not None:
             try:
-                logAccess('cloud', '/private/<hash_session>/record/file/remove/<file_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/file/remove/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print(str(traceback.print_exc()))
@@ -412,7 +413,7 @@ def file_remove(hash_session, file_id):
                 return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record_file.record.project.owner == current_user:
-                    delete_record_file(record_file)
+                    storage_manager.delete_record_file(record_file)
                     # record_file.delete()
                     return fk.Response('Record file removed', status.HTTP_200_OK)
                 else:

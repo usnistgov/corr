@@ -7,3 +7,17 @@ MONGODB_SETTINGS = {
 }
 
 S3_BUCKET = '{{s3_bucket}}'
+
+ENVIRONMENT = '{{env_type}}'
+
+FILE_STORAGE = {
+    'type': '{{storage_type}}',
+    'location': '{{storage_location}}',
+    'name': '{{storage_name}}',
+    'id': '{{storage_key_id}}',
+    'key': '{{storage_access_key}}'
+}
+
+ACCOUNT_MANAGEMENT = {
+    'type': 'api-token'
+}

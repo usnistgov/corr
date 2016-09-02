@@ -1,3 +1,4 @@
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ApplicationModel
@@ -12,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, stormpath_manager, crossdomain, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, s3_get_file, s3_upload_file, s3_delete_file, logStat, logTraffic, logAccess
+from cloud import app, storage_manager, access_manager, stormpath_manager, crossdomain, cloud_response, CLOUD_URL, API_HOST, API_PORT, API_MODE, VIEW_HOST, VIEW_PORT, VIEW_MODE
 import datetime
 import simplejson as json
 import traceback
@@ -38,7 +39,7 @@ from io import StringIO
 @app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_register():
-    logTraffic(endpoint='/public/user/register')
+    logTraffic(CLOUD_URL, endpoint='/public/user/register')
 
         
     if fk.request.method == 'POST':
@@ -225,7 +226,7 @@ def user_register():
 @app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_reset():
-    logTraffic(endpoint='/public/user/password/reset')
+    logTraffic(CLOUD_URL, endpoint='/public/user/password/reset')
 
         
     if fk.request.method == 'POST':
@@ -248,7 +249,7 @@ def user_password_reset():
 @app.route(CLOUD_URL + '/public/user/password/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_renew():
-    logTraffic(endpoint='/public/user/password/renew')
+    logTraffic(CLOUD_URL, endpoint='/public/user/password/renew')
 
         
     if fk.request.method == 'POST':
@@ -274,7 +275,7 @@ def user_password_renew():
 @app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_password_change():
-    logTraffic(endpoint='/private/<hash_session>/user/password/change')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/password/change')
 
         
     if fk.request.method == 'POST':
@@ -283,7 +284,7 @@ def user_password_change():
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=change_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/user/password/change')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/password/change')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
@@ -315,7 +316,7 @@ def user_password_change():
 @app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_login():
-    logTraffic(endpoint='/public/user/login')
+    logTraffic(CLOUD_URL, endpoint='/public/user/login')
     if fk.request.method == 'POST':
         print("Request: %s"%str(fk.request.data))
         if fk.request.data:
@@ -403,7 +404,7 @@ def user_login():
 @app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_sync(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/sync')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/sync')
 
         
     if fk.request.method == 'GET':
@@ -412,7 +413,7 @@ def user_sync(hash_session):
         if user_model is None:
             return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess('cloud', '/private/<hash_session>/user/sync')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/sync')
             user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
@@ -421,7 +422,7 @@ def user_sync(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_logout(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/logout')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/logout')
 
         
     if fk.request.method == 'GET':
@@ -430,7 +431,7 @@ def user_logout(hash_session):
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/user/logout')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/logout')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
@@ -449,7 +450,7 @@ def user_logout(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_unregister(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/unregister')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/unregister')
 
         
     if fk.request.method == 'GET':
@@ -457,7 +458,7 @@ def user_unregister(hash_session):
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=unregister_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/user/unregister')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/unregister')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             print("Allowance: {0}".format(allowance))
@@ -474,7 +475,7 @@ def user_unregister(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_dashboard(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/dashboard')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/dashboard')
 
         
     if fk.request.method == 'GET':
@@ -483,7 +484,7 @@ def user_dashboard(hash_session):
         if user_model is None:
             return fk.redirect('{0}:{1}/?action=logout_denied'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess('cloud', '/private/<hash_session>/user/dashboard')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/dashboard')
             profile_model = ProfileModel.objects(user=user_model).first()
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
@@ -571,7 +572,7 @@ def user_dashboard(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_update(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/update')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/update')
 
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
@@ -630,12 +631,12 @@ def user_update(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_file_upload(hash_session, group, item_id):
-    logTraffic(endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
     user_model = UserModel.objects(session=hash_session).first()
     if user_model is None:
         return fk.redirect('{0}:{1}/?action=update_denied'.format(VIEW_HOST, VIEW_PORT))
     else: 
-        logAccess('cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
+        logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
         if fk.request.method == 'POST':
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
@@ -791,7 +792,7 @@ def user_file_upload(hash_session, group, item_id):
                             _file.mimetype = mimetype
                             _file.group = group_
                             _file.save()
-                            uploaded = s3_upload_file(_file, file_obj)
+                            uploaded = storage_manager.storage_upload_file(_file, file_obj)
                             if not uploaded[0]:
                                 _file.delete()
                                 return cloud_response(500, 'An error occured', "%s"%uploaded[1])
@@ -810,7 +811,7 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'bundle':
                                     # _file.delete()
                                     if item.storage != storage:
-                                        s3_delete_file('bundle',item.storage)
+                                        storage_manager.storage_delete_file('bundle',item.storage)
                                     item.encoding = encoding
                                     item.size = size
                                     item.storage = storage
@@ -821,7 +822,7 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'picture':
                                     if item.picture != None:
                                         if _file.storage != old_storage:
-                                            deleted = s3_delete_file('picture',old_storage)
+                                            deleted = storage_manager.storage_delete_file('picture',old_storage)
                                             if deleted:
                                                 logStat(deleted=True, file_obj=item.picture)
                                         else:
@@ -832,7 +833,7 @@ def user_file_upload(hash_session, group, item_id):
                                         item.picture = _file
                                 elif 'logo' in group:
                                     if item.logo.location != storage:
-                                        s3_delete_file('logo',item.logo.storage)
+                                        storage_manager.storage_delete_file('logo',item.logo.storage)
                                     if item != None:
                                         item.logo = _file
                                 elif 'resource' in group:
@@ -850,7 +851,7 @@ def user_file_upload(hash_session, group, item_id):
 @app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_contactus(): #Setup and start smtp server on the instance
-    logTraffic(endpoint='/public/user/contactus')
+    logTraffic(CLOUD_URL, endpoint='/public/user/contactus')
         
     if fk.request.method == 'POST':
         if fk.request.data:
@@ -878,7 +879,7 @@ def user_contactus(): #Setup and start smtp server on the instance
 @app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def public_version(): #Setup and start smtp server on the instance
-    logTraffic(endpoint='/public/version')
+    logTraffic(CLOUD_URL, endpoint='/public/version')
         
     if fk.request.method == 'GET':
         version = 'N/A'
@@ -894,13 +895,13 @@ def public_version(): #Setup and start smtp server on the instance
 @app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_config(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/config')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
         
     user_model = UserModel.objects(session=hash_session).first()
     if user_model ==None:
         return cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        logAccess('cloud', '/private/<hash_session>/user/config')
+        logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
         if fk.request.method == 'GET':
             config_buffer = StringIO()
             config_content = {'default':{'api':{'host':API_HOST, 'port':API_PORT, 'key':user_model.api_token}}}
@@ -913,17 +914,19 @@ def user_config(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_picture(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/picture')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/picture')
         
     user_model = UserModel.objects(session=hash_session).first()
     if user_model ==None:
         return cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        logAccess('cloud', '/private/<hash_session>/user/picture')
+        print('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+
+        logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
         if fk.request.method == 'GET':
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
-                picture_buffer = s3_get_file('picture', 'default-picture.png')
+                picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
                     return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                 else:
@@ -931,48 +934,56 @@ def user_picture(hash_session):
             else:
                 picture = profile.picture
                 if picture == None:
-                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
                         return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 elif picture.location == 'local' and 'http://' not in picture.storage:
                     # print str(picture.to_json())
-                    picture_buffer = s3_get_file('picture', picture.storage)
+                    picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                        if picture_buffer != None:
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                        else:
+                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 elif picture.location == 'remote':
-                    picture_buffer = web_get_file(picture.storage)
+                    picture_buffer = storage_manager.web_get_file(picture.storage)
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                         else:
-                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
                     # solve the file situation and return the appropriate one.
                     if 'http://' in picture.storage:
                         picture.location = 'remote'
                         picture.save()
-                        picture_buffer = web_get_file(picture.storage)
+                        picture_buffer = storage_manager.web_get_file(picture.storage)
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                             if picture_buffer == None:
                                 return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                             else:
-                                return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                                return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
                         picture.location = 'local'
                         picture.save()
-                        picture_buffer = s3_get_file('picture', picture.storage)
+                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
-                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                            picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                            if picture_buffer != None:
+                                return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                            else:
+                                return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
         else:
@@ -981,7 +992,7 @@ def user_picture(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_truested(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/trusted')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/trusted')
         
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
@@ -989,7 +1000,7 @@ def user_truested(hash_session):
         if user_model is None:
             return fk.make_response('Trusting failed.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess('cloud', '/private/<hash_session>/user/trusted')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/trusted')
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             if allowance == hash_session:
                 # return fk.Response('Trusting succeed', status.HTTP_200_OK)
@@ -1008,7 +1019,7 @@ def user_truested(hash_session):
 @app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_home():
-    logTraffic(endpoint='/public/user/home')
+    logTraffic(CLOUD_URL, endpoint='/public/user/home')
     if fk.request.method == 'GET':
         users = UserModel.objects()
         projects = ProjectModel.objects()
@@ -1060,7 +1071,7 @@ def user_home():
 @app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_profile(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/profile')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/profile')
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
         profile_model = ProfileModel.objects(user=user_model).first()
@@ -1073,7 +1084,7 @@ def user_profile(hash_session):
         if user_model is None:
             return fk.make_response('profile get failed.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess('cloud', '/private/<hash_session>/user/profile')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/profile')
             # print "Connected_at: %s"%str(user_model.connected_at)
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             picture = None
@@ -1088,14 +1099,14 @@ def user_profile(hash_session):
 @app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def user_renew(hash_session):
-    logTraffic(endpoint='/private/<hash_session>/user/renew')
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/renew')
     if fk.request.method == 'GET':
         user_model = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if user_model is None:
             return fk.make_response('Renew token failed.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess('cloud', '/private/<hash_session>/user/renew')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/renew')
             allowance = user_model.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             if allowance == hash_session:
                 user_model.retoken()
@@ -1108,7 +1119,7 @@ def user_renew(hash_session):
 @app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def cloud_public_user_recover():
-    logTraffic(endpoint='/public/user/recover')
+    logTraffic(CLOUD_URL, endpoint='/public/user/recover')
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
@@ -1146,7 +1157,7 @@ def cloud_public_user_recover():
 @app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(origin='*')
 def cloud_public_user_picture(user_id):
-    logTraffic(endpoint='/public/user/picture/<user_id>')
+    logTraffic(CLOUD_URL, endpoint='/public/user/picture/<user_id>')
     if fk.request.method == 'GET':
         user_model = UserModel.object.with_id(user_id)
         if user_model == None:
