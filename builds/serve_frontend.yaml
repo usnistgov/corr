@@ -9,6 +9,10 @@
   file: src=/etc/nginx/sites-available/{{ app_service_name }} dest=/etc/nginx/sites-enabled/{{ app_service_name }} state=link
   become: true
 
+- name: allow read an write permission
+  shell: "chmod -R a+rw {{ frontend_path }}"
+  become: true
+
 - name: add the www-data user to the users group
   user:
     group: "{{ ansible_ssh_user }}"
