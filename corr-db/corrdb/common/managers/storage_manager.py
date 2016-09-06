@@ -11,6 +11,7 @@ import simplejson as json
 import time
 import traceback 
 import datetime
+import requests
 import os
 
 class StorageManager:
@@ -241,11 +242,13 @@ class StorageManager:
                 File buffer.
         """
         try:
+            print(url)
             response = requests.get(url)
             file_buffer = BytesIO(response.content)
             file_buffer.seek(0)
             return file_buffer
         except:
+            print(traceback.print_exc())
             return None
 
     def prepare_env(self, project=None, env=None):
