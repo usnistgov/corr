@@ -18,7 +18,7 @@ def setup_app(name, config='config'):
     """
     app = Flask(name)
     app.config.from_object(config)
-    app.debug = True
+    app.logger_name = "flask.app"
 
     # Flask-MongoEngine instance
     db.init_app(app)

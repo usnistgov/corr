@@ -13,9 +13,11 @@ import traceback
 import datetime
 import requests
 import os
+import glob
 
 class StorageManager:
     def __init__(self, app):
+        self.app = app
         self.config = app.config['FILE_STORAGE']
         if self.config['type'] == 's3':
             aws_path = '~/.aws'
@@ -34,15 +36,15 @@ class StorageManager:
             except:
                 self.bucket = ""
         elif self.config['type'] == 'filesystem':
-            self.config_path = '{0}{1}'.format(self.config['location'], self.config['name'])
-            if not os.path.exists(self.config_path):
-                os.makedirs(self.config_path)
-                os.makedirs('{0}/corr-bundles'.format(self.config_path))
-                os.makedirs('{0}/corr-files'.format(self.config_path))
-                os.makedirs('{0}/corr-logos'.format(self.config_path))
-                os.makedirs('{0}/corr-outputs'.format(self.config_path))
-                os.makedirs('{0}/corr-pictures'.format(self.config_path))
-                os.makedirs('{0}/corr-resources'.format(self.config_path))
+            self.storage_path = '{0}{1}'.format(self.config['location'], self.config['name'])
+            if not os.path.exists(self.storage_path):
+                os.makedirs(self.storage_path)
+                os.makedirs('{0}/corr-bundles'.format(self.storage_path))
+                os.makedirs('{0}/corr-files'.format(self.storage_path))
+                os.makedirs('{0}/corr-logos'.format(self.storage_path))
+                os.makedirs('{0}/corr-outputs'.format(self.storage_path))
+                os.makedirs('{0}/corr-pictures'.format(self.storage_path))
+                os.makedirs('{0}/corr-resources'.format(self.storage_path))
         elif self.config['type'] == 'mdcs': # TODO
             pass
         elif self.config['type'] == 'ftp' or self.config['type'] == 'sftp' : # TODO
@@ -53,7 +55,6 @@ class StorageManager:
             Returns:
                 File buffer.
         """
-        file_buffer = StringIO()
         try:
             obj = None
             content = None
@@ -66,30 +67,23 @@ class StorageManager:
                     with open('{0}/corr-{1}s/{2}'.format(self.storage_path, group, key), "rb") as obj:
                         content = obj.read()
             else:
-                if group == 'picture' or group == 'logo':
-                    if self.config['type'] == 's3':
-                        obj = self.s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/default-{1}.png'.format(group,key))
-                        res = obj.get()
-                        content = res['Body'].read()
-                    elif self.config['type'] == 'filesystem':
-                        with open('{0}/corr-{1}s/default-{2}.png'.format(self.storage_path, group, key), "rb") as obj:
-                            content = obj.read()
+                content = None
 
         except:
-            if group == 'picture' or group == 'logo':
-                if self.config['type'] == 's3':
-                    obj = self.s3.Object(bucket_name=S3_BUCKET, key='corr-logos/default-{0}.png'.format(group))
-                    res = obj.get()
-                    content = res['Body'].read()
-                elif self.config['type'] == 'filesystem':
-                        with open('{0}/corr-logos/default-{1}.png'.format(self.storage_path, group), "rb") as obj:
-                            content = obj.read()
+            print(traceback.print_exc())
+            content = None
 
         try:
+            if self.config['type'] == 's3':
+                file_buffer = StringIO()
+            elif self.config['type'] == 'filesystem':
+                file_buffer = BytesIO()
             file_buffer.write(content)
             file_buffer.seek(0)
             return file_buffer
         except:
+            self.app.logger.error(traceback.print_exc())
+            print(traceback.print_exc())
             return None
 
     def storage_upload_file(self, file_meta=None, file_obj=None):
@@ -111,10 +105,13 @@ class StorageManager:
                         s3_files = self.s3.Bucket(self.bucket)
                         s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
                     elif self.config['type'] == 'filesystem':
+                        self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
+                        print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
                         with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
                             obj.write(file_obj.read())
                     return [True, "File uploaded successfully"]
                 except:
+                    self.app.logger.error(traceback.print_exc())
                     return [False, traceback.format_exc()]
             else:
                 return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]

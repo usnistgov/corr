@@ -13,6 +13,22 @@
   shell: "chmod -R a+rw {{ frontend_path }}"
   become: true
 
+- name: check if storage exists with file system in use.
+  stat: path={{ storage_location }}/{{ storage_name }}
+  when: storage_type == "filesystem"
+  register: storage_dir
+  become: true
+
+- name: create storage folder when file system is used.
+  shell: "mkdir {{ storage_location }}/{{ storage_name }}"
+  when: storage_dir.stat.exists == False
+  become: true
+
+- name: allow read an write permission on filesystem is used.
+  shell: "chmod -R a+rw {{ storage_location }}/{{ storage_name }}"
+  when: storage_dir.stat.exists == True
+  become: true
+
 - name: add the www-data user to the users group
   user:
     group: "{{ ansible_ssh_user }}"
