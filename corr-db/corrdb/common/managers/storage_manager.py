@@ -1,9 +1,4 @@
 import boto3
-# from ..common import ProjectModel
-# from ..models import RecordModel
-# from ..models import EnvironmentModel
-# from ..models import FileModel
-# from .. import logStat
 from io import StringIO
 from io import BytesIO
 import zipfile
@@ -178,6 +173,8 @@ class StorageManager:
     def delete_project_files(self, project):
         """Delete a project files.
         """
+        from corrdb.common.models import FileModel
+        from corrdb.common.models import EnvironmentModel
 
         for _file in project.resources:
             file_ = FileModel.objects.with_id(_file)
@@ -211,8 +208,7 @@ class StorageManager:
             Returns:
                 True if all files are deleted.
         """
-        from ..models import RecordModel
-        from ..models import FileModel
+        from corrdb.common.models import FileModel
         final_result = True
         for _file_id in record.resources:
             _file = FileModel.objects.with_id(_file_id)
@@ -606,3 +602,33 @@ class StorageManager:
 
         return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
         
+    # def prepare_env(record):
+    #     # Include record files later.
+    #     memory_file = BytesIO()
+    #     with zipfile.ZipFile(memory_file, 'w') as zf:
+
+    #         try:
+    #             group = 'corr-bundles'
+    #             bundle_buffer = self.storage_get_file(group, record.environment.bundle['location'])
+
+    #             data = zipfile.ZipInfo("%s"%(record.project.name, record.environment.bundle['location'].split('_')))
+    #             data.date_time = time.localtime(time.time())[:6]
+    #             data.compress_type = zipfile.ZIP_DEFLATED
+    #             data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+    #             zf.writestr(data, bundle_buffer.read())
+    #         except:
+    #             print traceback.print_exc()
+    #         try:
+    #             json_buffer = StringIO()
+    #             json_buffer.write(record.to_json())
+    #             json_buffer.seek(0)
+
+    #             data = zipfile.ZipInfo("%s_%s.json"%(record.project.name, str(record.id)))
+    #             data.date_time = time.localtime(time.time())[:6]
+    #             data.compress_type = zipfile.ZIP_DEFLATED
+    #             data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
+    #             zf.writestr(data, json_buffer.read())
+    #         except:
+    #             print traceback.print_exc()
+    #     memory_file.seek(0)
+    #     return [memory_file, record.environment.bundle['location'].split("/")[-1].split(".")[0]+".zip"]

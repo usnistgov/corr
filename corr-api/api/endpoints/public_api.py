@@ -3,8 +3,8 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from corrdb.common import logAccess, logStat, logTraffic
-from api import app, storage_manager, access_manager, API_URL, crossdomain, check_api, api_response, data_pop, merge_dicts
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -32,7 +32,7 @@ import os
 import _thread
 
 @app.route(API_URL + '/public/api/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_api_status():
     logTraffic(API_URL, endpoint='/public/api/status')
     if fk.request.method == 'GET':
@@ -42,7 +42,7 @@ def public_api_status():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_show(app_id):
     logTraffic(API_URL, endpoint='/public/app/show/<app_id>')
     if fk.request.method == 'GET':
@@ -55,7 +55,7 @@ def public_app_show(app_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_logo(app_id):
     logTraffic(API_URL, endpoint='/public/app/logo/<app_id>')
     if fk.request.method == 'GET':
@@ -107,7 +107,7 @@ def public_app_logo(app_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_users():
     logTraffic(API_URL, endpoint='/public/users')
     if fk.request.method == 'GET':
@@ -120,7 +120,7 @@ def public_users():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_show(user_id):
     logTraffic(API_URL, endpoint='/public/user/show/<user_id>')
     if fk.request.method == 'GET':
@@ -133,7 +133,7 @@ def public_user_show(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_profile_show(user_id):
     logTraffic(API_URL, endpoint='/public/user/profile/show/<user_id>')
     if fk.request.method == 'GET':
@@ -150,7 +150,7 @@ def public_user_profile_show(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_picture(user_id):
     logTraffic(API_URL, endpoint='/public/user/picture/<user_id>')
     if fk.request.method == 'GET':
@@ -215,7 +215,7 @@ def public_user_picture(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/projects/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_projects(user_id):
     logTraffic(API_URL, endpoint='/public/user/projects')
     if fk.request.method == 'GET':
@@ -231,7 +231,7 @@ def public_user_projects(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_projects():
     logTraffic(API_URL, endpoint='/public/projects')
     if fk.request.method == 'GET':
@@ -245,7 +245,7 @@ def public_projects():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_comments(project_id):
     logTraffic(API_URL, endpoint='/public/project/comments/<project_id>')
     if fk.request.method == 'GET':
@@ -265,7 +265,7 @@ def public_project_comments(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_comment_show(comment_id):
     logTraffic(API_URL, endpoint='/public/comment/show/<comment_id>')
     if fk.request.method == 'GET':
@@ -278,7 +278,7 @@ def public_comment_show(comment_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_records(project_id):
     logTraffic(API_URL, endpoint='/public/project/records/<project_id>')
     if fk.request.method == 'GET':
@@ -295,7 +295,7 @@ def public_project_records(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_show(project_id):
     logTraffic(API_URL, endpoint='/public/project/show/<project_id>')
     if fk.request.method == 'GET':
@@ -308,7 +308,7 @@ def public_project_show(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_logo(project_id):
     logTraffic(API_URL, endpoint='/public/project/logo/<project_id>')
     if fk.request.method == 'GET':
@@ -359,7 +359,7 @@ def public_project_logo(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_download(project_id):
     logTraffic(API_URL, endpoint='/public/project/download/<project_id>')
     if fk.request.method == 'GET':
@@ -376,7 +376,7 @@ def public_project_download(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/history/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_history(project_id):
     logTraffic(API_URL, endpoint='/public/project/envs/<project_id>')
     if fk.request.method == 'GET':
@@ -395,7 +395,7 @@ def public_project_history(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_envs_head(project_id):
     logTraffic(API_URL, endpoint='/public/project/envs/head')
     if fk.request.method == 'GET':
@@ -411,7 +411,7 @@ def public_project_envs_head(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_env_show(project_id, env_id):
     logTraffic(API_URL, endpoint='/public/project/env/show/<project_id>/<env_id>')
     if fk.request.method == 'GET':
@@ -431,7 +431,7 @@ def public_project_env_show(project_id, env_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_env_download(project_id, env_id):
     logTraffic(API_URL, endpoint='/public/project/env/download/<project_id>/<env_id>')
     if fk.request.method == 'GET':
@@ -455,7 +455,7 @@ def public_project_env_download(project_id, env_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_records():
     logTraffic(API_URL, endpoint='/public/records')
     if fk.request.method == 'GET':
@@ -468,7 +468,7 @@ def public_records():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_record_show(record_id):
     logTraffic(API_URL, endpoint='/public/record/show/<record_id>')
     if fk.request.method == 'GET':
@@ -481,7 +481,7 @@ def public_record_show(record_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_record_download(project_id, record_id):
     logTraffic(API_URL, endpoint='/public/record/download/<project_id>/<record_id>')
     if fk.request.method == 'GET':
@@ -501,7 +501,7 @@ def public_record_download(project_id, record_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_diffs():
     logTraffic(API_URL, endpoint='/public/diffs')
     if fk.request.method == 'GET':
@@ -514,7 +514,7 @@ def public_diffs():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_diff_show(diff_id):
     logTraffic(API_URL, endpoint='/public/diff/show/<diff_id>')
     if fk.request.method == 'GET':
@@ -527,7 +527,7 @@ def public_diff_show(diff_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_files():
     logTraffic(API_URL, endpoint='/public/files')
     if fk.request.method == 'GET':
@@ -540,7 +540,7 @@ def public_files():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_file_download(file_id):
     logTraffic(API_URL, endpoint='/public/file/download/<file_id>')
     if fk.request.method == 'GET':
@@ -612,7 +612,7 @@ def public_file_download(file_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_file_show(file_id):
     logTraffic(API_URL, endpoint='/public/file/show/<file_id>')
     if fk.request.method == 'GET':
@@ -625,7 +625,7 @@ def public_file_show(file_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_messages():
     logTraffic(API_URL, endpoint='/public/messages')
     if fk.request.method == 'GET':
@@ -638,7 +638,7 @@ def public_messages():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_message_show(message_id):
     logTraffic(API_URL, endpoint='/public/message/show/<message_id>')
     if fk.request.method == 'GET':
@@ -651,6 +651,7 @@ def public_message_show(message_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_search(key_words):
     logTraffic(API_URL, endpoint='/public/search/<key_words>')
     if fk.request.method == 'GET':
@@ -995,6 +996,7 @@ def public_search(key_words):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_search(app_name):
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects(name__icontains=app_name)
@@ -1013,6 +1015,7 @@ def public_app_search(app_name):
 
 
 @app.route(API_URL + '/public/apps/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_apps(user_id):
     current_user = UserModel.objects.with_id(user_id)
     if current_user is not None:
@@ -1031,6 +1034,7 @@ def public_user_apps(user_id):
         return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
 
 @app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_apps():
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects()
@@ -1042,7 +1046,7 @@ def public_apps():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_resolve_item(item_id):
     logTraffic(API_URL, endpoint='/public/resolve/<item_id>')
     if fk.request.method == 'GET':

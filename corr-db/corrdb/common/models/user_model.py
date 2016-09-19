@@ -24,6 +24,7 @@ class UserModel(db.Document):
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
     connected_at = db.StringField(default=str(datetime.datetime.utcnow()))
     email = db.StringField(required=True, unique=True)
+    password = db.StringField(max_length=256)
     api_token = db.StringField(max_length=256, unique=True)
     session = db.StringField(max_length=256, unique=True)
     possible_group = ["admin", "user", "developer", "public", "unknown"]

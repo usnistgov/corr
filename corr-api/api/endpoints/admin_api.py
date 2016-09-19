@@ -3,8 +3,8 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from corrdb.common import logAccess, logStat, logTraffic
-from api import app, storage_manager, access_manager, API_URL, crossdomain, check_api, check_admin, api_response, data_pop, merge_dicts
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -32,12 +32,14 @@ import os
 import _thread
 
 @app.route(API_URL + '/admin/<api_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_search(api_token, key_words):
     logTraffic(API_URL, endpoint='/admin/<api_token>/search/<key_words>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
+        logAccess(API_URL,'api', '/admin/<api_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -378,9 +380,10 @@ def admin_search(api_token, key_words):
 
 # admin stuff
 @app.route(API_URL + '/admin/<api_token>/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_stats(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/stats')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -394,9 +397,10 @@ def admin_stats(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_stats_clear(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/stats/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -409,9 +413,10 @@ def admin_stats_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/traffic', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_traffic(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/traffic')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -425,9 +430,10 @@ def admin_traffic(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/traffic/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_traffic_clear(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -440,9 +446,10 @@ def admin_traffic_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/access', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_access(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/access')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -456,10 +463,10 @@ def admin_access(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comments', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comments(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comments')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -473,10 +480,10 @@ def admin_comments(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comments_clear(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comments/clear')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -490,10 +497,10 @@ def admin_comments_clear(api_token):
 
 # admin comment
 @app.route(API_URL + '/admin/<api_token>/comment/<group>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_send(group, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comment/<group>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -537,10 +544,10 @@ def admin_comment_send(group, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/all/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_all(group, item_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comment/<group>/<item_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -569,10 +576,10 @@ def admin_comment_all(group, item_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/update/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_update(comment_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comment/update/<comment_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -594,10 +601,10 @@ def admin_comment_update(comment_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_show(comment_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comment/show/<comment_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -611,10 +618,10 @@ def admin_comment_show(comment_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/delete/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_delete(comment_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/comment/delete/<comment_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -630,10 +637,10 @@ def admin_comment_delete(comment_id, api_token):
 
 # admin developer apps
 @app.route(API_URL + '/admin/<api_token>/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_apps(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/apps')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -647,10 +654,10 @@ def admin_apps(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -727,10 +734,10 @@ def admin_app_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_show(app_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/show/<app_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -744,10 +751,10 @@ def admin_app_show(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/delete/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_delete(app_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/delete/<app_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -766,10 +773,10 @@ def admin_app_delete(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/delete/all', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_delete_all(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/delete/all')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -782,10 +789,10 @@ def admin_app_delete_all(api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_update(app_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/update/<app_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -880,10 +887,10 @@ def admin_app_update(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_logo(app_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/app/logo/<app_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -937,10 +944,10 @@ def admin_app_logo(app_id, api_token):
 
 ### admin users
 @app.route(API_URL + '/admin/<api_token>/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_users(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/users')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -954,10 +961,10 @@ def admin_users(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/profiles/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_profiles_clear(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/profiles/clear')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -973,10 +980,10 @@ def admin_profiles_clear(api_token):
 # @app.route(API_URL + '/admin/<api_token>/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/user/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1007,10 +1014,10 @@ def admin_user_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_login(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/login')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1038,10 +1045,10 @@ def admin_user_login(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/token/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_token_update(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/token/update/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1059,10 +1066,10 @@ def admin_user_token_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/logout/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_logout(session_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/logout/<session_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1081,10 +1088,10 @@ def admin_user_logout(session_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/password/lost', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_password_lost(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/password/lost')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1110,10 +1117,10 @@ def admin_user_password_lost(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/session/recover/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_session_recover(session_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/session/recover/<session_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1132,10 +1139,10 @@ def admin_user_session_recover(session_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/create/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_create(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/create/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1208,10 +1215,10 @@ def admin_user_profile_create(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_show(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/show/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1225,10 +1232,10 @@ def admin_user_show(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_show(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/show/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1246,10 +1253,10 @@ def admin_user_profile_show(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/delete/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_delete(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/delete/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1270,10 +1277,10 @@ def admin_user_delete(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_update(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/update/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1301,10 +1308,10 @@ def admin_user_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_update(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/update/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1392,10 +1399,10 @@ def admin_user_profile_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_picture(user_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/user/picture/<user_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1463,10 +1470,10 @@ def admin_user_picture(user_id, api_token):
 
 ### admin projects
 @app.route(API_URL + '/admin/<api_token>/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_projects(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/projects')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1480,10 +1487,10 @@ def admin_projects(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_projects_clear(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/projects/clear')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1495,10 +1502,10 @@ def admin_projects_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_envs_clear(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/envs/clear')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1518,7 +1525,7 @@ def admin_envs_clear(api_token):
 # []
 
 # @app.route(API_URL + '/admin/<api_token>/projects/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# @crossdomain(origin='*')
+# @crossdomain(fk=fk, app=app, origin='*')
 # def admin_projects_comments_clear(api_token):
 #     logTraffic(API_URL, endpoint='/admin/<api_token>/comments/clear')
 #     if fk.request.method == 'GET':
@@ -1534,10 +1541,10 @@ def admin_envs_clear(api_token):
 #         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_comments(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/comments/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1558,10 +1565,10 @@ def admin_project_comments(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1636,10 +1643,10 @@ def admin_project_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_records(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/records/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1658,10 +1665,10 @@ def admin_project_records(project_id, api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_show(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/show/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1675,10 +1682,10 @@ def admin_project_show(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_logo(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/logo/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1730,10 +1737,10 @@ def admin_project_logo(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/delete/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_delete(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/delete/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1750,10 +1757,10 @@ def admin_project_delete(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/update/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_update(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/update/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1820,10 +1827,10 @@ def admin_project_update(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_download(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/download/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1842,10 +1849,10 @@ def admin_project_download(project_id, api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_envs(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/envs/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1865,10 +1872,10 @@ def admin_project_envs(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_envs_head(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/envs/head')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1885,10 +1892,10 @@ def admin_project_envs_head(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_show(project_id, env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/show/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1909,10 +1916,10 @@ def admin_project_env_show(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_push(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/next/<project_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1976,10 +1983,10 @@ def admin_project_env_push(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/update/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_update(project_id, env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/update/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2037,10 +2044,10 @@ def admin_project_env_update(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/update/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_update(env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/update/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2091,10 +2098,10 @@ def admin_env_update(env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/show/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_show(env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/show/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2108,10 +2115,10 @@ def admin_env_show(env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/delete/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_delete(env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/delete/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2130,10 +2137,10 @@ def admin_env_delete(env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/download/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_download(project_id, env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/download/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2151,10 +2158,10 @@ def admin_env_download(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_push(project_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2205,10 +2212,10 @@ def admin_env_push(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_download(project_id, env_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/download/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2238,10 +2245,10 @@ def admin_project_env_download(project_id, env_id, api_token):
 
 ### admin records
 @app.route(API_URL + '/admin/<api_token>/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_records(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/records')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2255,10 +2262,10 @@ def admin_records(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/records/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_records_clear(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/records/clear')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2275,10 +2282,10 @@ def admin_records_clear(api_token):
 # @app.route(API_URL + '/admin/<api_token>/record/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/record/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/record/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2370,10 +2377,10 @@ def admin_record_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_show(record_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/record/show/<record_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2387,10 +2394,10 @@ def admin_record_show(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/delete/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_delete(record_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/record/delete/<record_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2407,10 +2414,10 @@ def admin_record_delete(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/update/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_update(record_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/record/update/<record_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2524,10 +2531,10 @@ def admin_record_update(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_download(project_id, record_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/record/download/<project_id>/<record_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2561,10 +2568,10 @@ def admin_record_download(project_id, record_id, api_token):
 
 ### admin diffs
 @app.route(API_URL + '/admin/<api_token>/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diffs(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/diffs')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2582,10 +2589,10 @@ def admin_diffs(api_token):
 # @app.route(API_URL + '/admin/<api_token>/diff/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/diff/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2625,10 +2632,10 @@ def admin_diff_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_show(diff_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/diff/show/<diff_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2642,10 +2649,10 @@ def admin_diff_show(diff_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/delete/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_delete(diff_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/diff/delete/<diff_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2662,10 +2669,10 @@ def admin_diff_delete(diff_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/update/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_update(diff_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/diff/update/<diff_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2723,10 +2730,10 @@ def admin_diff_update(diff_id, api_token):
 
 ### admin files
 @app.route(API_URL + '/admin/<api_token>/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_files(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/files')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2741,10 +2748,10 @@ def admin_files(api_token):
 
 # @TODO
 @app.route(API_URL + '/admin/<api_token>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_upload(group, item_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/upload/<group>/<item_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2899,10 +2906,10 @@ def admin_file_upload(group, item_id, api_token):
 
 # @TODO
 @app.route(API_URL + '/admin/<api_token>/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_download(file_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/download/<file_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2975,10 +2982,10 @@ def admin_file_download(file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3015,10 +3022,10 @@ def admin_file_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_show(file_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/show/<file_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3032,10 +3039,10 @@ def admin_file_show(file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_delete(item_id, file_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/delete/<item_id>/<file_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3220,10 +3227,10 @@ def admin_file_delete(item_id, file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/update/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_update(file_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/file/update/<file_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3266,10 +3273,10 @@ def admin_file_update(file_id, api_token):
 
 ### admin messages
 @app.route(API_URL + '/admin/<api_token>/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_messages(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/messages')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3283,10 +3290,10 @@ def admin_messages(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_create(api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/message/create')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3321,10 +3328,10 @@ def admin_message_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_show(message_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/message/show/<message_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3338,10 +3345,10 @@ def admin_message_show(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/delete/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_delete(message_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/message/delete/<message_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3358,10 +3365,10 @@ def admin_message_delete(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/update/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_update(message_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/message/update/<message_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3404,10 +3411,10 @@ def admin_message_update(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_resolve_item(item_id, api_token):
     logTraffic(API_URL, endpoint='/admin/<api_token>/resolve/<item_id>')
-    admin_user = check_admin(api_token)
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
