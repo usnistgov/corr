@@ -1594,10 +1594,10 @@ def user_project_create(api_token, app_token):
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/create')
     current_user = access_manager.check_api(api_token)
     current_app = access_manager.check_app(app_token)
-    if current_user ==None:
+    if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None and app_token != "no-app":
+        if current_app == None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/create')
@@ -1655,6 +1655,11 @@ def user_project_create(api_token, app_token):
                         project.logo = logo
                         project.save()
                         logStat(project=project)
+                        current_app.projects = current_app.projects + 1
+                        current_app.save()
+                        if str(current_user.id) not in current_app.users:
+                            current_app.users.append(str(current_user.id))
+                            current_app.save()
                         return api_response(201, 'Project created', project.info())
                 else:
                     return api_response(204, 'Nothing created', 'You must provide the file information.')
@@ -2388,6 +2393,11 @@ def user_record_create(api_token, app_token, project_id):
                         if len(data) != 0:
                             body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
                         logStat(record=record)
+                        current_app.records = current_app.records + 1
+                        current_app.save()
+                        if str(current_user.id) not in current_app.users:
+                            current_app.users.append(str(current_user.id))
+                            current_app.save()
                         return api_response(201, 'Record created', record.info())
                     else:
                         return api_response(204, 'Nothing created', 'You must provide the file information.')

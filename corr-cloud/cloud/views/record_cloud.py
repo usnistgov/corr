@@ -9,27 +9,13 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, VIEW_MODE
 import datetime
 import simplejson as json
 import traceback
 import smtplib
 from email.mime.text import MIMEText
 import mimetypes
-
-# CLOUD_VERSION = 1
-# CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
-
-#Only redirects to pages that signify the state of the problem or the result.
-#The API will return some json response at all times. 
-#I will handle my own status and head and content and stamp
-
-
-#I think i will not allow upload of bundles from the web interface because i will loose environment consistency on the fact that
-#records are attached to the same bundle when nothing is changed in the code.
-#For experimental this still stands and is related to the way that the experiment profile is writtern
-#meaning having the same actions and same sequence and same calls. In this case only one profile will
-# be linked to many experiment untill a change happens in that sense.
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/remove/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -39,7 +25,7 @@ def record_remove(hash_session, record_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error-401/?action=remove_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/remove/<record_id>')
@@ -47,7 +33,7 @@ def record_remove(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
                     result = storage_manager.delete_record_files(record)
@@ -56,9 +42,9 @@ def record_remove(hash_session, record_id):
                         record.delete()
                     return fk.redirect('{0}:{1}/dashboard/?session={2}&view=records&project={3}'.format(VIEW_HOST, VIEW_PORT, hash_session, str(record.project.id)))
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -74,26 +60,26 @@ def record_comment(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
                     if fk.request.data:
                         data = json.loads(fk.request.data)
-                        comment = data.get("comment", {}) #{"user":str(user_id), "created":str(datetime.datetime.utc()), "title":"", "content":""}
+                        comment = data.get("comment", {})
                         if len(comment) != 0:
                             record.comments.append(comment)
                             record.save()
                             return fk.Response('Projject comment posted', status.HTTP_200_OK)
                         else:
-                            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=remove_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -109,13 +95,13 @@ def record_comments(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None or (record != None and record.access != 'public'):
-                return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.Response(json.dumps(record.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=comments_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -131,16 +117,16 @@ def record_view(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
                     return fk.Response(record.to_json(), mimetype='application/json')
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=view_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -150,7 +136,7 @@ def record_edit(hash_session, record_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is not None:
-            return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/edit/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
@@ -161,13 +147,12 @@ def record_edit(hash_session, record_id):
                 except:
                     print(str(traceback.print_exc()))
                 if record is None:
-                    return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     if record.project.owner == current_user:
                         if fk.request.data:
                                 data = json.loads(fk.request.data)
                                 try:
-                                    # only tags and rationels
                                     tags = data.get("tags", ','.join(record.tags))
                                     rationels = data.get("rationels", record.rationels)
                                     record.tags = tags.split(',')
@@ -176,15 +161,15 @@ def record_edit(hash_session, record_id):
                                     return fk.Response('Record edited', status.HTTP_200_OK)
                                 except:
                                     print(str(traceback.print_exc()))
-                                    return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                         else:
-                            return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        return fk.redirect('{0}:{1}/error-401/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('{0}:{1}/error-404/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -194,7 +179,7 @@ def pull_record(hash_session, record_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is not None:
-            return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
             allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
@@ -206,19 +191,18 @@ def pull_record(hash_session, record_id):
                     record = None
                     print(str(traceback.print_exc()))
                 if record is None:
-                    return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     prepared = storage_manager.prepare_record(record)
                     if prepared[0] == None:
                         print("Unable to retrieve a record to download.")
-                        return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
-                
             else:
-                return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -230,11 +214,11 @@ def public_record_comments(record_id):
         except:
             print(str(traceback.print_exc()))
         if record is None or (record != None and record.access != 'public'):
-            return fk.redirect('{0}:{1}/?action=comments_failed'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.Response(json.dumps(record.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT)) 
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
 
 @app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -246,14 +230,14 @@ def public_record_view(record_id):
         except:
             print(str(traceback.print_exc()))
         if record is None:
-            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             if record.access == 'public':
                 return fk.Response(record.to_json(), mimetype='application/json')
             else:
-                return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))   
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))   
 
 @app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -265,19 +249,19 @@ def public_pull_record(record_id):
         except:
             print(str(traceback.print_exc()))
         if record is None:
-            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             if record.project.access == 'public':
                 prepared = storage_manager.prepare_record(record)
                 if prepared[0] == None:
                     print("Unable to retrieve a record to download.")
-                    return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
             else:
-                return fk.redirect('{0}:{1}/error-401/?action=pull_denied'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
 #To be fixed.
 #Implement the quotas here image_obj.tell()
@@ -288,7 +272,7 @@ def file_add(hash_session, record_id):
     access_resp = access_manager.check_cloud(hash_session)
     user_model = access_resp[1]
     if user_model is None:
-        return fk.redirect('{0}:{1}/?action=update_denied'.format(VIEW_HOST, VIEW_PORT))
+        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:    
         if fk.request.method == 'POST':
             infos = {}
@@ -298,7 +282,7 @@ def file_add(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
                     file_model = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
@@ -306,16 +290,14 @@ def file_add(hash_session, record_id):
                     relative_path = infos.get("relative_path", "./")
                     group = infos.get("group", "undefined")
                     description = infos.get("description", "")
-
                     file_model.group = group
                     file_model.description = description
-
                     if fk.request.files:
                         if fk.request.files['file']:
                             file_obj = fk.request.files['file']
 
                             if current_user.quota+file_obj.tell() > 5000000000:
-                                return fk.make_response("You have exceeded your 5Gb of quota. You will have to make some space.", status.HTTP_403_FORBIDDEN)
+                                return fk.redirect('{0}:{1}/error/?code=403'.format(VIEW_HOST, VIEW_PORT))
                             else:
                                 relative_path = "%s%s"%(relative_path, file_obj.filename)
                                 location = str(user_model.id)+"-"+str(record.id)+"_%s"%file_obj.filename
@@ -333,16 +315,17 @@ def file_add(hash_session, record_id):
                                             file_model.save()
                                             return fk.make_response("File uploaded with success.", status.HTTP_200_OK)
                                         else:
-                                            return fk.make_response("Could not create storage states.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                            return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
                                     else:
                                         file_model.delete()
-                                        return fk.make_response("Could not upload the file.", status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                        return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
                                 except Exception as e:
-                                    return fk.make_response(str(traceback.print_exc()), status.HTTP_400_BAD_REQUEST)
+                                    traceback.print_exc()
+                                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+            return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -353,7 +336,7 @@ def file_download(hash_session, file_id):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/file/download/<file_id>')
@@ -361,7 +344,7 @@ def file_download(hash_session, file_id):
             except:
                 print(str(traceback.print_exc()))
             if record_file is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record_file.record.project.owner == current_user:
                     _file = storage_manager.storage_get_file('file', record_file.storage)
@@ -372,9 +355,9 @@ def file_download(hash_session, file_id):
                         attachment_filename=_file.name,
                     )
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/file/remove/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -390,14 +373,13 @@ def file_remove(hash_session, file_id):
             except:
                 print(str(traceback.print_exc()))
             if record_file is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record_file.record.project.owner == current_user:
                     storage_manager.delete_record_file(record_file)
-                    # record_file.delete()
                     return fk.Response('Record file removed', status.HTTP_200_OK)
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=remove_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
 

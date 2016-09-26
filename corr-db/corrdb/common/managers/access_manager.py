@@ -192,6 +192,7 @@ class AccessManager:
             Returns:
                 The user object instance.
         """
+        print([user.extended() for user in UserModel.objects()])
         return UserModel.objects(api_token=token).first()
 
     def check_app(self, token):

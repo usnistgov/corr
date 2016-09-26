@@ -8,7 +8,7 @@ var dashboard = {
             user.trusted();
         };
         function failed(){
-            window.location.replace("/error-404/");
+            window.location.replace("/error/?code=404");
         };
         config.load_xml('coming_soon.xml', [], succeed, failed);
     },
@@ -25,12 +25,26 @@ var dashboard = {
         };
         function failed(){
             console.log(window.location.host);
-            window.location.replace("/error-404/");
+            window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
 	},
 	apps:function(session){
-        this.coming_soon();
+        function succeed(xhttp){
+            dashboard.content.innerHTML = xhttp.responseText;
+            user.session = session;
+            console.log(user.session);
+            user.trusted();
+
+            var space = new Space(user.session);
+            space.apps();
+
+        };
+        function failed(){
+            console.log(window.location.host);
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_applications.xml', [], succeed, failed);
 	},
 	projects:function(session){
         function succeed(xhttp){
@@ -43,7 +57,7 @@ var dashboard = {
             space.dashboard();
         };
         function failed(){
-            window.location.replace("/error-404/");
+            window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_projects.xml', [], succeed, failed);
 	},
@@ -65,7 +79,7 @@ var dashboard = {
             space.records(project);
         };
         function failed(){
-            window.location.replace("/error-404/");
+            window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_records.xml', [], succeed, failed);
 	},

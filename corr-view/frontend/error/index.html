@@ -17,12 +17,12 @@
         <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
         <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
 
-        <title>CoRR - Error 415</title>
+        <title>CoRR - Error</title>
 
-        <link rel="icon" href="../images/logo.png" sizes="32x32">
-        <link rel="apple-touch-icon-precomposed" href="../images/logo.png" sizes="152x152">
+        <link rel="icon" href="../images/logo.ico" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="../images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <meta name="msapplication-TileImage" content="../images/logo.png" sizes="144x144">
+        <meta name="msapplication-TileImage" content="../images/logo.svg" sizes="144x144">
 
         <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -35,11 +35,11 @@
     <body class="cyan">
 
         <div id="loader-wrapper">
-                <div id="loader"></div>
-                <div class="loader-section section-left"></div>
-                <div class="loader-section section-right"></div>
+            <div id="loader"></div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
         </div>
-
+        
         <div id="error-page">
             <div class="row">
                 <div class="col s12">
@@ -58,10 +58,10 @@
                                 </div>
                                 <div id="site-layout-example-right" class="col s12 m12 l12">
                                     <div class="row center">
-                                        <h1 class="text-long-shadow col s12">415</h1>
+                                        <h1 id="error-code" class="text-long-shadow col s12"></h1>
                                     </div>
                                     <div class="row center">
-                                        <p class="center white-text col s12">It seems that the media type sent is not supported.</p>
+                                        <p id="error-message" class="center white-text col s12"></p>
                                         <p class="center s12"><button onclick="goBack()" class="btn waves-effect waves-light">Back</button> <a href="../" class="btn waves-effect waves-light">Homepage</a>
                                             <p>
                                             </p>
@@ -81,8 +81,47 @@
         <script type="text/javascript" src="../js/plugins.js"></script>
 
         <script type="text/javascript">
+            $(document).ready(function(){
+                $('.tooltipped').tooltip({delay: 50});
+            });
             function goBack() {
                 window.history.back();
+            }
+
+            var param = window.location.search.substring(1);
+            var parts = param.split("=");
+            if(parts[0] == "code"){
+                code = parts[1];
+                document.getElementById("error-code").innerHTML += code;
+                if(code == '404'){
+                    document.getElementById("error-message").innerHTML += "It seems that your session was ended. You should log back in."
+                }else if(code == '204'){
+                    document.getElementById("error-message").innerHTML += "It seems that there is no content available here."
+                }else if(code == '400'){
+                    document.getElementById("error-message").innerHTML += "It seems that the request has a bad structure."
+                }else if(code == '401'){
+                    document.getElementById("error-message").innerHTML += "It seems that you do not have access to this."
+                }else if(code == '403'){
+                    document.getElementById("error-message").innerHTML += "It seems this action is forbideen."
+                }else if(code == '405'){
+                    document.getElementById("error-message").innerHTML += "It seems that the HTTP method used is not allowed."
+                }else if(code == '409'){
+                    document.getElementById("error-message").innerHTML += "It seems that this object already exists."
+                }else if(code == '415'){
+                    document.getElementById("error-message").innerHTML += "It seems that the media type sent is not supported."
+                }else if(code == '500'){
+                    document.getElementById("error-message").innerHTML += "Something has gone seriously wrong. Please try later."
+                }else if(code == '503'){
+                    document.getElementById("error-message").innerHTML += "It seems the service is not available. Please try later."
+                }else if(code == '511'){
+                    document.getElementById("error-message").innerHTML += "It seems that you have issue with your network authentication."
+                }else{
+                    document.getElementById("error-code").innerHTML = "404";
+                    document.getElementById("error-message").innerHTML += "It seams that you are requesting an unknown error."
+                }
+            }else if(parts[0] == "action"){
+                document.getElementById("error-code").innerHTML = "404";
+                document.getElementById("error-message").innerHTML += "It seams that you are requesting an unknown error."
             }
         </script>
         <script>

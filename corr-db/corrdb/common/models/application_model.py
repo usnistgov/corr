@@ -44,6 +44,8 @@ class ApplicationModel(db.Document):
     network = db.StringField(default="0.0.0.0")
     visibile = db.BooleanField(default=False)
     extend = db.DictField()
+    projects = db.LongField(default=0)
+    records = db.LongField(default=0)
 
     def _users(self):
         """Gather all the users that used the application.
@@ -75,14 +77,14 @@ class ApplicationModel(db.Document):
             The call to the based mongoengine Document save function.
         """
         if not self.app_token:
-            self.app_token = hashlib.sha256(b'CoRRApp_%s'%(str(datetime.datetime.utcnow()))).hexdigest()
+            self.app_token = hashlib.sha256(('CoRRApp_%s'%(str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
 
         return super(ApplicationModel, self).save(*args, **kwargs)
 
     def retoken(self):
         """Regenerates the application api token.
         """
-        self.api_token = hashlib.sha256(b'CoRRApp_%s_%s'%(str(self.developer.id), str(datetime.datetime.utcnow()))).hexdigest()
+        self.api_token = hashlib.sha256(('CoRRApp_%s_%s'%(str(self.developer.id), str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
         self.save()
 
     def info(self):
@@ -108,7 +110,9 @@ class ApplicationModel(db.Document):
         data['resources'] = [resource.extended() for resource in self._resources()]
         data['extend'] = self.extend
         data['token'] = self.app_token
-        data['users'] = self._users()
+        data['users'] = len(self._users())
+        data['projects'] = self.projects
+        data['records'] = self.records
         data['storage'] = self.storage
         return data
 

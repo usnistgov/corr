@@ -9,8 +9,6 @@ from corrdb.common.models import FileModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
-# from flask.ext.stormpath import user
-# from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
 from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, API_MODE, VIEW_HOST, VIEW_PORT, VIEW_MODE
@@ -25,16 +23,6 @@ import os
 import mimetypes
 from io import StringIO
 
-# CLOUD_VERSION = 1
-# CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
-
-#Only redirects to pages that signify the state of the problem or the result.
-#The API will return some json response at all times. 
-#I will handle my own status and head and content and stamp
-
-#Allow admins to do everything they want. Developers will be able to do specific things with the API
-#that normal users can't
-
 @app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_register():
@@ -42,10 +30,8 @@ def user_register():
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
-            # application = stormpath_manager.application
             email = data.get('email', '').lower()
             password = data.get('password', '')
-            # username = data.get('username', 'username')
             fname = data.get('fname', 'FirstName')
             lname = data.get('lname', 'LastName')
             group = data.get('group', 'user')
@@ -58,34 +44,24 @@ def user_register():
             organisation = data.get('organisation', 'No organisation provided')
             about = data.get('about', 'Nothing about me yet.')
             if email == '' or '@' not in email or password == '':
-                # return cloud_response(400, "Bad request", "The email field cannot be empty.")
-                return fk.make_response("The email field cannot be empty.", status.HTTP_400_BAD_REQUEST)
+                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 user_model = access_manager.register(email, password, fname, lname, '')
-
                 if user_model is None:
-                    return cloud_response(500, "Account Registration failed", "Your user account creation failed. Please try later.")
+                    return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
                     print("Token %s"%user_model.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
-                    # print "Connected_at: %s"%str(user_model.connected_at)
-                    # user_model.connected_at = datetime.datetime.utcnow()
-                    # user_model.save()
                     user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     user_model.retoken()
-                    # print "Connected_at: %s"%str(user_model.connected_at)
                     print("Session: %s"%user_model.session)
-
-                    logStat(user=user_model)
-                    # return cloud_response(400, "Bad request", "The email field cannot be empty.")
                     return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-                # todo.
         else:
-            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -95,19 +71,16 @@ def user_password_reset():
         print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
-            # application = stormpath_manager.application
             email = data.get('email', '')
             account = access_manager.reset_password(email)
-            # account = application.send_password_reset_email(email)
             if account != None:
                 return fk.Response('An email has been sent to renew your password', status.HTTP_200_OK)
             else:
-                return fk.make_response('Password reset failed.', status.HTTP_401_UNAUTHORIZED)
-                    
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -116,10 +89,10 @@ def user_password_change():
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error-401/?action=change_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             if not access_resp[0]:
-                return fk.make_response('Password change failed.', status.HTTP_401_UNAUTHORIZED)
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/password/change')
                 user_model = access_resp[1]
@@ -127,13 +100,13 @@ def user_password_change():
                     password = data.get('password', '')
                     response = access_manager.change_password(user_model, password)
                     if response is None:
-                        return fk.make_response('Password change failed.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.Response('Password changed', status.HTTP_200_OK)
                 else:
-                    return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -143,34 +116,28 @@ def user_login():
         print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
-            # application = stormpath_manager.application
             email = data.get('email', '').lower()
             password = data.get('password', '')
             if email == '' or '@' not in email:
-                return fk.make_response("The email field cannot be empty.", status.HTTP_400_BAD_REQUEST)
+                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 try:
                     account = access_manager.login(email, password)
                     if account == None:
-                        return fk.make_response('Unknown user account.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
-                    # print "Connected at %s"%str(account.connected_at)
-                    # account.connected_at = datetime.datetime.utcnow()
-                    # account.save()
                     account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                    # print "Session: %s"%account.session
                     return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
-                    # return fk.redirect('{0}:{1}/?session={2}'.format(VIEW_HOST, VIEW_PORT, account.session))
                 except:
                     print(str(traceback.print_exc()))
-                    return fk.make_response('Login failed.', status.HTTP_401_UNAUTHORIZED)
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     
         else:
-            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -179,7 +146,7 @@ def user_sync(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.make_response('Sync failed.', status.HTTP_401_UNAUTHORIZED)
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/sync')
             user_model = access_resp[1]
@@ -187,7 +154,7 @@ def user_sync(hash_session):
             user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -196,15 +163,14 @@ def user_logout(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error-401/?action=logout_failed'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/logout')
             user_model = access_resp[1]
             user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
             return fk.Response('Logout succeed', status.HTTP_200_OK)
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -213,14 +179,13 @@ def user_unregister(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error-401/?action=unregister_failed'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/unregister')
             user_model = access_resp[1]
-            return fk.make_response('Currently not implemented. Try later.', status.HTTP_501_NOT_IMPLEMENTED)
+            return fk.redirect('{0}:{1}/error/?code=501'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -229,7 +194,7 @@ def user_dashboard(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error-401/?action=access_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/dashboard')
             user_model = access_resp[1]
@@ -305,8 +270,7 @@ def user_dashboard(hash_session):
                 dashboard["projects"].append(project_dash)
             return fk.Response(json.dumps(dashboard, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -315,22 +279,18 @@ def user_update(hash_session):
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.make_response('Account update denied.', status.HTTP_401_UNAUTHORIZED)
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/update')
             user_model = access_resp[1]
             if fk.request.data:
                 data = json.loads(fk.request.data)
-                # application = stormpath_manager.application
-                #Update stormpath user if password is affected
-                #Update local profile data and picture if other data are affected.
                 profile_model = ProfileModel.objects(user=user_model).first_or_404()
                 fname = data.get("fname", profile_model.fname)
                 lname = data.get("lname", profile_model.lname)
                 password = data.get("pwd", "")
                 organisation = data.get("org", profile_model.organisation)
                 about = data.get("about", profile_model.about)
-                # When picture given as a json field and not file path.
                 picture_link = data.get("picture", "")
                 picture = profile_model.picture
                 if picture_link != "":
@@ -350,12 +310,12 @@ def user_update(hash_session):
                 if password != "":
                     response = access_manager.change_password(user_model, password)
                     if response is None:
-                        return fk.make_response('Password change failed in stormpath.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 return fk.Response('Account update succeed', status.HTTP_200_OK)
             else:
-                return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -365,7 +325,7 @@ def user_file_upload(hash_session, group, item_id):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.redirect('{0}:{1}/error-401/?action=upload_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
@@ -404,32 +364,32 @@ def user_file_upload(hash_session, group, item_id):
                             item = RecordModel.objects.with_id(item_id)
                             owner = item.project.owner
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is an input file for the record %s'%(file_obj.filename, str(item.id))
                         elif group == 'output':
                             item = RecordModel.objects.with_id(item_id)
                             owner = item.project.owner
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is an output file for the record %s'%(file_obj.filename, str(item.id))
                         elif group == 'dependencie':
                             item = RecordModel.objects.with_id(item_id)
                             owner = item.project.owner
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is an dependency file for the record %s'%(file_obj.filename, str(item.id))
                         elif group == 'descriptive':
                             item = ProjectModel.objects.with_id(item_id)
                             owner = item.owner
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is a resource file for the project %s'%(file_obj.filename, str(item.id))
                         elif group == 'diff':
                             item = DiffModel.objects.with_id(item_id)
                             owner1 = item.sender
                             owner2 = item.targeted
                             if user_model != owner1 and user_model != owner2:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is a resource file for the collaboration %s'%(file_obj.filename, str(item.id))
                         elif 'attach' in group:
                             if 'message' in group:
@@ -437,13 +397,13 @@ def user_file_upload(hash_session, group, item_id):
                                 owner1 = item.sender
                                 owner2 = item.receiver
                                 if user_model != owner1 and user_model != owner2:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is an attachement file for the message %s'%(file_obj.filename, str(item.id))
                             elif 'comment' in group:
                                 item = CommentModel.objects.with_id(item_id)
                                 owner = item.sender
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is an attachement file for the comment %s'%(file_obj.filename, str(item.id))
                             group_ = group.split('-')[0]
                         elif group == 'bundle':
@@ -458,12 +418,12 @@ def user_file_upload(hash_session, group, item_id):
                             else:
                                 owner = rec_temp.project.owner
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                         elif group == 'picture':
                             item = ProfileModel.objects(user=user_model).first()
                             owner = item.user
                             if user_model != owner:
-                                return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
                             if item.picture != None:
                                 old_storage = item.picture.storage
@@ -476,13 +436,13 @@ def user_file_upload(hash_session, group, item_id):
                                 item = ApplicationModel.objects.with_id(item_id)
                                 owner = item.developer
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is the logo file of the application %s'%(file_obj.filename, str(item.id))
                             elif 'project' in group:
                                 item = ProjectModel.objects.with_id(item_id)
                                 owner = item.owner
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is the logo file of the project %s'%(file_obj.filename, str(item.id))
                             _file.delete()
                             _file = item.logo
@@ -491,26 +451,26 @@ def user_file_upload(hash_session, group, item_id):
                                 item = RecordModel.objects.with_id(item_id)
                                 owner = item.project.owner
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is an resource file for the record %s'%(file_obj.filename, str(item.id))
                             elif 'env' in group:
                                 item = EnvironmentModel.objects.with_id(item_id)
                                 rec_temp = RecordModel.objects(environment=item).first()
                                 owner = rec_temp.project.owner
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is a resource file for the environment %s'%(file_obj.filename, str(item.id))
                             elif 'app' in group:
                                 item = ApplicationModel.objects.with_id(item_id)
                                 owner = item.developer
                                 if user_model != owner:
-                                    return cloud_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                                 description = '%s is a resource file for the app %s'%(file_obj.filename, str(item.id))
                             group_ = group.split('-')[0]
 
                         if item == None:
                             if group != 'picture' or group != 'logo':
-                                return cloud_response(400, 'Missing mandatory instance', 'A file should reference an existing item.')
+                                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             _file.description = description
                             _file.encoding = encoding
@@ -539,7 +499,6 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'diff':
                                     item.resources.append(str(_file.id))
                                 elif group == 'bundle':
-                                    # _file.delete()
                                     if item.storage != storage:
                                         storage_manager.storage_delete_file('bundle',item.storage)
                                     item.encoding = encoding
@@ -572,15 +531,13 @@ def user_file_upload(hash_session, group, item_id):
                                     item.save()
                                 return cloud_response(201, 'New file created', _file.info())
                 else:
-                    return cloud_response(204, 'Nothing created', 'You must provide the file information.')
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return cloud_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-
-# Figure this out when all the updates are done.
 @app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_contactus(): #Setup and start smtp server on the instance
+def user_contactus():
     logTraffic(CLOUD_URL, endpoint='/public/user/contactus')
     if fk.request.method == 'POST':
         if fk.request.data:
@@ -590,7 +547,7 @@ def user_contactus(): #Setup and start smtp server on the instance
                 message = data.get("message", "")
                 msg = MIMEText("Dear user,\n You contacted us regarding the following matter:\n-------\n%s\n-------\nWe hope to reply shortly.\nBest regards,\n\nDDSM team."%message)
                 msg['Subject'] = 'DDSM -- You contacted us!'
-                msg['From'] = "yannick.congo@gmail.com" # no_reply@ddsm.nist.gov
+                msg['From'] = "yannick.congo@gmail.com"
                 msg['To'] = email
                 msg['CC'] = "yannick.congo@gmail.com"
                 s = smtplib.SMTP('localhost')
@@ -599,17 +556,16 @@ def user_contactus(): #Setup and start smtp server on the instance
                 return fk.Response('Message sent.', status.HTTP_200_OK)
             except:
                 print(str(traceback.print_exc()))
-                return fk.make_response("Could not send the email.", status.HTTP_503_SERVICE_UNAVAILABLE)
+                return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def public_version(): #Setup and start smtp server on the instance
+def public_version():
     logTraffic(CLOUD_URL, endpoint='/public/version')
-        
     if fk.request.method == 'GET':
         version = 'N/A'
         try:
@@ -619,7 +575,7 @@ def public_version(): #Setup and start smtp server on the instance
             pass
         return fk.Response(version, status.HTTP_200_OK)
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -629,7 +585,7 @@ def user_config(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
             config_buffer = StringIO()
@@ -638,7 +594,7 @@ def user_config(hash_session):
             config_buffer.seek(0)
             return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
     else:
-        return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -648,14 +604,14 @@ def user_picture(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            cloud_response(401, 'Unauthorized access', 'The user credential is not authorized.')
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
                 picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
-                    return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                    return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
@@ -664,18 +620,17 @@ def user_picture(hash_session):
                 if picture == None:
                     picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
-                        return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 elif picture.location == 'local' and 'http://' not in picture.storage:
-                    # print str(picture.to_json())
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
                         picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
-                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 elif picture.location == 'remote':
@@ -685,11 +640,10 @@ def user_picture(hash_session):
                     else:
                         picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
-                            return cloud_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
-                    # solve the file situation and return the appropriate one.
                     if 'http://' in picture.storage:
                         picture.location = 'remote'
                         picture.save()
@@ -699,7 +653,7 @@ def user_picture(hash_session):
                         else:
                             picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                             if picture_buffer == None:
-                                return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                             else:
                                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
@@ -711,11 +665,11 @@ def user_picture(hash_session):
                             if picture_buffer != None:
                                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                             else:
-                                return cloud_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
+                                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
     else:
-        return cloud_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -725,10 +679,9 @@ def user_truested(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.make_response('Trusting failed.', status.HTTP_401_UNAUTHORIZED)
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/trusted')
-            # return fk.Response('Trusting succeed', status.HTTP_200_OK)
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -737,7 +690,7 @@ def user_truested(hash_session):
                 pass
             return fk.Response(json.dumps({'version':version}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -788,7 +741,7 @@ def user_home():
 
         return fk.Response(json.dumps({'version':version, 'traffic':traffic_stat, 'users':users_stat, 'apps':apps_stat, 'projects':projects_stat, 'records':records_stat, 'storage':storage_stat}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -799,7 +752,7 @@ def user_profile(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.make_response('profile get failed.', status.HTTP_401_UNAUTHORIZED)
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
@@ -811,8 +764,7 @@ def user_profile(hash_session):
             print(fk.request.path)
             return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -822,14 +774,14 @@ def user_renew(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.make_response('Renew token failed.', status.HTTP_401_UNAUTHORIZED)
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/renew')
             print(fk.request.path)
             user_model.retoken()
             return fk.Response(json.dumps({'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -841,20 +793,20 @@ def cloud_public_user_recover():
             try:
                 email = data.get("email", "")
                 if email == "":
-                    return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     account = access_manager.reset_password(email)
                     if account != None:
                         return fk.Response('Recovery email sent from stormpath.', status.HTTP_200_OK)
                     else:
-                        return fk.make_response('Password reset failed.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             except:
                 print(str(traceback.print_exc()))
-                return fk.make_response("Could not send the email.", status.HTTP_503_SERVICE_UNAVAILABLE)
+                return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.make_response("Missing mandatory fields.", status.HTTP_400_BAD_REQUEST)
+            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -864,7 +816,7 @@ def cloud_public_user_picture(user_id):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             profile_model = ProfileModel.object(user=user_model).first_or_404()
             if profile_model.picture['scope'] == 'remote':
@@ -876,17 +828,10 @@ def cloud_public_user_picture(user_id):
                     return fk.send_file(
                         picture[0],
                         mimetypes.guess_type(picture[1])[0],
-                        # as_attachment=True,
                         attachment_filename=profile_model.picture['location'],
                     )
                 else:
                     print("Failed because of picture location not found.")
-                    return fk.make_response('Empty location. Nothing to pull from here!', status.HTTP_204_NO_CONTENT)
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.make_response('Method not allowed.', status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-# Picture upload
-#    Update the picture field to: local and the name of the file.
-
-#Picture get link to retrieve file
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

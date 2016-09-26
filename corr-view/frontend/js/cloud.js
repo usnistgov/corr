@@ -68,6 +68,40 @@ var user = {
             Materialize.toast('<span>Passwords mismatch.</span>', 3000);
         }  
     },
+    add_app: function() {
+        var name = document.getElementById("app-name").value;
+        var about = document.getElementById("app-about").value;
+        if(name != ""){
+            console.log(name+" -- "+about);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
+            var request = { 'name': name, 'about': about};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+                    window.location.replace("../?session="+this.session);
+
+                    // var file = document.getElementById("picture-input");
+                    // if (file.files.length > 0) {
+                    //     user.upload_file(file, 'picture', 'none');
+                    // }else{
+                    //     console.log("No picture to change");
+                    //     // window.location.replace("../?session="+user.session);
+                    //     window.location.reload(); 
+                    // }
+                    Materialize.toast('<span>Creation succeeded</span>', 3000);
+                } else {
+                    console.log("Update failed");
+                    Materialize.toast('<span>Creation failed</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Name should not be empty.</span>', 3000);
+        }  
+    },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -209,7 +243,7 @@ var user = {
                 }
                 
             } else {
-                window.location.replace("../error-404/");
+                window.location.replace("../error/?code=404");
             }
         } 
     },
@@ -241,7 +275,7 @@ var user = {
                     console.log("Account Api: "+this.api);
                 }
             } else {
-                window.location.replace("../error-404/");
+                window.location.replace("../error/?code=404");
             }
         }
     },
@@ -266,7 +300,7 @@ var user = {
                     Materialize.toast('<span>API Token renewed!</span>', 3000);
                 }
             } else {
-                window.location.replace("../error-404/");
+                window.location.replace("../error/?code=404");
             }
         }
     },
@@ -331,7 +365,7 @@ var Space = function (session){
                             }
                         };
                         function failed(){
-                            window.location.replace("/error-404");
+                            window.location.replace("/error/?code=404");
                         };
 
                         var params = [session, project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
@@ -365,6 +399,95 @@ var Space = function (session){
                         content += "<div id='project-"+project["project"]["id"]+"-confirm' class='modal'></div>";
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
+                    }
+                    document.getElementById("footer-version").innerHTML = version;
+                }else{
+                    console.log("Cloud returned empty response!");
+                }
+            } else {
+                console.log("Dashboard failed");
+            }
+        }
+    },
+    this.apps = function() {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if(xmlhttp.responseText != ""){
+                    var response = JSON.parse(xmlhttp.responseText);
+                    this.dash_content = response;
+                    document.getElementById("apps-list").innerHTML = "";
+                    var version = response["version"];
+                    console.log("Version: "+version);
+                    for(var i = 0; i < response["content"]["apps"].length; i++){
+                        app = response["content"]["apps"][i];
+                        console.log(app);
+                        var disable_view = "";
+                        // if(project["project"]["records"] == 0){
+                        //     disable_view = "disabled";
+                        // }
+                        // add tooltip
+                        // update to inputs
+                        // Make records clickable
+                        // Remove the view button since bottom info will be clickage.
+                        // Change the order to: View | Edit | Upload | Remove
+
+                        function succeed(xhttp, params){
+                            var content = xhttp.responseText;
+                            if(document.getElementById("update-app"+params[1]) == null){
+                                // console.log(content);
+                                content = content.replace(/session/g, params[0]); 
+                                content = content.replace(/app_id/g, params[1]);
+                                content = content.replace(/app_name/g, params[2]);
+                                content = content.replace(/app_created/g, params[3]);
+                                content = content.replace(/app_network/g, params[4]);
+                                content = content.replace(/app_access/g, params[5]);
+                                content = content.replace(/app_storage/g, params[6]);
+                                content = content.replace(/app_token/g, params[7]);
+                                content = content.replace(/app_about/g, params[8]);
+                                // document.getElementById("projects-list").innerHTML += content;
+                                // console.log(content);
+                            }
+                        };
+                        function failed(){
+                            window.location.replace("/error/?code=404");
+                        };
+
+                        var params = [session, app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
+                        config.load_xml('app_content.xml', params, succeed, failed);
+
+                        var content = "<div class='col s12 m6 l4'>";
+                        content += "<div id='profile-card' class='card'>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
+                        content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a onclick='appRemove(\""+app["name"]+"\",\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Application upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Application download not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-download'></i></a>";
+                        content += "<div id='update-app-"+app["id"]+"'><a id='update-action' onclick='appEdit(\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        // content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+app["created"]+"</p>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+app["id"]+"' type='text' value='"+app["name"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-settings-ethernet prefix cyan-text text-darken-2'></i><input readonly id='app-network-"+app["id"]+"' type='text' value='"+app["network"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+app["id"]+"' type='text' value='"+app["access"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+app["id"]+"' type='text' value='"+app["token"]+"'></div></div>";
+                        // content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+project["project"]["description"]+"</p>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+app["id"]+"' type='text' value='"+app["about"]+"'>"+app["about"]+"</textarea></div></div>";
+                        // content += "<p><i class='mdi-action-subject cyan-text text-darken-2'></i> "+project["project"]["goals"]+"</p>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a href='./?session="+session+"&view=users&app="+app["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'><i class='mdi-social-group-add cyan-text text-darken-2'></i> <span class='users badge'>"+app["users"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Application projects view not implemented yet!</span>\", 3000);' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+app["projects"]+"</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span> Application records view not implemented yet!</span>\", 3000);' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+app["records"]+"</span></a>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "<div id='app-"+app["id"]+"-confirm' class='modal'></div>";
+                        content += "</div>";
+                        document.getElementById("apps-list").innerHTML += content;
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{

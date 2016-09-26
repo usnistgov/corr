@@ -18,10 +18,10 @@
 
         <title>CoRR - Cloud of Reproducible Records</title>
 
-        <link rel="icon" href="images/logo.png" sizes="32x32">
-        <link rel="apple-touch-icon-precomposed" href="images/logo.png" sizes="152x152">
+        <link rel="icon" href="images/logo.ico" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <meta name="msapplication-TileImage" content="images/logo.png" sizes="144x144">
+        <meta name="msapplication-TileImage" content="images/logo.svg" sizes="144x144">
 
         <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -304,6 +304,11 @@
                     <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
                   </div>
                 </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#app-add-modal" class="modal-trigger btn purple waves-effect waves-light col s12">Add Application</a>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -332,6 +337,36 @@
                 <div class="row margin">
                   <div class="input-field col s12">
                     <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="app-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
+                    <label for="picture-input">
+                        <img src="images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <!-- <input id="picture-input" type="file" style="display: none;"/> -->
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="app-name" type="text">
+                    <label for="app-name">App Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="app-about" class="materialize-textarea"></textarea>
+                    <label id="app-about-value" for="app-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
                 </div>
             </div>

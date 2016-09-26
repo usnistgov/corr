@@ -1,0 +1,11 @@
+<div id="card-widgets">
+   <div id="apps-list" class="row" data-distance="100">
+      <div class="progress">
+         <div class="indeterminate">
+         </div>
+      </div>
+   </div>
+   <br />
+   <div id="temporal-slider">
+   </div>
+</div>

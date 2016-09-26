@@ -19,10 +19,10 @@
         
         <title>CoRR - Cloud of Reproducible Records</title>
 
-        <link rel="icon" href="../images/logo.png" sizes="32x32">
-        <link rel="apple-touch-icon-precomposed" href="../images/logo.png" sizes="152x152">
+        <link rel="icon" href="../images/logo.icon" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="../images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <meta name="msapplication-TileImage" content="../images/logo.png" sizes="144x144">
+        <meta name="msapplication-TileImage" content="../images/logo.svg" sizes="144x144">
 
         <link rel="stylesheet" href="../css/jquery.nouislider.min.css"></link>
         <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -51,11 +51,11 @@
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
                             </li>
-                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
+                            <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
                                 <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
                                     <i class=" nav-action mdi-action-search"></i>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                     <i class="nav-action nav-action mdi-action-home"></i>
@@ -75,7 +75,10 @@
             </div>
         </header>
 
-        <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
+        </div>
+
+        <div id="float-settings" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         </div>
 
         <div id="main">
@@ -142,18 +145,23 @@
                 var space = new Space(user.session);
             }else if(user.session != "" && view_selected == "apps"){
                 dashboard.apps(user.session);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='right' data-delay='50' data-tooltip='menu'><i class='mdi-navigation-menu'></i></a><ul><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='add'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-content-add'></i></a></li></ul>";
             }else if(user.session != "" && view_selected == "projects"){
                 dashboard.projects(user.session);
                 var space = new Space(user.session);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='right' data-delay='50' data-tooltip='menu'><i class='mdi-navigation-menu'></i></a><ul><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='add'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-content-add'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='upload'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-file-file-upload'></i></a></li></ul>";
             }else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='right' data-delay='50' data-tooltip='menu'><i class='mdi-navigation-menu'></i></a><ul><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='add'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-content-add'></i></a></li><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-file-file-upload'></i></a></li></ul>";
             }else if(user.session != "" && view_selected == "diffs"){
                 dashboard.diffs(user.session, options);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='right' data-delay='50' data-tooltip='menu'><i class='mdi-navigation-menu'></i></a><ul><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='add'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-content-add'></i></a></li></ul>";
             }else if(user.session != "" && view_selected == "query"){
                 dashboard.query(user.session, options);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='right' data-delay='50' data-tooltip='menu'><i class='mdi-navigation-menu'></i></a><ul><li class='tooltipped' data-position='right' data-delay='50' data-tooltip='add'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return add_app();\"><i class='large mdi-action-search'></i></a></li></ul>";
             }else{
-                window.location.replace("../error-404/");
+                window.location.replace("../error/?code=404");
             }
 
             if (user.session != ""){
@@ -163,7 +171,7 @@
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
                 // Target.
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query disabled');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
             function view(scope){

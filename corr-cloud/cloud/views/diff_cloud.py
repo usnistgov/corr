@@ -10,7 +10,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, VIEW_MODE
 import datetime
 import simplejson as json
 import traceback
@@ -33,7 +33,7 @@ def diff_create(hash_session, diff_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error-401/?action=create_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/create')
             if fk.request.data:
@@ -47,7 +47,7 @@ def diff_create(hash_session, diff_id):
                 comments = data.get("comments", [])
 
                 if targeted_id == "" or record_from_id == "" or record_to_id == "":
-                    return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     try:
                         targeted = UserModel.objects.with_id(targeted_id)
@@ -62,15 +62,15 @@ def diff_create(hash_session, diff_id):
                                 diff.save()
                                 return fk.Response('Diff created', status.HTTP_200_OK)
                             else:
-                                return fk.redirect('{0}:{1}/error-409/'.format(VIEW_HOST, VIEW_PORT))
+                                return fk.redirect('{0}:{1}/error/?code=409'.format(VIEW_HOST, VIEW_PORT))
                         else:
-                            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     except:
-                        return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/remove/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -86,17 +86,17 @@ def diff_remove(hash_session, diff_id):
             except:
                 print(str(traceback.print_exc()))
             if diff is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if diff.sender == current_user or diff.targeted == current_user:
                     diff.delete()
-                    return fk.Response('Diff request removed', status.HTTP_200_OK)
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('{0}:{1}/error-401/?action=remove_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=remove_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/comment/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -112,28 +112,23 @@ def diff_comment(hash_session, diff_id):
             except:
                 print(str(traceback.print_exc()))
             if diff is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                # if diff.project.owner == current_user: # Allow any user to be able to comment on a diff.
-                # Because based on a discussion a user that can't see the two records can ask
-                # the scientists involved to make one or both public so that he can access them.
                 if fk.request.data:
                     data = json.loads(fk.request.data)
-                    comment = data.get("comment", {}) #{"user":str(user_id), "created":str(datetime.datetime.utc()), "title":"", "content":""}
+                    comment = data.get("comment", {})
                     if len(comment) != 0:
                         diff.comments.append(comment)
                         diff.save()
                         return fk.Response('Diff comment posted', status.HTTP_200_OK)
                     else:
-                        return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
-                # else:
-                #     return fk.redirect('{0}:{1}/error-401/?action=comment_failed'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=comment_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))  
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -149,17 +144,13 @@ def diff_view(hash_session, diff_id):
             except:
                 print(str(traceback.print_exc()))
             if diff is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                # Let's allow anybody to be able to see a diff from a search or other.
-                # if diff.creator == current_user or diff.target == current_user:
                 return fk.Response(diff.to_json(), mimetype='application/json')
-                # else:
-                #     return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error-401/?action=view_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/edit/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -169,7 +160,7 @@ def diff_edit(hash_session, diff_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error-401/?action=edit_denied'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/edit/<diff_id>')
@@ -177,7 +168,7 @@ def diff_edit(hash_session, diff_id):
             except:
                 print(str(traceback.print_exc()))
             if diff is None:
-                return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -193,7 +184,7 @@ def diff_edit(hash_session, diff_id):
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:
                             print(str(traceback.print_exc()))
-                            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     elif diff.target == current_user:
                         try:
                             status = data.get("status", diff.status)
@@ -202,13 +193,13 @@ def diff_edit(hash_session, diff_id):
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:
                             print(str(traceback.print_exc()))
-                            return fk.redirect('{0}:{1}/error-400/'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     else:
-                        return fk.redirect('{0}:{1}/error-401/?action=edit_failed'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('{0}:{1}/error-415/'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -221,13 +212,8 @@ def public_diff_view(diff_id):
         except:
             print(str(traceback.print_exc()))
         if diff is None:
-            return fk.redirect('{0}:{1}/error-204/'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
-            #Full disclosure on diffs.
-            #It is one of the means of communication in the platform also.
-            # if not diff.source.private and not diff.destination.private:
             return fk.Response(diff.to_json(), mimetype='application/json')
-            # else:
-            #     return fk.redirect('{0}:{1}/error-401/?action=view_failed'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error-405/'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
