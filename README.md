@@ -31,7 +31,7 @@ To use CoRR as a user, view the help on the live instance at
 [http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
 ## Software Management Tools Integration Roadmap
-
+<p align="center"><sup><strong>
 [Sumatra](https://github.com/usnistgov/corr-sumatra)
 [Reprozip](https://github.com/usnistgov/corr-reprozip)
 [Panda]()
@@ -41,7 +41,7 @@ To use CoRR as a user, view the help on the live instance at
 [Kepler]()
 [Galaxy]()
 [Aiida]()
-
+</strong></sup></p>
 ## Links
 
 * [Paper at Scipy 2015 on CoRR](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
