@@ -30,6 +30,11 @@ instructions in [INSTALLATION.md](INSTALLATION.md).
 To use CoRR as a user, view the help on the live instance at
 [http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
+## References
+
+* [Paper at Scipy 2015 on CoRR](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
+* [CoRR is part of the MGI](https://mgi.nist.gov/cloud-reproducible-records)
+
 ## Software Management Tools Integration Roadmap
 <p align="center"><sup><strong>
 <a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
@@ -43,7 +48,3 @@ To use CoRR as a user, view the help on the live instance at
 <a href="">Aiida</a>
 <a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
 </strong></sup></p>
-## Links
-
-* [Paper at Scipy 2015 on CoRR](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
-* [CoRR is part of the MGI](https://mgi.nist.gov/cloud-reproducible-records)
