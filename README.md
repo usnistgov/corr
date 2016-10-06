@@ -32,15 +32,16 @@ To use CoRR as a user, view the help on the live instance at
 
 ## Software Management Tools Integration Roadmap
 <p align="center"><sup><strong>
-[Sumatra](https://github.com/usnistgov/corr-sumatra)
-[Reprozip](https://github.com/usnistgov/corr-reprozip)
-[Panda]()
-[ICE AFRL]()
-[T2C2]()
-[Taverna]()
-[Kepler]()
-[Galaxy]()
-[Aiida]()
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
+<a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
+<a href="">Panda</a>
+<a href="">ICE AFRL</a>
+<a href="">T2C2</a>
+<a href="">Taverna</a>
+<a href="">Kepler</a>
+<a href="">Galaxy</a>
+<a href="">Aiida</a>
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
 </strong></sup></p>
 ## Links
 
