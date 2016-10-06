@@ -33,14 +33,23 @@ To use CoRR as a user, view the help on the live instance at
 ## Currently Integrated Software Management Tools
 
 [Sumatra](https://github.com/usnistgov/corr-sumatra)
+
 [Reprozip](https://github.com/usnistgov/corr-reprozip)
+
 Coming up...
+
 [Panda]()
+
 [ICE AFRL]()
+
 [T2C2]()
+
 [Taverna]()
+
 [Kepler]()
+
 [Galaxy]()
+
 [Aiida]()
 
 ## Links
