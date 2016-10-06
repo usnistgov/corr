@@ -9,6 +9,19 @@
 See the live instance at <a href="http://corr-root.org/">corr-root.org:5000</a>.
 </strong></sup></p>
 
+<p align="center"><sup><strong>
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
+<a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
+<a href="">Panda</a>
+<a href="">ICE AFRL</a>
+<a href="">T2C2</a>
+<a href="">Taverna</a>
+<a href="">Kepler</a>
+<a href="">Galaxy</a>
+<a href="">Aiida</a>
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
+</strong></sup></p>
+
 The Cloud of Reproducible Records (CoRR) is an app for storing and
 viewing metadata associated with simulation records.
 
