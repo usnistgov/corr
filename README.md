@@ -30,6 +30,19 @@ instructions in [INSTALLATION.md](INSTALLATION.md).
 To use CoRR as a user, view the help on the live instance at
 [http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
+## Currently Integrated Software Management Tools
+
+[Sumatra](https://github.com/usnistgov/corr-sumatra)
+[Reprozip](https://github.com/usnistgov/corr-reprozip)
+Coming up...
+[Panda]()
+[ICE AFRL]()
+[T2C2]()
+[Taverna]()
+[Kepler]()
+[Galaxy]()
+[Aiida]()
+
 ## Links
 
 * [Paper at Scipy 2015 on CoRR](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
