@@ -30,13 +30,10 @@ instructions in [INSTALLATION.md](INSTALLATION.md).
 To use CoRR as a user, view the help on the live instance at
 [http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
-## Currently Integrated Software Management Tools
+## Software Management Tools Integration Roadmap
 
 [Sumatra](https://github.com/usnistgov/corr-sumatra)
 [Reprozip](https://github.com/usnistgov/corr-reprozip)
-
-Coming up...
-
 [Panda]()
 [ICE AFRL]()
 [T2C2]()
