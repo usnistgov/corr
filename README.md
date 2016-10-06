@@ -6,7 +6,11 @@
 </p>
 
 <p align="center"><sup><strong>
-See the live instance at <a href="http://corr-root.org/">corr-root.org:5000</a>.
+Upcoming live instance at <a href="http://corr-root.org/">corr-root.org:5000</a>.
+</strong></sup></p>
+
+<p align="center"><sup><strong>
+Software Management Tools Integration Roadmap
 </strong></sup></p>
 
 <p align="center"><sup><strong>
@@ -47,17 +51,3 @@ To use CoRR as a user, view the help on the live instance at
 
 * [Paper at Scipy 2015 on CoRR](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
 * [CoRR is part of the MGI](https://mgi.nist.gov/cloud-reproducible-records)
-
-## Software Management Tools Integration Roadmap
-<p align="center"><sup><strong>
-<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
-<a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
-<a href="">Panda</a>
-<a href="">ICE AFRL</a>
-<a href="">T2C2</a>
-<a href="">Taverna</a>
-<a href="">Kepler</a>
-<a href="">Galaxy</a>
-<a href="">Aiida</a>
-<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
-</strong></sup></p>
