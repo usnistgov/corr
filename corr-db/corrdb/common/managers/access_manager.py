@@ -52,9 +52,9 @@ class AccessManager:
         if self.type == 'api-token':
             pass
         else:
-            if selt.type == 'mongodb':
+            if self.type == 'mongodb':
                 account = UserModel.objects(email=email).first()
-            elif selt.type == 'stormpath':
+            elif self.type == 'stormpath':
                 try:
                     _account = application.authenticate_account(
                         email,

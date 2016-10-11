@@ -5,6 +5,7 @@ var user = {
     email: "",
     api: "",
     session: "",
+    query_result: {},
     login: function() {
         var email = document.getElementById("login-email").value;
         var password = document.getElementById("login-password").value;
@@ -319,6 +320,7 @@ var Space = function (session){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     this.session = session;
     this.dash_content = "";
+    this.query_result = "";
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -427,15 +429,6 @@ var Space = function (session){
                         app = response["content"]["apps"][i];
                         console.log(app);
                         var disable_view = "";
-                        // if(project["project"]["records"] == 0){
-                        //     disable_view = "disabled";
-                        // }
-                        // add tooltip
-                        // update to inputs
-                        // Make records clickable
-                        // Remove the view button since bottom info will be clickage.
-                        // Change the order to: View | Edit | Upload | Remove
-
                         function succeed(xhttp, params){
                             var content = xhttp.responseText;
                             if(document.getElementById("update-app"+params[1]) == null){
@@ -449,8 +442,6 @@ var Space = function (session){
                                 content = content.replace(/app_storage/g, params[6]);
                                 content = content.replace(/app_token/g, params[7]);
                                 content = content.replace(/app_about/g, params[8]);
-                                // document.getElementById("projects-list").innerHTML += content;
-                                // console.log(content);
                             }
                         };
                         function failed(){
@@ -559,6 +550,62 @@ var Space = function (session){
                 console.log("Dashboard failed");
             }
         }
+    },
+    this.query = function(search, exUser, exApp, exProject, exRecord) {
+        var xmlhttp = new XMLHttpRequest();
+        var query_result = document.getElementById('query-result');
+        query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/search?query="+search);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            var query_result = document.getElementById('query-result');
+            query_result.innerHTML = "";
+            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if(xmlhttp.responseText == ""){
+                    console.log("Cloud returned empty response!");
+                }else{
+                    var response = JSON.parse(xmlhttp.responseText);
+                    this.query_result = response;
+                    console.log(this.query_result);
+                    var hits = 0;
+                    if(!exUser == true){
+                        for(var i = 0; i < this.query_result["users"]["count"]; i++){
+                            var user_content = renderer.user(this.query_result["users"]["result"][i], false);
+                            query_result.innerHTML += user_content;
+                        }
+                        hits += this.query_result["users"]["count"];
+                    }
+                    if(!exApp == true){
+                        for(var i = 0; i < this.query_result["applications"]["count"]; i++){
+                            var app_content = renderer.application(this.query_result["applications"]["result"][i], false);
+                            query_result.innerHTML += app_content;
+                        }
+                        hits += this.query_result["applications"]["count"];
+                    }
+                    if(!exProject == true){
+                        for(var i = 0; i < this.query_result["projects"]["count"]; i++){
+                            var project_content = renderer.project(this.query_result["projects"]["result"][i], false);
+                            query_result.innerHTML += project_content;
+                        }
+                        hits += this.query_result["projects"]["count"];
+                    }
+                    if(!exRecord == true){
+                        for(var i = 0; i < this.query_result["records"]["count"]; i++){
+                            var record_content = renderer.record(this.query_result["records"]["result"][i], false);
+                            query_result.innerHTML += record_content;
+                        }
+                        hits += this.query_result["records"]["count"];
+                    }
+                    var display = document.getElementById('results-display');
+                    display.innerHTML = hits;
+                }
+            } else {
+                console.log("query failed");
+                Materialize.toast('<span>Query failed</span>', 3000);
+            }
+        }   
     },
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();

@@ -120,7 +120,7 @@ def project_comments(hash_session, project_id):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
-        if current_user is not None:
+        if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comments/<project_id>')
@@ -191,7 +191,7 @@ def project_records(hash_session, project_name):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
-        if current_user is not None:
+        if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/record/<project_name>')

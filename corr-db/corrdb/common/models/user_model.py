@@ -123,7 +123,7 @@ class UserModel(db.Document):
         """
         data = {'created':str(self.created_at), 
         'id': str(self.id), 'email' : self.email,
-         'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count}
+         'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count, 'total_apps':len(self.apps)}
         return data
 
     def extended(self):
@@ -185,7 +185,7 @@ class UserModel(db.Document):
             The user applications list.
         """
         from ..models import ApplicationModel
-        return [p.application for p in self.projects]
+        return [appli for appli in ApplicationModel.objects(developer=self)]
 
     @property
     def records(self):

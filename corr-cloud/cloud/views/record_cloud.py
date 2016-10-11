@@ -135,7 +135,7 @@ def record_edit(hash_session, record_id):
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
-        if current_user is not None:
+        if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/edit/<record_id>')
@@ -178,29 +178,24 @@ def pull_record(hash_session, record_id):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
-        if current_user is not None:
+        if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
-            allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print("Allowance: {0}".format(allowance))
-            if allowance == hash_session:
-                try:
-                    record = RecordModel.objects.with_id(record_id)
-                except:
-                    record = None
-                    print(str(traceback.print_exc()))
-                if record is None:
+            try:
+                record = RecordModel.objects.with_id(record_id)
+            except:
+                record = None
+                print(str(traceback.print_exc()))
+            if record is None:
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+            else:
+                prepared = storage_manager.prepare_record(record)
+                if prepared[0] == None:
+                    print("Unable to retrieve a record to download.")
                     return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    prepared = storage_manager.prepare_record(record)
-                    if prepared[0] == None:
-                        print("Unable to retrieve a record to download.")
-                        return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
-                    else:
-                        return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
-            else:
-                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

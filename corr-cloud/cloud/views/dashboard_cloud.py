@@ -1,5 +1,6 @@
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
 from corrdb.common.models import UserModel
+from corrdb.common.models import ProfileModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel
 from corrdb.common.models import EnvironmentModel
@@ -36,79 +37,90 @@ def private_search(hash_session):
                 query = fk.request.args.get("query").split(' ') #single word for now.
                 users = []
                 for user in UserModel.objects():
-                    profile = ProfileModel.objects(user=user)
+                    profile = ProfileModel.objects(user=user)[0]
                     where = []
-                    if query in user.email:
+                    if any(q.lower() in user.email.lower() for q in query):
                         where.append("email")
-                    if query in profile.fname:
+                    if any(q.lower() in profile.fname.lower() for q in query):
                         where.append("fname")
-                    if query in profile.lname:
+                    if any(q.lower() in profile.lname.lower() for q in query):
                         where.append("lname")
-                    if query in profile.organisation:
+                    if any(q.lower() in profile.organisation.lower() for q in query):
                         where.append("organisation")
-                    if query in profile.about:
+                    if any(q.lower() in profile.about.lower() for q in query):
                         where.append("about")
                     if len(where) != 0:
-                        users.append({"id":str(user.id), "email":user.email, "fname":profile.fname, "lname":profile.lname, "organisation":profile.organisation, "about":profile.about})
+                        users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                applications = []
+                for appli in ApplicationModel.objects():
+                    where = []
+                    if any(q.lower() in appli.name.lower() for q in query):
+                        where.append("name")
+                    if any(q.lower() in appli.about.lower() for q in query):
+                        where.append("about")
+                    if len(where) != 0:
+                        applications.append(appli.extended())
                 projects = []
                 records = []
+                #scape the records issue.
                 for project in ProjectModel.objects():
-                    if project.access == 'public' or (project.access != 'public' and current_user == project.owner):
+                    print(project.name)
+                    if project.access == 'private' or project.access == 'public' or (project.access != 'public' and current_user == project.owner):
                         where_project = []
-                        if query in project.name:
+                        if any(q.lower() in project.name.lower() for q in query):
                             where_project.append("name")
-                        if query in project.goals:
+                        if any(q.lower() in project.goals.lower() for q in query):
                             where_project.append("goals")
-                        if query in project.description:
+                        if any(q.lower() in project.description.lower() for q in query):
                             where_project.append("description")
-                        if query in project.group:
+                        if any(q.lower() in project.group.lower() for q in query):
                             where_project.append("group")
 
                         if len(where_project) != 0:
-                            projects.append({"user":str(project.owner.id), "id":str(project.id), "name":project.name, "created":str(project.created_at), "duration":str(project.duration)})
+                            projects.append(project.extended())
                         
                         for record in RecordModel.objects(project=project):
-                            if record.access == 'public' or (record.project.access != 'public' and current_user == record.project.owner):
+                            if record.access == 'private' or record.access == 'public' or (record.project.access != 'public' and current_user == record.project.owner):
                                 body = record.body
                                 where_record = []
                                 
-                                if query in record.label:
+                                if any(q.lower() in record.label.lower() for q in query):
                                     where_record.append("label")
-                                if query in str(json.dumps(record.system)):
+                                if any(q.lower() in str(json.dumps(record.system)).lower() for q in query):
                                     where_record.append("system")
-                                if query in str(json.dumps(record.program)):
-                                    where_record.append("program")
-                                if query in str(json.dumps(record.inputs)):
+                                if any(q.lower() in str(json.dumps(record.execution)).lower() for q in query):
+                                    where_record.append("execution")
+                                if any(q.lower() in str(json.dumps(record.inputs)).lower() for q in query):
                                     where_record.append("inputs")
-                                if query in str(json.dumps(record.outputs)):
+                                if any(q.lower() in str(json.dumps(record.outputs)).lower() for q in query):
                                     where_record.append("outputs")
-                                if query in str(json.dumps(record.dependencies)):
+                                if any(q.lower() in str(json.dumps(record.dependencies)).lower() for q in query):
                                     where_record.append("dependencies")
-                                if query in record.status:
+                                if any(q.lower() in record.status.lower() for q in query):
                                     where_record.append("status")
-                                if query in str(json.dumps(body.data)):
-                                    where_record.append("data")
-
+                                # data contains so much info that most key words are bringing records too.
+                                # if any(q.lower() in str(json.dumps(body.data)).lower() for q in query):
+                                #     where_record.append("data")
                                 if len(where_record) != 0:
-                                    records.append({"user":str(record.project.owner.id), "project":str(record.project.id), "id":str(record.id), "label":record.label, "created":str(record.created_at), "status":record.status})
+                                    records.append(json.loads(record.summary_json()))
 
                 diffs = []
                 for diff in DiffModel.objects():
-                    if (diff.record_from.access == 'public' and diff.record_to.access == 'public') or (diff.record_from.access != 'public' and current_user == diff.record_from.project.owner) or (diff.record_to.access != 'public' and current_user == diff.record_to.project.owner):
+                    if (diff.record_from.access == 'private' or diff.record_to.access == 'private') or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or (diff.record_from.access != 'public' and current_user == diff.record_from.project.owner) or (diff.record_to.access != 'public' and current_user == diff.record_to.project.owner):
                         where = []
-                        if query in str(json.dumps(diff.diff)):
+                        if any(q in str(json.dumps(diff.diff)) for q in query):
                             where.append("diff")
-                        if query in diff.proposition:
+                        if any(q in str(json.dumps(diff.proposition)) for q in query):
                             where.append("proposition")
-                        if query in diff.status:
+                        if any(q in str(json.dumps(diff.status)) for q in query):
                             where.append("status")
-                        if query in str(json.dumps(diff.comments)):
+                        if any(q in str(json.dumps(diff.comments)) for q in query):
                             where.append("comments")
 
                         if len(where) != 0:
                             diffs.append({"id":str(diff.id), "from":str(diff.record_from.id), "to":str(diff.record_to.id), "sender":str(diff.sender.id), "targeted":str(diff.targeted.id), "proposition":diff.proposition, "status":diff.status})
                     
-                return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:

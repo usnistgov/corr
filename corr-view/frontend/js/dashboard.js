@@ -87,6 +87,20 @@ var dashboard = {
 		this.coming_soon();
 	},
 	query:function(session, options){
-		this.coming_soon();
+        function succeed(xhttp){
+		    dashboard.content.innerHTML = xhttp.responseText;
+            user.session = session;
+            console.log(user.session);
+            user.trusted();
+
+            var space = new Space(user.session);
+            // space.search();
+
+        };
+        function failed(){
+            console.log(window.location.host);
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_query.xml', [], succeed, failed);
 	}
 }
