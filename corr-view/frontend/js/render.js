@@ -59,7 +59,7 @@ var renderer = {
         content += "</div>";
         content += "</div>";
         content += "</div>";
-        content += "<div id='app-"+app["id"]+"-confirm' class='modal'></div>";
+        content += "<div id='app-"+object["id"]+"-confirm' class='modal'></div>";
         content += "</div>";
         return content;
     },
