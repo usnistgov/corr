@@ -9,9 +9,22 @@
 Installation instructions are available at <a href="https://github.com/usnistgov/corr-deploy">CoRR-Deploy</a>.
 </strong></sup></p>
 
+<p align="center"><sup><strong>
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
+<a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
+<a href="">Panda</a>
+<a href="">ICE</a>
+<a href="">T2C2</a>
+<a href="">Taverna</a>
+<a href="">Kepler</a>
+<a href="">Galaxy</a>
+<a href="">Aiida</a>
+<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
+</strong></sup></p>
+
 <p align="center">
-<a href="https://travis-ci.org/faical-yannick-congo/corr" target="_blank">
-<img src="https://travis-ci.org/faical-yannick-congo/corr.svg?branch=master"
+<a href="https://travis-ci.org/usnistgov/corr" target="_blank">
+<img src="https://travis-ci.org/usnistgov/corr.svg?branch=master"
 alt="Travis CI">
 </a>
 <a href="https://github.com/usnistgov/corr/issues" target="_blank">
@@ -20,7 +33,7 @@ alt="Github Issues">
 </a>
 <a href="https://github.com/usnistgov/corr/pulls" target="_blank">
 <img src="http://githubbadges.herokuapp.com/usnistgov/corr/pulls.svg?style=flat-square"
-alt="Github Issues">
+alt="Github Pull requests">
 </a>
 <a href="http://mybinder.org/repo/usnistgov/corr" target="_blank">
 <img src="http://mybinder.org/badge.svg"
