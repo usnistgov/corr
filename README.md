@@ -9,21 +9,40 @@
 See the live instance at <a href="http://corr-root.org/">corr-root.org:5000</a>.
 </strong></sup></p>
 
+<p align="center">
+<a href="https://travis-ci.org/faical-yannick-congo/corr" target="_blank">
+<img src="https://travis-ci.org/faical-yannick-congo/corr.svg?branch=master"
+alt="Travis CI">
+</a>
+<a href="https://github.com/usnistgov/corr/issues" target="_blank">
+<img src="http://githubbadges.herokuapp.com/usnistgov/corr/issues.svg?style=flat-square"
+alt="Github Issues">
+</a>
+<a href="https://github.com/usnistgov/corr/pulls" target="_blank">
+<img src="http://githubbadges.herokuapp.com/usnistgov/corr/pulls.svg?style=flat-square"
+alt="Github Issues">
+</a>
+<a href="http://mybinder.org/repo/usnistgov/corr" target="_blank">
+<img src="http://mybinder.org/badge.svg"
+alt="Binder">
+</a>
+<a href="http://corr-deploy.readthedocs.io/en/latest/?badge=latest" target="_blank">
+<img src="https://readthedocs.org/projects/corr/badge/?version=latest"
+alt="Reathedocs">
+</a>
+<a href="https://gitter.im/usnistgov/corr">
+<img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg" alt="Gitter Chat" height="18">
+</a>
+<a href="https://github.com/usnistgov/corr/blob/master/LICENSE">
+<img src="https://img.shields.io/badge/license-mit-blue.svg" alt="License" height="18">
+</a>
+</p>
+
+
 The Cloud of Reproducible Records (CoRR) is an app for storing and
 viewing metadata associated with simulation records.
 
-[![Gitter Chat](https://img.shields.io/gitter/room/gitterHQ/gitter.svg)](https://gitter.im/usnistgov/corr)
-
-* **[INSTALL](INSTALLATION.md)** – installation instructions.
-* **[LICENSE](LICENSE)** – the license.
-
-## Installing CoRR for Development
-
-CoRR is designed as a web app and if possible users should try and use
-an exising instance such as
-[http://corr-root.org:5000](http://corr-root.org:5000). If you wish to install
-an instance of CoRR for development or local usage, then follow the
-instructions in [INSTALLATION.md](INSTALLATION.md).
+* **[CoRR-Deploy](https://github.com/usnistgov/corr-deploy)** – installation repository.
 
 ## Using CoRR
 
