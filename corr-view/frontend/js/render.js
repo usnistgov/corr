@@ -1,5 +1,5 @@
 var renderer = {
-    user: function(object, ownership){
+    user: function(object, ownership, session){
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -30,7 +30,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    application: function(object, ownership, layout){
+    application: function(object, ownership, session){
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -63,7 +63,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    project: function(object, ownership){
+    project: function(object, ownership, session){
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -95,7 +95,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    record: function(object, ownership){
+    record: function(object, ownership, session){
         var content = "<div class='col s12 m6 l4' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -108,7 +108,7 @@ var renderer = {
         content += "<a onclick='Materialize.toast(\"<span>Application share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
         content += "<a onclick='Materialize.toast(\"<span>Record project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-folder tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'></i></a>";
         // content += "<a onclick='recordRemove(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-        // content += "<a onclick=\"space.pull('"+object["head"]["project"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
+        content += "<a onclick=\"space.pull('"+object["head"]["project"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
         // content += "<div id='update-record-"+object["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["head"]["created"]+"</p>";
