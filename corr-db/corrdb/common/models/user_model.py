@@ -126,7 +126,10 @@ class UserModel(db.Document):
          'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count, 'total_apps':len(self.apps)}
         from ..models import ProfileModel
         profile = ProfileModel.objects(user=self).first()
-        data['user-name'] = '{0} {1}'.format(profile.fname, profile.lname)
+        if profile:
+            data['user-name'] = '{0} {1}'.format(profile.fname, profile.lname)
+        else:
+            data['user-name'] = 'Fname Lname'
         return data
 
     def extended(self):
