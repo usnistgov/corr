@@ -1,9 +1,0 @@
-- name: install corrdb
-  shell: "{{ env_path }}/python setup.py install"
-  args:
-    chdir: "{{ corr_path }}/corr-db"
-
-- name: check import corrdb
-  shell: "{{ python }} -c \"import corrdb\""
-  args:
-    chdir: "{{ corr_path }}/corr-db"

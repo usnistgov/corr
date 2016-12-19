@@ -1,8 +1,5 @@
-var config = {
-    host: '{{ hostvars['cloudhost']['ansible_ssh_host'] }}',
-    port: {{hostvars['cloudhost']['mapped_port']}},
-    mode: '{{hostvars['cloudhost']['mode']}}',
-    load_xml: function(xml_location, params, succeed, failed){
+var renderer = {
+    user: function(object, ownership, layout){
         $.ajax({
             url : "/xml/"+xml_location,
             type: 'GET',

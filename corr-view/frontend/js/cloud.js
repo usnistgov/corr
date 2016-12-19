@@ -442,6 +442,7 @@ var Space = function (session){
                                 content = content.replace(/app_storage/g, params[6]);
                                 content = content.replace(/app_token/g, params[7]);
                                 content = content.replace(/app_about/g, params[8]);
+                                // document.getElementById("apps-list").innerHTML += content;
                             }
                         };
                         function failed(){
