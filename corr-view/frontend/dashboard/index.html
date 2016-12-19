@@ -325,21 +325,45 @@
             function recordRemove(record_id){
                 Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
             }
+
+            function processSearch()
+            {
+                var query_search = document.getElementById("search").value;
+                var usersQ = document.getElementById("exclude-users").checked;
+                var applicationsQ = document.getElementById("exclude-applications").checked;
+                var projectsQ = document.getElementById("exclude-projects").checked;
+                var recordsQ = document.getElementById("exclude-records").checked;
+                Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" </span>", 5000);
+                // window.location.reload();
+                // var space = new Space(user.session);
+                space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ);
+            }
+
+            function customSearch(type, value)
+            {
+                if(type == "user"){
+                    document.getElementById("search").value = value;
+                    document.getElementById("exclude-users").checked = false;
+                    document.getElementById("exclude-applications").checked = true;
+                    document.getElementById("exclude-projects").checked = true;
+                    document.getElementById("exclude-records").checked = true;
+                }else if(type == "project"){
+                    document.getElementById("search").value = value;
+                    document.getElementById("exclude-users").checked = true;
+                    document.getElementById("exclude-applications").checked = true;
+                    document.getElementById("exclude-projects").checked = false;
+                    document.getElementById("exclude-records").checked = true;
+                }
+                processSearch();
+            }
+
             // }, 5000);
             function searchKeyPress(e)
             {
                 e = e || window.event;
                 if (e.keyCode == 13)
                 {
-                    var query_search = document.getElementById("search").value;
-                    var usersQ = document.getElementById("exclude-users").checked;
-                    var applicationsQ = document.getElementById("exclude-applications").checked;
-                    var projectsQ = document.getElementById("exclude-projects").checked;
-                    var recordsQ = document.getElementById("exclude-records").checked;
-                    Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" </span>", 5000);
-                    // window.location.reload();
-                    // var space = new Space(user.session);
-                    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ);
+                    processSearch();
                     // console.log(space.query_result);
 
                     // for(var i = 0; i < space.query_result["projects"]["count"]; i++){
