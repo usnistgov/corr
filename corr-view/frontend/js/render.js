@@ -35,7 +35,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-account-circle tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["developer-name"]+"'></i></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-person tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["developer-name"]+"'></i></a>";
         content += "<a onclick='Materialize.toast(\"<span>Application share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
 
         // content += "<a onclick='appRemove(\""+object["name"]+"\",\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -68,7 +68,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-account-circle tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'></i></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-person tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'></i></a>";
         content += "<a onclick='Materialize.toast(\"<span>Project share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
 
         // content += "<a onclick='Materialize.toast(\"<span>Project record upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
@@ -98,7 +98,7 @@ var renderer = {
         var content = "<div class='col s12 m6 l4' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
-        // content += "<div class='card-content'>";
+        content += "<div class='card-content'>";
         // var disable_download = "";
         // if(object["environments"] == null){
         //     disable_download = "disabled";
