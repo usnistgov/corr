@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "2.7"
+
+services: mongodb
+
+# command to install dependencies
+install: 
+  - "pip install -r requirements.txt"
+  - "pip install Lxml==3.4.0"
+
+before_script:
+  - sleep 15 #mongo may not be responded directly. See http://docs.travis-ci.com/user/database-setup/#MongoDB
+  - mongo --version
+
+notifications:
+  email: "yannick.congo@gmail.com"
+
+# command to run tests
+script: 
+  - nosetests -w $TRAVIS_BUILD_DIR/ddsmdb/test --with-doctest -v

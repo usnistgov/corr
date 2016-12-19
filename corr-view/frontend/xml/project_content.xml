@@ -1,0 +1,37 @@
+<div class='col s12 m6 l4'>
+    <div id='profile-card' class='card'>
+        <div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></img>
+        </div>
+        <div class='card-content'>
+            <img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'></img>
+            <a onclick='projectRemove("project_name","project_id");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>
+            <a onclick='uploadRecord("project_name","project_id");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-upload'></i></a>
+            <a onclick='nextEnvironment("project_name","project_id");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-maps-layers'></i></a>
+            <div id='update-project-project_id'><a id='update-action' onclick='projectEdit("project_id");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>
+            </div>
+            <span class='card-title activator black-text text-darken-4'>project_name</span>
+            <p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i>project_created</p>
+            <p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i>project_duration</p>
+            <div class='row margin'>
+                <div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i>
+                    <input readonly="true" id='project-tags-project_id' type='text' value='project_tags'></input>
+                </div>
+            </div>
+            <div class='row margin'>
+                <div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i>
+                    <input readonly="true" id='project-desc-project_id' type='text' value='project_description'></input>
+                </div>
+            </div>
+            <div class='row margin'>
+                <div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i>
+                    <input readonly="true" id='project-goals-project_id' type='text' value='project_goals'></input>
+                </div>
+            </div>
+            <div class='card-action center-align'>
+                <a href='./?session=session&amp;view=records&amp;project=project_id' class='valign left'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>project_records</span></a>
+                <a onclick='Materialize.toast(\"&lt;span&gt;Project diffs view not implemented yet!&lt;/span&gt;\", 3000);' class='valign'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>project_diffs</span></a>
+                <a onclick='Materialize.toast(\"&lt;span&gt; Project environments view not implemented yet!&lt;/span&gt;\", 3000);' class='valign right'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>project_envs</span></a>
+            </div>
+        </div>
+    </div>
+</div>

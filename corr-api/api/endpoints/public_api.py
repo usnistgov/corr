@@ -3,7 +3,8 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, API_URL, crossdomain, check_api, api_response, s3_delete_file, s3_get_file, web_get_file, s3_upload_file, data_pop, merge_dicts, logStat, logTraffic, logAccess, prepare_env, prepare_record, prepare_project
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -22,18 +23,28 @@ from corrdb.common.models import BundleModel
 from corrdb.common.models import VersionModel
 
 import mimetypes
-import json
+import simplejson as json
 import traceback
 import datetime
 import random
 import string
 import os
-import thread
+import _thread
+
+@app.route(API_URL + '/public/api/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def public_api_status():
+    logTraffic(API_URL, endpoint='/public/api/status')
+    if fk.request.method == 'GET':
+        # Maybe perform some sanity checks
+        return api_response(200, 'API reached', 'This CoRR API instance is up and running')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_show(app_id):
-    logTraffic(endpoint='/public/app/show/<app_id>')
+    logTraffic(API_URL, endpoint='/public/app/show/<app_id>')
     if fk.request.method == 'GET':
         app = ApplicationModel.objects.with_id(app_id)
         if app == None:
@@ -44,26 +55,26 @@ def public_app_show(app_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_logo(app_id):
-    logTraffic(endpoint='/public/app/logo/<app_id>')
+    logTraffic(API_URL, endpoint='/public/app/logo/<app_id>')
     if fk.request.method == 'GET':
         app = ApplicationModel.objects.with_id(app_id)
         if app != None:
             name = app.name if app.name != '' and app.name != None else 'unknown'
             logo = app.logo
             if logo.location == 'local' and 'http://' not in logo.storage:
-                logo_buffer = s3_get_file('logo', logo.storage)
+                logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                 if logo_buffer == None:
                     return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                 else:
                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
             elif logo.location == 'remote':
-                logo_buffer = web_get_file(logo.storage)
+                logo_buffer = storage_manager.web_get_file(logo.storage)
                 if logo_buffer != None:
                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                 else:
-                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                    logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                     else:
@@ -73,11 +84,11 @@ def public_app_logo(app_id):
                 if 'http://' in logo.storage:
                     logo.location = 'remote'
                     logo.save()
-                    logo_buffer = web_get_file(logo.storage)
+                    logo_buffer = storage_manager.web_get_file(logo.storage)
                     if logo_buffer != None:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     else:
-                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -85,7 +96,7 @@ def public_app_logo(app_id):
                 else:
                     logo.location = 'local'
                     logo.save()
-                    logo_buffer = s3_get_file('logo', logo.storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                     else:
@@ -96,9 +107,9 @@ def public_app_logo(app_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_users():
-    logTraffic(endpoint='/public/users')
+    logTraffic(API_URL, endpoint='/public/users')
     if fk.request.method == 'GET':
         users = UserModel.objects()
         users_dict = {'total_users':len(users), 'users':[]}
@@ -109,9 +120,9 @@ def public_users():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_show(user_id):
-    logTraffic(endpoint='/public/user/show/<user_id>')
+    logTraffic(API_URL, endpoint='/public/user/show/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user == None:
@@ -122,9 +133,9 @@ def public_user_show(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_profile_show(user_id):
-    logTraffic(endpoint='/public/user/profile/show/<user_id>')
+    logTraffic(API_URL, endpoint='/public/user/profile/show/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user == None:
@@ -139,33 +150,39 @@ def public_user_profile_show(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_picture(user_id):
-    logTraffic(endpoint='/public/user/picture/<user_id>')
+    logTraffic(API_URL, endpoint='/public/user/picture/<user_id>')
     if fk.request.method == 'GET':
         user = UserModel.objects.with_id(user_id)
         if user != None:
             profile = ProfileModel.objects(user=user).first()
             if profile == None:
-                picture_buffer = s3_get_file('picture', 'default-picture.png')
+                picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                 if picture_buffer == None:
                     return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
                 picture = profile.picture
-                if picture.location == 'local' and 'http://' not in picture.storage:
-                    picture_buffer = s3_get_file('picture', picture.storage)
+                if picture == None:
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                    if picture_buffer == None:
+                        return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                elif picture.location == 'local' and 'http://' not in picture.storage:
+                    picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
                         return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 elif picture.location == 'remote':
-                    picture_buffer = web_get_file(picture.storage)
+                    picture_buffer = storage_manager.web_get_file(picture.storage)
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                         else:
@@ -175,11 +192,11 @@ def public_user_picture(user_id):
                     if 'http://' in picture.storage:
                         picture.location = 'remote'
                         picture.save()
-                        picture_buffer = web_get_file(picture.storage)
+                        picture_buffer = storage_manager.web_get_file(picture.storage)
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                             if picture_buffer == None:
                                 return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                             else:
@@ -187,7 +204,7 @@ def public_user_picture(user_id):
                     else:
                         picture.location = 'local'
                         picture.save()
-                        picture_buffer = s3_get_file('picture', picture.storage)
+                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                         else:
@@ -198,13 +215,13 @@ def public_user_picture(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/user/projects/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_projects(user_id):
-    logTraffic(endpoint='/public/user/projects')
+    logTraffic(API_URL, endpoint='/public/user/projects')
     if fk.request.method == 'GET':
-    	user = UserModel.objects.with_id(user_id)
-    	if user == None:
-    		return api_response(404, 'No user found', 'We could not fetch the user with id:%s.'%user_id)
+        user = UserModel.objects.with_id(user_id)
+        if user == None:
+            return api_response(404, 'No user found', 'We could not fetch the user with id:%s.'%user_id)
         projects = ProjectModel.objects(owner=user)
         projects_dict = {'total_projects':len(projects), 'projects':[]}
         for project in projects:
@@ -214,9 +231,9 @@ def public_user_projects(user_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_projects():
-    logTraffic(endpoint='/public/projects')
+    logTraffic(API_URL, endpoint='/public/projects')
     if fk.request.method == 'GET':
         projects = ProjectModel.objects()
         projects_dict = {'total_projects':len(projects), 'projects':[]}
@@ -228,9 +245,9 @@ def public_projects():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_comments(project_id):
-    logTraffic(endpoint='/public/project/comments/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/comments/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -248,9 +265,9 @@ def public_project_comments(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_comment_show(comment_id):
-    logTraffic(endpoint='/public/comment/show/<comment_id>')
+    logTraffic(API_URL, endpoint='/public/comment/show/<comment_id>')
     if fk.request.method == 'GET':
         comment = CommentModel.objects.with_id(comment_id)
         if comment == None:
@@ -261,9 +278,9 @@ def public_comment_show(comment_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_records(project_id):
-    logTraffic(endpoint='/public/project/records/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/records/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -278,9 +295,9 @@ def public_project_records(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_show(project_id):
-    logTraffic(endpoint='/public/project/show/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/show/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -291,25 +308,25 @@ def public_project_show(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_logo(project_id):
-    logTraffic(endpoint='/public/project/logo/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/logo/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project != None:
             logo = project.logo
             if logo.location == 'local' and 'http://' not in logo.storage:
-                logo_buffer = s3_get_file('logo', logo.storage)
+                logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                 if logo_buffer == None:
                     return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                 else:
                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
             elif logo.location == 'remote':
-                logo_buffer = web_get_file(logo.storage)
+                logo_buffer = storage_manager.web_get_file(logo.storage)
                 if logo_buffer != None:
                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                 else:
-                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                    logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                     else:
@@ -319,11 +336,11 @@ def public_project_logo(project_id):
                 if 'http://' in logo.storage:
                     logo.location = 'remote'
                     logo.save()
-                    logo_buffer = web_get_file(logo.storage)
+                    logo_buffer = storage_manager.web_get_file(logo.storage)
                     if logo_buffer != None:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     else:
-                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -331,7 +348,7 @@ def public_project_logo(project_id):
                 else:
                     logo.location = 'local'
                     logo.save()
-                    logo_buffer = s3_get_file('logo', logo.storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                     else:
@@ -342,15 +359,15 @@ def public_project_logo(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_download(project_id):
-    logTraffic(endpoint='/public/project/download/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/download/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
             return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
         else:
-            prepared = prepare_project(project)
+            prepared = storage_manager.prepare_project(project)
             if prepared[0] == None:
                 return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
             else:
@@ -359,9 +376,9 @@ def public_project_download(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/history/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_history(project_id):
-    logTraffic(endpoint='/public/project/envs/<project_id>')
+    logTraffic(API_URL, endpoint='/public/project/envs/<project_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -378,9 +395,9 @@ def public_project_history(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_envs_head(project_id):
-    logTraffic(endpoint='/public/project/envs/head')
+    logTraffic(API_URL, endpoint='/public/project/envs/head')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -394,9 +411,9 @@ def public_project_envs_head(project_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_env_show(project_id, env_id):
-    logTraffic(endpoint='/public/project/env/show/<project_id>/<env_id>')
+    logTraffic(API_URL, endpoint='/public/project/env/show/<project_id>/<env_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -414,9 +431,9 @@ def public_project_env_show(project_id, env_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_project_env_download(project_id, env_id):
-    logTraffic(endpoint='/public/project/env/download/<project_id>/<env_id>')
+    logTraffic(API_URL, endpoint='/public/project/env/download/<project_id>/<env_id>')
     if fk.request.method == 'GET':
         project = ProjectModel.objects.with_id(project_id)
         if project == None:
@@ -429,7 +446,7 @@ def public_project_env_download(project_id, env_id):
                 if env == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
                 else:
-                    prepared = prepare_env(project, env)
+                    prepared = storage_manager.prepare_env(project, env)
                     if prepared[0] == None:
                         return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                     else:
@@ -438,9 +455,9 @@ def public_project_env_download(project_id, env_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_records():
-    logTraffic(endpoint='/public/records')
+    logTraffic(API_URL, endpoint='/public/records')
     if fk.request.method == 'GET':
         records = RecordModel.objects()
         records_dict = {'total_records':len(records), 'records':[]}
@@ -451,9 +468,9 @@ def public_records():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_record_show(record_id):
-    logTraffic(endpoint='/public/record/show/<record_id>')
+    logTraffic(API_URL, endpoint='/public/record/show/<record_id>')
     if fk.request.method == 'GET':
         record = RecordModel.objects.with_id(record_id)
         if record == None:
@@ -464,9 +481,9 @@ def public_record_show(record_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_record_download(project_id, record_id):
-    logTraffic(endpoint='/public/record/download/<project_id>/<record_id>')
+    logTraffic(API_URL, endpoint='/public/record/download/<project_id>/<record_id>')
     if fk.request.method == 'GET':
         record = RecordModel.objects.with_id(record_id)
         if record == None:
@@ -475,7 +492,7 @@ def public_record_download(project_id, record_id):
             if str(record.project.id) != project_id:
                 return api_response(401, 'Unauthorized access to this record', 'This record is not part of the provided project.')
             else:
-                prepared = prepare_record(record)
+                prepared = storage_manager.prepare_record(record)
                 if prepared[0] == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to retrieve a record to download.')
                 else:
@@ -484,9 +501,9 @@ def public_record_download(project_id, record_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_diffs():
-    logTraffic(endpoint='/public/diffs')
+    logTraffic(API_URL, endpoint='/public/diffs')
     if fk.request.method == 'GET':
         diffs = DiffModel.objects()
         diffs_dict = {'total_diffs':len(diffs), 'diffs':[]}
@@ -497,9 +514,9 @@ def public_diffs():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_diff_show(diff_id):
-    logTraffic(endpoint='/public/diff/show/<diff_id>')
+    logTraffic(API_URL, endpoint='/public/diff/show/<diff_id>')
     if fk.request.method == 'GET':
         diff = DiffModel.objects.with_id(diff_id)
         if diff == None:
@@ -510,9 +527,9 @@ def public_diff_show(diff_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_files():
-    logTraffic(endpoint='/public/files')
+    logTraffic(API_URL, endpoint='/public/files')
     if fk.request.method == 'GET':
         files = FileModel.objects()
         files_dict = {'total_files':len(files), 'files':[]}
@@ -523,9 +540,9 @@ def public_files():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_file_download(file_id):
-    logTraffic(endpoint='/public/file/download/<file_id>')
+    logTraffic(API_URL, endpoint='/public/file/download/<file_id>')
     if fk.request.method == 'GET':
         file_meta = FileModel.objects.with_id(file_id)
         if file_meta == None:
@@ -533,9 +550,9 @@ def public_file_download(file_id):
         else:
             file_obj = None
             if file_meta.location == 'remote':
-                file_obj = web_get_file(file_meta.storage)
+                file_obj = storage_manager.web_get_file(file_meta.storage)
             elif file_meta.location == 'local':
-                file_obj = s3_get_file(file_meta.group, file_meta.storage)
+                file_obj = storage_manager.storage_get_file(file_meta.group, file_meta.storage)
 
             if file_obj == None:
                 return api_response(404, 'Request suggested an empty response', 'No content found for this file.')
@@ -595,9 +612,9 @@ def public_file_download(file_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_file_show(file_id):
-    logTraffic(endpoint='/public/file/show/<file_id>')
+    logTraffic(API_URL, endpoint='/public/file/show/<file_id>')
     if fk.request.method == 'GET':
         _file = FileModel.objects.with_id(file_id)
         if _file == None:
@@ -608,9 +625,9 @@ def public_file_show(file_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_messages():
-    logTraffic(endpoint='/public/messages')
+    logTraffic(API_URL, endpoint='/public/messages')
     if fk.request.method == 'GET':
         messages = MessageModel.objects()
         messages_dict = {'total_messages':len(messages), 'messages':[]}
@@ -621,9 +638,9 @@ def public_messages():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_message_show(message_id):
-    logTraffic(endpoint='/public/message/show/<message_id>')
+    logTraffic(API_URL, endpoint='/public/message/show/<message_id>')
     if fk.request.method == 'GET':
         message = MessageModel.objects.with_id(message_id)
         if message == None:
@@ -634,8 +651,9 @@ def public_message_show(message_id):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_search(key_words):
-    logTraffic(endpoint='/public/search/<key_words>')
+    logTraffic(API_URL, endpoint='/public/search/<key_words>')
     if fk.request.method == 'GET':
         results = {'results':{}, 'total-results':0}
         results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -978,6 +996,7 @@ def public_search(key_words):
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/app/search/<app_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_app_search(app_name):
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects(name__icontains=app_name)
@@ -996,6 +1015,7 @@ def public_app_search(app_name):
 
 
 @app.route(API_URL + '/public/apps/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_user_apps(user_id):
     current_user = UserModel.objects.with_id(user_id)
     if current_user is not None:
@@ -1014,6 +1034,7 @@ def public_user_apps(user_id):
         return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
 
 @app.route(API_URL + '/public/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def public_apps():
     if fk.request.method == 'GET':
         apps = ApplicationModel.objects()
@@ -1025,9 +1046,9 @@ def public_apps():
         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/public/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def public_resolve_item(item_id):
-    logTraffic(endpoint='/public/resolve/<item_id>')
+    logTraffic(API_URL, endpoint='/public/resolve/<item_id>')
     if fk.request.method == 'GET':
         resolution = {'class':'', 'endpoints':[]}
         if item_id == 'root':

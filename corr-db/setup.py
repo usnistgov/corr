@@ -44,12 +44,7 @@ def make_version():
                                     '--tags',
                                     '--match',
                                     'v*'])
-            # ticket:475 - fix for bytecode received in Py3k
-            # http://jeetworks.org/node/67
             out = out.decode("utf-8")
-            # convert git long-form version string, e.g.,
-            # "version-3_1_1-127-g413ed61", into PEP 440 version,
-            # e.g., "3.1.1.dev127+g413ed61"
             version = out.strip().split("-")
             if len(version) > 1:
                 version, dev, sha = version

@@ -1,104 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!--================================================================================
-    Item Name: Materialize - Material Design Admin Template
-    Version: 1.0
-    Author: GeeksLabs
-    Author URL: http://www.themeforest.net/user/geekslabs
-================================================================================ -->
+    <!--================================================================================
+        Item Name: CoRR - Cloud of Reproducible Records
+        Version: 0.1
+        Authors: Faical Yannick P. Congo & Daniel Wheeler
+        Authors URL: https://github.com/usnistgov/corr
+    ================================================================================ -->
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="description" content="DDSM is a cloud service for simulation execution record atoms. ">
-    <meta name="keywords" content="simulation, cloud, service, record, atom, metadata,">
-    <title>DDSM - Data Driven Simulation Management</title>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
+        <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
 
-    <!-- Favicons-->
-    <link rel="icon" href="images/favicon/favicon-32x32.png" sizes="32x32">
-    <!-- Favicons-->
-    <link rel="apple-touch-icon-precomposed" href="images/favicon/apple-touch-icon-152x152.png">
-    <!-- For iPhone -->
-    <meta name="msapplication-TileColor" content="#00bcd4">
-    <meta name="msapplication-TileImage" content="images/favicon/mstile-144x144.png">
-    <!-- For Windows Phone -->
+        <title>CoRR - Cloud of Reproducible Records</title>
 
+        <link rel="icon" href="images/logo.ico" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="images/logo.svg" sizes="152x152">
+        <meta name="msapplication-TileColor" content="#00bcd4">
+        <meta name="msapplication-TileImage" content="images/logo.svg" sizes="144x144">
 
-    <!-- CORE CSS-->    
-    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
 
+    </head>
 
-    <!-- INCLUDED PLUGIN CSS ON THIS PAGE -->
-    <!-- <link href="js/plugins/material-preloader/materialPreloader.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
-    <link href="js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
-    <link href="js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <body>
 
-
-</head>
-<body>
-
-    <!-- Start Page Loading -->
-    <div id="loader-wrapper">
-        <div id="loader"></div>        
-        <div class="loader-section section-left"></div>
-        <div class="loader-section section-right"></div>
-    </div>
-    <!-- End Page Loading -->
-    
-    <!-- //////////////////////////////////////////////////////////////////////////// -->
-
-    <!-- START HEADER -->
-    <header id="header" class="page-topbar">
-        <!-- start header nav-->
-        <div class="navbar-fixed">
-            <nav class="cyan">
-                <div class="nav-wrapper">
-                    <h1 class="logo-wrapper cd-headline letters type"><a href="./" id="nav-home" class="brand-logo darken-1"><span>I Want To</span> <span class="cd-words-wrapper waiting"><b class="is-visible">Simulate</b><b>Repeat</b><b>Reproduce</b><b>Share</b></span><!--img src="images/materialize-logo.png" alt="materialize logo"--></a> <!--span class="logo-text">Materialize</span--></h1>
-                    <ul class="nav-bar right hide-on-med-and-down">
-                        <li class="search-out">
-                            <input type="text" class="search-out-text">
-                        </li>
-                        <li>    
-                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search"><i class=" nav-action mdi-action-search"></i></a>                              
-                        </li>
-                        <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen"><i class="nav-action mdi-action-settings-overscan"></i></a>
-                        </li>
-                        <li><a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-home"></i></a>
-                        </li>
-                        <li><a href="./api" id= "nav-api" class="waves-effect waves-block waves-light"><i class="nav-action nav-action mdi-action-description"></i></a>
-                        </li>                       
-                        <li id="nav-login"><a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse"><i class="nav-action nav-action mdi-navigation-menu"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+        <div id="loader-wrapper">
+            <div id="loader"></div>
+            <div class="loader-section section-left"></div>
+            <div class="loader-section section-right"></div>
         </div>
-        <!-- end header nav-->
-    </header>
-    <!-- END HEADER -->
-                <aside id="right-sidebar-nav">
-                <ul id="chat-out" class="side-nav rightside-navigation">
-<!--
-                    <li class="li-hover">
-                    <a href="#" data-activates="chat-out" class="chat-close-collapse right"><i class="mdi-navigation-close"></i></a>
-                    <div id="right-search" class="row">
-                        <form class="col s12">
-                            <div class="input-field">
-                                <i class="mdi-action-search prefix"></i>
-                                <input id="icon_prefix" type="text" class="validate">
-                                <label for="icon_prefix">Search</label>
-                            </div>
-                        </form>
+
+        <header id="header" class="page-topbar">
+            <div class="navbar-fixed">
+                <nav class="cyan">
+                    <div class="nav-wrapper">
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
+                        <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                            <li class="search-out">
+                                <input type="text" class="search-out-text">
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
+                                <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
+                                    <i class=" nav-action mdi-action-search"></i>
+                                </a>
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
+                                <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
+                                    <i class="nav-action nav-action mdi-action-home"></i>
+                                </a>
+                            </li>
+                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
+                                <a href="./help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                    <i class="nav-action mdi-communication-live-help"></i>
+                                </a>
+                            </li>
+                            <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
+                                <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
+                                    <i class="nav-action nav-action mdi-navigation-menu"></i>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                    </li>
--->
-                    <li class="li-hover">
-                        <ul class="chat-collapsible" data-collapsible="expandable">
+                </nav>
+            </div>
+        </header>
+
+        <aside id="right-sidebar-nav">
+            <ul id="chat-out" class="side-nav rightside-navigation">
+                <li class="li-hover">
+                    <ul class="chat-collapsible" data-collapsible="expandable">
                         <li>
                             <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
                             <div class="collapsible-body recent-activity">
@@ -116,12 +95,6 @@
                                     <label for="login-password">Password</label>
                                   </div>
                                 </div>
-                                <div class="row">          
-                                  <div class="input-field col s12 m12 l12  login-text">
-                                      <input type="checkbox" id="remember-me" onkeypress="loginKeyPress(event);"/>
-                                      <label for="remember-me">Remember me</label>
-                                  </div>
-                                </div>
                                 <div class="row">
                                   <div class="input-field col s12">
                                     <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
@@ -132,13 +105,6 @@
                         <li>
                             <div class="collapsible-header light-blue white-text"><i class="mdi-action-input"></i>Register</div>
                             <div class="collapsible-body sales-repoart">
-                                <div class="row margin">
-                                  <div class="input-field col s12">
-                                    <i class="mdi-social-person-outline prefix"></i>
-                                    <input id="register-username" type="text" onkeypress="registerKeyPress(event);">
-                                    <label for="register-username" class="center-align">Username</label>
-                                  </div>
-                                </div>
                                 <div class="row margin">
                                   <div class="input-field col s12">
                                     <i class="mdi-communication-email prefix"></i>
@@ -168,466 +134,437 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i>Contact us</div>
-                            <div class="collapsible-body favorite-associates">
+                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                            <div class="collapsible-body recent-activity">
                                 <div class="row margin">
                                   <div class="input-field col s12">
-                                    <i class="mdi-communication-email prefix"></i>
-                                    <input id="contactus-email" type="email" onkeypress="emailKeyPress(event);">
-                                    <label for="contactus-email" class="center-align">Email</label>
-                                  </div>
-                                </div>
-                                <div class="row margin">
-                                  <div class="input-field col s12">
-                                    <i class="mdi-image-edit prefix"></i>
-                                    <input id="contactus-message" type="text" onkeypress="emailKeyPress(event);">
-                                    <label for="contactus-message" class="center-align">Message</label>
+                                    <i class="mdi-social-person-outline prefix"></i>
+                                    <input id="recover-email" type="email" onkeypress="recoverKeyPress(event);">
+                                    <label for="recover-email" class="center-align">Email</label>
                                   </div>
                                 </div>
                                 <div class="row">
                                   <div class="input-field col s12">
-                                    <a id="buttonEmail" onclick="return user.contactus();" class="btn waves-effect waves-light red col s12">Send</a>
+                                    <a id="buttonRecover" onclick="return user.recover();" class="btn login-button waves-effect waves-light green col s12">Request</a>
                                   </div>
                                 </div>
                             </div>
                         </li>
-                        </ul>
-                    </li>
-                </ul>
-            </aside>
-    
-    <div class="parallax-container">
-    <div class="parallax">
-<!--    <div id="container">-->
-<!--
-            <div class="container white valign-wrapper centered focus">
-            <div class=" z-depth-4 card-panel">
-              <form class="login-form">
+                        <li>
+                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
+
+                        </li>
+                        <li>
+                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="parallax-container">
+            <div class="parallax">
+                <img src="images/b1.jpeg">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div  class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-image-flash-on"></i>
+                            <h4 class="promo-caption">Integration</h4>
+                            <p class="front-text light center">
+                              Integrate existing simulation management
+                              tools with CoRR's robust API to log 
+                              simulation records.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-social-group"></i>
+                            <h4 class="promo-caption">Collaboration</h4>
+                            <p class="light center front-text">
+                              Collaborate with other scientists by sharing
+                              simulation records and computational
+                              environments.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-device-devices"></i>
+                            <h4 class="promo-caption">Management</h4>
+                            <p class="light center front-text">
+                              Manage simulation records to maintain
+                              history, organize future jobs and enhance
+                              reproduciblity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        </div>
+
+        <div class="container">
+            <section id="content">
+                <div class="container">
+                    <div id="card-stats">
+                        <div class="row">
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content  green white-text">
+                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Users</p>
+                                        <h4 class="card-stats-number" id="total-users">N/A</h4>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content purple white-text">
+                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Applications</p>
+                                        <h4 class="card-stats-number" id="total-apps">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content brown white-text">
+                                        <p class="card-stats-title"><i class="mdi-file-folder"></i> Projects</p>
+                                        <h4 class="card-stats-number" id="total-projects">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content blue-grey white-text">
+                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Records</p>
+                                        <h4 class="card-stats-number" id="total-records">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content red white-text">
+                                        <p class="card-stats-title"><i class="mdi-device-storage"></i> Storage</p>
+                                        <h4 class="card-stats-number" id="total-storage">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content orange white-text">
+                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Traffic</p>
+                                        <h4 class="card-stats-number" id="total-traffic">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="account-modal" class="modal login-form">
+            <div class="modal-content">
                 <div class="row">
                   <div class="input-field col s12 center">
-                    <img src="images/login-logo.png" alt="" class="circle responsive-img valign profile-image-login">
-                    <p class="center login-form-text">Open your dashboard</p>
+                    <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
                   </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <i class="mdi-social-person-outline prefix"></i>
-                    <input id="username" type="text">
-                    <label for="username" class="center-align">Username</label>
+                    <i class="mdi-communication-email prefix"></i>
+                    <input readonly id="view-email" type="email">
+                    <label id="view-email-value" for="view-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-communication-vpn-key prefix"></i>
+                    <input readonly id="view-api" type="text">
+                    <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <!-- <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button> -->
+                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#app-add-modal" class="modal-trigger btn purple waves-effect waves-light col s12">Add Application</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="account-update-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
+                    <label for="picture-input">
+                        <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <input id="picture-input" type="file" style="display: none;"/>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="edit-new-password" type="password">
+                    <label for="edit-new-password">New Password</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <i class="mdi-action-lock-outline prefix"></i>
-                    <input id="password" type="password">
-                    <label for="password">Password</label>
+                    <input id="edit-new-password-again" type="password">
+                    <label for="edit-new-password-again">New Password Again</label>
                   </div>
                 </div>
-                <div class="row">          
-                  <div class="input-field col s12 m12 l12  login-text">
-                      <input type="checkbox" id="remember-me" />
-                      <label for="remember-me">Remember me</label>
-                  </div>
-                </div>
-                <div class="row">
+                <div class="row margin">
                   <div class="input-field col s12">
-                    <a href="index.html" class="btn waves-effect waves-light col s12">Login</a>
+                    <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
                   </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="app-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
+                    <label for="picture-input">
+                        <img src="images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <!-- <input id="picture-input" type="file" style="display: none;"/> -->
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="app-name" type="text">
+                    <label for="app-name">App Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="app-about" class="materialize-textarea"></textarea>
+                    <label id="app-about-value" for="app-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-modal" class="modal login-form">
+            <div class="modal-content">
                 <div class="row">
-                  <div class="input-field col s6 m6 l6">
-                    <p class="margin medium-small"><a href="page-register.html">Register Now!</a></p>
+                  <div class="input-field col s12 center">
+                    <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
                   </div>
-                  <div class="input-field col s6 m6 l6">
-                      <p class="margin right-align medium-small"><a href="page-forgot-password.html">Forgot password ?</a></p>
-                  </div>          
                 </div>
-
-              </form>
-            </div>
-          </div>
--->
-        <img src="images/b1.jpeg"></div>
-  </div>
-    
-    <!--Intro and service-->
-    <div class="section">
-        <div class="container">
-            <div class="row">
-
-                <div  class="col s12 m4 l4 container valign-wrapper z-depth-4">
-                    <div class="center promo promo-example">
-                        <i class="mdi-image-flash-on"></i>
-                        <h5 class="promo-caption">Speeds up science</h5>
-                        <p class="light center">DDSM provides a scheme for scoping your computational experiments. It will allow you to wrap your simulation into a repeatable and reproducible artifact.</p>
-                    </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-perm-identity prefix"></i>
+                    <input id="view-fname" type="text">
+                    <label id="view-fname-value" for="view-fname">First Name</label>
+                  </div>
                 </div>
-                <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
-                    <div class="center promo promo-example">
-                        <i class="mdi-social-group"></i>
-                        <h5 class="promo-caption">Improves collaboration</h5>
-                        <p class="light center">From his local machine environments, users can push their simulations executions metada to the DDSM cloud infrastructure. From DDSM, the metadata is bundeled into an collaborative artifact that can be manipulated, distributed and pulled.</p>
-                    </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment-ind prefix"></i>
+                    <input id="view-lname" type="text">
+                    <label id="view-lname-value" for="view-lname">Last Name</label>
+                  </div>
                 </div>
-                <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
-                    <div class="center promo promo-example">
-                        <i class="mdi-device-devices"></i>
-                        <h5 class="promo-caption">Fully responsive</h5>
-                        <p class="light center">DDSM cloud platform allows the users to access a web frontend from any browser on any device that has internet connection.</p>
-                    </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-home prefix"></i>
+                    <input id="view-org" type="text">
+                    <label id="view-org-value" for="view-org">Organisation</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="view-about" class="materialize-textarea"></textarea>
+                    <label id="view-about-value" for="view-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+                  </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-
-    </div>
-    
-    <!-- Floating Action Button -->
-<!--
-    <div class="fixed-action-btn" style="top: 50%; right: 24px;">
-        <a class="btn-floating btn-large cyan">
-          <i class="large mdi-navigation-menu"></i>
-        </a>
-        <ul>
-          <li><a href="page-login.html" class="btn-floating btn-large green"><i class="large mdi-action-home"></i></a></li>
-          <li><a href="page-register.html" class="btn-floating btn-large grey darken-1"><i class="large mdi-action-input"></i></a></li>
-          <li><a href="page-lock-screen.html" class="btn-floating btn-large blue"><i class="large mdi-communication-email"></i></a></li> contact us
-        </ul>
-    </div>
--->
-    <!-- Floating Action Button -->
-
-    <!--Footer-->
-    <!-- <footer class="footer page-footer white valign-wrapper"> -->
-        <div class="container">
-            <section id="content">
-                <div class="container">
-                    <!--card stats start-->
-                    <div id="card-stats">
-                        <div class="row">
-                            <div class="col s12 m6 l3">
-                                <div class="card">
-                                    <div class="card-content  green white-text">
-                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Toatl Users</p>
-                                        <h4 class="card-stats-number" id="total-users">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="green-text text-lighten-5">from last year</span>
-                                        </p>
-                                    </div>
-                                    <div class="card-action  green darken-2">
-                                        <div id="clients-bar"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l3">
-                                <div class="card">
-                                    <div class="card-content purple white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-folder"></i> Total Projects</p>
-                                        <h4 class="card-stats-number" id="total-projects">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="purple-text text-lighten-5">from last month</span>
-                                        </p>
-                                    </div>
-                                    <div class="card-action purple darken-2">
-                                        <div id="sales-compositebar"></div>
-
-                                    </div>
-                                </div>
-                            </div>                            
-                            <div class="col s12 m6 l3">
-                                <div class="card">
-                                    <div class="card-content blue-grey white-text">
-                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Today Records</p>
-                                        <h4 class="card-stats-number" id="total-records">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> N/A <span class="blue-grey-text text-lighten-5">from last week</span>
-                                        </p>
-                                    </div>
-                                    <div class="card-action blue-grey darken-2">
-                                        <div id="profit-tristate"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col s12 m6 l3">
-                                <div class="card">
-                                    <div class="card-content deep-purple white-text">
-                                        <p class="card-stats-title"><i class="mdi-device-storage"></i> Total Storage</p>
-                                        <h4 class="card-stats-number" id="total-storage">N/A</h4>
-                                        <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-down"></i> N/A <span class="deep-purple-text text-lighten-5">from yesterday</span>
-                                        </p>
-                                    </div>
-                                    <div class="card-action  deep-purple darken-2">
-                                        <div id="invoice-line"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!--card stats end-->
-                </div>
-            </section>
-        </div>
-    <!-- </footer> -->
-
-    <div id="view-modal" class="modal login-form">
-        <div class="modal-content">
-          <!-- <form class="login-form"> -->
-            <div class="row">
-              <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
-                <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-social-person-outline prefix"></i>
-                <input disabled id="view-username" type="text">
-                <label id="view-username-value" for="view-username" class="center-align">Username</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-communication-email prefix"></i>
-                <input disabled id="view-email" type="email">
-                <label id="view-email-value" for="view-email">Email</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-communication-vpn-key prefix"></i>
-                <input disabled id="view-api" type="text">
-                <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
-              </div>
-            </div>
-
-            <div class="row margin">
-              <div class="input-field col s12">
-                <a onclick="user.copy_api()" class="btn waves-effect waves-light col s12">Copy Token</a>
-              </div>
-            </div>
-
-          <!-- </form> -->
-        </div>
-        <div class="modal-footer teal lighten-4">
-            
+        <footer class="page-footer">
             <div class="footer-copyright">
-                <span >Last updated</span>
-                <span class="right">06/23/2015 5:49:23 PM</span>
+              <div class="container">
+                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
+                </div>
             </div>
-        </div>
-    </div>
+        </footer>
 
-    <div id="edit-modal" class="modal login-form">
-        <div class="modal-content">
-          <!-- <form class="login-form"> -->
-            <div class="row">
-              <div class="input-field col s12 center">
-                <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
-                <!-- <p class="center login-form-text">Material Design Admin Template</p> -->
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-social-person-outline prefix"></i>
-                <input id="username" type="text">
-                <label for="username" class="center-align">Username</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-lock-outline prefix"></i>
-                <input id="edit-old-password" type="password">
-                <label for="edit-old-password">Current Password</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-lock-outline prefix"></i>
-                <input id="edit-new-password" type="password">
-                <label for="edit-new-password">New Password</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-action-lock-outline prefix"></i>
-                <input id="edit-new-password-again" type="password">
-                <label for="edit-new-password-again">New Password Again</label>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <i class="mdi-communication-vpn-key prefix"></i>
-                <input id="view-api" type="text">
-                <label for="view-api">Api Key</label>
-              </div>
-            </div>
-            <div class="divider"></div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <a onclick="user.renew()" class="btn waves-effect waves-light col s12">Renew Api</a>
-              </div>
-            </div>
-            <div class="row margin">
-              <div class="input-field col s12">
-                <a href="index.html" class="btn waves-effect waves-light col s12">Update Account</a>
-              </div>
-            </div>
+        <script src="js/config.js"></script>
 
-          <!-- </form> -->
-        </div>
-    </div>
-    
-    <footer class="page-footer">
-        <div class="footer-copyright">
-          <div class="container">
-            <span>Copyright © 2015 <a class="grey-text text-lighten-4" href="https://github.com/faical-yannick-congo/ddsm-cloud" target="_blank">DDSM</a> All rights reserved.</span>
-            <span class="right"> Design and Developed by <a class="grey-text text-lighten-4" href="https://www.linkedin.com/pub/yannick-congo/60/16/411">Faical Yannick Palingwende Congo</a></span>
-            </div>
-        </div>
-    </footer>
+        <script type="text/javascript" src="js/materialize.js"></script>
+        <script type="text/javascript" src="js/prism.js"></script>
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="js/plugins/chartist-js/chartist.min.js"></script>
+        <script type="text/javascript" src="js/plugins/chartjs/chart.min.js"></script>
+        <script type="text/javascript" src="js/plugins/sparkline/jquery.sparkline.min.js"></script>
+        <script type="text/javascript" src="js/plugins/sparkline/sparkline-script.js"></script>
+        <script type="text/javascript" src="js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+        <script type="text/javascript" src="js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <script type="text/javascript" src="js/plugins/jvectormap/vectormap-script.js"></script>
+        <script type="text/javascript" src="js/plugins.js"></script>
+        <script type="text/javascript" src="js/clipboard.min.js"></script>
+        <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 
-    <!--  Scripts-->
-    <!--materialize js-->
-    <script type="text/javascript" src="js/materialize.js"></script>
-    <!--prism-->
-    <script type="text/javascript" src="js/prism.js"></script>
-    <!-- jQuery Library -->
-    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>    
-    <!--materialize js-->
-    <script type="text/javascript" src="js/materialize.min.js"></script>
-    <!--scrollbar-->
-    <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <!--script type="text/javascript" src="js/plugins/material-preloader/materialPreloader.js"></script-->   
+        <script type="text/javascript" src="js/init.js"></script>
+        <script type="text/javascript" src="js/cloud.js"></script>
 
-    <!-- chartist -->
-    <script type="text/javascript" src="js/plugins/chartist-js/chartist.min.js"></script>   
-
-    <!-- chartjs -->
-    <script type="text/javascript" src="js/plugins/chartjs/chart.min.js"></script>
-    <script type="text/javascript" src="js/plugins/chartjs/chart-script.js"></script>
-
-    <!-- sparkline -->
-    <script type="text/javascript" src="js/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <script type="text/javascript" src="js/plugins/sparkline/sparkline-script.js"></script>
-    
-    <!--jvectormap-->
-    <script type="text/javascript" src="js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script type="text/javascript" src="js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script type="text/javascript" src="js/plugins/jvectormap/vectormap-script.js"></script>
-    
-    
-    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
-    <script type="text/javascript" src="js/plugins.js"></script>
-    <!--scrollbar-->
-    <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="js/init.js"></script>
-    <script src="js/cloud.js"></script>
-
-     <script type="text/javascript">
-        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        console.log(this.session);
-        xmlhttp.open("GET", "http://0.0.0.0:5200/cloud/v1/public/user/home");
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
-        {
-            console.log(xmlhttp.responseText);
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.tooltipped').tooltip({delay: 50});
+                $('.collapsible').collapsible({accordion : false});
+                // new Clipboard('.btn');
+            });
+            var xmlhttp = new XMLHttpRequest();
+            console.log(this.session);
+            xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
+            xmlhttp.send();
+            xmlhttp.onreadystatechange=function()
+            {
                 console.log(xmlhttp.responseText);
-                var response = JSON.parse(xmlhttp.responseText);
-                console.log(response);
-                var users = response["users"];
-                var projects = response["projects"];
-                var records = response["records"];
-                var storage = response["storage"];
-
-                // console.log("Total Users:"+document.getElementById("total-users").value);
-
-                document.getElementById("total-users").innerHTML = users["number"];
-                document.getElementById("total-projects").innerHTML = projects["number"];
-                document.getElementById("total-records").innerHTML = records["number"];
-                document.getElementById("total-storage").innerHTML = storage["size"];
-
-                console.log("Total Users:"+users["number"]);
-                console.log("Total Projects:"+projects["number"]);
-                console.log("Total Records:"+records["number"]);
-                console.log("Total Storage:"+storage["size"]);
-
-                console.log("++Total Users:"+document.getElementById("total-users").value);
-                console.log("++Total Projects:"+document.getElementById("total-projects").value);
-                console.log("++Total Records:"+document.getElementById("total-records").value);
-                console.log("++Total Stage:"+document.getElementById("total-storage").value);
-            } else {
-                console.log("Cannot reach the cloud!");
-                // Materialize.toast('<span>Cannot reach the cloud!</span>', 3000);
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    console.log(xmlhttp.responseText);
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = JSON.parse(xmlhttp.responseText);
+                        console.log(response);
+                        var version = response["version"];
+                        var users = response["users"];
+                        var projects = response["projects"];
+                        var records = response["records"];
+                        var storage = response["storage"];
+                        var apps = response["apps"];
+                        var traffic = response["traffic"];
+                        document.getElementById("total-users").innerHTML = users["number"];
+                        document.getElementById("total-projects").innerHTML = projects["number"];
+                        document.getElementById("total-records").innerHTML = records["number"];
+                        document.getElementById("total-storage").innerHTML = storage["size"];
+                        console.log("Version: "+version);
+                        document.getElementById("footer-version").innerHTML = version;
+                        document.getElementById("total-apps").innerHTML = apps["size"];
+                        document.getElementById("total-traffic").innerHTML = traffic["size"];
+                        console.log("Total Users:"+users["number"]);
+                        console.log("Total Projects:"+projects["number"]);
+                        console.log("Total Records:"+records["number"]);
+                        console.log("Total Storage:"+storage["size"]);
+                        console.log("CoRR Version:"+version);
+                        console.log("Total Apps:"+apps["size"]);
+                        console.log("Total Traffic:"+traffic["size"]);
+                        console.log("++Total Users:"+document.getElementById("total-users").value);
+                        console.log("++Total Projects:"+document.getElementById("total-projects").value);
+                        console.log("++Total Records:"+document.getElementById("total-records").value);
+                        console.log("++Total Stage:"+document.getElementById("total-storage").value);
+                        console.log("++CoRR Version:"+document.getElementById("footer-version").value);
+                        console.log("++Total Apps:"+document.getElementById("total-apps").value);
+                        console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
+                    }
+                } else {
+                    console.log("Cannot reach the cloud!");
+                }
             }
-        }
-        var param = window.location.search.substring(1);
-        var parts = param.split("=");
-        if(parts[0] == "session"){
-            user.session = parts[1];
-            console.log(user.session);
-            user.trusted();
-            user.account();
-            console.log("Api Index: "+this.api);
-            document.getElementById("nav-home-2").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-home").href = "http://0.0.0.0:5000/?session="+user.session;
-            document.getElementById("nav-api").href = "http://0.0.0.0:5000/dashboard/api/?session="+user.session;
-            document.getElementById("nav-login").innerHTML = "<li><a href=\"http://0.0.0.0:5000/dashboard/?session="+user.session+"\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-dashboard\"></i></a></li>\n<li><a onclick=\"user.logout()\" class=\"waves-effect waves-block waves-light\"><i class=\"nav-action mdi-action-exit-to-app\"></i></a></li>";
-            document.getElementById("float-profile").innerHTML = "<a class=\"btn-floating btn-large cyan\"><img src=\"images/avatar.jpg\" alt=\"\" class=\"circle responsive-img valign profile-image\"></a><ul><li><a href=\"#view-modal\" class=\"modal-trigger btn-floating btn-large green\"><i class=\"large mdi-action-visibility\"></i></a></li><li><a href=\"#edit-modal\" class=\"modal-trigger btn-floating btn-large grey darken-1\"><i class=\"large mdi-editor-mode-edit\"></i></a></li></ul>";
-            // document.getElementById("view-username").value = user.username;
-            // document.getElementById("view-email").value = user.email;
-            // document.getElementById("view-api").value = user.api;
+            var param = window.location.search.substring(1);
+            var parts = param.split("=");
+            if(parts[0] == "session"){
+                user.session = parts[1];
+                console.log(user.session);
+                user.trusted();
+                user.account();
+                console.log("Api Index: "+this.api);
+                document.getElementById("nav-home-2").href = "./?session="+user.session;
+                document.getElementById("nav-home").href = "./?session="+user.session;
+                document.getElementById("nav-help").href = "./help/?session="+user.session;
+                document.getElementById("nav-login").remove();
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-communication-email'></i></a></li></ul>";
 
-            // console.log("Username: "+user.username);
-            // console.log("Email: "+user.email);
-            // console.log("Api: "+user.api);
-        }else if(parts[0] == "action"){
-            var scope = parts[1];
-            if (scope == "message_sent"){
-                Materialize.toast('<span>Your message has been sent!</span>', 3000);
+                document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+                document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+                document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+            }else if(parts[0] == "action"){
+                var scope = parts[1];
+                if (scope == "message_sent"){
+                    Materialize.toast('<span>Your message has been sent!</span>', 3000);
+                }
             }
-        }
-
-        function loginKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+            function loginKeyPress(e)
             {
-                document.getElementById('buttonLogin').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonLogin').click();
+                }
             }
-        }
-
-        function registerKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+             function recoverKeyPress(e)
             {
-                document.getElementById('buttonRegister').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRecover').click();
+                }
             }
-        }
-
-        function emailKeyPress(e)
-        {
-            e = e || window.event;
-            if (e.keyCode == 13)
+            function registerKeyPress(e)
             {
-                document.getElementById('buttonEmail').click();
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRegister').click();
+                }
             }
-        }
+            function emailKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonEmail').click();
+                }
+            }
+         </script>
+         <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-64854835-1', 'auto');
+          ga('send', 'pageview');
+        </script>
 
-     </script>
-     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-64854835-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
     </body>
 </html>

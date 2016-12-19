@@ -1,9 +1,16 @@
+*.~
 *.pyc
-*.log
 corr-db/data
 corr-db/dist
 corr-db/build
 corr-db/corrdb.egg-info
 corr-cloud/apiKey.properties
 corr-view/frontend/_site
+corr-view/frontend/js/config.js
 corr-api/test/requests/*_freeze.log
+corr-api/config.py
+corr-cloud/config.py
+builds/hosts.*
+corr-cmd/corr.egg-info
+corr-cmd/.coverage
+corr-cmd/cover

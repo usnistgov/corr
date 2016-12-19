@@ -1,5 +1,0 @@
-{
-    "code": 400,
-    "content": "A file should reference an existing item.",
-    "title": "Missing mandatory instance"
-}

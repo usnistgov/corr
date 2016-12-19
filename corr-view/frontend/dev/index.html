@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!--================================================================================
+            Item Name: CoRR - Cloud of Reproducible Records
+            Version: 0.1
+            Authors: Faical Yannick P. Congo & Daniel Wheeler
+            Authors URL: https://github.com/usnistgov/corr
+    ================================================================================ -->
+
+    <head>
+
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="msapplication-tap-highlight" content="no">
+            <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
+            <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
+
+            <title>CoRR - Cloud of Reproducible Records</title>
+
+            <link rel="icon" href="../images/logo.ico" sizes="32x32">
+            <link rel="apple-touch-icon-precomposed" href="../images/logo.svg" sizes="152x152">
+            <meta name="msapplication-TileColor" content="#00bcd4">
+            <meta name="msapplication-TileImage" content="../images/logo.svg" sizes="144x144">
+
+            <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="../js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="../js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="../js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+
+    </head>
+
+    <body>
+
+        <div id="loader-wrapper">
+                <div id="loader"></div>                
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+        </div>
+
+        <header id="header" class="page-topbar">
+                    <div class="navbar-fixed">
+                            <nav class="cyan">
+                                    <div class="nav-wrapper">
+                                            <h1 class="logo-wrapper"><a href="../" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
+                                            <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                                                    <li class="search-out">
+                                                            <input type="text" class="search-out-text">
+                                                    </li>
+                                                    <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
+                                                            <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
+                                                                    <i class=" nav-action mdi-action-search"></i>
+                                                            </a>
+                                                    </li>
+                                                    <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
+                                                            <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
+                                                                    <i class="nav-action nav-action mdi-action-home"></i>
+                                                            </a>
+                                                    </li>
+                                                    <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
+                                                            <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                                                    <i class="nav-action mdi-communication-live-help"></i>
+                                                            </a>
+                                                    </li>
+                                                    <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
+                                                            <a href="" data-activates="chat-out" class="waves-effect waves-block waves-light chat-collapse">
+                                                                    <i class="nav-action nav-action mdi-navigation-menu"></i>
+                                                            </a>
+                                                    </li>
+                                            </ul>
+                                    </div>
+                            </nav>
+                    </div>
+        </header>
+
+        <div id="main">
+            <div class="wrapper">
+                <section id="content">
+                    <div class="container">
+                        <div class="section">
+                            <p class="caption">A Simple Blank Page to use it for your custome design and elements.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer class="page-footer">
+                <div class="footer-copyright">
+                    <div class="container">
+                        <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                        <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
+                        </div>
+                </div>
+        </footer>
+     
+        <script src="../js/config.js"></script>
+
+        <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>        
+        <script type="text/javascript" src="../js/materialize.js"></script>
+        <script type="text/javascript" src="../js/prism.js"></script>
+        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>     
+        <script type="text/javascript" src="../js/plugins.js"></script>
+        <script type="text/javascript" src="../js/clipboard.min.js"></script>
+        <script type="text/javascript" src="../js/init.js"></script>
+        <script type="text/javascript" src="../js/cloud.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.tooltipped').tooltip({delay: 50});
+            });
+            config.version();
+        </script>
+        
+    </body>
+
+</html>

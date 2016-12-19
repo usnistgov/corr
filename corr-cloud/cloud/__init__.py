@@ -1,33 +1,36 @@
-# import jinja2
 import flask as fk
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.core import setup_app
-import tarfile
-from StringIO import StringIO
+from corrdb.common.models import UserModel
+from corrdb.common.models import ProjectModel
+from corrdb.common.models import ApplicationModel
+from corrdb.common.models import TrafficModel
+from corrdb.common.models import StatModel  
+from corrdb.common.models import AccessModel
+from io import StringIO
 from io import BytesIO
 import zipfile
-import json
+import simplejson as json
 import time
-import boto3
-import traceback
+import traceback 
+import datetime
 
-app = setup_app(__name__)
+import requests
+from datetime import date, timedelta
+from functools import update_wrapper
+from calendar import monthrange
+import time
 
-s3 =  boto3.resource('s3')
+app, storage_manager, access_manager = setup_app(__name__)
 
-# Templates
-# loader = jinja2.PackageLoader('cloud', 'templates')
-# template_env = jinja2.Environment(autoescape=True, loader=loader)
-# template_env.globals.update(url_for=fk.url_for)
-# template_env.globals.update(get_flashed_messages=fk.get_flashed_messages)
-
-#Remove templates
-#include admin power everywhere here.
+CLOUD_VERSION = 0.1
+CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 # Stormpath
 
-from flask.ext.stormpath import StormpathManager
+# from flask.ext.stormpath import StormpathManager
 
-stormpath_manager = StormpathManager(app)
+# stormpath_manager = StormpathManager(app)
 
 from datetime import date, timedelta
 from functools import update_wrapper
@@ -84,193 +87,40 @@ class InMemoryZip(object):
         f.write(self.read())
         f.close()
 
+def cloud_response(code, title, content):
+    import flask as fk
+    response = {'code':code, 'title':title, 'content':content}
+    # print response
+    return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
-def crossdomain(origin=None, methods=None, headers=None,
-                max_age=21600, attach_to_all=True,
-                automatic_options=True):
-    if methods is not None:
-        methods = ', '.join(sorted(x.upper() for x in methods))
-    if headers is not None and not isinstance(headers, basestring):
-        headers = ', '.join(x.upper() for x in headers)
-    if not isinstance(origin, basestring):
-        origin = ', '.join(origin)
-    if isinstance(max_age, timedelta):
-        max_age = max_age.total_seconds()
 
-    def get_methods():
-        if methods is not None:
-            return methods
-
-        options_resp = app.make_default_options_response()
-        return options_resp.headers['allow']
-
-    def decorator(f):
-        def wrapped_function(*args, **kwargs):
-            if automatic_options and fk.request.method == 'OPTIONS':
-                resp = app.make_default_options_response()
-            else:
-                resp = fk.make_response(f(*args, **kwargs))
-            if not attach_to_all and fk.request.method != 'OPTIONS':
-                return resp
-
-            h = resp.headers
-
-            h['Access-Control-Allow-Origin'] = origin
-            h['Access-Control-Allow-Methods'] = get_methods()
-            h['Access-Control-Max-Age'] = str(max_age)
-            if headers is not None:
-                h['Access-Control-Allow-Headers'] = headers
-            return resp
-
-        f.provide_automatic_options = False
-        return update_wrapper(wrapped_function, f)
-    return decorator
-
-def load_bundle(record):
-    # Include record files later.
-    memory_file = BytesIO()
-    with zipfile.ZipFile(memory_file, 'w') as zf:
-
+def data_pop(data=None, element=''):
+    """Pop an element of a dictionary.
+    """
+    if data != None:
         try:
-            bundle_buffer = StringIO()
-            # with open(record.container.image['location'], 'rb') as fh:
-            #     image_buffer.write(fh.read())
-            # res = key.get_contents_to_filename(record.container.image['location'])   
-            # s3_client = boto3.client('s3')
-            # res = s3_client.get_object(Bucket='ddsm-bucket', Key=record.container.image['location']) 
-            obj = s3.Object(bucket_name='reproforge-bundles', key=record.environment.bundle['location'])  
-            res = obj.get()      
-            bundle_buffer.write(res['Body'].read())
-            bundle_buffer.seek(0)
-
-            data = zipfile.ZipInfo("%s"%(record.project.name, record.environment.bundle['location'].split('_')))
-            data.date_time = time.localtime(time.time())[:6]
-            data.compress_type = zipfile.ZIP_DEFLATED
-            data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-            zf.writestr(data, bundle_buffer.read())
+            del data[element]
         except:
-            print traceback.print_exc()
+            pass
 
-        try:
-            json_buffer = StringIO()
-            json_buffer.write(record.to_json())
-            json_buffer.seek(0)
+def merge_dicts(*dict_args):
+    """
+    Given any number of dicts, shallow copy and merge into a new dict,
+    precedence goes to key value pairs in latter dicts.
+    """
+    result = {}
+    for dictionary in dict_args:
+        result.update(dictionary)
+    return result
 
-            data = zipfile.ZipInfo("%s_%s.json"%(record.project.name, str(record.id)))
-            data.date_time = time.localtime(time.time())[:6]
-            data.compress_type = zipfile.ZIP_DEFLATED
-            data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-            zf.writestr(data, json_buffer.read())
-        except:
-            print traceback.print_exc()
-    memory_file.seek(0)
+VIEW_HOST = app.config['VIEW_SETTINGS']['host']
+VIEW_PORT = app.config['VIEW_SETTINGS']['port']
+VIEW_MODE = app.config['VIEW_SETTINGS']['mode']
 
+API_HOST = app.config['API_SETTINGS']['host']
+API_PORT = app.config['API_SETTINGS']['port']
+API_MODE = app.config['API_SETTINGS']['mode']
 
-    # imz.append('record.tar', image_buffer.read()).append("record.json", json_buffer.read())
-
-    # print record.container.image['location'].split("/")[-1].split(".")[0]+".zip"
-
-    return [memory_file, record.environment.bundle['location'].split("/")[-1].split(".")[0]+".zip"]
-
-def delete_project_files(project):
-    s3_files = s3.Bucket('reproforge-pictures')
-    s3_bundles = s3.Bucket('reproforge-bundles')
-
-    from corrdb.common.models import ProjectModel
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import EnvironmentModel
-    from corrdb.common.models import FileModel
-
-    for record in project.records:
-        for _file in record.files:
-            s3_files.delete_key(_file.location)
-
-    for environment_id in project.history:
-        _environment = EnvironmentModel.objects.with_id(environment_id)
-        if _environment.bundle["scope"] == "local":
-            s3_bundles.delete_key(_environment.bundle["location"])
-        del _environment
-
-def delete_record_files(record):
-    s3_files = s3.Bucket('reproforge-pictures')
-
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import FileModel
-
-    for record in project.records:
-        for _file in record.files:
-            s3_files.delete_key(_file.location)
-
-def delete_record_file(record_file):
-    s3_files = s3.Bucket('reproforge-pictures')
-
-    s3_files.delete_key(record_file.location)
-
-
-def load_file(file_model):
-
-    file_buffer = StringIO()
-    obj = s3.Object(bucket_name='reproforge-files', key=file_model.location)  
-    res = obj.get()      
-    file_buffer.write(res['Body'].read())
-    file_buffer.seek(0)
-
-    return [file_buffer, file_model.location.split('_')[1]]
-
-def load_picture(profile):
-
-    picture_buffer = StringIO()
-    obj = s3.Object(bucket_name='reproforge-pictures', key=profile.picture['location'])
-    res = obj.get()      
-    picture_buffer.write(res['Body'].read())
-    picture_buffer.seek(0)
-
-    return [picture_buffer, digest]
-
-def upload_bundle(current_user, environment, file_obj):
-    dest_filename = str(current_user.id)+"-"+str(environment.id)+"_%s"%file_obj.filename #kind is record| signature
-
-    print "About to write..."
-    try:
-        s3.Bucket('reproforge-bundles').put_object(Key=str(current_user.id)+"-"+str(environment.id)+"_%s"%file_obj.filename, Body=file_obj.read())
-        environment.bundle['location'] = dest_filename
-        environment.bundle['size'] = file_obj.tell()
-        print "%s saving..."%file_obj.filename
-        environment.save()
-        return True
-    except:
-        return False
-        print traceback.print_exc()
-
-def upload_file(current_user, file_model, file_obj):
-    dest_filename = str(current_user.id)+"-"+str(file_model.record.id)+"_%s"%file_obj.filename #kind is record| signature
-
-    print "About to write..."
-    try:
-        s3.Bucket('reproforge-files').put_object(Key=str(current_user.id)+"-"+str(record.id)+"_%s"%file_obj.filename, Body=file_obj.read())
-        file_model.location = dest_filename
-        file_model.size = file_obj.tell()
-        print "%s saving..."%file_obj.filename
-        file_model.save()
-        return True
-    except:
-        return False
-        print traceback.print_exc()
-
-def upload_picture(current_user, file_obj):
-    dest_filename = str(current_user.id) #kind is record| signature
-
-    print "About to write..."
-    try:
-        s3.Bucket('reproforge-pictures').put_object(Key=str(current_user.id)+"."+file_obj.filename.split('.')[-1], Body=file_obj.read())
-        print "%s saving..."%file_obj.filename
-        return True
-    except:
-        return False
-        print traceback.print_exc()
-
-CLOUD_VERSION = 1
-CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 from . import views
 from corrdb.common import models

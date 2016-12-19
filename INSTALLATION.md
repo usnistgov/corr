@@ -8,20 +8,61 @@ develop CoRR, then please use the instructions below.
 ## Native Development Installation
 
 To develop with CoRR it is best to be using an Ubuntu linux
-machine. First clone the CoRR repository and then run
+machine. First clone the CoRR repository and then edit
+`builds/hosts_example` and copy it to `builds/host.local`. Remember
+that the `stormpath_id`, `stormpath_secret` and `stormpath_app` values
+are required for the cloud service. To install use,
 
-    $ ./config.bash -K --tags install_develop
+    $ ./config.bash --ask-sudo-pass --tags install --inventory-file builds/hosts.local
 
 This will run an Ansible script that will install all the necessary
 prerequisites to run CoRR. `sudo` privileges are required. Edit
-[`builds/install.yaml`](builds/install.yaml) to change custom
-variables such as the version of the code to install and the
-repository URL. To launch the front end web app and the API use,
+`builds/hosts` to change custom variables such as the version of the
+code to install, the repository URL or the conda environment. To start
+development servers switch to the `corr` environment with,
 
-    $ ./config.bash -K --tags serve_develop
+    $ source activate corr
 
-This runs the mongodb, the flask development servers for corr-cloud
-and corr-api as well as jekyll for the frontend.
+and use
+
+    $  sudo service mongodb start
+
+to start the database and then
+
+    $ cd corr-api
+    $ python run.py
+
+to start the API and then in another terminal use,
+
+    $ cd ../corr-cloud
+    $ python run.py
+
+to start the cloud service. To run the front end, open another
+terminal and use
+
+    $ cd ../corr-view/frontend
+    $ jekyll serve --watch --port 5000 --host 0.0.0.0
+
+Go to [http://0.0.0.0:5000/](http://0.0.0.0:5000/) to see the front
+end.
+
+## Deploy CoRR on AWS
+
+To deploy on AWS, create a `builds/hosts.aws` file with the
+appropriate config variables. Use,
+
+    $ ./config.bash --tags install --inventory-file builds/hosts.aws
+
+to install and
+
+    $ ./config.bash --tags serve --inventory-file builds/hosts.aws
+
+to serve. To install or serve the `api`, `db`, `cloud` or `frontend`
+separately, use
+
+    $ ./config.bash --tags serve --inventory-file builds/hosts.aws --limit db
+
+for example.
 
 ## Test Installation with Docker
 

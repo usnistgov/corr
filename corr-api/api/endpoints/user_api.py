@@ -1,9 +1,11 @@
+"""CoRR user api endpoints."""
 import json
 
 from flask.ext.api import status
 import flask as fk
 
-from api import app, API_URL, crossdomain, check_api, check_app, api_response, s3_delete_file, s3_get_file, web_get_file, s3_upload_file, data_pop, merge_dicts, logStat, logTraffic, logAccess, prepare_env, prepare_record, prepare_project
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -22,22 +24,28 @@ from corrdb.common.models import BundleModel
 from corrdb.common.models import VersionModel
 
 import mimetypes
-import json
+import simplejson as json
 import traceback
 import datetime
 import random
 import string
 import os
-import thread
+import _thread
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def user_search(api_token, app_token, key_words):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/search/<key_words>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Allows user to search for key words in the platform.
+        Returns:
+            A list of results.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/search/<key_words>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
+        logAccess(API_URL,'api', '/private/<api_token>/<app_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -379,122 +387,96 @@ def user_search(api_token, app_token, key_words):
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-#User info
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_status(api_token, app_token):
-    logTraffic(endpoint='<api_token>/<app_token>/user/status')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Allows user to check the user has to proper right to access the backend's api.
+        Returns:
+            A string of authorization access.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/status')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
-        	return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
+        if current_app ==None and app_token != "no-app":
+            return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '<api_token>/<app_token>/user/status')
+            logAccess(API_URL,'api', '/private/<api_token><app_token>/user/status')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s credentials are authorized'%str(current_user.id), current_user.info())
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/connectivity', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def user_app_connectivity(api_token, app_token):
-    logTraffic(endpoint='<api_token>/<app_token>/connectivity')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Allows user to check if its application has connectivity to the backend's api.
+        Returns:
+            A string of accessibility status.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/connectivity')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/<app_token>/connectivity')
+            logAccess(API_URL, 'api', '/private/<app_token>/connectivity')
             if fk.request.method == 'GET':
                 name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
                 return api_response(200, 'Application %s is accessible'%name, current_app.info())
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
-# @app.route(API_URL + '/private/<api_token>/<app_token>/user/search/<user_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# def user_search(api_token, app_token, user_name):
-#     logTraffic(endpoint='<api_token>/<app_token>/user/search/<user_name>')
-#     current_user = check_api(api_token)
-#     current_app = check_app(app_token)
-#     if current_user ==None:
-#         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
-#     else:
-#         if current_app ==None:
-#             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
-#         else:
-#             logAccess(current_app,'api', '<api_token>/<app_token>/user/search/<user_name>')
-#             if fk.request.method == 'GET':
-#                 names = user_name.split('-')
-#                 users = []
-#                 for user in UserModel.objects():
-#                     exists = [False for name in names]
-#                     condition = [True for name in names]
-#                     profile = ProfileModel.objects(user=user).first()
-#                     index = 0
-#                     for name in names:
-#                         if name != '':
-#                             if profile != None:
-#                                 if name in profile.fname or name in profile.lname:
-#                                     exists[index] = True
-#                         else:
-#                             exists[index] = True
-#                         index += 1
-#                     if exists == condition:
-#                         users.append(user)
-
-#                 # for name in names:
-#                 #     users_1 = ProfileModel.objects(fname__icontains=name)
-#                 #     for pf in users_1:
-#                 #         if pf.user not in users:
-#                 #             users.append(pf.user)
-#                 #     users_2 = ProfileModel.objects(lname__icontains=name)
-#                 #     for pf in users_2:
-#                 #         if pf.user not in users:
-#                 #             users.append(pf.user)
-#                 users_dict = {'total_users':len(users), 'users':[user.info() for user in users]}
-#                 return api_response(200, 'Search results for user with name containing: %s'%user_name.split('-'), users_dict)
-#             else:
-#                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
-
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_picture(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/user/picture')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Allows user to get his profile picture.
+        Returns:
+            the picture file buffer.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/picture')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/user/picture')
             if fk.request.method == 'GET':
                 profile = ProfileModel.objects(user=current_user).first()
                 if profile == None:
-                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                     if picture_buffer == None:
                         return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
                     picture = profile.picture
-                    if picture.location == 'local' and 'http://' not in picture.storage:
-                        picture_buffer = s3_get_file('picture', picture.storage)
+                    if picture == None:
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                        if picture_buffer == None:
+                            return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
+                        else:
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                    elif picture.location == 'local' and 'http://' not in picture.storage:
+                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     elif picture.location == 'remote':
-                        picture_buffer = web_get_file(picture.storage)
+                        picture_buffer = storage_manager.web_get_file(picture.storage)
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                             if picture_buffer == None:
                                 return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                             else:
@@ -504,11 +486,11 @@ def user_picture(api_token, app_token):
                         if 'http://' in picture.storage:
                             picture.location = 'remote'
                             picture.save()
-                            picture_buffer = web_get_file(picture.storage)
+                            picture_buffer = storage_manager.web_get_file(picture.storage)
                             if picture_buffer != None:
                                 return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                             else:
-                                picture_buffer = s3_get_file('picture', 'default-picture.png')
+                                picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                                 if picture_buffer == None:
                                     return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                                 else:
@@ -516,7 +498,7 @@ def user_picture(api_token, app_token):
                         else:
                             picture.location = 'local'
                             picture.save()
-                            picture_buffer = s3_get_file('picture', picture.storage)
+                            picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                             if picture_buffer == None:
                                 return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                             else:
@@ -525,18 +507,22 @@ def user_picture(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_home(api_token, app_token):
-    logTraffic(endpoint='<api_token>/<app_token>/user/home')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve the content to show the user home page.
+        Returns:
+            The user home content.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/home')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '<api_token>/<app_token>/user/home')
+            logAccess(API_URL,'api', '/private/<api_token><app_token>/user/home')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s Home'%str(current_user.id), current_user.home())
             else:
@@ -544,18 +530,22 @@ def user_home(api_token, app_token):
 
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/profile/show', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_user_profile_show(api_token, app_token):
-    logTraffic(endpoint='<api_token>/<app_token>/profile/show')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve the user profile.
+        Returns:
+            The user profile content.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/profile/show')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '<api_token>/<app_token>/profile/show')
+            logAccess(API_URL,'api', '/private/<api_token><app_token>/profile/show')
             if fk.request.method == 'GET':
                 profile = ProfileModel.objects(user=current_user).first()
                 if profile == None:
@@ -570,18 +560,22 @@ def user_user_profile_show(api_token, app_token):
 
 #Messages
 @app.route(API_URL + '/private/<api_token>/<app_token>/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_messages(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/messages')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Allows user to retrive his messages.
+        Returns:
+            The list of messages.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/messages')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/messages')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/messages')
             if fk.request.method == 'GET':
                 messages = []
                 messages.extend(MessageModel.objects(sender=current_user))
@@ -594,18 +588,22 @@ def user_messages(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/message/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_message_create(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/message/create')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Message creation endpoint.
+        Returns:
+            The created message information.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/create')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -635,18 +633,22 @@ def user_message_create(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_message_show(api_token, app_token, message_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/message/show/<message_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Show a message.
+        Returns:
+            Message full content.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/show/<message_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'GET':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -660,18 +662,22 @@ def user_message_show(api_token, app_token, message_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/message/delete/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_message_delete(api_token, app_token, message_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/message/delete/<message_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Message deletion endpoint.
+        Returns:
+            Deletion confirmation.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/delete/<message_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'GET':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -688,18 +694,22 @@ def user_message_delete(api_token, app_token, message_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/message/update/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_message_update(api_token, app_token, message_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/message/update/<message_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Message update endpoint.
+        Returns:
+            New message info.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/update/<message_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'POST':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -743,18 +753,22 @@ def user_message_update(api_token, app_token, message_id):
 
 # Files
 @app.route(API_URL + '/private/<api_token>/<app_token>/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_files(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/files')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve the user files.
+        Returns:
+            List of user files.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/files')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/files')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/files')
             if fk.request.method == 'GET':
                 files = []
                 for _file in FileModel.objects():
@@ -770,20 +784,24 @@ def user_files(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_upload(api_token, app_token, group, item_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Upload a new file to an object.
+        Returns:
+            Return the info about the file.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
             if fk.request.method == 'POST':
-                if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
+                if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "resource-project", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                     return api_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
                 else:
                     if fk.request.files:
@@ -910,6 +928,12 @@ def user_file_upload(api_token, app_token, group, item_id):
                                     if current_user != owner:
                                         return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
                                     description = '%s is a resource file for the app %s'%(file_obj.filename, str(item.id))
+                                elif 'project' in group:
+                                    item = ProjectModel.objects.with_id(item_id)
+                                    owner = item.owner
+                                    if current_user != owner:
+                                        return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
+                                    description = '%s is a resource file for the project %s'%(file_obj.filename, str(item.id))
                                 group_ = group.split('-')[0]
 
                             if item == None:
@@ -926,7 +950,7 @@ def user_file_upload(api_token, app_token, group, item_id):
                                 _file.mimetype = mimetype
                                 _file.group = group_
                                 _file.save()
-                                uploaded = s3_upload_file(_file, file_obj)
+                                uploaded = storage_manager.storage_upload_file(_file, file_obj)
                                 if not uploaded[0]:
                                     _file.delete()
                                     return api_response(500, 'An error occured', "%s"%uploaded[1])
@@ -944,7 +968,7 @@ def user_file_upload(api_token, app_token, group, item_id):
                                     elif group == 'bundle':
                                         _file.delete()
                                         if item.location != storage:
-                                            s3_delete_file('bundle',item.location)
+                                            storage_manager.storage_delete_file('bundle',item.location)
                                         item.encoding = encoding
                                         item.size = size
                                         item.scope = 'local'
@@ -955,12 +979,12 @@ def user_file_upload(api_token, app_token, group, item_id):
                                         item.attachments.append(str(_file.id))
                                     elif group == 'picture':
                                         if item.picture.location != storage:
-                                            s3_delete_file('picture',item.picture.storage)
+                                            storage_manager.storage_delete_file('picture',item.picture.storage)
                                         if item != None:
                                             item.picture = _file
                                     elif 'logo' in group:
                                         if item.logo.location != storage:
-                                            s3_delete_file('logo',item.logo.storage)
+                                            storage_manager.storage_delete_file('logo',item.logo.storage)
                                         if item != None:
                                             item.logo = _file
                                     elif 'resource' in group:
@@ -975,18 +999,22 @@ def user_file_upload(api_token, app_token, group, item_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_download(api_token, app_token, file_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/download/<file_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Download a file.
+        Returns:
+            The file buffer.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/download/<file_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
             if fk.request.method == 'GET':
                 # print [f.extended() for f in FileModel.objects()]
                 file_meta = FileModel.objects.with_id(file_id)
@@ -994,16 +1022,16 @@ def user_file_download(api_token, app_token, file_id):
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
                 else:
                     info = file_meta.info()
-                    print info
-                    print str(current_user.id)
+                    print(info)
+                    print(str(current_user.id))
                     if info['owner'] != 'public' and info['owner'] != str(current_user.id):
                         return api_response(401, 'Unauthorized access', 'This file is private and you are not the owner.')
                     else:
                         file_obj = None
                         if file_meta.location == 'remote':
-                            file_obj = web_get_file(file_meta.storage)
+                            file_obj = storage_manager.web_get_file(file_meta.storage)
                         elif file_meta.location == 'local':
-                            file_obj = s3_get_file(file_meta.group, file_meta.storage)
+                            file_obj = storage_manager.storage_get_file(file_meta.group, file_meta.storage)
 
                         if file_obj == None:
                             return api_response(404, 'Request suggested an empty response', 'No content found for this file.')
@@ -1041,18 +1069,22 @@ def user_file_download(api_token, app_token, file_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_create(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/create')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Create a new file object.
+        Returns:
+            The info about the file.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/create')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -1071,10 +1103,10 @@ def user_file_create(api_token, app_token):
                     else:
                         
                         if 'http://' in storage or 'https://' in storage:
-                            file_buffer = web_get_file(storage)
+                            file_buffer = storage_manager.web_get_file(storage)
                             location = 'remote'
                         else:
-                            file_buffer = s3_get_file(group, storage)
+                            file_buffer = storage_manager.storage_get_file(group, storage)
                             location = 'local'
                         if file_buffer != None:
                             old_file_position = file_buffer.tell()
@@ -1098,18 +1130,22 @@ def user_file_create(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_show(api_token, app_token, file_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/show/<file_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Show a file info.
+        Returns:
+            Info of the file.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/show/<file_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
             if fk.request.method == 'GET':
                 # print [f.extended() for f in FileModel.objects()]
                 _file = FileModel.objects.with_id(file_id)
@@ -1125,18 +1161,22 @@ def user_file_show(api_token, app_token, file_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_delete(api_token, app_token, item_id, file_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """File deletion endpoint.
+        Returns:
+            Deletion confirmation.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
             if fk.request.method == 'GET':
                 _file = FileModel.objects.with_id(file_id)
                 if _file == None:
@@ -1153,7 +1193,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.delete()
                                 item.inputs.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                     elif _file.group == 'output':
@@ -1166,7 +1206,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.delete()
                                 item.outputs.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                     elif _file.group == 'dependencie':
@@ -1179,7 +1219,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.delete()
                                 item.dependencies.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                     elif _file.group == 'diff':
@@ -1193,7 +1233,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.delete()
                                 item.resources.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                     elif _file.group == 'attach':
@@ -1207,7 +1247,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.delete()
                                 item.attachments.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                         else:
@@ -1220,7 +1260,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                     _file.delete()
                                     item.attachments.remove(file_id)
                                     if _file.location == 'local':
-                                        s3_delete_file(_file.group, _file.storage)
+                                        storage_manager.storage_delete_file(_file.group, _file.storage)
                                 except ValueError:
                                     pass
                     elif _file.group == 'picture':
@@ -1230,7 +1270,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                             if current_user != owner:
                                 return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
                             _file.storage = 'default-picture.png'
-                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                             _file.name = 'default-picture.png'
                             _file.location = 'local'
                             _file.group = 'picture'
@@ -1244,7 +1284,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.size = 0
                             _file.save()
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
 
                     elif _file.group == 'logo':
                         item = ApplicationModel.objects.with_id(item_id)
@@ -1253,7 +1293,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                             if current_user != owner:
                                 return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
                             _file.storage = 'default-logo.png'
-                            logo_buffer = s3_get_file('logo', 'default-logo.png')
+                            logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                             _file.name = 'default-logo.png'
                             _file.location = 'local'
                             _file.group = 'logo'
@@ -1267,7 +1307,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 _file.size = 0
                             _file.save()
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         else:
                             item = ProjectModel.objects.with_id(item_id)
                             if item != None:
@@ -1275,7 +1315,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 if current_user != owner:
                                     return api_response(401, 'Unauthorized access', 'You are not an owner of this item.')
                                 _file.storage = 'default-project.png'
-                                logo_buffer = s3_get_file('logo', 'default-project.png')
+                                logo_buffer = storage_manager.storage_get_file('logo', 'default-project.png')
                                 _file.name = 'default-project.png'
                                 _file.location = 'local'
                                 _file.group = 'logo'
@@ -1289,7 +1329,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                     _file.size = 0
                                 _file.save()
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
 
                     elif _file.group == 'resource':
                         item = RecordModel.objects.with_id(item_id)
@@ -1301,7 +1341,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                 item.resources.remove(file_id)
                                 _file.delete()
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                         else:
@@ -1321,7 +1361,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                     item.resources.remove(file_id)
                                     _file.delete()
                                     if _file.location == 'local':
-                                        s3_delete_file(_file.group, _file.storage)
+                                        storage_manager.storage_delete_file(_file.group, _file.storage)
                                 except ValueError:
                                     pass
                             else:
@@ -1334,7 +1374,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                         item.resources.remove(file_id)
                                         _file.delete()
                                         if _file.location == 'local':
-                                            s3_delete_file(_file.group, _file.storage)
+                                            storage_manager.storage_delete_file(_file.group, _file.storage)
                                     except ValueError:
                                         pass
                                 else:
@@ -1347,13 +1387,13 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                                             item.resources.remove(file_id)
                                             _file.delete()
                                             if _file.location == 'local':
-                                                s3_delete_file(_file.group, _file.storage)
+                                                storage_manager.storage_delete_file(_file.group, _file.storage)
                                         except ValueError:
                                             pass
                     if item == None:
                         if item_id in _file.storage or item_id in _file.name:
                             _file.delete()
-                            s3_delete_file(_file.group, _file.storage)
+                            storage_manager.storage_delete_file(_file.group, _file.storage)
                             logStat(deleted=True, file_obj=_file)
                             return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
                         else:
@@ -1366,18 +1406,22 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/file/update/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_file_update(api_token, app_token, file_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/file/update/<file_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """FIle info update.
+        Returns:
+            New file info.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/update/<file_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/file/update/<file_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/update/<file_id>')
             if fk.request.method == 'POST':
                 _file = FileModel.objects.with_id(file_id)
                 if _file == None:
@@ -1423,18 +1467,22 @@ def user_file_update(api_token, app_token, file_id):
 # +++++
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_projects(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/projects')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve the user projects.
+        Returns:
+            Projects list.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/projects')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/projects')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects_dict = {'total_projects':len(projects), 'projects':[]}
@@ -1445,18 +1493,22 @@ def user_projects(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_projects_clear(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/projects/clear')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Delete all the user projects.
+        Returns:
+            Deletion confirmation.
+    """
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/projects/clear')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/projects/clear')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/projects/clear')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects.delete()
@@ -1465,18 +1517,23 @@ def user_projects_clear(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_envs_clear(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/envs/clear')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Delete all the user environments.
+        Returns:
+            Deletion confirmation.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/envs/clear')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/envs/clear')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/envs/clear')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 for project in projects:
@@ -1490,18 +1547,23 @@ def user_envs_clear(api_token, app_token):
 
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_comments(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/comments/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrive user prject comments.
+        Returns:
+            List of comments.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/comments/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/comments/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/comments/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1522,18 +1584,23 @@ def user_project_comments(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_create(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/create')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
-    if current_user ==None:
+    """Project creation endpoint
+        Returns:
+            project info
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/create')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
+    if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app == None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -1550,7 +1617,7 @@ def user_project_create(api_token, app_token):
                     logo_storage = 'default-project.png'
                     logo_encoding = ''
                     logo_mimetype = mimetypes.guess_type(logo_storage)[0]
-                    logo_buffer = s3_get_file('logo', logo_storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     if logo_buffer != None:
                         old_file_position = logo_buffer.tell()
                         logo_buffer.seek(0, os.SEEK_END)
@@ -1572,10 +1639,11 @@ def user_project_create(api_token, app_token):
                             cloned_from = str(clone.id)
                     if (cloned_from == '' and cloned_from_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A project should have an existing original record when provided original record.')
-                    project, created = ProjectModel.objects.get_or_create(owner=current_user, name=name)
-                    if not created:
+                    project = ProjectModel.objects(owner=current_user, name=name).first()
+                    if project:
                         return api_response(200, 'Project already exists', project.info())
                     else:
+                        project, created = ProjectModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
                         # project.application = current_app
                         project.description = description
                         project.goals = goals
@@ -1587,6 +1655,11 @@ def user_project_create(api_token, app_token):
                         project.logo = logo
                         project.save()
                         logStat(project=project)
+                        current_app.projects = current_app.projects + 1
+                        current_app.save()
+                        if str(current_user.id) not in current_app.users:
+                            current_app.users.append(str(current_user.id))
+                            current_app.save()
                         return api_response(201, 'Project created', project.info())
                 else:
                     return api_response(204, 'Nothing created', 'You must provide the file information.')
@@ -1594,18 +1667,23 @@ def user_project_create(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_records(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/records/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Fetch project records.
+        Returns:
+            A list of records.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/records/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1624,18 +1702,23 @@ def user_project_records(api_token, app_token, project_id):
 
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_show(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/show/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve project content.
+        Returns:
+            The project's info.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/show/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/show/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/show/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1649,18 +1732,23 @@ def user_project_show(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_logo(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/logo/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """get a project's logo
+        Returns:
+            buffer of the log file.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/logo/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/logo/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/logo/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None:
@@ -1669,17 +1757,17 @@ def user_project_logo(api_token, app_token, project_id):
                     else:
                         logo = project.logo
                         if logo.location == 'local' and 'http://' not in logo.storage:
-                            logo_buffer = s3_get_file('logo', logo.storage)
+                            logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                             else:
                                 return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                         elif logo.location == 'remote':
-                            logo_buffer = web_get_file(logo.storage)
+                            logo_buffer = storage_manager.web_get_file(logo.storage)
                             if logo_buffer != None:
                                 return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                             else:
-                                logo_buffer = s3_get_file('logo', 'default-logo.png')
+                                logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                                 if logo_buffer == None:
                                     return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                                 else:
@@ -1689,11 +1777,11 @@ def user_project_logo(api_token, app_token, project_id):
                             if 'http://' in logo.storage:
                                 logo.location = 'remote'
                                 logo.save()
-                                logo_buffer = web_get_file(logo.storage)
+                                logo_buffer = storage_manager.web_get_file(logo.storage)
                                 if logo_buffer != None:
                                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                                 else:
-                                    logo_buffer = s3_get_file('logo', 'default-logo.png')
+                                    logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                                     if logo_buffer == None:
                                         return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                                     else:
@@ -1701,7 +1789,7 @@ def user_project_logo(api_token, app_token, project_id):
                             else:
                                 logo.location = 'local'
                                 logo.save()
-                                logo_buffer = s3_get_file('logo', logo.storage)
+                                logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                                 if logo_buffer == None:
                                     return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                                 else:
@@ -1712,18 +1800,23 @@ def user_project_logo(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/delete/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_delete(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/delete/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Delete a project.
+        Returns:
+            Deletion confirmation.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/delete/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/delete/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/delete/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1740,18 +1833,23 @@ def user_project_delete(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/update/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_update(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/update/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Update a project.
+        Returns:
+            Project's new content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/update/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
             if fk.request.method == 'POST':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1764,7 +1862,7 @@ def user_project_update(api_token, app_token, project_id):
                             data = json.loads(fk.request.data)
                             # application_id = data.get('application', None)
                             owner_id = data.get('owner', None)
-                            name = data.get('name', project.name)
+                            # name = data.get('name', project.name)
                             description = data.get('description', project.description)
                             goals = data.get('goals', project.goals)
                             tags = data.get('tags', [])
@@ -1800,10 +1898,11 @@ def user_project_update(api_token, app_token, project_id):
 
                             # project.application = application
                             project.owner = owner
-                            project.name = name
+                            # project.name = name
                             project.description = description
                             project.goals = goals
                             project.tags.extend(tags)
+                            project.tags = list(set(project.tags))
                             project.access = access
                             project.history.extend(history)
                             project.cloned_from = cloned_from
@@ -1817,18 +1916,23 @@ def user_project_update(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_download(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/download/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Download a project.
+        Returns:
+            A zip buffer of the project's content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/download/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/download/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/download/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1837,7 +1941,7 @@ def user_project_download(api_token, app_token, project_id):
                     if project.access == 'private' and project.owner != current_user:
                         return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                     else:
-                        prepared = prepare_project(project)
+                        prepared = storage_manager.prepare_project(project)
                         if prepared[0] == None:
                             return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                         else:
@@ -1847,18 +1951,23 @@ def user_project_download(api_token, app_token, project_id):
 
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_envs(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/envs/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Get the project's environments.
+        Returns:
+            List of project environments.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/envs/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/envs/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/envs/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1878,18 +1987,23 @@ def user_project_envs(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_envs_head(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/envs/head')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Project's latest environment.
+        Returns:
+            The environment content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/envs/head')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/envs/head/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/envs/head/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1906,18 +2020,23 @@ def user_project_envs_head(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_env_show(api_token, app_token, project_id, env_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Show a project environment content.
+        Returns:
+            The environment content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1938,18 +2057,23 @@ def user_project_env_show(api_token, app_token, project_id, env_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_env_push(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/next/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Upload a new head environment.
+        Returns:
+            The environment's information.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/next/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -1967,7 +2091,10 @@ def user_project_env_push(api_token, app_token, project_id):
                         if project.owner != current_user:
                             return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                         else:
-                            env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
+                            if app_token == "no-app":
+                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                            else:
+                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
                             if not created:
                                 return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                             else:
@@ -1984,11 +2111,10 @@ def user_project_env_push(api_token, app_token, project_id):
                                     location = bundle_dict.get('location', '')
                                     if 'http://' in location or 'https://' in location: #only allow web hosted third party content links to be updated here.
                                         bundle.location = location
-                                        bundle.save()
                                         def handle_file_resolution(_bundle):
                                             # print _bundle
                                             bundle = BundleModel.objects.with_id(_bundle)
-                                            bundle_buffer = web_get_file(location)
+                                            bundle_buffer = storage_manager.web_get_file(location)
                                             bundle.mimetype = mimetypes.guess_type(location)[0]
                                             old_file_position = bundle_buffer.tell()
                                             bundle_buffer.seek(0, os.SEEK_END)
@@ -1996,6 +2122,7 @@ def user_project_env_push(api_token, app_token, project_id):
                                             bundle_buffer.seek(old_file_position, os.SEEK_SET)
                                             bundle.save()
                                         thread.start_new_thread(handle_file_resolution, (str(bundle.id),))
+                                    bundle.save()
                                     env.bundle = bundle
                                 env.save()
                                 project.history.append(str(env.id))
@@ -2007,18 +2134,23 @@ def user_project_env_push(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_env_update(api_token, app_token, project_id, env_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Update an environment.
+        Returns:
+            The environment info.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -2057,7 +2189,7 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
                                             def handle_file_resolution(_bundle):
                                                 # print _bundle
                                                 bundle = BundleModel.objects.with_id(_bundle)
-                                                bundle_buffer = web_get_file(location)
+                                                bundle_buffer = storage_manager.web_get_file(location)
                                                 bundle.mimetype = mimetypes.guess_type(location)[0]
                                                 old_file_position = bundle_buffer.tell()
                                                 bundle_buffer.seek(0, os.SEEK_END)
@@ -2076,18 +2208,23 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_project_env_download(api_token, app_token, project_id, env_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Download a project's environment.
+        Returns:
+            Zip file buffer of the environment content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2103,7 +2240,7 @@ def user_project_env_download(api_token, app_token, project_id, env_id):
                             if env == None:
                                 return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
                             else:
-                                prepared = prepare_env(project, env)
+                                prepared = storage_manager.prepare_env(project, env)
                                 if prepared[0] == None:
                                     return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                                 else:
@@ -2112,18 +2249,23 @@ def user_project_env_download(api_token, app_token, project_id, env_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/records/list/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_records_list(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/project/records/list/<project_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve a project records list.
+        Returns:
+            List of records.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/records/list/<project_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/list/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/list/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and (project.access == 'private' and project.owner != current_user):
@@ -2138,18 +2280,23 @@ def user_records_list(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/records/clear/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_records_clear(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/records/clear')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Clear project records.
+        Returns:
+            Remove all records in a project.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/records/clear')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/records/clear/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/clear/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and project.owner != current_user:
@@ -2162,18 +2309,23 @@ def user_records_clear(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/project/record/create/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_record_create(api_token, app_token, project_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/record/create')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Create a record.
+        Returns:
+            The record info.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/create')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
             if fk.request.method == 'POST':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and project.owner != current_user:
@@ -2187,6 +2339,7 @@ def user_record_create(api_token, app_token, project_id):
                         data_pop(data, 'label')
                         tags = data.get('tags', [])
                         data_pop(data, 'tags')
+                        execution = data.get('execution', {})
                         system = data.get('system', {})
                         data_pop(data, 'system')
                         inputs = data.get('inputs', [])
@@ -2233,13 +2386,18 @@ def user_record_create(api_token, app_token, project_id):
                         #             resources.append(res)
                         # print resources
                         if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
                         else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
                         
                         if len(data) != 0:
                             body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
                         logStat(record=record)
+                        current_app.records = current_app.records + 1
+                        current_app.save()
+                        if str(current_user.id) not in current_app.users:
+                            current_app.users.append(str(current_user.id))
+                            current_app.save()
                         return api_response(201, 'Record created', record.info())
                     else:
                         return api_response(204, 'Nothing created', 'You must provide the file information.')
@@ -2247,18 +2405,23 @@ def user_record_create(api_token, app_token, project_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_record_show(api_token, app_token, record_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/record/show/<record_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Show a record content.
+        Returns:
+            The record content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/show/<record_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/show/<record_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/show/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2272,18 +2435,23 @@ def user_record_show(api_token, app_token, record_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/record/delete/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_record_delete(api_token, app_token, record_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/record/delete/<record_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Delete a record.
+        Returns:
+            Deletion confirmation.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/delete/<record_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/delete/<record_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/delete/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2300,18 +2468,23 @@ def user_record_delete(api_token, app_token, record_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/record/update/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_record_update(api_token, app_token, record_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/record/update/<record_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Record update endpoint.
+        Returns:
+            New record content info.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/update/<record_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
             if fk.request.method == 'POST':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2399,11 +2572,25 @@ def user_record_update(api_token, app_token, record_id):
                             record.label = label
                             record.system = system
                             record.status = status
-                            record.tags.extend(tags)
+                            # print record.tags
+                            for tag in tags:
+                                if str(tag) not in str(record.tags):
+                                    record.tags.append(tag)
+                            # record.tags.extend(tags)
+                            # print record.tags
                             record.access = access
-                            record.inputs.extend(inputs)
-                            record.outputs.extend(outputs)
-                            record.dependencies.extend(dependencies)
+                            # record.inputs.extend(inputs)
+                            for inp in inputs:
+                                if str(inp) not in str(record.inputs):
+                                    record.inputs.append(inp)
+                            # record.outputs.extend(outputs)
+                            for out in outputs:
+                                if str(out) not in str(record.outputs):
+                                    record.outputs.append(out)
+                            # record.dependencies.extend(dependencies)
+                            for dep in dependencies:
+                                if str(dep) not in str(record.dependencies):
+                                    record.dependencies.append(dep)
                             record.rationels.extend(rationels)
                             record.cloned_from = cloned_from
                             record.environment = environment
@@ -2424,18 +2611,23 @@ def user_record_update(api_token, app_token, record_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/record/download/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_record_download(api_token, app_token, record_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/record/download/<record_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Download a record.
+        Returns:
+            Zip buffer of a record content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/download/<record_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/record/download/<record_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/download/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2444,7 +2636,7 @@ def user_record_download(api_token, app_token, record_id):
                     if record.project.access == 'private' and record.project.owner != current_user and record.access == 'private':
                         return api_response(401, 'Unauthorized access', 'You are this record\'s project owner.')
                     else:
-                        prepared = prepare_record(record)
+                        prepared = storage_manager.prepare_record(record)
                         if prepared[0] == None:
                             return api_response(404, 'Request suggested an empty response', 'Unable to retrieve a record to download.')
                         else:
@@ -2453,18 +2645,23 @@ def user_record_download(api_token, app_token, record_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_diffs(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/diffs')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve all user diffs.
+        Returns:
+            List of diffs.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diffs')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/diffs')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diffs')
             if fk.request.method == 'GET':
                 diffs = DiffModel.objects()
                 diffs_dict = {'total_diffs':0, 'diffs':[]}
@@ -2480,18 +2677,23 @@ def user_diffs(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_diff_create(api_token, app_token):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/diff/create')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Create a diff.
+        Returns:
+            The content of the created diff.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/create')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -2528,18 +2730,23 @@ def user_diff_create(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_diff_show(api_token, app_token, diff_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/diff/show/<diff_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Retrieve a diff content.
+        Returns:
+            The content of the diff.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/show/<diff_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/show/<diff_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/show/<diff_id>')
             if fk.request.method == 'GET':
                 diff = DiffModel.objects.with_id(diff_id)
                 if diff == None:
@@ -2553,18 +2760,23 @@ def user_diff_show(api_token, app_token, diff_id):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/diff/delete/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_diff_delete(api_token, app_token, diff_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/diff/delete/<diff_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Delete a diff
+        Returns:
+            The deletion confirmation.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/delete/<diff_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/delete/<diff_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/delete/<diff_id>')
             if fk.request.method == 'GET':
                 diff = DiffModel.objects.with_id(diff_id)
                 if diff == None:
@@ -2583,18 +2795,23 @@ def user_diff_delete(api_token, app_token, diff_id):
 
 #++++
 @app.route(API_URL + '/private/<api_token>/<app_token>/diff/update/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_diff_update(api_token, app_token, diff_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/diff/update/<diff_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Update the diff.
+        Returns:
+            New diff content.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/update/<diff_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
         if fk.request.method == 'POST':
             diff = DiffModel.objects.with_id(diff_id)
             if diff == None:
@@ -2655,18 +2872,23 @@ def user_diff_update(api_token, app_token, diff_id):
 # Can be used with a command line tool to enhance a very good way of using an API.
 
 @app.route(API_URL + '/private/<api_token>/<app_token>/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def user_resolve_item(api_token, app_token, item_id):
-    logTraffic(endpoint='/private/<api_token>/<app_token>/resolve/<item_id>')
-    current_user = check_api(api_token)
-    current_app = check_app(app_token)
+    """Resolve an item.
+        Returns:
+            The resolution results.
+    """
+
+    logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/resolve/<item_id>')
+    current_user = access_manager.check_api(api_token)
+    current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        if current_app ==None:
+        if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(current_app,'api', '/private/<api_token>/<app_token>/resolve/<item_id>')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/resolve/<item_id>')
             if fk.request.method == 'GET':
                 resolution = {'type':'', 'endpoints':[]}
                 if item_id == 'root':

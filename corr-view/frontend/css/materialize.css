@@ -2370,7 +2370,7 @@ span.badge {
     right: 15px;
     content: " new"; }
 
-  span.badge.inputs:after {
+  /*span.badge.inputs:after {
     content: " input"; }
 
   span.badge.outputs:after {
@@ -2386,7 +2386,7 @@ span.badge {
     content: " diff"; }
 
   span.badge.containers:after {
-    content: " container"; }
+    content: " container"; }*/
 
 .video-container {
   position: relative;

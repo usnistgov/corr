@@ -4,15 +4,15 @@ import os
 import nose
 from nose.tools import nottest
 import corrdb.common
-import corrdb.tests
+import corrdb.test
 
 @nottest
-def test():
+def test_all():
     r"""
     Run all the doctests available.
     """
     path = os.path.split(__file__)[0]
-    print "Path: "+path
+    print("Path: %s"%path)
     nose.main(argv=['-w', path, '--with-doctest'])
 
 

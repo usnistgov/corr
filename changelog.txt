@@ -1,0 +1,115 @@
+Change Log for the CoRR Project
+
+
+
+* 2016-09-26T14:06:53-04:00 c9ff1b3ff688 Yannick Congo Implemented application creation and reduced error pages into a single ajax page.
+| 
+| 35	0	Dockerfile
+| 12	2	corr-api/api/endpoints/user_api.py
+| 373	201	corr-cloud/cloud/views/dashboard_cloud.py
+| 31	45	corr-cloud/cloud/views/diff_cloud.py
+| 53	113	corr-cloud/cloud/views/project_cloud.py
+| 56	74	corr-cloud/cloud/views/record_cloud.py
+| 80	135	corr-cloud/cloud/views/user_cloud.py
+| 1	0	corr-db/corrdb/common/managers/access_manager.py
+| 7	3	corr-db/corrdb/common/models/application_model.py
+| 16	8	corr-view/frontend/dashboard/index.html
+| 3	3	corr-view/frontend/dev/index.html
+| 0	100	corr-view/frontend/error-204/index.html
+| 0	100	corr-view/frontend/error-400/index.html
+| 0	99	corr-view/frontend/error-401/index.html
+| 0	100	corr-view/frontend/error-404/index.html
+| 0	99	corr-view/frontend/error-405/index.html
+| 0	100	corr-view/frontend/error-409/index.html
+| 0	100	corr-view/frontend/error-415/index.html
+| 0	100	corr-view/frontend/error-500/index.html
+| 0	100	corr-view/frontend/error-511/index.html
+| 139	0	corr-view/frontend/error/index.html
+| 46	12	corr-view/frontend/help/index.html
+| -	-	corr-view/frontend/images/corr-logo-old.png
+| -	-	corr-view/frontend/images/corr-logo.png
+| -	-	corr-view/frontend/images/favicon/logo.ico
+| 1	0	corr-view/frontend/images/global_view.svg
+| -	-	corr-view/frontend/images/logo-hold.png
+| -	-	corr-view/frontend/images/logo-old.png
+| -	-	corr-view/frontend/images/logo.ico
+| -	-	corr-view/frontend/images/logo.png
+| 1	0	corr-view/frontend/images/platform.svg
+| 38	3	corr-view/frontend/index.html
+| 127	4	corr-view/frontend/js/cloud.js
+| 19	5	corr-view/frontend/js/dashboard.js
+| 0	0	corr-view/frontend/js/help.js
+| 35	0	corr-view/frontend/xml/app_content.xml
+| 1	1	corr-view/frontend/xml/coming_soon.xml
+| 11	0	corr-view/frontend/xml/dashboard_applications.xml
+* 2016-09-19T15:37:19-04:00 8972f91d965f Yannick Congo Now CoRR access offline.
+| 
+| 1	1	builds/config-cloud.py.j2
+| 0	461	corr-api/api/__init__.py
+| 173	166	corr-api/api/endpoints/admin_api.py
+| 22	12	corr-api/api/endpoints/developer_api.py
+| 36	32	corr-api/api/endpoints/public_api.py
+| 194	190	corr-api/api/endpoints/user_api.py
+| 2	46	corr-cloud/cloud/__init__.py
+| 23	24	corr-cloud/cloud/views/dashboard_cloud.py
+| 94	123	corr-cloud/cloud/views/diff_cloud.py
+| 29	30	corr-cloud/cloud/views/project_cloud.py
+| 51	71	corr-cloud/cloud/views/record_cloud.py
+| 244	542	corr-cloud/cloud/views/user_cloud.py
+| 45	1	corr-db/corrdb/common/__init__.py
+| 199	3	corr-db/corrdb/common/managers/access_manager.py
+| 33	7	corr-db/corrdb/common/managers/storage_manager.py
+| 1	0	corr-db/corrdb/common/models/user_model.py
+* 2016-09-09T09:06:33-04:00 8f5ece9a5799 Yannick Congo Storage management works pretty well for local filesystems too now.
+| 
+| 1	1	builds/app.service.j2
+| 2	0	builds/config-api.py.j2
+| 2	1	builds/config-cloud.py.j2
+| 16	0	builds/serve_frontend.yaml
+| 47	47	corr-api/api/endpoints/user_api.py
+| 1	0	corr-cloud/cloud/views/user_cloud.py
+| 2	0	corr-db/corrdb/common/__init__.py
+| 1	1	corr-db/corrdb/common/core.py
+| 23	26	corr-db/corrdb/common/managers/storage_manager.py
+* 2016-09-06T15:58:42-04:00 253fb5772183 Yannick Congo Forgot requests import in storage manager.
+| 
+| 3	0	corr-db/corrdb/common/managers/storage_manager.py
+*   2016-09-02T15:13:58-04:00 19b0fd9d0e72 Faical Yannick P. Congo Merge branch 'cleanup-1.1' of github.com:faical-yannick-congo/corr into cleanup-0.1
+|\  
+| * 2016-08-30T10:15:49-04:00 36385b8dd4f4 Yannick Congo Allow read and write permission for frontend data.
+| | 
+| | 4	0	builds/serve_frontend.yaml
+* | 2016-09-02T15:11:45-04:00 3a4c64d767a8 Faical Yannick P. Congo major refactor of file storage and access management.
+|/  
+|   
+|   15	1	builds/config-api.py.j2
+|   18	2	builds/config-cloud.py.j2
+|   1	0	builds/config-frontend.js.j2
+|   8	231	corr-api/api/__init__.py
+|   151	150	corr-api/api/endpoints/admin_api.py
+|   13	12	corr-api/api/endpoints/developer_api.py
+|   58	57	corr-api/api/endpoints/public_api.py
+|   141	140	corr-api/api/endpoints/user_api.py
+|   26	419	corr-cloud/cloud/__init__.py
+|   16	15	corr-cloud/cloud/views/dashboard_cloud.py
+|   2	1	corr-cloud/cloud/views/diff_cloud.py
+|   22	21	corr-cloud/cloud/views/project_cloud.py
+|   0	23	corr-cloud/cloud/views/project_view.py
+|   26	25	corr-cloud/cloud/views/record_cloud.py
+|   0	7	corr-cloud/cloud/views/record_view.py
+|   60	49	corr-cloud/cloud/views/user_cloud.py
+|   93	3	corr-db/corrdb/common/__init__.py
+|   7	1	corr-db/corrdb/common/core.py
+|   5	0	corr-db/corrdb/common/managers/__init__.py
+|   14	0	corr-db/corrdb/common/managers/access_manager.py
+|   608	0	corr-db/corrdb/common/managers/storage_manager.py
+* 2016-07-26T18:02:27-04:00 27f787eb0e86 Yannick Congo binary string now supported by encode ascii in python 3.
+| 
+| 4	4	corr-cloud/cloud/views/user_cloud.py
+| 6	6	corr-db/corrdb/common/models/user_model.py
+* 2016-07-26T17:21:30-04:00 1017e3456029 Yannick Congo Renamed user_model to account in login.
+| 
+| 1	1	corr-cloud/cloud/views/user_cloud.py
+* 2016-07-26T17:07:17-04:00 96ea2e469c8f Yannick Congo Allowing a registered user in the SSO and not in a new backend to create the account in the new backend while login in through the SS0.
+| 
+| 10	5	corr-cloud/cloud/views/user_cloud.py

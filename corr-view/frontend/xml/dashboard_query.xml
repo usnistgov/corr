@@ -1,0 +1,95 @@
+<div id="card-widgets">
+  <br />
+  <div class="nav-wrapper">
+    <div class="col s12">
+      <div class="row">
+        <div class="input-field">
+          <input id="search" type="text" required="" onkeypress="searchKeyPress(event);"/>
+          <label for="search" class="">
+            <i class="mdi-action-search"></i>
+          </label>
+        </div>
+        <center>
+        <div class="input-field col s3">
+            <input type="checkbox" id="exclude-users" />
+            <label for="exclude-users">
+              <!-- <i class="mdi-action-perm-identity"></i> -->
+              Exclude Users
+            </label>
+        </div>
+        <div class="input-field col s3">
+            <input type="checkbox" id="exclude-applications" />
+            <label for="exclude-applications">
+              <!-- <i class="mdi-navigation-apps"></i> -->
+              Exclude Applications
+            </label>
+        </div>
+        <div class="input-field col s3">
+            <input type="checkbox" id="exclude-projects" />
+            <label for="exclude-projects">
+              <!-- <i class="mdi-file-folder"></i> -->
+              Exclude Projects
+            </label>
+        </div>
+        <div class="input-field col s3">
+            <input type="checkbox" id="exclude-records" />
+            <label for="exclude-records">
+              <!-- <i class="mdi-file-cloud-upload"></i> -->
+              Exclude Records
+            </label>
+        </div>
+      </center>
+      </div>
+
+    </div>
+  </div>
+  <br />
+  <br />
+  <!-- <center><div class="divider"></div></center> -->
+  <div id="query-result" class="row" data-distance="100">
+      <!-- <div class="progress">
+         <div class="indeterminate">
+         </div>
+      </div> -->
+      <!-- <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header purple white-text"><i class="mdi-device-access-alarms"></i> First Header</div>
+          <div class="collapsible-body purple lighten-5">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header red white-text"><i class="mdi-device-battery-charging-20"></i> Second Header</div>
+          <div class="collapsible-body red lighten-5 lighten-5">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header teal white-text"><i class="mdi-device-dvr"></i> Third Header</div>
+          <div class="collapsible-body teal lighten-5">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header lime darken-4 white-text"><i class="mdi-device-bluetooth-searching"></i> Forth Header</div>
+          <div class="collapsible-body lime lighten-5">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header orange white-text"><i class="mdi-device-now-widgets"></i> Fifth Header</div>
+          <div class="collapsible-body orange lighten-5">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </div>
+        </li>
+      </ul> -->
+  </div>
+  <br />
+  <div id="temporal-slider">
+  </div>
+</div>
