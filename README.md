@@ -23,8 +23,8 @@ Installation instructions are available at <a href="https://github.com/usnistgov
 </strong></sup></p>
 
 <p align="center">
-<a href="https://travis-ci.org/faical-yannick-congo/corr" target="_blank">
-<img src="https://travis-ci.org/faical-yannick-congo/corr.svg?branch=master"
+<a href="https://travis-ci.org/usnistgov/corr" target="_blank">
+<img src="https://travis-ci.org/usnistgov/corr.svg?branch=master"
 alt="Travis CI">
 </a>
 <a href="https://github.com/usnistgov/corr/issues" target="_blank">
