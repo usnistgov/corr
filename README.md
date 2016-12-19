@@ -6,7 +6,7 @@
 </p>
 
 <p align="center"><sup><strong>
-See the live instance at <a href="http://corr-root.org/">corr-root.org:5000</a>.
+Installation instructions are available at <a href="https://github.com/usnistgov/corr-deploy">CoRR-Deploy</a>.
 </strong></sup></p>
 
 <p align="center">
@@ -41,13 +41,6 @@ alt="Reathedocs">
 
 The Cloud of Reproducible Records (CoRR) is an app for storing and
 viewing metadata associated with simulation records.
-
-* **[CoRR-Deploy](https://github.com/usnistgov/corr-deploy)** – installation repository.
-
-## Using CoRR
-
-To use CoRR as a user, view the help on the live instance at
-[http://corr-root.org:5000/help](http://corr-root.org:5000/help).
 
 ## Links
 
