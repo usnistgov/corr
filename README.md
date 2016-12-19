@@ -45,11 +45,15 @@ viewing metadata associated with simulation records.
 It is designed as a gateway for simulation management tools that aim in capturing software
 executions. The need of those records for recalls, reproducibility, education, provenance
 and posterity is so critical now.
+</p>
+<p align="justify">
 The platform is composed of five components. A database component which stores the meta-data about
 the diverse entities in relationship within the platform. An api component which identifies and allow
 software management tools to interact with the platform. A cloud component dedicated for the frontend
 component access to the meta-data and records. A storage component that handles non meta-data 
 files management.
+</p>
+<p align="justify">
 The CoRR platform is programming language agnostic and recording style and process independent. Instead
 of fosucing in these specifics, the platform comes at a higher level by providing a unified gateway for
 software management tools. They are the ones who handle these specifics. The platform focus on networking
