@@ -39,6 +39,7 @@ alt="Reathedocs">
 </p>
 
 
+<p align="center">
 The Cloud of Reproducible Records (CoRR) is a web platform for storing and
 viewing metadata associated with simulation records.
 It is designed as a gateway for simulation management tools that aim in capturing software
@@ -53,6 +54,7 @@ The CoRR platform is programming language agnostic and recording style and proce
 of fosucing in these specifics, the platform comes at a higher level by providing a unified gateway for
 software management tools. They are the ones who handle these specifics. The platform focus on networking
 records and scientists. Thus making the long term survival of research reproducibility its core goal.
+</p>
 
 ## References
 
