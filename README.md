@@ -33,7 +33,7 @@ alt="Github Issues">
 </a>
 <a href="https://github.com/usnistgov/corr/pulls" target="_blank">
 <img src="http://githubbadges.herokuapp.com/usnistgov/corr/pulls.svg?style=flat-square"
-alt="Github Issues">
+alt="Github Pull requests">
 </a>
 <a href="http://mybinder.org/repo/usnistgov/corr" target="_blank">
 <img src="http://mybinder.org/badge.svg"
