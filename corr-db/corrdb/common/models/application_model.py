@@ -92,8 +92,9 @@ class ApplicationModel(db.Document):
         Returns:
             The dictionary content of the application model.
         """
-        data = {'created':str(self.created_at), 'id': str(self.id), 'developer':str(self.developer.id), 'name':self.name,
+        data = {'created':str(self.created_at), 'id': str(self.id), 'developer-id':str(self.developer.id), 'name':self.name,
         'about':self.about, 'access':self.access, 'network':self.network, 'visibile':self.visibile}
+        data['developer-name'] = self.developer.info()['user-name']
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:

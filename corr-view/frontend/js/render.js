@@ -35,10 +35,13 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='appRemove(\""+object["name"]+"\",\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Application upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Application download not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-download'></i></a>";
-        content += "<div id='update-app-"+object["id"]+"'><a id='update-action' onclick='appEdit(\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-account-circle tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["developer-name"]+"'></i></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Application share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
+
+        // content += "<a onclick='appRemove(\""+object["name"]+"\",\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+        // content += "<a onclick='Materialize.toast(\"<span>Application upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
+        // content += "<a onclick='Materialize.toast(\"<span>Application download not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-download'></i></a>";
+        // content += "<div id='update-app-"+object["id"]+"'><a id='update-action' onclick='appEdit(\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
         // content += "<a href='./?session="+session+"&view=records&project="+object["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+object["id"]+"' type='text' value='"+object["name"]+"'></div></div>";
@@ -65,14 +68,16 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='projectRemove(\""+object["name"]+"\",\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Project record upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Project environment upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-maps-layers'></i></a>";
-        content += "<div id='update-project-"+object["id"]+"'><a id='update-action' onclick='projectEdit(\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+        content += "<a onclick='Materialize.toast(\"<span>Project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-account-circle tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'></i></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Project share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
+
+        // content += "<a onclick='Materialize.toast(\"<span>Project record upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
+        // content += "<a onclick='Materialize.toast(\"<span>Project environment upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-maps-layers'></i></a>";
+        // content += "<div id='update-project-"+object["id"]+"'><a id='update-action' onclick='projectEdit(\""+object["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
         // content += "<a href='./?session="+session+"&view=records&project="+object["id"]+"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_view+"'><i class='mdi-action-visibility'></i></a>";
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
-        content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+object["duration"]+"</p>";
+        // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+object["duration"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+object["id"]+"' type='text' value='"+object["tags"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+object["id"]+"' type='text' value='"+object["description"]+"'></div></div>";
         // content += "<p><i class='mdi-action-description cyan-text text-darken-2'></i> "+object["description"]+"</p>";
@@ -93,22 +98,25 @@ var renderer = {
         var content = "<div class='col s12 m6 l4' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
-        content += "<div class='card-content'>";
-        var disable_download = "";
-        if(object["environments"] == null){
-            disable_download = "disabled";
-        }
+        // content += "<div class='card-content'>";
+        // var disable_download = "";
+        // if(object["environments"] == null){
+        //     disable_download = "disabled";
+        // }
         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='recordRemove(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-        content += "<a onclick=\"space.pull('"+object["head"]["project"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
-        content += "<div id='update-record-"+object["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+        content += "<a onclick='Materialize.toast(\"<span>Record project owner view not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-folder tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'></i></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Record share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-social-share tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'></i></a>";
+        // content += "<a onclick='recordRemove(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+        // content += "<a onclick=\"space.pull('"+object["head"]["project"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
+        // content += "<div id='update-record-"+object["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["head"]["created"]+"</p>";
-        content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+object["head"]["project-name"]+"</p>";
-        content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+object["head"]["updated"]+"</p>";
+        // content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+object["head"]["project-name"]+"</p>";
+        // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+object["head"]["updated"]+"</p>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+object["head"]["id"]+"' type='text' value='"+object["head"]["tags"]+"'></div></div>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+object["head"]["id"]+"' type='text' value='"+object["head"]["rationels"]+"'></div></div>";
-        content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+object["head"]["status"]+"</p>";
+        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='status'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='record-status-"+object["head"]["id"]+"' type='text' value='This record status is: "+object["head"]["status"]+".'></div></div>";
+        // content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+object["head"]["status"]+"</p>";
         content += "<div class='card-action center-align'>";
         content += "<a onclick='Materialize.toast(\"<span>Record inputs view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+object["head"]["inputs"]+"</span></a>";
         content += "<a onclick='Materialize.toast(\"<span>Record outputs view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+object["head"]["outputs"]+"</span></a>";

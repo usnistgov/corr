@@ -124,6 +124,9 @@ class UserModel(db.Document):
         data = {'created':str(self.created_at), 
         'id': str(self.id), 'email' : self.email,
          'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count, 'total_apps':len(self.apps)}
+        from ..models import ProfileModel
+        profile = ProfileModel.objects(user=self).first().info()
+        data['user-name'] = '{0} {1}'.format(profile.fname, profile.lname)
         return data
 
     def extended(self):
