@@ -1,9 +1,6 @@
 (function($){
   $(function(){
 
-    // $('.button-collapse').sideNav();
-    // $('.scrollspy').scrollSpy();
-
     /*** Animate word ***/
 
     //set animation timing
@@ -34,9 +31,6 @@
             var word = $(this),
                 letters = word.text().split(''),
                 selected = word.hasClass('is-visible');
-            // console.log(word);
-            // console.log(letters);
-            // console.log(selected);
             for (i in letters) {
                 if(word.parents('.rotate-2').length > 0) letters[i] = '<em>' + letters[i] + '</em>';
                 letters[i] = (selected) ? '<i class="in">' + letters[i] + '</i>': '<i>' + letters[i] + '</i>';
@@ -160,9 +154,39 @@
         $newWord.removeClass('is-hidden').addClass('is-visible');
     }
 
-    // [].forEach.call(card, function(card) {
-    //     card.addEventListener('click', scaleCard, false);
-    // });
+    // Enter key handlers for login/recover/register and email us.
+    function loginKeyPress(e)
+    {
+        e = e || window.event;
+        if (e.keyCode == 13)
+        {
+            document.getElementById('buttonLogin').click();
+        }
+    }
+     function recoverKeyPress(e)
+    {
+        e = e || window.event;
+        if (e.keyCode == 13)
+        {
+            document.getElementById('buttonRecover').click();
+        }
+    }
+    function registerKeyPress(e)
+    {
+        e = e || window.event;
+        if (e.keyCode == 13)
+        {
+            document.getElementById('buttonRegister').click();
+        }
+    }
+    function emailKeyPress(e)
+    {
+        e = e || window.event;
+        if (e.keyCode == 13)
+        {
+            document.getElementById('buttonEmail').click();
+        }
+    }
 
     }); // end of document ready
 })(jQuery); // end of jQuery name space

@@ -90,6 +90,7 @@
 
             var param = window.location.search.substring(1);
             var parts = param.split("=");
+            // In case of a code or an action, inject the error code to display and the error message.
             if(parts[0] == "code"){
                 code = parts[1];
                 document.getElementById("error-code").innerHTML += code;
@@ -117,11 +118,11 @@
                     document.getElementById("error-message").innerHTML += "It seems that you have issue with your network authentication."
                 }else{
                     document.getElementById("error-code").innerHTML = "404";
-                    document.getElementById("error-message").innerHTML += "It seams that you are requesting an unknown error."
+                    document.getElementById("error-message").innerHTML += "It seams that your request produced an unknown error."
                 }
             }else if(parts[0] == "action"){
                 document.getElementById("error-code").innerHTML = "404";
-                document.getElementById("error-message").innerHTML += "It seams that you are requesting an unknown error."
+                document.getElementById("error-message").innerHTML += "It seams that your request produced an unknown error."
             }
         </script>
         <script>
