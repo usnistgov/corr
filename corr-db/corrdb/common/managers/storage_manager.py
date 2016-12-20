@@ -232,7 +232,6 @@ class StorageManager:
             record_file.delete()
         return result
 
-
     def web_get_file(self, url):
         """Retrieve a externaly hosted file.
             Returns:

@@ -13,7 +13,8 @@ def logAccess(component='none', scope='root', endpoint='', app=None):
     (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(component, endpoint))
 
 def logTraffic(component='none', endpoint=''):
-    # created_at=datetime.datetime.utcnow()
+    """Log the traffic to the backend.
+    """
     (traffic, created) = TrafficModel.objects.get_or_create(service="cloud", endpoint="%s%s"%(component, endpoint))
     if not created:
         traffic.interactions += 1 
@@ -23,6 +24,8 @@ def logTraffic(component='none', endpoint=''):
         traffic.save()
 
 def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
+    """Log the statistics to the backend.
+    """
     category = ''
     periode = ''
     traffic = 0
@@ -80,8 +83,6 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
         traffic = 1 * (-1 if deleted else 1)
         interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
 
-
-    #created_at=datetime.datetime.utcnow()
     (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
     print("Stat Traffic {0}".format(traffic))
     if not created:

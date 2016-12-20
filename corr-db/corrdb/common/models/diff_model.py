@@ -92,14 +92,6 @@ class DiffModel(db.Document):
         data = self.info()
         sender_profile = ProfileModel.objects(user=self.sender).first()
         targeted_profile = ProfileModel.objects(user=self.targeted).first()
-        # if sender_profile == None:
-        #     data['sender'] = self.sender.email
-        # else:
-        #     data['sender'] = sender_profile.extended()
-        # if targeted_profile == None:
-        #     data['targeted'] = self.targeted.email
-        # else:
-        #     data['targeted'] = targeted_profile.extended()
         data['resources'] = [resource.extended() for resource in self._resources()]
         data['comments'] = [comment.extended() for comment in self._comments()]
         data['extend'] = self.extend

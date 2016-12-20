@@ -57,9 +57,7 @@ def make_version():
     elif os.path.exists('corrdb.egg-info'):
         from corrdb import get_version
         version = get_version()
-
     return version
-
 
 setup(name='corrdb',
       version=make_version(),
