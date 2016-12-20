@@ -98,7 +98,7 @@ class ProjectModel(db.Document):
         'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
-
+        data['owner-name'] = self.owner.info()['user-name']
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
