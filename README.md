@@ -39,9 +39,8 @@ alt="Github Pull requests">
 <img src="http://mybinder.org/badge.svg"
 alt="Binder">
 </a>
-<a href="http://corr-deploy.readthedocs.io/en/latest/?badge=latest" target="_blank">
-<img src="https://readthedocs.org/projects/corr/badge/?version=latest"
-alt="Reathedocs">
+<a href="http://corr.readthedocs.io/en/latest/?badge=latest" target="_blank">
+<img src="https://readthedocs.org/projects/corr/badge/?version=latest" alt="Reathedocs">
 </a>
 <a href="https://gitter.im/usnistgov/corr">
 <img src="https://img.shields.io/gitter/room/gitterHQ/gitter.svg" alt="Gitter Chat" height="18">
