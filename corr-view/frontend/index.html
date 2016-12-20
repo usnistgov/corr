@@ -348,7 +348,6 @@
                     <label for="picture-input">
                         <img src="images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
                     </label>
-                    <!-- <input id="picture-input" type="file" style="display: none;"/> -->
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
@@ -450,8 +449,8 @@
             $(document).ready(function(){
                 $('.tooltipped').tooltip({delay: 50});
                 $('.collapsible').collapsible({accordion : false});
-                // new Clipboard('.btn');
             });
+            // Querying the cloud service component for the home page dynamic data injection.
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
             xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
@@ -466,6 +465,7 @@
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
                         console.log(response);
+                        // Data provisioned by the cloud service.
                         var version = response["version"];
                         var users = response["users"];
                         var projects = response["projects"];
@@ -473,6 +473,7 @@
                         var storage = response["storage"];
                         var apps = response["apps"];
                         var traffic = response["traffic"];
+                        // Home page dynamic component data injection from reponse.
                         document.getElementById("total-users").innerHTML = users["number"];
                         document.getElementById("total-projects").innerHTML = projects["number"];
                         document.getElementById("total-records").innerHTML = records["number"];
@@ -481,6 +482,7 @@
                         document.getElementById("footer-version").innerHTML = version;
                         document.getElementById("total-apps").innerHTML = apps["size"];
                         document.getElementById("total-traffic").innerHTML = traffic["size"];
+                        // Logging provisioned and injected values.
                         console.log("Total Users:"+users["number"]);
                         console.log("Total Projects:"+projects["number"]);
                         console.log("Total Records:"+records["number"]);
@@ -502,12 +504,15 @@
             }
             var param = window.location.search.substring(1);
             var parts = param.split("=");
+            // In case home has session key (logged in)
             if(parts[0] == "session"){
                 user.session = parts[1];
                 console.log(user.session);
+                // Check that the user is trusted with this session key.
                 user.trusted();
                 user.account();
                 console.log("Api Index: "+this.api);
+                // If the session is trusted, inject user nav menu session tabs and account floating menu.
                 document.getElementById("nav-home-2").href = "./?session="+user.session;
                 document.getElementById("nav-home").href = "./?session="+user.session;
                 document.getElementById("nav-help").href = "./help/?session="+user.session;
@@ -524,46 +529,14 @@
                     Materialize.toast('<span>Your message has been sent!</span>', 3000);
                 }
             }
-            function loginKeyPress(e)
-            {
-                e = e || window.event;
-                if (e.keyCode == 13)
-                {
-                    document.getElementById('buttonLogin').click();
-                }
-            }
-             function recoverKeyPress(e)
-            {
-                e = e || window.event;
-                if (e.keyCode == 13)
-                {
-                    document.getElementById('buttonRecover').click();
-                }
-            }
-            function registerKeyPress(e)
-            {
-                e = e || window.event;
-                if (e.keyCode == 13)
-                {
-                    document.getElementById('buttonRegister').click();
-                }
-            }
-            function emailKeyPress(e)
-            {
-                e = e || window.event;
-                if (e.keyCode == 13)
-                {
-                    document.getElementById('buttonEmail').click();
-                }
-            }
-         </script>
-         <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-          ga('create', 'UA-64854835-1', 'auto');
-          ga('send', 'pageview');
+        </script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-64854835-1', 'auto');
+            ga('send', 'pageview');
         </script>
 
     </body>

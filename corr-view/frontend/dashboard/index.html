@@ -19,7 +19,7 @@
         
         <title>CoRR - Cloud of Reproducible Records</title>
 
-        <link rel="icon" href="../images/logo.icon" sizes="32x32">
+        <link rel="icon" href="../images/logo.ico" sizes="32x32">
         <link rel="apple-touch-icon-precomposed" href="../images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
         <meta name="msapplication-TileImage" content="../images/logo.svg" sizes="144x144">
@@ -52,11 +52,6 @@
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
                             </li>
-                            <!-- <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
-                                <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
-                                    <i class=" nav-action mdi-action-search"></i>
-                                </a>
-                            </li> -->
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                     <i class="nav-action nav-action mdi-action-home"></i>
@@ -82,7 +77,6 @@
                     <label for="picture-input">
                         <img src="../images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
                     </label>
-                    <!-- <input id="picture-input" type="file" style="display: none;"/> -->
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
@@ -105,58 +99,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div id="query-search-modal" class="modal login-form">
-            <div class="modal-content">
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-lock-outline prefix"></i>
-                    <input id="key-words" type="text">
-                    <label for="key-words">Key Words</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-assignment prefix"></i>
-                    <input type="checkbox" id="include-users" />
-                    <label for="include-users">Include Users</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-assignment prefix"></i>
-                    <input type="checkbox" id="include-applications" />
-                    <label for="include-applications">Include Applications</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-assignment prefix"></i>
-                    <input type="checkbox" id="include-projects" />
-                    <label for="include-projects">Include Projects</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-assignment prefix"></i>
-                    <input type="checkbox" id="include-records" />
-                    <label for="include-records">Include Records</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-action-assignment prefix"></i>
-                    <input type="checkbox" id="include-diffs" />
-                    <label for="include-diffs">Include Diffs</label>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <a onclick="return user.query_search();" class="btn waves-effect purple waves-light col s12">Fetch</a>
-                  </div>
-                </div>
-            </div>
-        </div> -->
 
         <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
         </div>
@@ -208,12 +150,11 @@
         <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
-            // setInterval(function() {
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
-            // var session = "";
             var view_selected = "";
             var options = [];
+            // Extract the parameters session, view and others from the url.
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
                 if(parts[0] == "session"){
@@ -224,160 +165,78 @@
                     options.push(blocks[i]);
                 }
             }
+            // Inject the default dashboard view
             if(user.session != "" && view_selected == ""){
                 dashboard.activity(user.session);
                 var space = new Space(user.session);
-            }else if(user.session != "" && view_selected == "apps"){
+            }
+            // Inject the applications dashboard view
+            else if(user.session != "" && view_selected == "apps"){
                 dashboard.apps(user.session);
                 document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
-            }else if(user.session != "" && view_selected == "projects"){
+            }
+            // Inject the projects dashboard view
+            else if(user.session != "" && view_selected == "projects"){
                 dashboard.projects(user.session);
                 var space = new Space(user.session);
                 document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create' onclick=\"return create_project();\"><i class='mdi-content-add'></i></a>";
-            }else if(user.session != "" && view_selected == "records"){
+            }
+            // Inject the records dashboard view
+            else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
                 document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload' onclick=\"return upload_record();\"><i class='mdi-file-file-upload'></i></a>";
-            }else if(user.session != "" && view_selected == "diffs"){
+            }
+            // Inject the diffs dashboard view
+            else if(user.session != "" && view_selected == "diffs"){
                 dashboard.diffs(user.session, options);
                 document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create' onclick=\"return create_diff();\"><i class='mdi-content-add'></i></a>";
-            }else if(user.session != "" && view_selected == "query"){
+            }
+            // Inject the query dashboard view
+            else if(user.session != "" && view_selected == "query"){
                 var space = new Space(user.session);
                 dashboard.query(user.session, options);
 
                 document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
-            }else{
+            }
+            // Otherwise redirect to a 404
+            else{
                 window.location.replace("../error/?code=404");
             }
 
+            // In case home has session key (logged in)
             if (user.session != ""){
+                // Inject the nav menu and the dashboard floating menu
                 document.getElementById("nav-home-2").href = "../?session="+user.session;
                 document.getElementById("nav-home").href = "../?session="+user.session;
                 document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
-                // Target.
                 document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings' href='./?session="+user.session+"' ><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
+            // View switching function
             function view(scope){
                 window.location.replace("./?session="+user.session+"&view="+scope);
             }
-
-            function projectEdit(project_id){
-                var project_update = document.getElementById('update-project-'+project_id);
-                project_update.innerHTML = "<a id='update-action' onclick='projectSave(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
-                var tags = document.getElementById('project-tags-'+project_id);
-                var description = document.getElementById('project-desc-'+project_id);
-                var goals = document.getElementById('project-goals-'+project_id);
-                tags.removeAttribute("readonly");
-                description.removeAttribute("readonly");
-                goals.removeAttribute("readonly");
-            }
-
-            function projectSave(project_id){
-                var project_update = document.getElementById('update-project-'+project_id);
-                project_update.innerHTML = "<a id='update-action' onclick='projectEdit(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
-                var tags = document.getElementById('project-tags-'+project_id);
-                var description = document.getElementById('project-desc-'+project_id);
-                var goals = document.getElementById('project-goals-'+project_id);
-                // description.setAttribute("readonly", null);
-                // goals.setAttribute("readonly", null);
-                var project = new Project(user.session, project_id);
-                project.save(tags.value, description.value, goals.value);
-            }
-
-            function projectRemove(project_name, project_id){
-                Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
-            }
-
-            function projectRemoveAgree(session, project_id){
-                console.log("in projectRemoveAgree!");
-                var project = new Project(session, project_id);
-                project.trash();
-                window.location.reload();
-            }
-
-            function uploadRecord(project_name, project_id){
-                Materialize.toast('<span>Uploading a new record to Project ['+project_name+']...</span>', 3000);
-            }
-
-            function recordEdit(record_id){
-                var project_update = document.getElementById('update-record-'+record_id);
-                project_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
-                var tags = document.getElementById('record-tags-'+record_id);
-                var rationels = document.getElementById('record-rationels-'+record_id);
-                tags.removeAttribute("readonly");
-                rationels.removeAttribute("readonly");
-            }
-
-            function recordSave(record_id){
-                var project_update = document.getElementById('update-record-'+record_id);
-                project_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
-                var tags = document.getElementById('record-tags-'+record_id);
-                var rationels = document.getElementById('record-rationels-'+record_id);
-                // tags.setAttribute("readonly", null);
-                // rationels.setAttribute("readonly", null);
-                var record = new Record(user.session, record_id);
-                record.save(tags.value, rationels.value);
-            }
-
-            function recordRemove(record_id){
-                Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
-            }
-
-            function processSearch()
-            {
-                var query_search = document.getElementById("search").value;
-                var usersQ = document.getElementById("exclude-users").checked;
-                var applicationsQ = document.getElementById("exclude-applications").checked;
-                var projectsQ = document.getElementById("exclude-projects").checked;
-                var recordsQ = document.getElementById("exclude-records").checked;
-                Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" </span>", 5000);
-                // window.location.reload();
-                // var space = new Space(user.session);
-                space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ);
-            }
-
-            function customSearch(type, value)
-            {
-                if(type == "user"){
-                    document.getElementById("search").value = value;
-                    document.getElementById("exclude-users").checked = false;
-                    document.getElementById("exclude-applications").checked = true;
-                    document.getElementById("exclude-projects").checked = true;
-                    document.getElementById("exclude-records").checked = true;
-                }else if(type == "project"){
-                    document.getElementById("search").value = value;
-                    document.getElementById("exclude-users").checked = true;
-                    document.getElementById("exclude-applications").checked = true;
-                    document.getElementById("exclude-projects").checked = false;
-                    document.getElementById("exclude-records").checked = true;
-                }
-                processSearch();
-            }
-
-            // }, 5000);
-            function searchKeyPress(e)
-            {
-                e = e || window.event;
-                if (e.keyCode == 13)
-                {
-                    processSearch();
-                    // console.log(space.query_result);
-
-                    // for(var i = 0; i < space.query_result["projects"]["count"]; i++){
-                    //     var project_content = render.project(space.query_result["projects"]["result"][i]);
-                    //     console.log(project_content);
-                    // }
-                }
-                // else{
-                //     Materialize.toast(e.keyCode);
-                // }
-            }
+            
         </script>
+        <script type="text/javascript" src="../js/callbacks/user.js"></script>
+        <script type="text/javascript" src="../js/callbacks/application.js"></script>
+        <script type="text/javascript" src="../js/callbacks/project.js"></script>
+        <script type="text/javascript" src="../js/callbacks/record.js"></script>
+        <script type="text/javascript" src="../js/callbacks/diff.js"></script>
+        <script type="text/javascript" src="../js/callbacks/search.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
+        <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+                ga('create', 'UA-64854835-1', 'auto');
+                ga('send', 'pageview');
+        </script>
     </body>
 
 </html>
