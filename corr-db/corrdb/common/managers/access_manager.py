@@ -13,6 +13,8 @@ import datetime
 
 class AccessManager:
     def __init__(self, app):
+        """Initializes an access manager instance.
+        """
         self.config = app.config['ACCOUNT_MANAGEMENT']
 
         if self.config['type'] == 'stormpath':
@@ -26,6 +28,10 @@ class AccessManager:
             self.type = 'mongodb'
 
     def create_account(self, email, password, fname, lname, mname):
+        """Create an account.
+            Returns:
+                Tuple of the account object and a message in case of an error.
+        """
         try:
             _account = self.manager.application.accounts.create({
                 'email': email,
@@ -46,6 +52,10 @@ class AccessManager:
             return (None, re.message['message'])
 
     def register(self, email, password, fname, lname, mname):
+        """Registration handler.
+            Returns:
+                User account registered.
+        """
         from corrdb.common.models import UserModel
         account = None
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
@@ -77,6 +87,10 @@ class AccessManager:
 
 
     def login(self, email, password):
+        """Account login handler.
+            Returns:
+                User account instance if successful otherwise None.
+        """
         from corrdb.common.models import UserModel
         account = None
         if self.type == 'stormpath':
@@ -106,6 +120,8 @@ class AccessManager:
         return account
 
     def logout(self, session_token):
+        """Session login handler.
+        """
         if self.type == 'stormpath':
             pass
         elif self.type == 'api-token':
@@ -115,6 +131,10 @@ class AccessManager:
             pass
 
     def unregister(self, session_token):
+        """Account unregistration handler.
+            Returns:
+                None in case of a success. Otherwise return the account object.
+        """
         # No unregister yet.
         if self.type == 'stormpath':
             pass
@@ -125,6 +145,10 @@ class AccessManager:
         return None
 
     def reset_password(self, email):
+        """Password recovery handler.
+            Returns:
+                User Account in case of a success, otherwise None.
+        """
         account = None
         if self.type == 'stormpath':
             try:
@@ -143,6 +167,10 @@ class AccessManager:
         return account
 
     def change_password(self, user_model, password):
+        """Password change handler.
+            Returns:
+                User Account in case of a success, otherwise None.
+        """
         account = None
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
         if self.type == 'stormpath':
@@ -162,6 +190,10 @@ class AccessManager:
         return account
 
     def accounts(self):
+        """Retrieve the registered accounts.
+            Returns:
+                List of registered users accounts.
+        """
         from corrdb.common.models import UserModel
         users = None
         if self.type == 'stormpath':
@@ -171,6 +203,10 @@ class AccessManager:
         return users
 
     def check_cloud(self, hash_session):
+        """Check that a session is valid.
+            Returns:
+                Tuple of Validation Boolean and the account instance.
+        """
         from corrdb.common.models import UserModel
         account = UserModel.objects(session=hash_session).first()
         print(fk.request.path)

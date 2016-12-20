@@ -12,6 +12,8 @@ import glob
 
 class StorageManager:
     def __init__(self, app):
+        """Initializes a storage manager instance.
+        """
         self.app = app
         self.config = app.config['FILE_STORAGE']
         if self.config['type'] == 's3':
@@ -46,7 +48,7 @@ class StorageManager:
             pass
 
     def storage_get_file(self, group='', key=''):
-        """Retrive a file from the file storage.
+        """Retreive a file from the file storage.
             Returns:
                 File buffer.
         """
@@ -113,6 +115,33 @@ class StorageManager:
         else:
             return [False, "file meta data does not exist or file content is empty."]
 
+    def agent_delete(self, group, path):
+        """Agent function that deletes a file in the storage.
+            Returns:
+                Deletion status of file.
+        """
+        found = False
+        for file_path in glob.glob('{0}/corr-{1}s'.format(path, group)):
+            if key in file_path:
+                os.remove(file_path)
+                found = True
+                break
+        return found
+
+    def agent_prepare(self, zf, group, object_dict):
+        """Agent function that prepares a dictionary for storage in a compressed files.
+            Returns:
+                Zipping status
+        """
+        object_buffer = StringIO()
+        object_buffer.write(json.dumps(object_dict, sort_keys=True, indent=4, separators=(',', ': ')))
+        object_buffer.seek(0)
+        data = zipfile.ZipInfo("{0}.json".format(group))
+        data.date_time = time.localtime(time.time())[:6]
+        data.compress_type = zipfile.ZIP_DEFLATED
+        data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
+        return zf.writestr(data, object_buffer.read())
+
     def storage_delete_file(self, group='', key=''):
         """Delete a file from the s3 bucket.
             Returns:
@@ -130,42 +159,17 @@ class StorageManager:
                         deleted = True
                         break
             elif self.config['type'] == 'filesystem':
-                found = False
-                for file_path in glob.glob('{0}/corr-bundles'.format(self.storage_path)):
-                    if key in file_path:
-                        os.remove(file_path)
-                        found = True
-                        break
+                found = self.agent_delete('bundle', self.storage_path)
                 if not found:
-                    for file_path in glob.glob('{0}/corr-files'.format(self.storage_path)):
-                        if key in file_path:
-                            os.remove(file_path)
-                            found = True
-                            break
+                    found = self.agent_delete('file', self.storage_path)
                 if not found:
-                    for file_path in glob.glob('{0}/corr-logos'.format(self.storage_path)):
-                        if key in file_path:
-                            os.remove(file_path)
-                            found = True
-                            break
+                    found = self.agent_delete('logo', self.storage_path)
                 if not found:
-                    for file_path in glob.glob('{0}/corr-outputs'.format(self.storage_path)):
-                        if key in file_path:
-                            os.remove(file_path)
-                            found = True
-                            break
+                    found = self.agent_delete('output', self.storage_path)
                 if not found:
-                    for file_path in glob.glob('{0}/corr-pictures'.format(self.storage_path)):
-                        if key in file_path:
-                            os.remove(file_path)
-                            found = True
-                            break
+                    found = self.agent_delete('picture', self.storage_path)
                 if not found:
-                    for file_path in glob.glob('{0}/corr-resources'.format(self.storage_path)):
-                        if key in file_path:
-                            os.remove(file_path)
-                            found = True
-                            break
+                    found = self.agent_delete('resource', self.storage_path)
             if not deleted:
                 print("File not deleted")
         return deleted
@@ -310,80 +314,31 @@ class StorageManager:
                 application = project_dict['application']
                 del project_dict['application']
                 try:
-                    project_buffer = StringIO()
-                    project_buffer.write(json.dumps(project_dict, sort_keys=True, indent=4, separators=(',', ': ')))
-                    project_buffer.seek(0)
-                    data = zipfile.ZipInfo("project.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, project_buffer.read())
+                    self.agent_prepare(zf, 'project', project_dict)
                 except:
                     print(traceback.print_exc())
                 try:
-                    comments_buffer = StringIO()
-                    comments_buffer.write(json.dumps(comments, sort_keys=True, indent=4, separators=(',', ': ')))
-                    comments_buffer.seek(0)
-                    data = zipfile.ZipInfo("comments.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, comments_buffer.read())
+                    self.agent_prepare(zf, 'comments', comments)
                 except:
                     print(traceback.print_exc())
                 try:
-                    resources_buffer = StringIO()
-                    resources_buffer.write(json.dumps(resources, sort_keys=True, indent=4, separators=(',', ': ')))
-                    resources_buffer.seek(0)
-                    data = zipfile.ZipInfo("resources.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, resources_buffer.read())
+                    self.agent_prepare(zf, 'resources', resources)
                 except:
                     print(traceback.print_exc())
                 try:
-                    history_buffer = StringIO()
-                    history_buffer.write(json.dumps(history, sort_keys=True, indent=4, separators=(',', ': ')))
-                    history_buffer.seek(0)
-                    data = zipfile.ZipInfo("environments.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, history_buffer.read())
+                    self.agent_prepare(zf, 'environments', history)
                 except:
                     print(traceback.print_exc())
                 try:
-                    records_buffer = StringIO()
-                    records_buffer.write(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')))
-                    records_buffer.seek(0)
-                    data = zipfile.ZipInfo("records.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, records_buffer.read())
+                    self.agent_prepare(zf, 'records', records)
                 except:
                     print(traceback.print_exc())
                 try:
-                    records_buffer = StringIO()
-                    records_buffer.write(json.dumps(application, sort_keys=True, indent=4, separators=(',', ': ')))
-                    records_buffer.seek(0)
-                    data = zipfile.ZipInfo("application.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, records_buffer.read())
+                    self.agent_prepare(zf, 'application', application)
                 except:
                     print(traceback.print_exc())
                 try:
-                    records_buffer = StringIO()
-                    records_buffer.write(json.dumps(diffs, sort_keys=True, indent=4, separators=(',', ': ')))
-                    records_buffer.seek(0)
-                    data = zipfile.ZipInfo("diffs.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, records_buffer.read())
+                    self.agent_prepare(zf, 'diffs', diffs)
                 except:
                     print(traceback.print_exc())
             memory_file.seek(0)
@@ -424,146 +379,51 @@ class StorageManager:
                 del record_dict['head']['execution']
                 project = record.project.info()
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("project.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'project', project)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(comments, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("comments.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'comments', comments)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(resources, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("resources.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'resources', resources)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(inputs, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("inputs.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'inputs', inputs)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(outputs, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("outputs.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'outputs', outputs)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(dependencies, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("dependencies.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'dependencies', dependencies)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(application, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("application.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'application', application)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(parent, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("parent.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'parent', parent)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(body, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("body.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'body', body)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(execution, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("execution.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'execution', execution)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(environment, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-
-                    data = zipfile.ZipInfo("environment.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'environment', environment)
                 except:
                     print(traceback.print_exc())
                 try:
-                    json_buffer = StringIO()
-                    json_buffer.write(json.dumps(record_dict, sort_keys=True, indent=4, separators=(',', ': ')))
-                    json_buffer.seek(0)
-                    data = zipfile.ZipInfo("record.json")
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
-                    zf.writestr(data, json_buffer.read())
+                    self.agent_prepare(zf, 'record', record_dict)
                 except:
                     print(traceback.print_exc())
                 if env != None and env.bundle.location != '':
@@ -602,33 +462,3 @@ class StorageManager:
 
         return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
         
-    # def prepare_env(record):
-    #     # Include record files later.
-    #     memory_file = BytesIO()
-    #     with zipfile.ZipFile(memory_file, 'w') as zf:
-
-    #         try:
-    #             group = 'corr-bundles'
-    #             bundle_buffer = self.storage_get_file(group, record.environment.bundle['location'])
-
-    #             data = zipfile.ZipInfo("%s"%(record.project.name, record.environment.bundle['location'].split('_')))
-    #             data.date_time = time.localtime(time.time())[:6]
-    #             data.compress_type = zipfile.ZIP_DEFLATED
-    #             data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-    #             zf.writestr(data, bundle_buffer.read())
-    #         except:
-    #             print traceback.print_exc()
-    #         try:
-    #             json_buffer = StringIO()
-    #             json_buffer.write(record.to_json())
-    #             json_buffer.seek(0)
-
-    #             data = zipfile.ZipInfo("%s_%s.json"%(record.project.name, str(record.id)))
-    #             data.date_time = time.localtime(time.time())[:6]
-    #             data.compress_type = zipfile.ZIP_DEFLATED
-    #             data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-    #             zf.writestr(data, json_buffer.read())
-    #         except:
-    #             print traceback.print_exc()
-    #     memory_file.seek(0)
-    #     return [memory_file, record.environment.bundle['location'].split("/")[-1].split(".")[0]+".zip"]
