@@ -39,6 +39,8 @@ def private_search(hash_session):
                 for user in UserModel.objects():
                     profile = ProfileModel.objects(user=user)[0]
                     where = []
+                    if "!all" in query:
+                        where.append("all")
                     if any(q.lower() in str(user.id) for q in query):
                         where.append("id")
                     if any(q.lower() in user.email.lower() for q in query):
@@ -56,6 +58,8 @@ def private_search(hash_session):
                 applications = []
                 for appli in ApplicationModel.objects():
                     where = []
+                    if "!all" in query:
+                        where.append("all")
                     if any(q.lower() in str(appli.id) for q in query):
                         where.append("id")
                     if any(q.lower() in appli.name.lower() for q in query):
@@ -71,6 +75,8 @@ def private_search(hash_session):
                     print(project.name)
                     if project.access == 'private' or project.access == 'public' or (project.access != 'public' and current_user == project.owner):
                         where_project = []
+                        if "!all" in query:
+                            where_project.append("all")
                         if any(q.lower() in str(project.id) for q in query):
                             where_project.append("id")
                         if any(q.lower() in project.name.lower() for q in query):
@@ -90,6 +96,8 @@ def private_search(hash_session):
                                 body = record.body
                                 where_record = []
 
+                                if "!all" in query:
+                                    where_record.append("all")
                                 if any(q.lower() in str(record.id) for q in query):
                                     where_record.append("id")
                                 if any(q.lower() in record.label.lower() for q in query):
@@ -116,6 +124,8 @@ def private_search(hash_session):
                 for diff in DiffModel.objects():
                     if (diff.record_from.access == 'private' or diff.record_to.access == 'private') or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or (diff.record_from.access != 'public' and current_user == diff.record_from.project.owner) or (diff.record_to.access != 'public' and current_user == diff.record_to.project.owner):
                         where = []
+                        if "!all" in query:
+                            where.append("all")
                         if any(q.lower() in str(diff.id) for q in query):
                             where.append("id")
                         if any(q in str(json.dumps(diff.diff)) for q in query):
