@@ -5,8 +5,6 @@ from flask.ext.mongoengine import MongoEngine
 from .managers import StorageManager
 from .managers import AccessManager
 
-
-
 db = MongoEngine()
 
 def setup_app(name, config='config'):

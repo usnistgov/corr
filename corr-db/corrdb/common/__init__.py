@@ -1,6 +1,9 @@
 """CoRR common modules.
 """
 from .models import *
+"""CoRR Mongoengine Database Tools.
+"""
+
 from .tools import *
 import datetime
 from datetime import date, timedelta
