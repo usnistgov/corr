@@ -85,7 +85,6 @@ class AccessManager:
                     account.save()
         return account
 
-
     def login(self, email, password):
         """Account login handler.
             Returns:
