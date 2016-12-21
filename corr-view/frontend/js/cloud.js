@@ -181,7 +181,6 @@ var user = {
             cache      : false,
             processData: false,
             contentType: false,
-        if(name != ""){
             success    : function(text){
                 if(text == ""){
                     console.log("Cloud returned empty response!");
