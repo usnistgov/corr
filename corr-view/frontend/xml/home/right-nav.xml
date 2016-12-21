@@ -1,0 +1,85 @@
+<ul id="chat-out" class="side-nav rightside-navigation">
+    <li class="li-hover">
+        <ul class="chat-collapsible" data-collapsible="expandable">
+            <li>
+                <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
+                <div class="collapsible-body recent-activity">
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-social-person-outline prefix"></i>
+                        <input id="login-email" type="email" onkeypress="loginKeyPress(event);">
+                        <label for="login-email" class="center-align">Email</label>
+                      </div>
+                    </div>
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-action-lock-outline prefix"></i>
+                        <input id="login-password" type="password" onkeypress="loginKeyPress(event);">
+                        <label for="login-password">Password</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
+                      </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header light-blue white-text"><i class="mdi-action-input"></i>Register</div>
+                <div class="collapsible-body sales-repoart">
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-communication-email prefix"></i>
+                        <input id="register-email" type="email" onkeypress="registerKeyPress(event);">
+                        <label for="register-email" class="center-align">Email</label>
+                      </div>
+                    </div>
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-action-lock-outline prefix"></i>
+                        <input id="register-password" type="password" onkeypress="registerKeyPress(event);">
+                        <label for="register-password">Password</label>
+                      </div>
+                    </div>
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-action-lock-outline prefix"></i>
+                        <input id="register-password-again" type="password" onkeypress="registerKeyPress(event);">
+                        <label for="register-password-again">Password again</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <a id="buttonRegister" onclick="return user.register();" class="btn waves-effect waves-light blue col s12">Register Now</a>
+                      </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                <div class="collapsible-body recent-activity">
+                    <div class="row margin">
+                      <div class="input-field col s12">
+                        <i class="mdi-social-person-outline prefix"></i>
+                        <input id="recover-email" type="email" onkeypress="recoverKeyPress(event);">
+                        <label for="recover-email" class="center-align">Email</label>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <a id="buttonRecover" onclick="return user.recover();" class="btn login-button waves-effect waves-light green col s12">Request</a>
+                      </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
+
+            </li>
+            <li>
+                <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
+            </li>
+        </ul>
+    </li>
+</ul>

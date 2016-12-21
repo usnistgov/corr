@@ -1,0 +1,37 @@
+<div class="container" id="home-features">
+    <div class="row">
+        <div  class="col s12 m4 l4 container valign-wrapper z-depth-4">
+            <div class="center promo promo-example">
+                <i class="mdi-image-flash-on"></i>
+                <h4 class="promo-caption">Integration</h4>
+                <p class="front-text light center">
+                  Integrate existing simulation management
+                  tools with CoRR's robust API to log 
+                  simulation records.
+                </p>
+            </div>
+        </div>
+        <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+            <div class="center promo promo-example">
+                <i class="mdi-social-group"></i>
+                <h4 class="promo-caption">Collaboration</h4>
+                <p class="light center front-text">
+                  Collaborate with other scientists by sharing
+                  simulation records and computational
+                  environments.
+                </p>
+            </div>
+        </div>
+        <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+            <div class="center promo promo-example">
+                <i class="mdi-device-devices"></i>
+                <h4 class="promo-caption">Management</h4>
+                <p class="light center front-text">
+                  Manage simulation records to maintain
+                  history, organize future jobs and enhance
+                  reproduciblity.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<section id="content">
+    <div class="container">
+        <div id="card-stats">
+            <div class="row">
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content  green white-text">
+                            <p class="card-stats-title"><i class="mdi-social-group-add"></i> Users</p>
+                            <h4 class="card-stats-number" id="total-users">N/A</h4>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content purple white-text">
+                            <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Applications</p>
+                            <h4 class="card-stats-number" id="total-apps">N/A</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content brown white-text">
+                            <p class="card-stats-title"><i class="mdi-file-folder"></i> Projects</p>
+                            <h4 class="card-stats-number" id="total-projects">N/A</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content blue-grey white-text">
+                            <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Records</p>
+                            <h4 class="card-stats-number" id="total-records">N/A</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content red white-text">
+                            <p class="card-stats-title"><i class="mdi-device-storage"></i> Storage</p>
+                            <h4 class="card-stats-number" id="total-storage">N/A</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l2">
+                    <div class="card">
+                        <div class="card-content orange white-text">
+                            <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Traffic</p>
+                            <h4 class="card-stats-number" id="total-traffic">N/A</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
