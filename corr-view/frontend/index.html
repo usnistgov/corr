@@ -168,12 +168,50 @@
             </div>
         </div>
 
-        <div class="section" id="home-features"></div>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div  class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-image-flash-on"></i>
+                            <h4 class="promo-caption">Integration</h4>
+                            <p class="front-text light center">
+                              Integrate existing simulation management
+                              tools with CoRR's robust API to log 
+                              simulation records.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-social-group"></i>
+                            <h4 class="promo-caption">Collaboration</h4>
+                            <p class="light center front-text">
+                              Collaborate with other scientists by sharing
+                              simulation records and computational
+                              environments.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col s12 m4 l4 container valign-wrapper z-depth-4">
+                        <div class="center promo promo-example">
+                            <i class="mdi-device-devices"></i>
+                            <h4 class="promo-caption">Management</h4>
+                            <p class="light center front-text">
+                              Manage simulation records to maintain
+                              history, organize future jobs and enhance
+                              reproduciblity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         </div>
 
-        <div class="container" id="home-stats">
+        <div class="container">
             <section id="content">
                 <div class="container">
                     <div id="card-stats">
@@ -406,28 +444,13 @@
 
         <script type="text/javascript" src="js/init.js"></script>
         <script type="text/javascript" src="js/cloud.js"></script>
+        <script type="text/javascript" src="js/content.js"></script>
 
         <script type="text/javascript">
             $(document).ready(function(){
                 $('.tooltipped').tooltip({delay: 50});
                 $('.collapsible').collapsible({accordion : false});
             });
-            function load_succeed(xhttp, params){
-                var content = document.getElementById(params[1]);
-                content.innerHTML = xhttp.responseText;
-            };
-            function load_failed(params){
-                console.log(window.location.host);
-                Materialize.toast('<span>'+params[0]+' injection failed.</span>', 3000);
-            };
-
-            // config.load_xml('home/right-nav.xml', ['right-nav.xml', 'right-sidebar-nav'], load_succeed, load_failed);
-            config.load_xml('home/home-features.xml', ['home-features.xml', 'home-features'], load_succeed, load_failed);
-            // config.load_xml('home/home-stats.xml', ['home-stats.xml', 'home-stats'], load_succeed, load_failed);
-            // config.load_xml('home/account-modal.xml', ['account-modal.xml', 'account-modal'], load_succeed, load_failed);
-            // config.load_xml('home/account-update-modal.xml', ['account-update-modal.xml', 'account-update-modal'], load_succeed, load_failed);
-            // config.load_xml('home/app-add-modal.xml', ['app-add-modal.xml', 'app-add-modal'], load_succeed, load_failed);
-            // config.load_xml('home/profile-modal', ['profile-modal.xml', 'profile-modal'], load_succeed, load_failed);
             // Querying the cloud service component for the home page dynamic data injection.
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
