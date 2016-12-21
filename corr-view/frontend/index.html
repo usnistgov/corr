@@ -74,7 +74,93 @@
             </div>
         </header>
 
-        <aside id="right-sidebar-nav"></aside>
+        <aside id="right-sidebar-nav">
+            <ul id="chat-out" class="side-nav rightside-navigation">
+                <li class="li-hover">
+                    <ul class="chat-collapsible" data-collapsible="expandable">
+                        <li>
+                            <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Login</div>
+                            <div class="collapsible-body recent-activity">
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-social-person-outline prefix"></i>
+                                    <input id="login-email" type="email" onkeypress="loginKeyPress(event);">
+                                    <label for="login-email" class="center-align">Email</label>
+                                  </div>
+                                </div>
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-action-lock-outline prefix"></i>
+                                    <input id="login-password" type="password" onkeypress="loginKeyPress(event);">
+                                    <label for="login-password">Password</label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="input-field col s12">
+                                    <a id="buttonLogin" onclick="return user.login();" class="btn login-button waves-effect waves-light green col s12">Login</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header light-blue white-text"><i class="mdi-action-input"></i>Register</div>
+                            <div class="collapsible-body sales-repoart">
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-communication-email prefix"></i>
+                                    <input id="register-email" type="email" onkeypress="registerKeyPress(event);">
+                                    <label for="register-email" class="center-align">Email</label>
+                                  </div>
+                                </div>
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-action-lock-outline prefix"></i>
+                                    <input id="register-password" type="password" onkeypress="registerKeyPress(event);">
+                                    <label for="register-password">Password</label>
+                                  </div>
+                                </div>
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-action-lock-outline prefix"></i>
+                                    <input id="register-password-again" type="password" onkeypress="registerKeyPress(event);">
+                                    <label for="register-password-again">Password again</label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="input-field col s12">
+                                    <a id="buttonRegister" onclick="return user.register();" class="btn waves-effect waves-light blue col s12">Register Now</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                            <div class="collapsible-body recent-activity">
+                                <div class="row margin">
+                                  <div class="input-field col s12">
+                                    <i class="mdi-social-person-outline prefix"></i>
+                                    <input id="recover-email" type="email" onkeypress="recoverKeyPress(event);">
+                                    <label for="recover-email" class="center-align">Email</label>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="input-field col s12">
+                                    <a id="buttonRecover" onclick="return user.recover();" class="btn login-button waves-effect waves-light green col s12">Request</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
+
+                        </li>
+                        <li>
+                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </aside>
 
         <div class="parallax-container">
             <div class="parallax">
@@ -84,17 +170,212 @@
 
         <div class="section" id="home-features"></div>
 
-        <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;"></div>
+        <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        </div>
 
-        <div class="container" id="home-stats"></div>
+        <div class="container" id="home-stats">
+            <section id="content">
+                <div class="container">
+                    <div id="card-stats">
+                        <div class="row">
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content  green white-text">
+                                        <p class="card-stats-title"><i class="mdi-social-group-add"></i> Users</p>
+                                        <h4 class="card-stats-number" id="total-users">N/A</h4>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content purple white-text">
+                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Applications</p>
+                                        <h4 class="card-stats-number" id="total-apps">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content brown white-text">
+                                        <p class="card-stats-title"><i class="mdi-file-folder"></i> Projects</p>
+                                        <h4 class="card-stats-number" id="total-projects">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content blue-grey white-text">
+                                        <p class="card-stats-title"><i class="mdi-file-cloud-upload"></i> Records</p>
+                                        <h4 class="card-stats-number" id="total-records">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content red white-text">
+                                        <p class="card-stats-title"><i class="mdi-device-storage"></i> Storage</p>
+                                        <h4 class="card-stats-number" id="total-storage">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s12 m6 l2">
+                                <div class="card">
+                                    <div class="card-content orange white-text">
+                                        <p class="card-stats-title"><i class="mdi-av-equalizer"></i> Traffic</p>
+                                        <h4 class="card-stats-number" id="total-traffic">N/A</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
-        <div id="account-modal" class="modal login-form"></div>
+        <div id="account-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-communication-email prefix"></i>
+                    <input readonly id="view-email" type="email">
+                    <label id="view-email-value" for="view-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-communication-vpn-key prefix"></i>
+                    <input readonly id="view-api" type="text">
+                    <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <!-- <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button> -->
+                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#app-add-modal" class="modal-trigger btn purple waves-effect waves-light col s12">Add Application</a>
+                  </div>
+                </div>
+            </div>
+        </div>
 
-        <div id="account-update-modal" class="modal login-form"></div>
+        <div id="account-update-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
+                    <label for="picture-input">
+                        <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <input id="picture-input" type="file" style="display: none;"/>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="edit-new-password" type="password">
+                    <label for="edit-new-password">New Password</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="edit-new-password-again" type="password">
+                    <label for="edit-new-password-again">New Password Again</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
 
-        <div id="app-add-modal" class="modal login-form"></div>
+        <div id="app-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
+                    <label for="picture-input">
+                        <img src="images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="app-name" type="text">
+                    <label for="app-name">App Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="app-about" class="materialize-textarea"></textarea>
+                    <label id="app-about-value" for="app-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
 
-        <div id="profile-modal" class="modal login-form"></div>
+        <div id="profile-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-perm-identity prefix"></i>
+                    <input id="view-fname" type="text">
+                    <label id="view-fname-value" for="view-fname">First Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment-ind prefix"></i>
+                    <input id="view-lname" type="text">
+                    <label id="view-lname-value" for="view-lname">Last Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-home prefix"></i>
+                    <input id="view-org" type="text">
+                    <label id="view-org-value" for="view-org">Organisation</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="view-about" class="materialize-textarea"></textarea>
+                    <label id="view-about-value" for="view-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+                  </div>
+                </div>
+            </div>
+        </div>
 
         <footer class="page-footer">
             <div class="footer-copyright">
@@ -140,14 +421,13 @@
                 Materialize.toast('<span>'+params[0]+' injection failed.</span>', 3000);
             };
 
-            config.load_xml('home/right-nav.xml', ['right-nav.xml', 'right-sidebar-nav'], load_succeed, load_failed);
-            config.load_xml('home/home-featuresv.xml', ['home-features.xml', 'home-features'], load_succeed, load_failed);
-            config.load_xml('home/home-stats.xml', ['home-stats.xml', 'home-stats'], load_succeed, load_failed);
-            config.load_xml('home/account-modal.xml', ['account-modal.xml', 'account-modal'], load_succeed, load_failed);
-            config.load_xml('home/account-update-modal.xml', ['account-update-modal.xml', 'account-update-modal'], load_succeed, load_failed);
-            config.load_xml('home/app-add-modal.xml', ['app-add-modal.xml', 'app-add-modal'], load_succeed, load_failed);
-            config.load_xml('home/profile-modal', ['profile-modal.xml', 'profile-modal'], load_succeed, load_failed);
-
+            // config.load_xml('home/right-nav.xml', ['right-nav.xml', 'right-sidebar-nav'], load_succeed, load_failed);
+            config.load_xml('home/home-features.xml', ['home-features.xml', 'home-features'], load_succeed, load_failed);
+            // config.load_xml('home/home-stats.xml', ['home-stats.xml', 'home-stats'], load_succeed, load_failed);
+            // config.load_xml('home/account-modal.xml', ['account-modal.xml', 'account-modal'], load_succeed, load_failed);
+            // config.load_xml('home/account-update-modal.xml', ['account-update-modal.xml', 'account-update-modal'], load_succeed, load_failed);
+            // config.load_xml('home/app-add-modal.xml', ['app-add-modal.xml', 'app-add-modal'], load_succeed, load_failed);
+            // config.load_xml('home/profile-modal', ['profile-modal.xml', 'profile-modal'], load_succeed, load_failed);
             // Querying the cloud service component for the home page dynamic data injection.
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
@@ -188,6 +468,13 @@
                         console.log("CoRR Version:"+version);
                         console.log("Total Apps:"+apps["size"]);
                         console.log("Total Traffic:"+traffic["size"]);
+                        console.log("++Total Users:"+document.getElementById("total-users").value);
+                        console.log("++Total Projects:"+document.getElementById("total-projects").value);
+                        console.log("++Total Records:"+document.getElementById("total-records").value);
+                        console.log("++Total Stage:"+document.getElementById("total-storage").value);
+                        console.log("++CoRR Version:"+document.getElementById("footer-version").value);
+                        console.log("++Total Apps:"+document.getElementById("total-apps").value);
+                        console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
                     }
                 } else {
                     console.log("Cannot reach the cloud!");
