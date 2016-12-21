@@ -180,7 +180,7 @@ var user = {
             async      : true,
             cache      : false,
             processData: false,
-            contentType: false,("app-about").value;
+            contentType: false,
         if(name != ""){
             success    : function(text){
                 if(text == ""){
