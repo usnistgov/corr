@@ -88,7 +88,7 @@ var dashboard = {
 	},
 	query:function(session, options){
         function succeed(xhttp){
-		    dashboard.content.innerHTML = xhttp.responseText;
+            dashboard.content.innerHTML = xhttp.responseText;
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -102,5 +102,5 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_query.xml', [], succeed, failed);
-	}
+    }
 }
