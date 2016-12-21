@@ -1,21 +1,21 @@
 <div class="modal-content">
   <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
       <label for="picture-input">
-          <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+        <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
       </label>
-      <input id="picture-input" type="file" style="display: none;"/>
+      <input id="picture-input" type="file" style="display: none;"></input>
   </div>
   <div class="row margin">
     <div class="input-field col s12">
       <i class="mdi-action-lock-outline prefix"></i>
-      <input id="edit-new-password" type="password">
+      <input id="edit-new-password" type="password"></input>
       <label for="edit-new-password">New Password</label>
     </div>
   </div>
   <div class="row margin">
     <div class="input-field col s12">
       <i class="mdi-action-lock-outline prefix"></i>
-      <input id="edit-new-password-again" type="password">
+      <input id="edit-new-password-again" type="password"></input>
       <label for="edit-new-password-again">New Password Again</label>
     </div>
   </div>
