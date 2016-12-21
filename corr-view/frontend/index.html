@@ -295,7 +295,6 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <!-- <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button> -->
                     <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
                   </div>
                 </div>
@@ -426,9 +425,9 @@
 
         <script src="js/config.js"></script>
 
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="js/materialize.js"></script>
         <script type="text/javascript" src="js/prism.js"></script>
-        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="js/materialize.min.js"></script>
         <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script type="text/javascript" src="js/plugins/chartist-js/chartist.min.js"></script>
@@ -451,6 +450,15 @@
                 $('.tooltipped').tooltip({delay: 50});
                 $('.collapsible').collapsible({accordion : false});
             });
+
+            function succeed(xhttp, params){
+                var content = document.getElementById(params[0]);
+                content.innerHTML = xhttp.responseText;
+            };
+            function failed(){
+                console.log("Error injecting in:"+params[0]);
+            };
+            config.load_xml('home/right-nav.xml', ['right-sidebar-nav'], succeed, failed);
             // Querying the cloud service component for the home page dynamic data injection.
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
