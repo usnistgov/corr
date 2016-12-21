@@ -451,14 +451,14 @@
                 $('.collapsible').collapsible({accordion : false});
             });
 
-            function succeed(xhttp, params){
-                var content = document.getElementById(params[0]);
-                content.innerHTML = xhttp.responseText;
-            };
-            function failed(){
-                console.log("Error injecting in:"+params[0]);
-            };
-            config.load_xml('home/right-nav.xml', ['right-sidebar-nav'], succeed, failed);
+            // function succeed(xhttp, params){
+            //     var content = document.getElementById(params[0]);
+            //     content.innerHTML = xhttp.responseText;
+            // };
+            // function failed(){
+            //     console.log("Error injecting in:"+params[0]);
+            // };
+            // config.load_xml('home/right-nav.xml', ['right-sidebar-nav'], succeed, failed);
             // Querying the cloud service component for the home page dynamic data injection.
             var xmlhttp = new XMLHttpRequest();
             console.log(this.session);
