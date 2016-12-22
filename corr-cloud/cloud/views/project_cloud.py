@@ -147,7 +147,7 @@ def project_create(hash_session):
                     name = data.get("name", "")
                     description = data.get("description", "")
                     goals = data.get("goals", "")
-                    access = data.get("goals", 'public')
+                    access = data.get("access", 'public')
                     group = data.get("group", "undefined")
                     tags = data.get("tags", "")
                     environment = data.get("environment", {})

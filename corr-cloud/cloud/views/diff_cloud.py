@@ -62,7 +62,8 @@ def diff_create(hash_session, diff_id):
                         else:
                             return cloud_response(400, 'Diff not created.', "Both record from and to have to exist.")
                     except:
-                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                        return cloud_response(500, 'diff not created.', str(traceback.print_exc()))
+                        # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
     else:
