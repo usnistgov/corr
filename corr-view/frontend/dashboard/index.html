@@ -58,7 +58,7 @@
                                 </a>
                             </li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                                <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                <a href="http://corr.readthedocs.io/en/latest/rst/README.html" id= "nav-help" class="waves-effect waves-block waves-light">
                                     <i class="nav-action mdi-communication-live-help"></i>
                                 </a>
                             </li>
@@ -210,7 +210,7 @@
                 // Inject the nav menu and the dashboard floating menu
                 document.getElementById("nav-home-2").href = "../?session="+user.session;
                 document.getElementById("nav-home").href = "../?session="+user.session;
-                document.getElementById("nav-help").href = "../help/?session="+user.session;
+                // document.getElementById("nav-help").href = "../help/?session="+user.session;
                 document.getElementById("nav-dashboard").href = "./?session="+user.session;
 
                 document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings' href='./?session="+user.session+"' ><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
