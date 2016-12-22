@@ -139,41 +139,36 @@ def record_create(hash_session, project_id):
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/create/<project_id>')
-            allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print("Allowance: {0}".format(allowance))
-            if allowance == hash_session:
-                try:
-                    project = ProjectModel.objects.with_id(project_id)
-                except:
-                    print(str(traceback.print_exc()))
-                if project is None:
-                    return cloud_response(404, 'Record not created.', "The project referenced is unknown.")
-                else:
-                    if project.owner == current_user:
-                        if fk.request.data:
-                                data = json.loads(fk.request.data)
-                                try:
-                                    record = RecordModel(created_at=str(datetime.datetime.utcnow()), project=project)
-                                    tags = data.get("tags", "")
-                                    rationels = data.get("rationels", "")
-                                    status = data.get("status", "unknown")
-                                    content = data.get("content", "no content")
-                                    record.tags = [tags]
-                                    record.rationels = [rationels]
-                                    record.status = status
-                                    record.extend = {"uploaded":content}
-                                    record.save()
-                                    return cloud_response(201, 'Record successfully created.', "The record was created.")
-                                except:
-                                    print(str(traceback.print_exc()))
-                                    return cloud_response(500, 'record not created.', str(traceback.print_exc()))
-                                    # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
-                        else:
-                            return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
-                    else:
-                        return cloud_response(401, 'Record not created.', "You are not this project owner.")
+            try:
+                project = ProjectModel.objects.with_id(project_id)
+            except:
+                print(str(traceback.print_exc()))
+            if project is None:
+                return cloud_response(404, 'Record not created.', "The project referenced is unknown.")
             else:
-                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                if project.owner == current_user:
+                    if fk.request.data:
+                            data = json.loads(fk.request.data)
+                            try:
+                                record = RecordModel(created_at=str(datetime.datetime.utcnow()), project=project)
+                                tags = data.get("tags", "")
+                                rationels = data.get("rationels", "")
+                                status = data.get("status", "unknown")
+                                content = data.get("content", "no content")
+                                record.tags = [tags]
+                                record.rationels = [rationels]
+                                record.status = status
+                                record.extend = {"uploaded":content}
+                                record.save()
+                                return cloud_response(201, 'Record successfully created.', "The record was created.")
+                            except:
+                                print(str(traceback.print_exc()))
+                                return cloud_response(500, 'record not created.', str(traceback.print_exc()))
+                                # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                else:
+                    return cloud_response(401, 'Record not created.', "You are not this project owner.")
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
