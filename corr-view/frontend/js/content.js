@@ -223,6 +223,56 @@ var Space = function (session){
             }
         }
     },
+    ,
+    this.diffs = function() {
+        document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        document.getElementById("temporal-slider").innerHTML = "";
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/diffs");
+        console.log(this.session);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if(xmlhttp.responseText == ""){
+                    console.log("Cloud returned empty response!");
+                }else{
+                    var response = JSON.parse(xmlhttp.responseText);
+                    document.getElementById("diffs-list").innerHTML = "";
+                    this.dash_content = response;
+                    
+                    for(var i = 0; i < response["number"]; i++){
+                        diff = response["diffs"][i];
+                        console.log(record);
+                        var content = "<div class='col s12 m6 l4' id='"+diff["id"]+"'> ";
+                        content += "<div id='profile-card' class='card'>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
+                        content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a onclick='diffRemove(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
+                        content += "<div id='update-diff-"+diff["id"]+"'><a id='update-action' onclick='diffEdit(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        content += "<span class='card-title activator grey-text text-darken-4'>"+diff["id"]+"</span>";
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+diff["created"]+"</p>";
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='diff-method-"+diff["method"]+"' type='text' value='"+diff["method"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='diff-proposition-"+diff["proposition"]+"' type='text' value='"+diff["proposition"]+"'></div></div>";
+                        content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+diff["status"]+"</p>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record from view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record to view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record dependencies view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+diff["comments"]+"</span></a>";
+                        content += "</div>";
+                        content += "</div>";                
+                        content += "</div>";
+                        content += "</div>";
+                        document.getElementById("diffs-list").innerHTML += content;
+                    }
+                }
+            } else {
+                console.log("Dashboard failed");
+            }
+        }
+    },
     this.query = function(search, exUser, exApp, exProject, exRecord) {
         var xmlhttp = new XMLHttpRequest();
         var query_result = document.getElementById('query-result');

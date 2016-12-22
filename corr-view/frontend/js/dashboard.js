@@ -84,7 +84,19 @@ var dashboard = {
         config.load_xml('dashboard_records.xml', [], succeed, failed);
 	},
 	diffs:function(session, options){
-		this.coming_soon();
+		function succeed(xhttp){
+            dashboard.content.innerHTML = xhttp.responseText;
+            user.session = session;
+            console.log(user.session);
+            user.trusted();
+
+            var space = new Space(user.session);
+            space.diffs();
+        };
+        function failed(){
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_diffs.xml', [], succeed, failed);
 	},
 	query:function(session, options){
         function succeed(xhttp){

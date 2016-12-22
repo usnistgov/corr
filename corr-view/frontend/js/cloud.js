@@ -363,7 +363,7 @@ var user = {
                     console.log(response);
 
                     Materialize.toast('<span>Creation succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
                 } else {
                     console.log(xmlhttp.responseText);
                     Materialize.toast('<span>Creation failed</span>', 3000);
