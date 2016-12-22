@@ -102,39 +102,142 @@
 
         <div id="project-add-modal" class="modal login-form">
             <div class="modal-content">
-                <div class="row">
-                  <div class="input-field col s12 center">
-                    <img src="../images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login"></img>
-                  </div>
-                </div>
-                <div class="divider"></div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <i class="mdi-communication-email prefix"></i>
-                    <input readonly id="view-email" type="email"></input>
-                    <label id="view-email-value" for="view-email">Email</label>
-                  </div>
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="project logo">
+                    <label for="picture-input">
+                        <img src="../images/project.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <i class="mdi-communication-vpn-key prefix"></i>
-                    <input readonly id="view-api" type="text"></input>
-                    <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="project-name" type="text"></input>
+                    <label for="project-name">Project Name</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="project-tags" type="text"></input>
+                    <label id="project-tags-value" for="project-tags">Project Tags</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
+                    <i class="mdi-action-description prefix"></i>
+                    <textarea id="project-description" class="materialize-textarea"></textarea>
+                    <label id="project-description-value" for="project-description">Description</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a href="#app-add-modal" class="modal-trigger btn purple waves-effect waves-light col s12">Add Application</a>
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="project-goals" class="materialize-textarea"></textarea>
+                    <label id="project-goals-value" for="project-goals">Goals</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_project();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="diff-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
+                    <label for="picture-input">
+                        <img src="../images/diff.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="diff-from" type="text"></input>
+                    <label for="diff-from">Record From</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="diff-to" type="text"></input>
+                    <label for="diff-to">Record To</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <label>Diff Method</label>
+                    <select id="diff-method">
+                      <option value="" disabled selected>Choose method</option>
+                      <option value="1">Default</option>
+                      <option value="2">Visual</option>
+                      <option value="3">Custom</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <label>Diff Proposition</label>
+                    <select id="diff-proposition">
+                      <option value="" disabled selected>Choose proposition</option>
+                      <option value="1">Repeated</option>
+                      <option value="2">Reproduced</option>
+                      <option value="3">Replicated</option>
+                      <option value="3">Non-replicated</option>
+                      <option value="3">Non-repeated</option>
+                      <option value="3">Non-reproduced</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="project-goals" class="materialize-textarea"></textarea>
+                    <label id="project-goals-value" for="project-goals">Goals</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_diff();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="record-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="record-tags" type="text"></input>
+                    <label id="record-tags-value" for="record-tags">Record Tags</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <textarea id="record-rationels" class="materialize-textarea"></textarea>
+                    <label id="record-rationels-value" for="record-rationels">Rationels</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <label>Record Status</label>
+                    <select id="record-status">
+                      <option value="" disabled selected>Choose status</option>
+                      <option value="2">Finished</option>
+                      <option value="3">Failed</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_record();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
                 </div>
             </div>
@@ -224,18 +327,18 @@
             else if(user.session != "" && view_selected == "projects"){
                 dashboard.projects(user.session);
                 var space = new Space(user.session);
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create' onclick=\"return create_project();\"><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the records dashboard view
             else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload' onclick=\"return upload_record();\"><i class='mdi-file-file-upload'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#record-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='mdi-file-file-upload'></i></a>";
             }
             // Inject the diffs dashboard view
             else if(user.session != "" && view_selected == "diffs"){
                 dashboard.diffs(user.session, options);
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create' onclick=\"return create_diff();\"><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the query dashboard view
             else if(user.session != "" && view_selected == "query"){
