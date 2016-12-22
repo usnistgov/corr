@@ -27,7 +27,7 @@ import mimetypes
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_create(hash_session, diff_id):
+def diff_create(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/create')
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
