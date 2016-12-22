@@ -154,11 +154,11 @@ def record_create(hash_session, project_id):
                                 data = json.loads(fk.request.data)
                                 try:
                                     record = RecordModel(created_at=str(datetime.datetime.utcnow()), project=project)
-                                    tags = data.get("tags", ",")
+                                    tags = data.get("tags", "")
                                     rationels = data.get("rationels", "")
                                     status = data.get("status", "unknown")
                                     content = data.get("content", "no content")
-                                    record.tags = tags.split(',')
+                                    record.tags = [tags]
                                     record.rationels = [rationels]
                                     record.status = status
                                     record.extend = {"uploaded":content}

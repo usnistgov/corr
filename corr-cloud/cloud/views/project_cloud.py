@@ -147,9 +147,9 @@ def project_create(hash_session):
                     name = data.get("name", "")
                     description = data.get("description", "")
                     goals = data.get("goals", "")
-                    access = data.get("goals", "public")
+                    access = data.get("goals", 'public')
                     group = data.get("group", "undefined")
-                    tags = data.get("tags", ",")
+                    tags = data.get("tags", "")
                     environment = data.get("environment", {})
                     query_project = ProjectModel.objects(owner=current_user, name=name).first()
                     if query_project is None:
@@ -158,7 +158,7 @@ def project_create(hash_session):
                         project.access = access
                         project.goals = goals
                         project.group = group
-                        project.tags = tags.split(',')
+                        project.tags = [tags]
                         project.save()
                         return cloud_response(201, 'Project successfully created.', "The project was created.")
                     else:
