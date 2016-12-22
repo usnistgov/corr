@@ -46,7 +46,7 @@ var user = {
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                     if(xmlhttp.responseText == ""){
+                    if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
@@ -317,14 +317,19 @@ var user = {
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
 
-                    Materialize.toast('<span>Creation succeeded</span>', 3000);
-                    window.location.reload();
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = JSON.parse(xmlhttp.responseText);
+                        console.log(response);
+                        Materialize.toast('<span>'+response['title']+'</span>', 3000);
+                        window.location.reload();
+                    }
                 } else {
-                    console.log("Update failed");
+                    var response = JSON.parse(xmlhttp.responseText);
+                    console.log(response);
                     Materialize.toast('<span>Creation failed</span>', 3000);
                 }
             }
