@@ -38,33 +38,29 @@ def diff_create(hash_session, diff_id):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/create')
             if fk.request.data:
                 data = json.loads(fk.request.data)
-                targeted_id = data.get("targeted", "")
                 record_from_id = data.get("record_from", "")
                 record_to_id = data.get("record_to", "")
-                diffentiation = data.get("diff", {})
+                method = data.get("method", "undefined")
                 proposition = data.get("proposition", "undefined")
                 status = data.get("status", "undefined")
                 comments = data.get("comments", [])
 
-                if targeted_id == "" or record_from_id == "" or record_to_id == "":
-                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                if record_from_id == "" or record_to_id == "":
+                    return cloud_response(400, 'Diff not created.', "Both record from and to be provided.")
                 else:
                     try:
-                        targeted = UserModel.objects.with_id(targeted_id)
                         record_from = RecordModel.objects.with_id(record_from_id)
                         record_to = RecordModel.objects.with_id(record_to_id)
-                        if targeted != None and record_to != None and record_from != None:
-                            (diff, created) = DiffModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=current_user, targeted=targeted, record_from=record_from, record_to=record_to)
-                            if created:
-                                diff.proposition = proposition
-                                diff.status = status
-                                diff.comments = comments
-                                diff.save()
-                                return fk.Response('Diff created', status.HTTP_200_OK)
-                            else:
-                                return fk.redirect('{0}:{1}/error/?code=409'.format(VIEW_HOST, VIEW_PORT))
+                        if record_to and record_from:
+                            diff = DiffModel(created_at=str(datetime.datetime.utcnow()), sender=current_user, targeted=current_user, record_from=record_from, record_to=record_to)
+                            diff.method = method
+                            diff.proposition = proposition
+                            diff.status = status
+                            diff.comments = comments
+                            diff.save()
+                            return cloud_response(201, 'Diff successfully created.', "The diff was created.")
                         else:
-                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                            return cloud_response(400, 'Diff not created.', "Both record from and to have to exist.")
                     except:
                         return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
