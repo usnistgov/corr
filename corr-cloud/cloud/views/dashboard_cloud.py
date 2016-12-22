@@ -184,7 +184,8 @@ def diffs_dashboard(hash_session):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/diffs')
             
-            diffs = DiffModel.objects(owner=current_user).order_by('+created_at')
+            diffs_send = DiffModel.objects(sender=current_user).order_by('+created_at')
+            diffs_targ = DiffModel.objects(targeted=current_user).order_by('+created_at')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -192,8 +193,11 @@ def diffs_dashboard(hash_session):
             except:
                 pass
             summaries = []
-            for p in diffs:
-                summaries.append(diff.info())
+            for d in diffs_send:
+                summaries.append(d.info())
+            for d in diffs_targ:
+                if d not in diffs_send:
+                    summaries.append(d.info())
             return fk.Response(json.dumps({'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
