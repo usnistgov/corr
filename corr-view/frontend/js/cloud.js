@@ -365,7 +365,7 @@ var user = {
                     Materialize.toast('<span>Creation succeeded</span>', 3000);
                     window.location.reload();
                 } else {
-                    console.log("Update failed");
+                    console.log(xmlhttp.responseText);
                     Materialize.toast('<span>Creation failed</span>', 3000);
                 }
             }
@@ -395,7 +395,7 @@ var user = {
                     Materialize.toast('<span>Creation succeeded</span>', 3000);
                     window.location.reload();
                 } else {
-                    console.log("Update failed");
+                    console.log(xmlhttp.responseText);
                     Materialize.toast('<span>Creation failed</span>', 3000);
                 }
             }
