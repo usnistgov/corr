@@ -305,12 +305,98 @@ var user = {
         }  
     },
     add_project: function() {
-        Materialize.toast('<span>Project online create not available yet!</span>', 3000);
+        var name = document.getElementById("project-name").value;
+        var tags = document.getElementById("project-tags").value;
+        var description = document.getElementById("project-description").value;
+        var goals = document.getElementById("project-goals").value;
+        if(name != ""){
+            console.log(name+" -- "+tags);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/project/create");
+            var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+
+                    Materialize.toast('<span>Creation succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    console.log("Update failed");
+                    Materialize.toast('<span>Creation failed</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Project name should not be empty.</span>', 3000);
+        }  
     },
     add_record: function() {
-        Materialize.toast('<span>Record online create not available yet!</span>', 3000);
+        var project_id = document.getElementById("project-id").value;
+        var param = window.location.search.substring(1);
+        var blocks = param.split("&");
+        for(i=0;i<blocks.length;i++){
+            var parts = blocks[i].split("=");
+            if(parts[0] == "project"){
+                project_id = parts[1];
+                break;
+            }
+        }
+        var tags = document.getElementById("record-tags").value;
+        var rationels = document.getElementById("record-rationels").value;
+        var status = document.getElementById("record-status").value;
+        if(project_id != ""){
+            console.log(project_id+" -- "+status);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/record/create/"+project_id);
+            var request = {'tags': tags, 'rationels':rationels, 'status':status};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+
+                    Materialize.toast('<span>Creation succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    console.log("Update failed");
+                    Materialize.toast('<span>Creation failed</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Project id should not be empty.</span>', 3000);
+        }
     },
     add_diff: function() {
-        Materialize.toast('<span>Record online create not available yet!</span>', 3000);
+        var record_1 = "";
+        var record_2 = "";
+        var from = document.getElementById("diff-from").value;
+        var to = document.getElementById("diff-to").value;
+        var method = document.getElementById("diff-method").value;
+        var proposition = document.getElementById("diff-proposition").value;
+        if(from != "" && to != ""){
+            console.log(from+" -- "+to);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/diff/create");
+            var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+
+                    Materialize.toast('<span>Creation succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    console.log("Update failed");
+                    Materialize.toast('<span>Creation failed</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
+        }
     }
 };

@@ -132,6 +132,47 @@ def project_comments(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
+@app.route(CLOUD_URL + '/private/<hash_session>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def project_create(hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/create')
+    if fk.request.method == 'POST':
+        access_resp = access_manager.check_cloud(hash_session)
+        current_user = access_resp[1]
+        if current_user is not None:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/create')
+            if fk.request.data:
+                data = json.loads(fk.request.data)
+                try:
+                    name = data.get("name", "")
+                    description = data.get("description", "")
+                    goals = data.get("goals", "")
+                    access = data.get("goals", "public")
+                    group = data.get("group", "undefined")
+                    tags = data.get("tags", ",")
+                    environment = data.get("environment", {})
+                    query_project = ProjectModel.objects(owner=current_user, name=name).first()
+                    if query_project is None:
+                        project = ProjectModel(created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
+                        project.description = description
+                        project.access = access
+                        project.goals = goals
+                        project.group = group
+                        project.tags = tags.split(',')
+                        project.save()
+                        return cloud_response(201, 'Project successfully created.', "The project was created.")
+                    else:
+                        return cloud_response(409, 'Project not created.', "A project with this name already exists.")
+                except:
+                    print(str(traceback.print_exc()))
+                    return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
+            else:
+                return fk.Response('Nothing to create from', status.HTTP_200_OK)
+        else:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
 @app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
 def project_edit(hash_session, project_id):
