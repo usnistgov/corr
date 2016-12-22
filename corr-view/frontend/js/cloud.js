@@ -328,8 +328,7 @@ var user = {
                         window.location.reload();
                     }
                 } else {
-                    var response = JSON.parse(xmlhttp.responseText);
-                    console.log(response);
+                    console.log(xmlhttp.responseText);
                     Materialize.toast('<span>Creation failed</span>', 3000);
                 }
             }
