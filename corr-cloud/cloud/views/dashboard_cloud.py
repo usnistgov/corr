@@ -172,6 +172,32 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def diffs_dashboard(hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/diffs')
+    if fk.request.method == 'GET':
+        access_resp = access_manager.check_cloud(hash_session)
+        current_user = access_resp[1]
+        if current_user is None:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/diffs')
+            
+            diffs = DiffModel.objects(owner=current_user).order_by('+created_at')
+            version = 'N/A'
+            try:
+                from corrdb import __version__
+                version = __version__
+            except:
+                pass
+            summaries = []
+            for p in diffs:
+                summaries.append(diff.info())
+            return fk.Response(json.dumps({'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
 def dashboard_records(hash_session, project_id):
