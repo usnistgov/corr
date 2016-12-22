@@ -170,6 +170,7 @@
             if(user.session != "" && view_selected == ""){
                 dashboard.activity(user.session);
                 var space = new Space(user.session);
+                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create' onclick=\"return create_project();\"><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
             else if(user.session != "" && view_selected == "apps"){
