@@ -71,17 +71,22 @@
             </div>
         </header>
 
+        <div class="parallax-container">
+            <div class="parallax">
+            </div>
+        </div>
+
         <div id="app-add-modal" class="modal login-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
                     <label for="picture-input">
-                        <img src="../images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
+                        <img src="../images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
                     </label>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <i class="mdi-action-lock-outline prefix"></i>
-                    <input id="app-name" type="text">
+                    <input id="app-name" type="text"></input>
                     <label for="app-name">App Name</label>
                   </div>
                 </div>
@@ -179,6 +184,7 @@
         <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
         <script type="text/javascript" src="../js/plugins/jvectormap/vectormap-script.js"></script>
         <script type="text/javascript" src="../js/plugins.js"></script>
+        <script type="text/javascript" src="../js/clipboard.min.js"></script>
         <script type="text/javascript" src="../js/jquery.min.js"></script>
         <script type="text/javascript" src="../js/wNumb.min.js"></script>
         <script type="text/javascript" src="../js/jquery.nouislider.min.js"></script>
@@ -191,6 +197,10 @@
         <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
+            $(document).ready(function(){
+                $('.tooltipped').tooltip({delay: 50});
+                $('.collapsible').collapsible({accordion : false});
+            });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
             var view_selected = "";
