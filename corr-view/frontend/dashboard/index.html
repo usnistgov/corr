@@ -58,7 +58,7 @@
                                 </a>
                             </li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                                <a href="http://corr.readthedocs.io/en/latest/rst/README.html" id= "nav-help" class="waves-effect waves-block waves-light">
+                                <a href="http://corr.readthedocs.io/en/latest/rst/README.html" target="_blank" id= "nav-help" class="waves-effect waves-block waves-light">
                                     <i class="nav-action mdi-communication-live-help"></i>
                                 </a>
                             </li>
@@ -95,6 +95,46 @@
                 <div class="row margin">
                   <div class="input-field col s12">
                     <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img src="../images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login"></img>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-communication-email prefix"></i>
+                    <input readonly id="view-email" type="email"></input>
+                    <label id="view-email-value" for="view-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-communication-vpn-key prefix"></i>
+                    <input readonly id="view-api" type="text"></input>
+                    <label class"truncate" id="view-api-value" for="view-api">Api Key</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a href="#app-add-modal" class="modal-trigger btn purple waves-effect waves-light col s12">Add Application</a>
                   </div>
                 </div>
             </div>
@@ -170,6 +210,7 @@
             if(user.session != "" && view_selected == ""){
                 dashboard.activity(user.session);
                 var space = new Space(user.session);
+                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-triggerbtn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
             else if(user.session != "" && view_selected == "apps"){
