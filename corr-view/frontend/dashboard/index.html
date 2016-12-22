@@ -71,11 +71,6 @@
             </div>
         </header>
 
-        <div class="parallax-container">
-            <div class="parallax">
-            </div>
-        </div>
-
         <div id="app-add-modal" class="modal login-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
@@ -197,10 +192,6 @@
         <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
-            $(document).ready(function(){
-                $('.tooltipped').tooltip({delay: 50});
-                $('.collapsible').collapsible({accordion : false});
-            });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
             var view_selected = "";
