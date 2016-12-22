@@ -223,7 +223,6 @@ var Space = function (session){
             }
         }
     },
-    ,
     this.diffs = function() {
         document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
