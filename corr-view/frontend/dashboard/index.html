@@ -192,6 +192,9 @@
         <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
+            $(document).ready(function() {
+              $('.modal-trigger').leanModal();
+            });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
             var view_selected = "";
