@@ -27,14 +27,14 @@ Installation instructions are available at <a href="https://github.com/usnistgov
 <img src="https://travis-ci.org/usnistgov/corr.svg?branch=master"
 alt="Travis CI">
 </a>
-<a href="https://github.com/usnistgov/corr/issues" target="_blank">
+<!-- <a href="https://github.com/usnistgov/corr/issues" target="_blank">
 <img src="http://githubbadges.herokuapp.com/usnistgov/corr/issues.svg?style=flat-square"
 alt="Github Issues">
 </a>
 <a href="https://github.com/usnistgov/corr/pulls" target="_blank">
 <img src="http://githubbadges.herokuapp.com/usnistgov/corr/pulls.svg?style=flat-square"
-alt="Github Pull requests">
-</a>
+alt="Github Pulls">
+</a> -->
 <a href="http://mybinder.org/repo/usnistgov/corr" target="_blank">
 <img src="http://mybinder.org/badge.svg"
 alt="Binder">
