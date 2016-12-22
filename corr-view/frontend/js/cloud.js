@@ -69,32 +69,6 @@ var user = {
             Materialize.toast('<span>Passwords mismatch.</span>', 3000);
         }  
     },
-    add_app: function() {
-        var name = document.getElementById("app-name").value;
-        var about = document.getElementById("app-about").value;
-        if(name != ""){
-            console.log(name+" -- "+about);
-            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
-            var request = { 'name': name, 'about': about};
-            xmlhttp.send(JSON.stringify(request));
-            xmlhttp.onreadystatechange=function()
-            {
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
-                    window.location.replace("../?session="+this.session);
-
-                    Materialize.toast('<span>Creation succeeded</span>', 3000);
-                } else {
-                    console.log("Update failed");
-                    Materialize.toast('<span>Creation failed</span>', 3000);
-                }
-            }
-        }else{
-            Materialize.toast('<span>Name should not be empty.</span>', 3000);
-        }  
-    },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -303,5 +277,40 @@ var user = {
         console.log("Email: "+this.email);
         console.log("Username: "+this.username);
         console.log("Session: "+this.session);
+    },
+    add_app: function() {
+        var name = document.getElementById("app-name").value;
+        var about = document.getElementById("app-about").value;
+        if(name != ""){
+            console.log(name+" -- "+about);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
+            var request = { 'name': name, 'about': about};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    var response = xmlhttp.responseText;
+                    console.log(response);
+
+                    Materialize.toast('<span>Creation succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    console.log("Update failed");
+                    Materialize.toast('<span>Creation failed</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Name should not be empty.</span>', 3000);
+        }  
+    },
+    add_project: function() {
+        Materialize.toast('<span>Project online create not available yet!</span>', 3000);
+    },
+    add_record: function() {
+        Materialize.toast('<span>Record online create not available yet!</span>', 3000);
+    },
+    add_diff: function() {
+        Materialize.toast('<span>Record online create not available yet!</span>', 3000);
     }
 };
