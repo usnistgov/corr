@@ -165,7 +165,8 @@ def project_create(hash_session):
                         return cloud_response(409, 'Project not created.', "A project with this name already exists.")
                 except:
                     print(str(traceback.print_exc()))
-                    return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
+                    return cloud_response(500, 'Project not created.', str(traceback.print_exc()))
+                    # return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.Response('Nothing to create from', status.HTTP_200_OK)
         else:
