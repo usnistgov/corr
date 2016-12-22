@@ -210,7 +210,7 @@
             if(user.session != "" && view_selected == ""){
                 dashboard.activity(user.session);
                 var space = new Space(user.session);
-                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-triggerbtn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
             else if(user.session != "" && view_selected == "apps"){
