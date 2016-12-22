@@ -166,7 +166,8 @@ def record_create(hash_session, project_id):
                                     return cloud_response(201, 'Record successfully created.', "The record was created.")
                                 except:
                                     print(str(traceback.print_exc()))
-                                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                                    return cloud_response(500, 'record not created.', str(traceback.print_exc()))
+                                    # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
                     else:
