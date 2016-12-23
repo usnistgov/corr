@@ -128,8 +128,8 @@ def private_search(hash_session):
                             where.append("all")
                         if any(q.lower() in str(diff.id) for q in query):
                             where.append("id")
-                        if any(q in str(json.dumps(diff.diff)) for q in query):
-                            where.append("diff")
+                        if any(q in str(json.dumps(diff.method)) for q in query):
+                            where.append("method")
                         if any(q in str(json.dumps(diff.proposition)) for q in query):
                             where.append("proposition")
                         if any(q in str(json.dumps(diff.status)) for q in query):
