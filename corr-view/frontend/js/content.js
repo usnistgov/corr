@@ -145,11 +145,11 @@ var Space = function (session){
                         access_select.push("<option value='deactivated'>Deactivated</option>");
                         access_select.push("</select></div></div>");
                         if(app["access"] == "activated"){
-                            access_select[0] = "<option value='activated' disabled selected>Choose status</option>";
+                            access_select[1] = "<option value='activated' disabled selected>Choose status</option>";
                         }else if(app["access"] == "blocked"){
-                            access_select[1] = "<option value='blocked' selected>Blocked</option>";
+                            access_select[2] = "<option value='blocked' selected>Blocked</option>";
                         }else if(app["access"] == "deactivated"){
-                            access_select[2] = "<option value='deactivated' selected>Deactivated</option>>";
+                            access_select[3] = "<option value='deactivated' selected>Deactivated</option>";
                         }
                         
                         for(var j = 0; j < access_select.length; j++){
@@ -237,25 +237,25 @@ var Space = function (session){
                         status_select.push("<option value='running'>Running</option>");
                         status_select.push("</select></div></div>");
                         if(record["head"]["status"] == "unknown"){
-                            status_select[0] = "<option value='unknown' disabled selected>Choose status</option>";
+                            status_select[1] = "<option value='unknown' disabled selected>Choose status</option>";
                         }else if(record["head"]["status"] == "finished"){
-                            status_select[1] = "<option value='finished' selected>Finished</option>";
+                            status_select[2] = "<option value='finished' selected>Finished</option>";
                         }else if(record["head"]["status"] == "crashed"){
-                            status_select[2] = "<option value='crashed' selected>Crashed</option>>";
+                            status_select[3] = "<option value='crashed' selected>Crashed</option>>";
                         }else if(record["head"]["status"] == "terminated"){
-                            status_select[3] = "<option value='terminated' selected>Terminated</option>";
+                            status_select[4] = "<option value='terminated' selected>Terminated</option>";
                         }else if(record["head"]["status"] == "starting"){
-                            status_select[4] = "<option value='starting' selected>Started</option>";
+                            status_select[5] = "<option value='starting' selected>Started</option>";
                         }else if(record["head"]["status"] == "started"){
-                            status_select[5] = "<option value='started' selected>Starting</option>";
+                            status_select[6] = "<option value='started' selected>Starting</option>";
                         }else if(record["head"]["status"] == "paused"){
-                            status_select[6] = "<option value='paused' selected>Paused</option>";
+                            status_select[7] = "<option value='paused' selected>Paused</option>";
                         }else if(record["head"]["status"] == "sleeping"){
-                            status_select[7] = "<option value='sleeping' selected>Sleeping</option>";
+                            status_select[8] = "<option value='sleeping' selected>Sleeping</option>";
                         }else if(record["head"]["status"] == "resumed"){
-                            status_select[8] = "<option value='resumed' selected>Resumed</option>";
+                            status_select[9] = "<option value='resumed' selected>Resumed</option>";
                         }else if(record["head"]["status"] == "running"){
-                            status_select[9] = "<option value='running' selected>Running</option>";
+                            status_select[10] = "<option value='running' selected>Running</option>";
                         }
                         
                         for(var j = 0; j < status_select.length; j++){
@@ -314,13 +314,13 @@ var Space = function (session){
                         method_select.push("<option value='custom'>Custom</option>");
                         method_select.push("</select></div></div>");
                         if(diff["method"] == "undefined"){
-                            method_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                            method_select[1] = "<option value='undefined' disabled selected>Choose status</option>";
                         }else if(diff["method"] == "default"){
-                            method_select[1] = "<option value='default' selected>Default</option>";
+                            method_select[2] = "<option value='default' selected>Default</option>";
                         }else if(diff["method"] == "visual"){
-                            method_select[2] = "<option value='visual' selected>Visual</option>>";
+                            method_select[3] = "<option value='visual' selected>Visual</option>>";
                         }else if(diff["method"] == "custom"){
-                            method_select[3] = "<option value='custom' selected>Custom</option>";
+                            method_select[4] = "<option value='custom' selected>Custom</option>";
                         }
                         
                         for(var j = 0; j < method_select.length; j++){
@@ -338,19 +338,19 @@ var Space = function (session){
                         propos_select.push("<option value='non-reproduced'>Non-reproduced</option>");
                         propos_select.push("</select></div></div>");
                         if(diff["proposition"] == "undefined"){
-                            propos_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                            propos_select[1] = "<option value='undefined' disabled selected>Choose status</option>";
                         }else if(diff["proposition"] == "repeated"){
-                            propos_select[1] = "<option value='repeated' selected>Repeated</option>";
+                            propos_select[2] = "<option value='repeated' selected>Repeated</option>";
                         }else if(diff["proposition"] == "reproduced"){
-                            propos_select[2] = "<option value='reproduced' selected>Reproduced</option>>";
+                            propos_select[3] = "<option value='reproduced' selected>Reproduced</option>>";
                         }else if(diff["proposition"] == "replicated"){
-                            propos_select[3] = "<option value='replicated' selected>Replicated</option>";
+                            propos_select[4] = "<option value='replicated' selected>Replicated</option>";
                         }else if(diff["proposition"] == "non-replicated"){
-                            propos_select[4] = "<option value='non-replicated' selected>Non-replicated</option>";
+                            propos_select[5] = "<option value='non-replicated' selected>Non-replicated</option>";
                         }else if(diff["proposition"] == "non-repeated"){
-                            propos_select[5] = "<option value='non-repeated' selected>Non-repeated</option>";
+                            propos_select[6] = "<option value='non-repeated' selected>Non-repeated</option>";
                         }else if(diff["proposition"] == "non-reproduced"){
-                            propos_select[6] = "<option value='non-reproduced' selected>Non-reproduced</option>";
+                            propos_select[7] = "<option value='non-reproduced' selected>Non-reproduced</option>";
                         }
                         
                         for(var j = 0; j < propos_select.length; j++){
@@ -365,13 +365,13 @@ var Space = function (session){
                         status_select.push("<option value='altered'>Altered</option>");
                         status_select.push("</select></div></div>");
                         if(diff["status"] == "undefined"){
-                            status_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                            status_select[1] = "<option value='undefined' disabled selected>Choose status</option>";
                         }else if(diff["status"] == "agreed"){
-                            status_select[1] = "<option value='agreed' selected>Agreed</option>";
+                            status_select[2] = "<option value='agreed' selected>Agreed</option>";
                         }else if(diff["status"] == "denied"){
-                            status_select[2] = "<option value='denied' selected>Denied</option>>";
+                            status_select[3] = "<option value='denied' selected>Denied</option>>";
                         }else if(diff["status"] == "altered"){
-                            status_select[3] = "<option value='altered' selected>Altered</option>";
+                            status_select[4] = "<option value='altered' selected>Altered</option>";
                         }
                         
                         for(var j = 0; j < status_select.length; j++){
