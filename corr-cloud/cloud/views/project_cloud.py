@@ -166,7 +166,6 @@ def project_create(hash_session):
                 except:
                     print(str(traceback.print_exc()))
                     return cloud_response(500, 'Project not created.', str(traceback.print_exc()))
-                    # return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.Response('Nothing to create from', status.HTTP_200_OK)
         else:

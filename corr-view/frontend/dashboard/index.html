@@ -87,6 +87,15 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
+                    <select id="app-access">
+                      <option value="activated" disabled selected>Choose method</option>
+                      <option value="blocked">Blocked</option>
+                      <option value="deactivated">Deactivated</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
                     <i class="mdi-action-assignment prefix"></i>
                     <textarea id="app-about" class="materialize-textarea"></textarea>
                     <label id="app-about-value" for="app-about">About</label>
@@ -109,7 +118,7 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <i class="mdi-action-lock-outline prefix"></i>
+                    <i class="mdi-file-folder prefix"></i>
                     <input id="project-name" type="text"></input>
                     <label for="project-name">Project Name</label>
                   </div>
@@ -167,23 +176,33 @@
                 <div class="row margin">
                   <div class="input-field col s12">
                     <select id="diff-method">
-                      <option value="" disabled selected>Choose method</option>
-                      <option value="1">Default</option>
-                      <option value="2">Visual</option>
-                      <option value="3">Custom</option>
+                      <option value="undefined" disabled selected>Choose method</option>
+                      <option value="default">Default</option>
+                      <option value="visual">Visual</option>
+                      <option value="custom">Custom</option>
                     </select>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <select id="diff-proposition">
-                      <option value="" disabled selected>Choose proposition</option>
-                      <option value="1">Repeated</option>
-                      <option value="2">Reproduced</option>
-                      <option value="3">Replicated</option>
-                      <option value="3">Non-replicated</option>
-                      <option value="3">Non-repeated</option>
-                      <option value="3">Non-reproduced</option>
+                      <option value="undefined" disabled selected>Choose proposition</option>
+                      <option value="repeated">Repeated</option>
+                      <option value="repeated">Repeated</option>
+                      <option value="replicated">Replicated</option>
+                      <option value="non-replicated">Non-replicated</option>
+                      <option value="non-repeated">Non-repeated</option>
+                      <option value="non-reproduced">Non-reproduced</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="diff-status">
+                      <option value="undefined" disabled selected>Choose status</option>
+                      <option value="agreed">Agreed</option>
+                      <option value="denied">Denied</option>
+                      <option value="altered">Altered</option>
                     </select>
                   </div>
                 </div>
@@ -226,9 +245,15 @@
                 <div class="row margin">
                   <div class="input-field col s12">
                     <select id="record-status">
-                      <option value="" disabled selected>Choose status</option>
-                      <option value="2">Finished</option>
-                      <option value="3">Failed</option>
+                      <option value="unknown" disabled selected>Choose status</option>
+                      <option value="finished">Finished</option>
+                      <option value="crashed">Crashed</option>
+                      <option value="starting">Starting</option>
+                      <option value="started">Started</option>
+                      <option value="paused">Paused</option>
+                      <option value="sleeping">Sleeping</option>
+                      <option value="resumed">Resumed</option>
+                      <option value="running">Running</option>
                     </select>
                   </div>
                 </div>

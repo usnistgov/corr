@@ -138,7 +138,23 @@ var Space = function (session){
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+app["created"]+"</p>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+app["id"]+"' type='text' value='"+app["name"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-settings-ethernet prefix cyan-text text-darken-2'></i><input readonly id='app-network-"+app["id"]+"' type='text' value='"+app["network"]+"'></div></div>";
-                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+app["id"]+"' type='text' value='"+app["access"]+"'></div></div>";
+                        var access_select = [];
+                        access_select.push("<div class='row margin'><div class='input-field col s12'><select id='app-access-"+app["id"]+"'>");
+                        access_select.push("<option value='activated' disabled>Choose status</option>");
+                        access_select.push("<option value='blocked'>Blocked</option>");
+                        access_select.push("<option value='deactivated'>Deactivated</option>");
+                        access_select.push("</select></div></div>");
+                        if(app["access"] == "activated"){
+                            access_select[0] = "<option value='activated' disabled selected>Choose status</option>";
+                        }else if(app["access"] == "blocked"){
+                            access_select[1] = "<option value='blocked' selected>Blocked</option>";
+                        }else if(app["access"] == "deactivated"){
+                            access_select[2] = "<option value='deactivated' selected>Deactivated</option>>";
+                        }
+                        
+                        for(var j = 0; j < access_select.length; j++){
+                            content += access_select[j];
+                        }
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+app["id"]+"' type='text' value='"+app["token"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+app["id"]+"' type='text' value='"+app["about"]+"'>"+app["about"]+"</textarea></div></div>";
                         content += "<div class='card-action center-align'>";
@@ -206,8 +222,45 @@ var Space = function (session){
                         content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+record["head"]["updated"]+"</p>";
                         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
                         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+record["head"]["id"]+"' type='text' value='"+record["head"]["rationels"]+"'></div></div>";
-                        content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+record["head"]["status"]+"</p>";
-                        content += "<div class='card-action center-align'>";
+                        
+                        var status_select = [];
+                        status_select.push("<div class='row margin'><div class='input-field col s12'><select id='record-status-"+record["head"]["id"]+"'>");
+                        status_select.push("<option value='unknown' disabled>Choose status</option>");
+                        status_select.push("<option value='finished'>Finished</option>");
+                        status_select.push("<option value='crashed'>Crashed</option>");
+                        status_select.push("<option value='terminated'>Terminated</option>");
+                        status_select.push("<option value='started'>Started</option>");
+                        status_select.push("<option value='starting'>Starting</option>");
+                        status_select.push("<option value='paused'>Paused</option>");
+                        status_select.push("<option value='sleeping'>Sleeping</option>");
+                        status_select.push("<option value='resumed'>Resumed</option>");
+                        status_select.push("<option value='running'>Running</option>");
+                        status_select.push("</select></div></div>");
+                        if(record["head"]["status"] == "unknown"){
+                            status_select[0] = "<option value='unknown' disabled selected>Choose status</option>";
+                        }else if(record["head"]["status"] == "finished"){
+                            status_select[1] = "<option value='finished' selected>Finished</option>";
+                        }else if(record["head"]["status"] == "crashed"){
+                            status_select[2] = "<option value='crashed' selected>Crashed</option>>";
+                        }else if(record["head"]["status"] == "terminated"){
+                            status_select[3] = "<option value='terminated' selected>Terminated</option>";
+                        }else if(record["head"]["status"] == "starting"){
+                            status_select[4] = "<option value='starting' selected>Started</option>";
+                        }else if(record["head"]["status"] == "started"){
+                            status_select[5] = "<option value='started' selected>Starting</option>";
+                        }else if(record["head"]["status"] == "paused"){
+                            status_select[6] = "<option value='paused' selected>Paused</option>";
+                        }else if(record["head"]["status"] == "sleeping"){
+                            status_select[7] = "<option value='sleeping' selected>Sleeping</option>";
+                        }else if(record["head"]["status"] == "resumed"){
+                            status_select[8] = "<option value='resumed' selected>Resumed</option>";
+                        }else if(record["head"]["status"] == "running"){
+                            status_select[9] = "<option value='running' selected>Running</option>";
+                        }
+                        
+                        for(var j = 0; j < status_select.length; j++){
+                            content += status_select[j];
+                        }
                         content += "<a onclick='Materialize.toast(\"<span>Record inputs view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record outputs view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record dependencies view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
@@ -242,7 +295,7 @@ var Space = function (session){
                     
                     for(var i = 0; i < response["number"]; i++){
                         diff = response["diffs"][i];
-                        console.log(record);
+                        console.log(diff);
                         var content = "<div class='col s12 m6 l4' id='"+diff["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -253,12 +306,81 @@ var Space = function (session){
                         content += "<span class='card-title activator grey-text text-darken-4'>"+diff["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+diff["created"]+"</p>";
 
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='diff-method-"+diff["method"]+"' type='text' value='"+diff["method"]+"'></div></div>";
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='diff-proposition-"+diff["proposition"]+"' type='text' value='"+diff["proposition"]+"'></div></div>";
-                        content += "<p><i class='mdi-notification-sync cyan-text text-darken-2'></i> "+diff["status"]+"</p>";
+                        var method_select = [];
+                        method_select.push("<div class='row margin'><div class='input-field col s12'><select id='diff-method-"+diff["id"]+"'>");
+                        method_select.push("<option value='undefined' disabled>Choose status</option>");
+                        method_select.push("<option value='default'>Default</option>");
+                        method_select.push("<option value='visual'>Visual</option>");
+                        method_select.push("<option value='custom'>Custom</option>");
+                        method_select.push("</select></div></div>");
+                        if(diff["method"] == "undefined"){
+                            method_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                        }else if(diff["method"] == "default"){
+                            method_select[1] = "<option value='default' selected>Default</option>";
+                        }else if(diff["method"] == "visual"){
+                            method_select[2] = "<option value='visual' selected>Visual</option>>";
+                        }else if(diff["method"] == "custom"){
+                            method_select[3] = "<option value='custom' selected>Custom</option>";
+                        }
+                        
+                        for(var j = 0; j < method_select.length; j++){
+                            content += method_select[j];
+                        }
+
+                        var propos_select = [];
+                        propos_select.push("<div class='row margin'><div class='input-field col s12'><select id='diff-proposition-"+diff["id"]+"'>");
+                        propos_select.push("<option value='undefined' disabled>Choose status</option>");
+                        propos_select.push("<option value='repeated'>Repeated</option>");
+                        propos_select.push("<option value='reproduced'>Reproduced</option>");
+                        propos_select.push("<option value='replicated'>Replicated</option>");
+                        propos_select.push("<option value='non-replicated'>Non-replicated</option>");
+                        propos_select.push("<option value='non-repeated'>Non-repeated</option>");
+                        propos_select.push("<option value='non-reproduced'>Non-reproduced</option>");
+                        propos_select.push("</select></div></div>");
+                        if(diff["proposition"] == "undefined"){
+                            propos_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                        }else if(diff["proposition"] == "repeated"){
+                            propos_select[1] = "<option value='repeated' selected>Repeated</option>";
+                        }else if(diff["proposition"] == "reproduced"){
+                            propos_select[2] = "<option value='reproduced' selected>Reproduced</option>>";
+                        }else if(diff["proposition"] == "replicated"){
+                            propos_select[3] = "<option value='replicated' selected>Replicated</option>";
+                        }else if(diff["proposition"] == "non-replicated"){
+                            propos_select[4] = "<option value='non-replicated' selected>Non-replicated</option>";
+                        }else if(diff["proposition"] == "non-repeated"){
+                            propos_select[5] = "<option value='non-repeated' selected>Non-repeated</option>";
+                        }else if(diff["proposition"] == "non-reproduced"){
+                            propos_select[6] = "<option value='non-reproduced' selected>Non-reproduced</option>";
+                        }
+                        
+                        for(var j = 0; j < propos_select.length; j++){
+                            content += propos_select[j];
+                        }
+                        
+                        var status_select = [];
+                        status_select.push("<div class='row margin'><div class='input-field col s12'><select id='diff-status-"+diff["id"]+"'>");
+                        status_select.push("<option value='undefined' disabled>Choose status</option>");
+                        status_select.push("<option value='agreed'>Agreed</option>");
+                        status_select.push("<option value='denied'>Denied</option>");
+                        status_select.push("<option value='altered'>Altered</option>");
+                        status_select.push("</select></div></div>");
+                        if(diff["status"] == "undefined"){
+                            status_select[0] = "<option value='undefined' disabled selected>Choose status</option>";
+                        }else if(diff["status"] == "agreed"){
+                            status_select[1] = "<option value='agreed' selected>Agreed</option>";
+                        }else if(diff["status"] == "denied"){
+                            status_select[2] = "<option value='denied' selected>Denied</option>>";
+                        }else if(diff["status"] == "altered"){
+                            status_select[3] = "<option value='altered' selected>Altered</option>";
+                        }
+                        
+                        for(var j = 0; j < status_select.length; j++){
+                            content += status_select[j];
+                        }
+
                         content += "<div class='card-action center-align'>";
-                        content += "<a onclick='Materialize.toast(\"<span>Record from view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i></a>";
-                        content += "<a onclick='Materialize.toast(\"<span>Record to view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record from view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='comments badge'>From</span></a>";
+                        content += "<a onclick='Materialize.toast(\"<span>Record to view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i><span class='comments badge'>To</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record dependencies view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+diff["comments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";                
@@ -369,10 +491,10 @@ var Record = function (session, _id){
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
-    this.save = function(tags, rationels) {
+    this.save = function(tags, rationels, status) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", url+"/private/"+this.session+"/record/edit/"+self._id);
-        var request = { 'tags': tags, 'rationels': rationels};
+        var request = { 'tags': tags, 'rationels': rationels, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
@@ -441,6 +563,102 @@ var Project = function (session, _id){
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/project/remove/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Record removal succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    Materialize.toast('<span>Record removal failed</span>', 3000);
+                    console.log("Dashboard download failed");
+                }
+            }
+        }
+    }
+};
+
+var Application = function (session, _id){
+    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    this.session = session;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    this.save = function(name, network, about, access) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url+"/private/"+this.session+"/dashboard/developer/app/update/"+self._id);
+        var request = { 'name':name, 'network': network, 'about': about, 'access': access};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                } else {
+                    Materialize.toast('<span>Update failed</span>', 5000);
+                }
+                window.location.reload();
+            }
+        }
+    },
+    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    this.trash = function () {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        
+        xmlhttp.open("DELETE", url+"/private/"+this.session+"/dashboard/app/delete/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Record removal succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    Materialize.toast('<span>Record removal failed</span>', 3000);
+                    console.log("Dashboard download failed");
+                }
+            }
+        }
+    }
+};
+
+var Diff = function (session, _id){
+    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    this.session = session;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    this.save = function(method, description, status) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url+"/private/"+this.session+"/diff/edit/"+self._id);
+        var request = { 'method':method, 'description': description, 'status': status};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                } else {
+                    Materialize.toast('<span>Update failed</span>', 5000);
+                }
+                window.location.reload();
+            }
+        }
+    },
+    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    this.trash = function () {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        
+        xmlhttp.open("DELETE", url+"/private/"+this.session+"/diff/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
