@@ -281,23 +281,28 @@ var user = {
     add_app: function() {
         var name = document.getElementById("app-name").value;
         var about = document.getElementById("app-about").value;
+        var access = document.getElementById("app-access").value;
         if(name != ""){
             console.log(name+" -- "+about);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
-            var request = { 'name': name, 'about': about};
+            var request = { 'name': name, 'about': about, 'access': access};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = xmlhttp.responseText;
+                        console.log(response);
 
-                    Materialize.toast('<span>Creation succeeded</span>', 3000);
-                    window.location.reload();
+                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        window.location.reload();
+                    }
                 } else {
-                    console.log("Update failed");
-                    Materialize.toast('<span>Creation failed</span>', 3000);
+                    console.log(xmlhttp.responseText);
+                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
@@ -322,14 +327,19 @@ var user = {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
-                        var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
-                        Materialize.toast('<span>'+response['title']+'</span>', 3000);
-                        window.location.reload();
+                        if(xmlhttp.responseText == ""){
+                            console.log("Cloud returned empty response!");
+                        }else{
+                            var response = JSON.parse(xmlhttp.responseText);
+                            console.log(response);
+
+                            Materialize.toast('<span>'+response['title']+'</span>', 3000);
+                            window.location.reload();
+                        }
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>Creation failed</span>', 3000);
+                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
@@ -339,7 +349,6 @@ var user = {
     add_record: function() {
         var project_id = document.getElementById("project-id").value;
         var param = window.location.search.substring(1);
-        var status_list = ['none', 'unknown', 'finished', 'failed'];
         var blocks = param.split("&");
         for(i=0;i<blocks.length;i++){
             var parts = blocks[i].split("=");
@@ -350,7 +359,7 @@ var user = {
         }
         var tags = document.getElementById("record-tags").value;
         var rationels = document.getElementById("record-rationels").value;
-        var status = status_list[document.getElementById("record-status").value];
+        var status = document.getElementById("record-status").value;
         if(project_id != ""){
             console.log(project_id+" -- "+status);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
@@ -360,14 +369,18 @@ var user = {
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = xmlhttp.responseText;
+                        console.log(response);
 
-                    Materialize.toast('<span>Creation succeeded</span>', 3000);
-                    // window.location.reload();
+                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        window.location.reload();
+                    }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>Creation failed</span>', 3000);
+                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
@@ -377,29 +390,32 @@ var user = {
     add_diff: function() {
         var record_1 = "";
         var record_2 = "";
-        var method_list = ["none", "undefined", "default", "visual", "custom"];
-        var proposition_list = ["none", "undefined", "repeated", "reproduced", "replicated", "non-replicated", "non-repeated", "non-reproduced"];
         var from = document.getElementById("diff-from").value;
         var to = document.getElementById("diff-to").value;
-        var method = method_list[document.getElementById("diff-method").value];
-        var proposition = proposition_list[document.getElementById("diff-proposition").value];
+        var method = document.getElementById("diff-method").value;
+        var proposition = document.getElementById("diff-proposition").value;
+        var status = document.getElementById("diff-status").value;
         if(from != "" && to != ""){
             console.log(from+" -- "+to);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/diff/create");
-            var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition};
+            var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    var response = xmlhttp.responseText;
-                    console.log(response);
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = xmlhttp.responseText;
+                        console.log(response);
 
-                    Materialize.toast('<span>Creation succeeded</span>', 3000);
-                    window.location.reload();
+                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        window.location.reload();
+                    }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>Creation failed</span>', 3000);
+                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{

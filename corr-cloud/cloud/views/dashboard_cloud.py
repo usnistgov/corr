@@ -557,7 +557,7 @@ def app_create(hash_session):
                 name = data.get('name', '')
                 about = data.get('about', '')
                 logo_storage = '{0}://{1}:{2}/images/gearsIcon.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT)
-                access = 'deactivated'
+                access = 'activated'
                 network = '0.0.0.0'
                 visibile = False
                 developer = current_user

@@ -63,7 +63,6 @@ def diff_create(hash_session):
                             return cloud_response(400, 'Diff not created.', "Both record from and to have to exist.")
                     except:
                         return cloud_response(500, 'diff not created.', str(traceback.print_exc()))
-                        # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -173,10 +172,14 @@ def diff_edit(hash_session, diff_id):
                         try:
                             diffentiation = data.get("diff", diff.diff)
                             proposition = data.get("proposition", diff.proposition)
+                            status = data.get("status", diff.status)
                             diff.diff = diffentiation
                             diff.proposition = proposition
-                            if diff.status == "agreed" or diff.status == "denied":
-                                diff.status = "altered"
+                            if status == diff.status:
+                                if diff.status == "agreed" or diff.status == "denied":
+                                    diff.status = "altered"
+                            else:
+                                diff.status = status
                             diff.save()
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:

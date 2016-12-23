@@ -9,8 +9,10 @@ function recordEdit(record_id){
     project_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
+    var status = document.getElementById('record-status-'+record_id);
     tags.removeAttribute("readonly");
     rationels.removeAttribute("readonly");
+    status.removeAttribute("readonly");
 }
 
 // Record save callback
@@ -19,8 +21,9 @@ function recordSave(record_id){
     project_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
+    var status = document.getElementById('record-status-'+record_id);
     var record = new Record(user.session, record_id);
-    record.save(tags.value, rationels.value);
+    record.save(tags.value, rationels.value, status.value);
 }
 
 // Record remove callback

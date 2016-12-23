@@ -155,16 +155,17 @@ def record_create(hash_session, project_id):
                                 rationels = data.get("rationels", "")
                                 status = data.get("status", "unknown")
                                 content = data.get("content", "no content")
+                                access = data.get("access", "public")
                                 record.tags = [tags]
                                 record.rationels = [rationels]
                                 record.status = status
+                                record.access = access
                                 record.extend = {"uploaded":content}
                                 record.save()
                                 return cloud_response(201, 'Record successfully created.', "The record was created.")
                             except:
                                 print(str(traceback.print_exc()))
                                 return cloud_response(500, 'record not created.', str(traceback.print_exc()))
-                                # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -199,8 +200,10 @@ def record_edit(hash_session, record_id):
                                 try:
                                     tags = data.get("tags", ','.join(record.tags))
                                     rationels = data.get("rationels", record.rationels)
+                                    status = data.get("status", record.status)
                                     record.tags = tags.split(',')
                                     record.rationels = [rationels]
+                                    record.status = status
                                     record.save()
                                     return fk.Response('Record edited', status.HTTP_200_OK)
                                 except:
