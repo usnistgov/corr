@@ -100,19 +100,19 @@ def private_search(hash_session):
                                     where_record.append("all")
                                 if any(q.lower() in str(record.id) for q in query):
                                     where_record.append("id")
-                                if any(q.lower() in record.label.lower() for q in query):
+                                if record.label and any(q.lower() in record.label.lower() for q in query):
                                     where_record.append("label")
-                                if any(q.lower() in str(json.dumps(record.system)).lower() for q in query):
+                                if record.system and any(q.lower() in str(json.dumps(record.system)).lower() for q in query):
                                     where_record.append("system")
-                                if any(q.lower() in str(json.dumps(record.execution)).lower() for q in query):
+                                if record.execution and any(q.lower() in str(json.dumps(record.execution)).lower() for q in query):
                                     where_record.append("execution")
-                                if any(q.lower() in str(json.dumps(record.inputs)).lower() for q in query):
+                                if record.inputs and any(q.lower() in str(json.dumps(record.inputs)).lower() for q in query):
                                     where_record.append("inputs")
-                                if any(q.lower() in str(json.dumps(record.outputs)).lower() for q in query):
+                                if record.outputs and any(q.lower() in str(json.dumps(record.outputs)).lower() for q in query):
                                     where_record.append("outputs")
-                                if any(q.lower() in str(json.dumps(record.dependencies)).lower() for q in query):
+                                if record.dependencies and any(q.lower() in str(json.dumps(record.dependencies)).lower() for q in query):
                                     where_record.append("dependencies")
-                                if any(q.lower() in record.status.lower() for q in query):
+                                if record.status and any(q.lower() in record.status.lower() for q in query):
                                     where_record.append("status")
                                 # data contains so much info that most key words are bringing records too.
                                 # if any(q.lower() in str(json.dumps(body.data)).lower() for q in query):
