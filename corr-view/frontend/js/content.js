@@ -153,8 +153,11 @@ var Space = function (session){
                         }
                         
                         for(var j = 0; j < access_select.length; j++){
-                            content += access_select[j];
+                            // content += access_select[j];
                         }
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+app["id"]+"' type='text' value='"+app["access"]+"'></div></div>";
+
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+app["id"]+"' type='text' value='"+app["token"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+app["id"]+"' type='text' value='"+app["about"]+"'>"+app["about"]+"</textarea></div></div>";
                         content += "<div class='card-action center-align'>";
@@ -259,8 +262,11 @@ var Space = function (session){
                         }
                         
                         for(var j = 0; j < status_select.length; j++){
-                            content += status_select[j];
+                            // content += status_select[j];
                         }
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
+                        
                         content += "<a onclick='Materialize.toast(\"<span>Record inputs view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record outputs view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record dependencies view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
@@ -324,8 +330,10 @@ var Space = function (session){
                         }
                         
                         for(var j = 0; j < method_select.length; j++){
-                            content += method_select[j];
+                            // content += method_select[j];
                         }
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-book prefix cyan-text text-darken-2'></i><input readonly id='diff-method-"+diff["id"]+"' type='text' value='"+diff["method"]+"'></div></div>";
 
                         var propos_select = [];
                         propos_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><select id='diff-proposition-"+diff["id"]+"'>");
@@ -354,8 +362,10 @@ var Space = function (session){
                         }
                         
                         for(var j = 0; j < propos_select.length; j++){
-                            content += propos_select[j];
+                            // content += propos_select[j];
                         }
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly id='diff-proposition-"+diff["id"]+"' type='text' value='"+diff["proposition"]+"'></div></div>";
                         
                         var status_select = [];
                         status_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><select id='diff-status-"+diff["id"]+"'>");
@@ -375,8 +385,10 @@ var Space = function (session){
                         }
                         
                         for(var j = 0; j < status_select.length; j++){
-                            content += status_select[j];
+                            // content += status_select[j];
                         }
+
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly id='diff-status-"+diff["id"]+"' type='text' value='"+diff["status"]+"'></div></div>";
 
                         content += "<div class='card-action center-align'>";
                         content += "<a onclick='Materialize.toast(\"<span>Record from view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i></a>";
