@@ -522,6 +522,40 @@
                     Materialize.toast('<span>Your message has been sent!</span>', 3000);
                 }
             }
+
+            // Enter key handlers for login/recover/register and email us.
+            function loginKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonLogin').click();
+                }
+            }
+             function recoverKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRecover').click();
+                }
+            }
+            function registerKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonRegister').click();
+                }
+            }
+            function emailKeyPress(e)
+            {
+                e = e || window.event;
+                if (e.keyCode == 13)
+                {
+                    document.getElementById('buttonEmail').click();
+                }
+            }
         </script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
