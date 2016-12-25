@@ -18,7 +18,7 @@ function diffSave(diff_id){
     var proposition = document.getElementById('diff-proposition-'+diff_id);
     var status = document.getElementById('diff-status-'+diff_id);
     var diff = new Diff(user.session, diff_id);
-    diff.save(method.value, description.value, status.value);
+    diff.save(method.value, proposition.value, status.value);
 }
 
 // Diff remove callback
