@@ -90,8 +90,16 @@ var dashboard = {
             console.log(user.session);
             user.trusted();
 
+            var project = "all";
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "project"){
+                    project = parts[1];
+                }
+            }
+
             var space = new Space(user.session);
-            space.diffs();
+            space.diffs(project);
         };
         function failed(){
             window.location.replace("/error/?code=404");

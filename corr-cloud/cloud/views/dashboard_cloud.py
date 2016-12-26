@@ -172,9 +172,9 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/diffs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diffs_dashboard(hash_session):
+def diffs_dashboard(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/diffs')
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
@@ -194,10 +194,17 @@ def diffs_dashboard(hash_session):
                 pass
             summaries = []
             for d in diffs_send:
-                summaries.append(d.info())
+                if project_id == "all":
+                    summaries.append(d.info())
+                elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
+                    summaries.append(d.info())
             for d in diffs_targ:
                 if d not in diffs_send:
-                    summaries.append(d.info())
+                    if project_id == "all":
+                        summaries.append(d.info())
+                    elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
+                        summaries.append(d.info())
+
             return fk.Response(json.dumps({'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
