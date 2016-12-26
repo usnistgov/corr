@@ -161,14 +161,14 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <i class="mdi-file-cloud-done prefix"></i>
+                    <i class="mdi-file-cloud-download prefix"></i>
                     <input id="diff-from" type="text"></input>
                     <label for="diff-from">Record From</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <i class="mdi-file-cloud-done prefix"></i>
+                    <i class="mdi-file-cloud-upload prefix"></i>
                     <input id="diff-to" type="text"></input>
                     <label for="diff-to">Record To</label>
                   </div>
@@ -225,14 +225,14 @@
                   <div class="input-field col s12">
                     <i class="mdi-file-folder prefix"></i>
                     <input id="project-id" type="text"></input>
-                    <label id="project-id-value" for="project-id">Project id</label>
+                    <label id="project-id-value" for="project-id">Project</label>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <i class="mdi-action-turned-in prefix"></i>
                     <input id="record-tags" type="text"></input>
-                    <label id="record-tags-value" for="record-tags">Record Tags</label>
+                    <label id="record-tags-value" for="record-tags">Tags</label>
                   </div>
                 </div>
                 <div class="row margin">
@@ -257,7 +257,8 @@
                     </select>
                   </div>
                 </div>
-                <div class="row margin">
+
+                <div class="row margin" id="record-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_record();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
@@ -356,7 +357,7 @@
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
                 var selected_records = [];
-                document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='large mdi-editor-vertical-align-center'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
             }
             // Inject the diffs dashboard view
             else if(user.session != "" && view_selected == "diffs"){
@@ -406,6 +407,21 @@
               }else{
                 Materialize.toast('<span>Please select up to two records!</span>', 3000);
               }
+            }
+
+            function recordViewModal(record_id, project_name, tags, rationels, status){
+              $('#record-add-modal').openModal();
+              var project_ref = document.getElementById("project-id");
+              var record_tags = document.getElementById("record-tags");
+              var record_rationels = document.getElementById("record-rationels");
+              var record_status = document.getElementById("record-status");
+              project_ref.value = project_name;
+              record_tags.value = tags;
+              record_rationels.value = rationels;
+              record_status.value = status;
+              var add_callback = document.getElementById("record-add-callback");
+              add_callback.innerHTML = "";
+
             }
             
         </script>
