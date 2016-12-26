@@ -172,14 +172,14 @@ def diff_edit(hash_session, diff_id):
                         try:
                             diffentiation = data.get("diff", diff.diff)
                             proposition = data.get("proposition", diff.proposition)
-                            status = data.get("status", diff.status)
+                            d_status = data.get("status", diff.status)
                             diff.diff = diffentiation
                             diff.proposition = proposition
                             if status == diff.status:
                                 if diff.status == "agreed" or diff.status == "denied":
                                     diff.status = "altered"
                             else:
-                                diff.status = status
+                                diff.status = d_status
                             diff.save()
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:
