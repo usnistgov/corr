@@ -30,3 +30,24 @@ function recordSave(record_id){
 function recordRemove(record_id){
     Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
 }
+
+function recordSelect(record_id){
+    selected_records.push(record_id);
+    console.log("Record: "+record_id+" selected!");
+    console.log(selected_records);
+    var project_update = document.getElementById('select-record-'+record_id);
+    project_update.innerHTML = "<a id='deselect-action' onclick='recordDeselect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box'></i></a>";
+}
+
+function recordDeselect(record_id){
+    for(var i=0; i<selected_records.length; i++){
+        if(selected_records[i]==record_id){
+            selected_records.splice(i,1);
+            break;
+        }
+    }
+    console.log("Record: "+record_id+" deselected!");
+    console.log(selected_records);
+    var project_update = document.getElementById('select-record-'+record_id);
+    project_update.innerHTML = "<a id='select-action' onclick='recordSelect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box-outline-blank'></i></a>";
+}
