@@ -170,15 +170,20 @@ def diff_edit(hash_session, diff_id):
                     data = json.loads(fk.request.data)
                     if diff.sender == current_user:
                         try:
-                            diffentiation = data.get("diff", diff.diff)
+                            method = data.get("method", diff.method)
                             proposition = data.get("proposition", diff.proposition)
                             d_status = data.get("status", diff.status)
-                            diff.diff = diffentiation
-                            diff.proposition = proposition
-                            if status == diff.status:
+                            if proposition != diff.proposition or method != diff.method:
                                 if diff.status == "agreed" or diff.status == "denied":
                                     diff.status = "altered"
-                            else:
+                            if d_status != "":
+                                if diff.status == "agreed" or diff.status == "denied":
+                                    diff.status = "altered"
+                                else:
+                                    diff.status = d_status
+                            if proposition != "":
+                                diff.proposition = proposition
+                            if d_status != "":
                                 diff.status = d_status
                             diff.save()
                             return fk.Response('Diff edited', status.HTTP_200_OK)

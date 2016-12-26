@@ -268,7 +268,7 @@ var Space = function (session){
                             // content += status_select[j];
                         }
 
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='unknown,finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
                         
                         content += "<a onclick='Materialize.toast(\"<span>Record inputs view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Record outputs view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
@@ -341,7 +341,7 @@ var Space = function (session){
                             // content += method_select[j];
                         }
 
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-book prefix cyan-text text-darken-2'></i><input readonly placeholder='undefined,default,visual,custom' id='diff-method-"+diff["id"]+"' type='text' value='"+diff["method"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-book prefix cyan-text text-darken-2'></i><input readonly placeholder='default,visual,custom' id='diff-method-"+diff["id"]+"' type='text' value='"+diff["method"]+"'></div></div>";
 
                         var propos_select = [];
                         propos_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><select id='diff-proposition-"+diff["id"]+"'>");
@@ -373,7 +373,7 @@ var Space = function (session){
                             // content += propos_select[j];
                         }
 
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly placeholder='undefined,repeated,reproduced,replicated,non-replicated,non-repeated,non-reproduced' class='autocomplete' id='diff-proposition-"+diff["id"]+"' type='text' value='"+diff["proposition"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly placeholder='repeated,reproduced,replicated,non-replicated,non-repeated,non-reproduced' class='autocomplete' id='diff-proposition-"+diff["id"]+"' type='text' value='"+diff["proposition"]+"'></div></div>";
                         
                         var status_select = [];
                         status_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><select id='diff-status-"+diff["id"]+"'>");
@@ -396,7 +396,7 @@ var Space = function (session){
                             // content += status_select[j];
                         }
 
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='undefined,agreed,denied,altered' id='diff-status-"+diff["id"]+"' type='text' value='"+diff["status"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='agreed,denied' id='diff-status-"+diff["id"]+"' type='text' value='"+diff["status"]+"'></div></div>";
 
                         content += "<div class='card-action center-align'>";
                         var record_from = diff["from"];
