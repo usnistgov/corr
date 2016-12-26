@@ -197,10 +197,10 @@ def record_edit(hash_session, record_id):
                             try:
                                 tags = data.get("tags", ','.join(record.tags))
                                 rationels = data.get("rationels", record.rationels)
-                                status = data.get("status", record.status)
+                                r_status = data.get("status", record.status)
                                 record.tags = tags.split(',')
                                 record.rationels = [rationels]
-                                record.status = status
+                                record.status = r_status
                                 record.save()
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
