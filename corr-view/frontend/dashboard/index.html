@@ -355,7 +355,8 @@
             else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
-                // document.getElementById("float-menu").innerHTML = "<a href='#record-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='mdi-file-file-upload'></i></a>";
+                var selected_records = [];
+                document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='large mdi-editor-vertical-align-center'></i></a>";
             }
             // Inject the diffs dashboard view
             else if(user.session != "" && view_selected == "diffs"){
@@ -393,6 +394,18 @@
               $('#record-add-modal').openModal();
               var project_ref = document.getElementById("project-id");
               project_ref.value = project_id;
+            }
+
+            function launchDiffModal(){
+              $('#diff-add-modal').openModal();
+              if(selected_records.length == 2){
+                var record_from = document.getElementById("diff-from");
+                var record_to = document.getElementById("diff-to");
+                record_from.value = selected_records[0];
+                record_from.value = selected_records[1];
+              }else{
+                Materialize.toast('<span>Please select up to two records!</span>', 3000);
+              }
             }
             
         </script>
