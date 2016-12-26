@@ -188,8 +188,8 @@
                     <select id="diff-proposition">
                       <option value="undefined" disabled selected>Choose proposition</option>
                       <option value="repeated">Repeated</option>
-                      <option value="repeated">Repeated</option>
-                      <option value="replicated">Replicated</option>
+                      <option value="replicated">replicated</option>
+                      <option value="reproduced">Reproduced</option>
                       <option value="non-replicated">Non-replicated</option>
                       <option value="non-repeated">Non-repeated</option>
                       <option value="non-reproduced">Non-reproduced</option>
@@ -200,9 +200,9 @@
                   <div class="input-field col s12">
                     <select id="diff-status">
                       <option value="undefined" disabled selected>Choose status</option>
+                      <option value="proposed">Altered</option>
                       <option value="agreed">Agreed</option>
                       <option value="denied">Denied</option>
-                      <option value="altered">Altered</option>
                     </select>
                   </div>
                 </div>
@@ -243,7 +243,7 @@
                   </div>
                 </div>
                 <div class="row margin">
-                  <div class="input-field col s12">
+                  <div class="input-field col s12" id="record-status-dropdown">
                     <select id="record-status">
                       <option value="unknown" disabled selected>Choose status</option>
                       <option value="finished">Finished</option>
@@ -414,7 +414,7 @@
               var project_ref = document.getElementById("project-id");
               var record_tags = document.getElementById("record-tags");
               var record_rationels = document.getElementById("record-rationels");
-              var record_status = document.getElementById("record-status");
+              var record_status = document.getElementById("record-status-dropdown");
               project_ref.value = project_name;
               project_ref.readOnly = true;
               record_tags.value = tags;
@@ -422,7 +422,6 @@
               record_rationels.value = rationels;
               record_rationels.readOnly = true;
               record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' class='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
-              record_status.value = status;
               record_status.readOnly = true;
               var add_callback = document.getElementById("record-add-callback");
               add_callback.innerHTML = "";
