@@ -397,12 +397,12 @@
             }
 
             function launchDiffModal(){
-              $('#diff-add-modal').openModal();
               if(selected_records.length == 2){
+                $('#diff-add-modal').openModal();
                 var record_from = document.getElementById("diff-from");
                 var record_to = document.getElementById("diff-to");
                 record_from.value = selected_records[0];
-                record_from.value = selected_records[1];
+                record_to.value = selected_records[1];
               }else{
                 Materialize.toast('<span>Please select up to two records!</span>', 3000);
               }

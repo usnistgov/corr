@@ -348,15 +348,6 @@ var user = {
     },
     add_record: function() {
         var project_id = document.getElementById("project-id").value;
-        var param = window.location.search.substring(1);
-        var blocks = param.split("&");
-        for(i=0;i<blocks.length;i++){
-            var parts = blocks[i].split("=");
-            if(parts[0] == "project"){
-                project_id = parts[1];
-                break;
-            }
-        }
         var tags = document.getElementById("record-tags").value;
         var rationels = document.getElementById("record-rationels").value;
         var status = document.getElementById("record-status").value;
