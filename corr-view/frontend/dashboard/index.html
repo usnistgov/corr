@@ -355,7 +355,7 @@
             else if(user.session != "" && view_selected == "records"){
                 dashboard.records(user.session, options);
                 var space = new Space(user.session);
-                document.getElementById("float-menu").innerHTML = "<a href='#record-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='mdi-file-file-upload'></i></a>";
+                // document.getElementById("float-menu").innerHTML = "<a href='#record-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='upload'><i class='mdi-file-file-upload'></i></a>";
             }
             // Inject the diffs dashboard view
             else if(user.session != "" && view_selected == "diffs"){
@@ -390,8 +390,9 @@
             }
 
             function launchRecordModal(project_id){
-              $('#record-add-modal').modal('open');
-              console.log("Openning record add modal on project-id: "+project_id);
+              $('#record-add-modal').openModal();
+              var project_ref = document.getElementById("project-id");
+              project_ref.value = project_id;
             }
             
         </script>
