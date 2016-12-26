@@ -416,14 +416,14 @@
               var record_rationels = document.getElementById("record-rationels");
               var record_status = document.getElementById("record-status");
               project_ref.value = project_name;
-              project_ref.attr("readonly", true);
+              project_ref.readOnly = true;
               record_tags.value = tags;
-              record_tags.attr("readonly", true);
+              record_tags.readOnly = true;
               record_rationels.value = rationels;
-              record_rationels.attr("readonly", true);
+              record_rationels.readOnly = true;
               record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' class='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
               record_status.value = status;
-              record_status.attr("readonly", true);
+              record_status.readOnly = true;
               var add_callback = document.getElementById("record-add-callback");
               add_callback.innerHTML = "";
 
