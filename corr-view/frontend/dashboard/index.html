@@ -200,7 +200,7 @@
                   <div class="input-field col s12">
                     <select id="diff-status">
                       <option value="undefined" disabled selected>Choose status</option>
-                      <option value="proposed">Altered</option>
+                      <option value="proposed">Proposed</option>
                       <option value="agreed">Agreed</option>
                       <option value="denied">Denied</option>
                     </select>
@@ -421,7 +421,7 @@
               record_tags.readOnly = true;
               record_rationels.value = rationels;
               record_rationels.readOnly = true;
-              record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' class='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
+              record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' type='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
               record_status.readOnly = true;
               var add_callback = document.getElementById("record-add-callback");
               add_callback.innerHTML = "";
