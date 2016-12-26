@@ -58,7 +58,7 @@ var Space = function (session){
                         content += "<div class='card-content'>";
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-                        content += "<a onclick='Materialize.toast(\"<span>Project record upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-file-cloud-upload'></i></a>";
+                        content += "<a onclick='launchRecordModal("+project["project"]["id"]+");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-upload'></i></a>";
                         content += "<a onclick='Materialize.toast(\"<span>Project environment upload not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-maps-layers'></i></a>";
                         content += "<div id='update-project-"+project["project"]["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<span class='card-title activator black-text text-darken-4'> "+project["project"]["name"]+"</span>";

@@ -388,6 +388,11 @@
             function view(scope){
                 window.location.replace("./?session="+user.session+"&view="+scope);
             }
+
+            function launchRecordModal(project_id){
+              $('#record-add-modal').modal('open');
+              console.log("Openning record add modal on project-id: "+project_id);
+            }
             
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
