@@ -183,38 +183,33 @@ def record_edit(hash_session, record_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/edit/<record_id>')
-            allowance = current_user.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print("Allowance: {0}".format(allowance))
-            if allowance == hash_session:
-                try:
-                    record = RecordModel.objects.with_id(record_id)
-                except:
-                    print(str(traceback.print_exc()))
-                if record is None:
-                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
-                else:
-                    if record.project.owner == current_user:
-                        if fk.request.data:
-                                data = json.loads(fk.request.data)
-                                try:
-                                    tags = data.get("tags", ','.join(record.tags))
-                                    rationels = data.get("rationels", record.rationels)
-                                    status = data.get("status", record.status)
-                                    record.tags = tags.split(',')
-                                    record.rationels = [rationels]
-                                    record.status = status
-                                    record.save()
-                                    return fk.Response('Record edited', status.HTTP_200_OK)
-                                except:
-                                    print(str(traceback.print_exc()))
-                                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
-                        else:
-                            return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
-                    else:
-                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            
+            try:
+                record = RecordModel.objects.with_id(record_id)
+            except:
+                print(str(traceback.print_exc()))
+            if record is None:
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                if record.project.owner == current_user:
+                    if fk.request.data:
+                            data = json.loads(fk.request.data)
+                            try:
+                                tags = data.get("tags", ','.join(record.tags))
+                                rationels = data.get("rationels", record.rationels)
+                                status = data.get("status", record.status)
+                                record.tags = tags.split(',')
+                                record.rationels = [rationels]
+                                record.status = status
+                                record.save()
+                                return fk.Response('Record edited', status.HTTP_200_OK)
+                            except:
+                                print(str(traceback.print_exc()))
+                                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                else:
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
