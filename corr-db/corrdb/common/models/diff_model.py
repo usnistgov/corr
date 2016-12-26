@@ -76,7 +76,7 @@ class DiffModel(db.Document):
             The dictionary content of the diff model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 
-        'from':str(self.record_from.id), 'to': str(self.record_to.id), 'proposition':self.proposition, 
+        'from':self.record_from.info(), 'to': self.record_to.info(), 'proposition':self.proposition, 
         'method': self.method, 'status': self.status}
         data['sender'] = str(self.sender.id)
         data['targeted'] = str(self.targeted.id)

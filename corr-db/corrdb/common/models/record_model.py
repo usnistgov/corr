@@ -122,12 +122,13 @@ class RecordModel(db.Document):
          'id': str(self.id), 'project':str(self.project.id), 
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
         data['head']['project-name'] = self.project.name
-        data['head']['tags'] = ','.join(self.tags)
+        data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
         data['head']['inputs'] = len(self.inputs)
         data['head']['outputs'] = len(self.outputs)
         data['head']['dependencies'] = len(self.dependencies)
+        data['head']['rationels'] = ' '.join(self.rationels)
         if self.environment != None:
             data['head']['environment'] = str(self.environment.id)
         else:
@@ -181,7 +182,6 @@ class RecordModel(db.Document):
         data['head']['dependencies'] = self.dependencies
         data['head']['comments'] = [comment.extended() for comment in self._comments()]
         data['head']['resources'] = [resource.extended() for resource in self._resources()]
-        data['head']['rationels'] = self.rationels
         if self.environment != None:
             if self.environment.application != None:
                 data['head']['application'] = self.environment.application.extended()
