@@ -654,6 +654,8 @@ def app_update(app_id, hash_session):
                     about = data.get('about', app.about)
                     logo_storage = data.get('logo', None)
                     access = data.get('access', app.access)
+                    if access == "":
+                        access = app.access
                     network = data.get('network', app.network)
                     visibile = data.get('visibile', app.visibile)
                     logo = app.logo
