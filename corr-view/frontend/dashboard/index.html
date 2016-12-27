@@ -490,7 +490,8 @@
                 env_record.value = record_id;
                 var apps_select = document.getElementById("env-app");
                 var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-                xmlhttp.open("GET", this.url+"/private/"+this.session+"/dashboard/developer/apps");
+                var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+                xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
                 xmlhttp.send();
                 xmlhttp.onreadystatechange=function()
                 {

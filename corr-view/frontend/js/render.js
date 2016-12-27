@@ -11,9 +11,9 @@ var renderer = {
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='user-email-"+object["id"]+"' type='text' value='"+object["email"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='user-about-"+object["id"]+"' type='text'>"+object["about"]+"</textarea></div></div>";
         content += "<div class='card-action center-align'>";
-        content += "<a onclick='Materialize.toast(\"<span>Project diffs view not implemented yet!</span>\", 3000);' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'><i class='mdi-navigation-apps cyan-text text-darken-2'></i> <span class='applications badge'>"+object["apps"]+"</span></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Project diffs view not implemented yet!</span>\", 3000);' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
-        content += "<a onclick='Materialize.toast(\"<span> Project environments view not implemented yet!</span>\", 3000);' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+object["records"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>User apps view not implemented yet!</span>\", 3000);' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'><i class='mdi-navigation-apps cyan-text text-darken-2'></i> <span class='applications badge'>"+object["apps"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>User projects view not implemented yet!</span>\", 3000);' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span> User records view not implemented yet!</span>\", 3000);' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+object["records"]+"</span></a>";
         content += "</div>";
         content += "</div>";
         content += "</div>";
@@ -128,16 +128,17 @@ var renderer = {
         content += "<a onclick=\"space.env_pull('"+object["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
-        content += "<a onclick='appViewModal(\""+object["app"]["name"]+"\",\""+object["app"]["access"]+"\",\""+object["app"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'><i class='mdi-navigation-apps'></i></a>";
+        // content += "<a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["application"]["name"]+"'><i class='mdi-navigation-apps'></i></a>";
+        content += "<p class='grey-text ultra-small'><i class='mdi-navigation-apps cyan-text text-darken-2'></i><a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'>"+object["application"]["name"]+"</a></p>";
 
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly placeholder='computational,experimental' id='env-group-"+object["id"]+"' type='text' value='"+object["group"]+"'></div></div>";
-        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly placeholder='container-based,vm-based,tool-based,cloud-based,device-based,lab-based,custom-based' id='env-system-"+object["id"]+"' type='text' value='"+object["system"]+"'></div></div>";
+        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea class='materialize-textarea' readonly placeholder='container-based,vm-based,tool-based,cloud-based,device-based,lab-based,custom-based' id='env-system-"+object["id"]+"' type='text'>"+object["system"]+"</textarea></div></div>";
 
 
         content += "<div class='card-action center-align'>";
 
         content += "<a onclick='Materialize.toast(\"<span>Env resources view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Diff comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Env comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
 
         content += "</div>";
         content += "</div>";                
