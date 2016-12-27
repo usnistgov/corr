@@ -142,7 +142,7 @@ def private_search(hash_session):
                 
                 envs = []
                 for env in EnvironmentModel.objects():
-                    if diff.application.access == 'private' or env.application.access == 'public':
+                    if env.application.access == 'private' or env.application.access == 'public':
                         where = []
                         if "!all" in query:
                             where.append("all")

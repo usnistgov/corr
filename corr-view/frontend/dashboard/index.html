@@ -485,13 +485,35 @@
             }
 
             function launchEnvModal(record_id){
-              //Query to get the apps to display here.
-              $('#env-add-modal').openModal();
-              var env_record = document.getElementById("env-record");
-              env_record.value = record_id;
-              var apps_select = document.getElementById("env-app");
-              apps_select.innerHTML = "";
+              if(user.session != ""){
+                var env_record = document.getElementById("env-record");
+                env_record.value = record_id;
+                var apps_select = document.getElementById("env-app");
+                var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+                xmlhttp.open("GET", this.url+"/private/"+this.session+"/dashboard/developer/apps");
+                xmlhttp.send();
+                xmlhttp.onreadystatechange=function()
+                {
+                  $('#env-add-modal').openModal();
+                  env_record.value = record_id;
 
+                  if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                      if(xmlhttp.responseText == ""){
+                          console.log("Cloud returned empty response!");
+                      }else{
+                          var response = JSON.parse(xmlhttp.responseText);
+                          console.log(response);
+                          var apps = response["content"]["apps"];
+                          var selection = "";
+                          for(int i=0; i<apps.length; i++){
+                            selection += "<option>"+apps[i]["name"]+"</option>";
+                          }
+                          apps_select.innerHTML = selection;
+                      }
+                  } else {
+                      console.log(xmlhttp.responseText);
+                  }
+                }
             }
 
             function launchRecordModal(project_id){

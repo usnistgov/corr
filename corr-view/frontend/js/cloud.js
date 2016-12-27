@@ -307,7 +307,7 @@ var user = {
             }
         }else{
             Materialize.toast('<span>Name should not be empty.</span>', 3000);
-        }  
+        }
     },
     add_project: function() {
         var name = document.getElementById("project-name").value;

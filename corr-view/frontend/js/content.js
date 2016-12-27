@@ -529,7 +529,7 @@ var Space = function (session){
                         hits += this.query_result["records"]["count"];
                     }
                     if(!exDiff == true){
-                        for(var i = 0; i < this.query_result["records"]["count"]; i++){
+                        for(var i = 0; i < this.query_result["diffs"]["count"]; i++){
                             var diff_content = renderer.diff(this.query_result["diffs"]["result"][i], false);
                             query_result.innerHTML += diff_content;
                         }
@@ -540,7 +540,7 @@ var Space = function (session){
                             var env_content = renderer.env(this.query_result["envs"]["result"][i], false);
                             query_result.innerHTML += env_content;
                         }
-                        hits += this.query_result["diffs"]["count"];
+                        hits += this.query_result["envs"]["count"];
                     }
                     var display = document.getElementById('results-display');
                     display.innerHTML = hits;
