@@ -504,7 +504,6 @@
                           var apps = response["content"]["apps"];
                           var selection = "";
                           for(var i=0; i<apps.length; i++){
-                            <li class='disabled active'><span>Default</span></li>
                             selection += "<option value='"+apps[i]["name"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>";
                           }
                           apps_select.innerHTML += selection;
