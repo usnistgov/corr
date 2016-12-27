@@ -506,8 +506,11 @@
                           console.log(response);
                           var apps = response["content"]["apps"];
                           var selection = "";
+                          if(apps.length >0){
+                            selection += "<option value='"+apps[0]["name"]+"' disabled selected>"+apps[0]["name"].charAt(0).toUpperCase() + apps[0]["name"].slice(1)+"</option>";
+                          }
                           for(var i=0; i<apps.length; i++){
-                            selection += "<option>"+apps[i]["name"]+"</option>";
+                            selection += "<option value='"+apps[i]["name"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>";
                           }
                           apps_select.innerHTML = selection;
                       }
