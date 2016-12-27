@@ -822,7 +822,6 @@ def cloud_public_user_picture(user_id):
                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
         else:
             picture = profile.picture
-            print(profile.picture.storage)
             if picture == None:
                 picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:

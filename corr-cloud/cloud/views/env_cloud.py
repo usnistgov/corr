@@ -69,7 +69,7 @@ def env_view(hash_session, env_id):
 
 @app.route(CLOUD_URL + '/private/<hash_session>/env/create/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def env_create(hash_session, app_id):
+def env_create(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/create/<record_id>')
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
@@ -79,7 +79,7 @@ def env_create(hash_session, app_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/create/<record_id>')
             try:
-                record = RecordModel.objects.with_id(app_id)
+                record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
             if record is None:
