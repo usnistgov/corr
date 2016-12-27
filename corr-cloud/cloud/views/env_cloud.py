@@ -93,6 +93,12 @@ def env_create(hash_session, record_id):
                         if application_id:
                             application = ApplicationModel.objects.with_id(application_id)
                             if application:
+                                application
+                                application.records = application.records + 1
+                                application.save()
+                                if str(current_user.id) not in application.users:
+                                    application.users.append(str(current_user.id))
+                                    application.save()
                                 env.application = application
 
                         group = data.get("group", "unknown")
@@ -100,6 +106,7 @@ def env_create(hash_session, record_id):
                         env.group = group
                         env.system = system
                         env.save()
+                        record.project.history.append(str(env.id))
                         record.environment = env
                         record.save()
                         return cloud_response(201, 'Environment successfully created.', "The environment was created.")
