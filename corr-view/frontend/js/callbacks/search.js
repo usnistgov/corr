@@ -6,8 +6,9 @@ function processSearch()
     var applicationsQ = document.getElementById("exclude-applications").checked;
     var projectsQ = document.getElementById("exclude-projects").checked;
     var recordsQ = document.getElementById("exclude-records").checked;
-    Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" </span>", 5000);
-    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ);
+    var diffsQ = document.getElementById("exclude-diffs").checked;
+    Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" Exclude Diffs: "+diffsQ+" </span>", 5000);
+    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ);
 }
 
 // Search link sub research injection

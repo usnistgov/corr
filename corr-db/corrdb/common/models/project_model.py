@@ -103,6 +103,8 @@ class ProjectModel(db.Document):
             data['logo'] = str(self.logo.id)
         else:
             data['logo'] = ''
+        data['goals'] = self.goals
+        data['description'] = self.description
         return data
 
     def extended(self):
@@ -111,9 +113,7 @@ class ProjectModel(db.Document):
             The augmented dictionary.
         """
         data = self.info()
-        data['goals'] = self.goals
         data['history'] = [env.extended() for env in self._history()]
-        data['description'] = self.description
         data['comments'] = [comment.extended() for comment in self._comments()]
         data['resources'] = [resource.extended() for resource in self._resources()]
         data['extend'] = self.extend
@@ -188,9 +188,9 @@ class ProjectModel(db.Document):
         from ..models import DiffModel
         diffs = []
         for diff in DiffModel.objects():
-            if diff.record_from.project == self:
+            if diff.record_from.project == self and str(diff.id) not in [str(d.id) for d in diffs]:
                 diffs.append(diff)
-            if diff.record_to.project == self:
+            if diff.record_to.project == self and str(diff.id) not in [str(d.id) for d in diffs]:
                 diffs.append(diff)
         return len(diffs)
 

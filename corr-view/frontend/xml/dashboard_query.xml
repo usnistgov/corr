@@ -34,6 +34,12 @@
               Exclude Records
             </label>
         </div>
+        <div class="input-field col s3">
+            <input type="checkbox" id="exclude-diffs" />
+            <label for="exclude-diffs">
+              Exclude Diffs
+            </label>
+        </div>
       </center>
       </div>
 

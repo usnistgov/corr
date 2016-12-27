@@ -119,9 +119,8 @@ class RecordModel(db.Document):
         """
         data = {}
         data['head'] = {'updated':str(self.updated_at),
-         'id': str(self.id), 'project':str(self.project.id), 
+         'id': str(self.id), 'project':self.project.info(), 
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
-        data['head']['project-name'] = self.project.name
         data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)

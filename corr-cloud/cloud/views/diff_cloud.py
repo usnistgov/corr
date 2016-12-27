@@ -192,8 +192,8 @@ def diff_edit(hash_session, diff_id):
                             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                     elif diff.target == current_user:
                         try:
-                            status = data.get("status", diff.status)
-                            diff.status = status
+                            d_status = data.get("status", diff.status)
+                            diff.status = d_status
                             diff.save()
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:

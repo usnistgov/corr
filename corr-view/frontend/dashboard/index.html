@@ -144,7 +144,7 @@
                     <label id="project-goals-value" for="project-goals">Goals</label>
                   </div>
                 </div>
-                <div class="row margin">
+                <div class="row margin" id="project-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_project();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
@@ -422,6 +422,25 @@
               record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' type='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
               record_status.readOnly = true;
               var add_callback = document.getElementById("record-add-callback");
+              add_callback.innerHTML = "";
+
+            }
+
+            function projectViewModal(name, tags, description, goals){
+              $('#project-add-modal').openModal();
+              var project_name = document.getElementById("project-name");
+              var project_tags = document.getElementById("project-tags");
+              var project_description = document.getElementById("project-description");
+              var project_goals = document.getElementById("project-goals");
+              project_name.value = name;
+              project_name.readOnly = true;
+              project_tags.value = tags;
+              project_tags.readOnly = true;
+              project_description.value = description;
+              project_description.readOnly = true;
+              project_goals.value = goals;
+              project_goals.readOnly = true;
+              var add_callback = document.getElementById("project-add-callback");
               add_callback.innerHTML = "";
 
             }
