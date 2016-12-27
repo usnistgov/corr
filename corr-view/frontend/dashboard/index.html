@@ -269,6 +269,7 @@
                <div class="row margin">
                   <div class="input-field col s12">
                     <select id="env-app">
+                    <option value="none" disabled selected>None</option>
                     </select>
                   </div>
                 </div>
@@ -506,13 +507,11 @@
                           console.log(response);
                           var apps = response["content"]["apps"];
                           var selection = "";
-                          if(apps.length >0){
-                            selection += "<option value='"+apps[0]["name"]+"' disabled selected>"+apps[0]["name"].charAt(0).toUpperCase() + apps[0]["name"].slice(1)+"</option>";
-                          }
                           for(var i=0; i<apps.length; i++){
-                            selection += "<option value='"+apps[i]["name"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>";
+                            
+                            selection += "<li class='disabled active'><span>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</span></li>";
                           }
-                          apps_select.innerHTML = selection;
+                          apps_select.innerHTML += selection;
                       }
                   } else {
                       console.log(xmlhttp.responseText);
