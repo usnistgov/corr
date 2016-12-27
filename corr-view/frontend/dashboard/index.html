@@ -487,8 +487,6 @@
 
             function launchEnvModal(record_id){
               if(user.session != ""){
-                var env_record = document.getElementById("env-record");
-                env_record.value = record_id;
                 var apps_select = document.getElementById("env-app");
                 var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
                 var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
@@ -496,8 +494,6 @@
                 xmlhttp.send();
                 xmlhttp.onreadystatechange=function()
                 {
-                  $('#env-add-modal').openModal();
-                  env_record.value = record_id;
 
                   if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                       if(xmlhttp.responseText == ""){
@@ -508,14 +504,18 @@
                           var apps = response["content"]["apps"];
                           var selection = "";
                           for(var i=0; i<apps.length; i++){
-                            
-                            selection += "<li class='disabled active'><span>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</span></li>";
+                            <li class='disabled active'><span>Default</span></li>
+                            selection += "<option value='"+apps[i]["name"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>";
                           }
                           apps_select.innerHTML += selection;
                       }
                   } else {
                       console.log(xmlhttp.responseText);
                   }
+
+                  $('#env-add-modal').openModal();
+                  var env_record = document.getElementById("env-record");
+                  env_record.value = record_id;
                 }
               }
             }
