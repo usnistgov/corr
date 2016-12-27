@@ -71,6 +71,45 @@
             </div>
         </header>
 
+        <div id="user-view-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img id="user-picture" src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-perm-identity prefix"></i>
+                    <input id="user-fname" type="text">
+                    <label id="user-fname-value" for="user-fname">First Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment-ind prefix"></i>
+                    <input id="user-lname" type="text">
+                    <label id="user-lname-value" for="user-lname">Last Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-home prefix"></i>
+                    <input id="user-org" type="text">
+                    <label id="user-org-value" for="user-org">Organisation</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="user-about" class="materialize-textarea"></textarea>
+                    <label id="user-about-value" for="user-about">About</label>
+                  </div>
+                </div>
+            </div>
+        </div>
+
         <div id="app-add-modal" class="modal login-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
@@ -101,7 +140,7 @@
                     <label id="app-about-value" for="app-about">About</label>
                   </div>
                 </div>
-                <div class="row margin">
+                <div class="row margin" id="app-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
@@ -208,6 +247,56 @@
                 <div class="row margin">
                   <div class="input-field col s12">
                     <a onclick="return user.add_diff();" class="btn waves-effect purple waves-light col s12">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="env-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
+                    <label for="picture-input">
+                        <img src="../images/env.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-cloud-download prefix"></i>
+                    <input id="env-record" type="text"></input>
+                    <label for="env-record">Record</label>
+                  </div>
+               </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-app">
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-group">
+                      <option value="computational" disabled selected>Computational</option>
+                      <option value="experimental">Experimental</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-system">
+                      <option value="container-based" disabled selected>Container</option>
+                      <option value="vm-based">Virtual Machine</option>
+                      <option value="tool-based">Tool</option>
+                      <option value="cloud-based">Cloud</option>
+                      <option value="device-based">Device</option>
+                      <option value="lab-based">Lab</option>
+                      <option value="custom-based">Custom</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_env();" class="btn waves-effect purple waves-light col s12">Confirm</a>
                   </div>
                 </div>
             </div>
@@ -362,6 +451,12 @@
                 dashboard.diffs(user.session, options);
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
+            // Inject the envs dashboard view
+            else if(user.session != "" && view_selected == "envs"){
+                dashboard.envs(user.session, options);
+                var space = new Space(user.session);
+                // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+            }
             // Inject the query dashboard view
             else if(user.session != "" && view_selected == "query"){
                 var space = new Space(user.session);
@@ -389,6 +484,16 @@
                 window.location.replace("./?session="+user.session+"&view="+scope);
             }
 
+            function launchEnvModal(record_id){
+              //Query to get the apps to display here.
+              $('#env-add-modal').openModal();
+              var env_record = document.getElementById("env-record");
+              env_record.value = record_id;
+              var apps_select = document.getElementById("env-app");
+              apps_select.innerHTML = "";
+
+            }
+
             function launchRecordModal(project_id){
               $('#record-add-modal').openModal();
               var project_ref = document.getElementById("project-id");
@@ -405,6 +510,25 @@
               }else{
                 Materialize.toast('<span>Please select up to two records!</span>', 3000);
               }
+            }
+
+            function userViewModal(_id, fname, lname, organisation, about){
+              $('#user-view-modal').openModal();
+              var user_picture = document.getElementById("user-picture");
+              var user_fname = document.getElementById("user-fname");
+              var user_lname = document.getElementById("user-lname");
+              var user_organisation = document.getElementById("user-org");
+              var user_about = document.getElementById("user-about");
+              var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+              user_picture.src = url+"/public/user/picture/"+_id;
+              user_fname.value = fname;
+              user_fname.readOnly = true;
+              user_lname.value = lname;
+              user_lname.readOnly = true;
+              user_organisation.value = organisation;
+              user_organisation.readOnly = true;
+              user_about.value = about;
+              user_about.readOnly = true;
             }
 
             function recordViewModal(record_id, project_name, tags, rationels, status){
@@ -444,6 +568,22 @@
               add_callback.innerHTML = "";
 
             }
+
+            function appViewModal(name, access, about){
+              $('#app-add-modal').openModal();
+              var app_name = document.getElementById("app-name");
+              var app_access = document.getElementById("app-access");
+              var app_about = document.getElementById("app-about");
+              app_name.value = name;
+              app_name.readOnly = true;
+              app_access.value = access;
+              app_access.readOnly = true;
+              app_about.value = about;
+              app_about.readOnly = true;
+              var add_callback = document.getElementById("app-add-callback");
+              add_callback.innerHTML = "";
+
+            }
             
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
@@ -451,6 +591,7 @@
         <script type="text/javascript" src="../js/callbacks/project.js"></script>
         <script type="text/javascript" src="../js/callbacks/record.js"></script>
         <script type="text/javascript" src="../js/callbacks/diff.js"></script>
+        <script type="text/javascript" src="../js/callbacks/env.js"></script>
         <script type="text/javascript" src="../js/callbacks/search.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
         <script>

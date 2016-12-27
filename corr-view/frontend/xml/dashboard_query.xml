@@ -10,34 +10,40 @@
           </label>
         </div>
         <center>
-        <div class="input-field col s3">
+        <div class="input-field col s2">
             <input type="checkbox" id="exclude-users" />
             <label for="exclude-users">
               Exclude Users
             </label>
         </div>
-        <div class="input-field col s3">
+        <div class="input-field col s2">
             <input type="checkbox" id="exclude-applications" />
             <label for="exclude-applications">
               Exclude Applications
             </label>
         </div>
-        <div class="input-field col s3">
+        <div class="input-field col s2">
             <input type="checkbox" id="exclude-projects" />
             <label for="exclude-projects">
               Exclude Projects
             </label>
         </div>
-        <div class="input-field col s3">
+        <div class="input-field col s2">
             <input type="checkbox" id="exclude-records" />
             <label for="exclude-records">
               Exclude Records
             </label>
         </div>
-        <div class="input-field col s3">
+        <div class="input-field col s2">
             <input type="checkbox" id="exclude-diffs" />
             <label for="exclude-diffs">
               Exclude Diffs
+            </label>
+        </div>
+        <div class="input-field col s2">
+            <input type="checkbox" id="exclude-envs" />
+            <label for="exclude-envs">
+              Exclude Envs
             </label>
         </div>
       </center>

@@ -95,10 +95,10 @@ class ProjectModel(db.Document):
             The dictionary content of the project model.
         """
         data = {'created':str(self.created_at), 'updated':str(self.last_updated), 'id': str(self.id), 
-        'owner':str(self.owner.id), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
+        'owner':self.owner.info(), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
-        data['owner-name'] = self.owner.info()['user-name']
+        # data['owner-profile'] = self.owner.info()['user-name']
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
@@ -217,6 +217,18 @@ class ProjectModel(db.Document):
         """
         from ..models import RecordModel
         return RecordModel.objects(project=self).order_by('+created_at')
+
+    @property
+    def envs(self):
+        """Gather all the project's records.
+        Returns:
+            The project's records.
+        """
+        envs = []
+        for record in self.records:
+            if record.environment:
+                envs.append(record.environment)
+        return envs
     
     @property
     def last_updated(self):

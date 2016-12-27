@@ -75,9 +75,9 @@ class EnvironmentModel(db.Document):
         data = {'created':str(self.created_at), 'id': str(self.id), 'group':self.group,
         'system':self.system, 'specifics':self.specifics}
         if self.application != None:
-            data['application'] = str(self.application.id)
+            data['application'] = self.application.info()
         else:
-            data['application'] = None
+            data['application'] = {'id':None, 'name':'unknown'}
         if self.version != None:
             data['version'] = str(self.version.id)
         else:

@@ -1,12 +1,12 @@
-// Reload upload callback
+// Record upload callback
 function uploadRecord(project_name, project_id){
     Materialize.toast('<span>Uploading a new record to Project ['+project_name+']...</span>', 3000);
 }
 
 // Record edit callback
 function recordEdit(record_id){
-    var project_update = document.getElementById('update-record-'+record_id);
-    project_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
+    var record_update = document.getElementById('update-record-'+record_id);
+    record_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
@@ -17,8 +17,8 @@ function recordEdit(record_id){
 
 // Record save callback
 function recordSave(record_id){
-    var project_update = document.getElementById('update-record-'+record_id);
-    project_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+    var record_update = document.getElementById('update-record-'+record_id);
+    record_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
@@ -35,8 +35,8 @@ function recordSelect(record_id){
     selected_records.push(record_id);
     console.log("Record: "+record_id+" selected!");
     console.log(selected_records);
-    var project_update = document.getElementById('select-record-'+record_id);
-    project_update.innerHTML = "<a id='deselect-action' onclick='recordDeselect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box'></i></a>";
+    var record_update = document.getElementById('select-record-'+record_id);
+    record_update.innerHTML = "<a id='deselect-action' onclick='recordDeselect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box'></i></a>";
 }
 
 function recordDeselect(record_id){
@@ -48,6 +48,6 @@ function recordDeselect(record_id){
     }
     console.log("Record: "+record_id+" deselected!");
     console.log(selected_records);
-    var project_update = document.getElementById('select-record-'+record_id);
-    project_update.innerHTML = "<a id='select-action' onclick='recordSelect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box-outline-blank'></i></a>";
+    var record_update = document.getElementById('select-record-'+record_id);
+    record_update.innerHTML = "<a id='select-action' onclick='recordSelect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box-outline-blank'></i></a>";
 }
