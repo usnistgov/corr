@@ -505,7 +505,7 @@
                           console.log(response);
                           var apps = response["content"]["apps"];
                           var selection = "";
-                          for(int i=0; i<apps.length; i++){
+                          for(var i=0; i<apps.length; i++){
                             selection += "<option>"+apps[i]["name"]+"</option>";
                           }
                           apps_select.innerHTML = selection;
