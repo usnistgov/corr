@@ -28,7 +28,7 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
-	},
+    },
 	apps:function(session){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
@@ -45,7 +45,7 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
-	},
+    },
 	projects:function(session){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
@@ -60,7 +60,7 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_projects.xml', [], succeed, failed);
-	},
+    },
 	records:function(session, options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
@@ -82,7 +82,7 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_records.xml', [], succeed, failed);
-	},
+    },
 	diffs:function(session, options){
 		function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
@@ -105,7 +105,30 @@ var dashboard = {
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_diffs.xml', [], succeed, failed);
-	},
+    },
+    envs:function(session, options){
+        function succeed(xhttp){
+            dashboard.content.innerHTML = xhttp.responseText;
+            user.session = session;
+            console.log(user.session);
+            user.trusted();
+
+            var project = "all";
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "project"){
+                    project = parts[1];
+                }
+            }
+
+            var space = new Space(user.session);
+            space.envs(project);
+        };
+        function failed(){
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_diffs.xml', [], succeed, failed);
+    },
 	query:function(session, options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;

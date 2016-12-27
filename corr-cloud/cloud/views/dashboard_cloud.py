@@ -139,8 +139,25 @@ def private_search(hash_session):
 
                         if len(where) != 0:
                             diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status})
-                    
-                return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                
+                envs = []
+                for env in EnvironmentModel.objects():
+                    if diff.application.access == 'private' or env.application.access == 'public':
+                        where = []
+                        if "!all" in query:
+                            where.append("all")
+                        if any(q.lower() in str(env.id) for q in query):
+                            where.append("id")
+                        if any(q in str(json.dumps(env.group)) for q in query):
+                            where.append("group")
+                        if any(q in str(json.dumps(env.system)) for q in query):
+                            where.append("system")
+                        if any(q in str(json.dumps(env.comments)) for q in query):
+                            where.append("comments")
+
+                        if len(where) != 0:
+                            envs.append(env.info())
+                return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -238,6 +255,37 @@ def dashboard_records(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def dashboard_envs(hash_session, project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/envs/<project_id>')
+    if fk.request.method == 'GET':
+        access_resp = access_manager.check_cloud(hash_session)
+        current_user = access_resp[1]
+        if current_user is None:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/envs/<project_id>')
+            if project_id == "all":
+                projects = ProjectModel.objects(owner=current_user)
+                envs = {'size':0, 'envs':[]}
+                for project in projects:
+                    for env in project.envs:
+                        envs['envs'].append(env.info())
+                envs['size'] = len(envs['envs'])
+                return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            else:
+                project = ProjectModel.objects.with_id(project_id)
+                if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                else:
+                    envs = {'size':0, 'envs':[]}
+                    for env in project.envs:
+                        envs['envs'].append(env.info())
+                    envs['size'] = len(envs['envs'])
+                    return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')

@@ -29,7 +29,7 @@ var renderer = {
         content += "<div class='card-content'>";
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='Materialize.toast(\"<span>Application share not implemented yet!</span>\", 3000);' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
-        content += "<a onclick='customSearch(\"user\",\""+object["developer-id"]+" "+object["developer-name"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-delay='50' data-tooltip='"+object["developer-name"]+"'><i class='mdi-social-person' data-position='bottom'></i></a>";
+        content += "<a onclick='userViewModal(\""+object["developer"]["id"]+"\",\""+object["developer"]["profile"]["fname"]+"\""+",\""+object["developer"]["profile"]["lname"]+"\",\""+object["developer"]["profile"]["organisation"]+"\",\""+object["developer"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-delay='50' data-tooltip='"+object["developer-name"]+"'><i class='mdi-social-person' data-position='bottom'></i></a>";
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+object["id"]+"' type='text' value='"+object["access"]+"'></div></div>";
@@ -52,7 +52,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='customSearch(\"user\",\""+object["owner"]+" "+object["owner-name"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'><i class='mdi-social-person'></i></a>";
+        content += "<a onclick='userViewModal(\""+object["owner"]["id"]+"\",\""+object["owner"]["profile"]["fname"]+"\""+",\""+object["owner"]["profile"]["lname"]+"\",\""+object["owner"]["profile"]["organisation"]+"\",\""+object["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'><i class='mdi-social-person'></i></a>";
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+object["id"]+"' type='text' value='"+object["tags"]+"'></div></div>";
@@ -75,7 +75,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='projectViewModal(\""+object["project"]["name"]+",\""+object["project"]["tags"]+"\""+",\""+object["project"]["description"]+"\""+object["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'><i class='mdi-file-folder'></i></a>";
+        content += "<a onclick='projectViewModal(\""+object["project"]["name"]+"\",\""+object["project"]["tags"]+"\",\""+object["project"]["description"]+"\",\""+object["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'><i class='mdi-file-folder'></i></a>";
         content += "<a onclick=\"space.pull('"+object["head"]["project"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["head"]["created"]+"</p>";
@@ -91,8 +91,7 @@ var renderer = {
         content += "</div>";
         content += "</div>";
         return content;
-    }
-
+    },
     diff: function(object, ownership, session){
         var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
@@ -103,7 +102,7 @@ var renderer = {
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-book prefix cyan-text text-darken-2'></i><input readonly placeholder='default,visual,custom' id='diff-method-"+object["id"]+"' type='text' value='"+object["method"]+"'></div></div>";
-        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly placeholder='repeated,reproduced,replicated,non-replicated,non-repeated,non-reproduced' class='autocomplete' id='diff-proposition-"+object["id"]+"' type='text' value='"+object["proposition"]+"'></div></div>";
+        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly placeholder='repeated,reproduced,replicated,non-replicated,non-repeated,non-reproduced' id='diff-proposition-"+object["id"]+"' type='text' value='"+object["proposition"]+"'></div></div>";
 
 
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='agreed,denied' id='diff-status-"+object["id"]+"' type='text' value='"+object["status"]+"'></div></div>";
@@ -113,7 +112,33 @@ var renderer = {
 
         content += "<a onclick='recordViewModal(\""+record_from["head"]["id"]+"\",\""+record_from["head"]["project-name"]+"\",\""+record_from["head"]["tags"]+"\",\""+record_from["head"]["rationels"]+"\",\""+record_from["head"]["status"]+"\");' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+record_from["head"]["id"].substring(0,4)+"..."+record_from["head"]["id"].substring(19,23)+"</span></a>";
         content += "<a onclick='recordViewModal(\""+record_to["head"]["id"]+"\",\""+record_to["head"]["project-name"]+"\",\""+record_to["head"]["tags"]+"\",\""+record_to["head"]["rationels"]+"\",\""+record_to["head"]["status"]+"\");' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i><span class='to badge'>"+record_to["head"]["id"].substring(0,4)+"..."+record_to["head"]["id"].substring(19,23)+"</span></a>";
-        content += "<a onclick='Materialize.toast(\"<span>Diff comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+diff["comments"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Diff comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
+
+        content += "</div>";
+        content += "</div>";                
+        content += "</div>";
+        content += "</div>";
+        return content;
+    },
+    env: function(object, ownership, session){
+        var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'>";
+        content += "<div id='profile-card' class='card'>";
+        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+        content += "<div class='card-content'>";
+        content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
+        content += "<a onclick=\"space.env_pull('"+object["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
+        content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
+        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
+        content += "<a onclick='appViewModal(\""+object["app"]["name"]+"\",\""+object["app"]["access"]+"\",\""+object["app"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project-name"]+"'><i class='mdi-navigation-apps'></i></a>";
+
+        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly placeholder='computational,experimental' id='env-group-"+object["id"]+"' type='text' value='"+object["group"]+"'></div></div>";
+        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly placeholder='container-based,vm-based,tool-based,cloud-based,device-based,lab-based,custom-based' id='env-system-"+object["id"]+"' type='text' value='"+object["system"]+"'></div></div>";
+
+
+        content += "<div class='card-action center-align'>";
+
+        content += "<a onclick='Materialize.toast(\"<span>Env resources view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Diff comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
 
         content += "</div>";
         content += "</div>";                

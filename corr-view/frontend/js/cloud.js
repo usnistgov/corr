@@ -412,5 +412,37 @@ var user = {
         }else{
             Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
         }
+    },
+    add_env: function() {
+        var record = document.getElementById("env-record").value;
+        var application = document.getElementById("env-app").value;
+        var group = document.getElementById("env-group").value;
+        var system = document.getElementById("env-system").value;
+        if(from != "" && to != ""){
+            console.log(from+" -- "+to);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            xmlhttp.open("POST", this.url+"/private/"+this.session+"/env/create/"+record);
+            var request = { 'app': application, 'group': group, 'system':system};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        var response = xmlhttp.responseText;
+                        console.log(response);
+
+                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        window.location.reload();
+                    }
+                } else {
+                    console.log(xmlhttp.responseText);
+                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                }
+            }
+        }else{
+            Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
+        }
     }
 };
