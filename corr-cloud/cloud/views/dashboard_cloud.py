@@ -142,21 +142,20 @@ def private_search(hash_session):
                 
                 envs = []
                 for env in EnvironmentModel.objects():
-                    if env.application.access == 'private' or env.application.access == 'public':
-                        where = []
-                        if "!all" in query:
-                            where.append("all")
-                        if any(q.lower() in str(env.id) for q in query):
-                            where.append("id")
-                        if any(q in str(json.dumps(env.group)) for q in query):
-                            where.append("group")
-                        if any(q in str(json.dumps(env.system)) for q in query):
-                            where.append("system")
-                        if any(q in str(json.dumps(env.comments)) for q in query):
-                            where.append("comments")
+                    where = []
+                    if "!all" in query:
+                        where.append("all")
+                    if any(q.lower() in str(env.id) for q in query):
+                        where.append("id")
+                    if any(q in str(json.dumps(env.group)) for q in query):
+                        where.append("group")
+                    if any(q in str(json.dumps(env.system)) for q in query):
+                        where.append("system")
+                    if any(q in str(json.dumps(env.comments)) for q in query):
+                        where.append("comments")
 
-                        if len(where) != 0:
-                            envs.append(env.info())
+                    if len(where) != 0:
+                        envs.append(env.info())
                 return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
