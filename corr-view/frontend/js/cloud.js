@@ -418,8 +418,8 @@ var user = {
         var application = document.getElementById("env-app").value;
         var group = document.getElementById("env-group").value;
         var system = document.getElementById("env-system").value;
-        if(from != "" && to != ""){
-            console.log(from+" -- "+to);
+        if(record != ""){
+            console.log(record);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/env/create/"+record);
             var request = { 'app': application, 'group': group, 'system':system};

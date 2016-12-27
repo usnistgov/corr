@@ -502,7 +502,7 @@ var Space = function (session){
                     if(!exUser == true){
                         for(var i = 0; i < this.query_result["users"]["count"]; i++){
                             var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];
-                            var user_content = renderer.user(this.query_result["users"]["result"][i], false, picture_uri);
+                            var user_content = renderer.user(this.query_result["users"]["result"][i], false, this.session, picture_uri);
                             query_result.innerHTML += user_content;
                         }
                         hits += this.query_result["users"]["count"];
