@@ -90,7 +90,7 @@ def env_create(hash_session, record_id):
                     try:
                         env = EnvironmentModel(created_at=str(datetime.datetime.utcnow()))
                         application_id = data.get("app", None)
-                        if application_id:
+                        if application_id and application_id != 'none':
                             application = ApplicationModel.objects.with_id(application_id)
                             if application:
                                 application.records = application.records + 1
