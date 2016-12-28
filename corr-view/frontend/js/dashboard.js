@@ -3,6 +3,7 @@ var dashboard = {
     coming_soon:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -15,6 +16,7 @@ var dashboard = {
 	activity:function(session){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -32,6 +34,7 @@ var dashboard = {
 	apps:function(session){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -49,6 +52,7 @@ var dashboard = {
 	projects:function(session){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -64,6 +68,7 @@ var dashboard = {
 	records:function(session, options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -86,6 +91,7 @@ var dashboard = {
 	diffs:function(session, options){
 		function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -109,6 +115,7 @@ var dashboard = {
     envs:function(session, options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
@@ -132,6 +139,7 @@ var dashboard = {
 	query:function(session, options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
             user.session = session;
             console.log(user.session);
             user.trusted();
