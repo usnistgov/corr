@@ -432,7 +432,7 @@ var Space = function (session){
         }
     },
     this.envs = function(project_id) {
-        document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project id: "+project_id);
