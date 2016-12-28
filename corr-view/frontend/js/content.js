@@ -54,7 +54,7 @@ var Space = function (session){
 
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -71,7 +71,7 @@ var Space = function (session){
                         content += "<div class='card-action center-align'>";
                         content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
                         content += "<a href='./?session="+session+"&view=diffs&project="+project["project"]["id"]+"' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
-                        content += "<<a href='./?session="+session+"&view=envs&project="+project["project"]["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
+                        content += "<a href='./?session="+session+"&view=envs&project="+project["project"]["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
@@ -129,7 +129,7 @@ var Space = function (session){
 
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='appRemove(\""+app["name"]+"\",\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -211,7 +211,7 @@ var Space = function (session){
                         console.log(record);
                         var content = "<div class='col s12 m6 l4' id='"+record["head"]["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         var disable_download = "";
                         if(record["container"] == false){
@@ -322,7 +322,7 @@ var Space = function (session){
                         console.log(diff);
                         var content = "<div class='col s12 m6 l4' id='"+diff["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='diffRemove(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -459,7 +459,7 @@ var Space = function (session){
                         console.log(env);
                         var content = "<div class='col s12 m6 l4' id='"+env["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='envRemove(\""+env["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -474,8 +474,8 @@ var Space = function (session){
                         // }
                         // content += "<p class='grey-text ultra-small'><i class='mdi-navigation-apps cyan-text text-darken-2'></i> "+env["application"]["name"]+"</p>";
                         content += "<div class='row margin'><div class='input-field col s12 m6 l10'><i class='mdi-navigation-apps prefix cyan-text text-darken-2'></i><input readonly id='env-app-"+env["id"]+"' type='text' value='"+env["application"]["name"]+"'></div><div class='input-field col s12 m6 l2'><a onclick='appViewModal(\""+env["application"]["name"]+"\",\""+env["application"]["access"]+"\",\""+env["application"]["about"]+"\");' class='btn waves-effect cyan waves-light col s12'>Show</a></div></div>";
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='env-group-"+env["id"]+"' type='text' value='"+env["group"]+"'></div></div>";
-                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='env-system-"+env["id"]+"' type='text' value='"+env["system"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input placeholder='computational,experimental,hybrid' readonly id='env-group-"+env["id"]+"' type='text' value='"+env["group"]+"'></div></div>";
+                        content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input 'placeholder='container-based,vm-based,tool-based,cloud-based,device-based,lab-based,custom-based' readonly id='env-system-"+env["id"]+"' type='text' value='"+env["system"]+"'></div></div>";
                         
                         content += "<div class='card-action center-align'>";
 
@@ -701,7 +701,7 @@ var Application = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     this.session = session;
     self._id = _id;
-    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
     this.save = function(name, network, about, access) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", url+"/private/"+this.session+"/dashboard/developer/app/update/"+self._id);
@@ -721,7 +721,7 @@ var Application = function (session, _id){
             }
         }
     },
-    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    // Half way optimal. We could have just removed the app div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
@@ -749,7 +749,7 @@ var Diff = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     this.session = session;
     self._id = _id;
-    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
     this.save = function(method, description, status) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", url+"/private/"+this.session+"/diff/edit/"+self._id);
@@ -769,12 +769,60 @@ var Diff = function (session, _id){
             }
         }
     },
-    // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
+    // Half way optimal. We could have just removed the diff div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/diff/remove/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Record removal succeeded</span>', 3000);
+                    window.location.reload();
+                } else {
+                    Materialize.toast('<span>Record removal failed</span>', 3000);
+                    console.log("Dashboard download failed");
+                }
+            }
+        }
+    }
+};
+
+var Environment = function (session, _id){
+    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    this.session = session;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a env and change its content we reload the whole page.
+    this.save = function(group, system) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url+"/private/"+this.session+"/env/edit/"+self._id);
+        var request = { 'group':group, 'system': system};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                } else {
+                    Materialize.toast('<span>Update failed</span>', 5000);
+                }
+                window.location.reload();
+            }
+        }
+    },
+    // Half way optimal. We could have just removed the env div instead of reloading the whole page. TODO
+    this.trash = function () {
+        var xmlhttp = new XMLHttpRequest();
+        console.log(this.session);
+        
+        xmlhttp.open("DELETE", url+"/private/"+this.session+"/env/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
