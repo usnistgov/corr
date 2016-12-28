@@ -32,7 +32,33 @@
         <link href="../js/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="../js/plugins/jvectormap/jquery-jvectormap.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="../js/plugins/chartist-js/chartist.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <script>
+          var $apps_select = $("env-app");
+          console.log($apps_select);
+          var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+          var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+          xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/developer/apps");
+          xmlhttp.send();
+          xmlhttp.onreadystatechange=function()
+          {
 
+            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if(xmlhttp.responseText == ""){
+                    console.log("Cloud returned empty response!");
+                }else{
+                    var response = JSON.parse(xmlhttp.responseText);
+                    console.log(response);
+                    var apps = response["content"]["apps"];
+                    for(var i=0; i<apps.length; i++){
+                      $apps_select.append("<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>");
+                    }
+                    console.log($apps_select);
+                }
+            } else {
+                console.log(xmlhttp.responseText);
+            }
+          }
+        </script>
     </head>
 
     <body>
@@ -408,9 +434,6 @@
         <script type="text/javascript">
             $(document).ready(function() {
               $('.modal-trigger').leanModal();
-              $('#card-image').on('click', function(event) {
-                event.preventDefault();
-              });
             });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
@@ -490,41 +513,9 @@
             }
 
             function launchEnvModal(record_id){
-              if(user.session != ""){
-                // var apps_select = document.getElementById("env-app");
-                var $apps_select = $("env-app");
-                console.log($apps_select);
-                var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-                var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
-                xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
-                xmlhttp.send();
-                xmlhttp.onreadystatechange=function()
-                {
-
-                  if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                      if(xmlhttp.responseText == ""){
-                          console.log("Cloud returned empty response!");
-                      }else{
-                          var response = JSON.parse(xmlhttp.responseText);
-                          console.log(response);
-                          var apps = response["content"]["apps"];
-                          // var selection = "<select><option value='none' disabled selected>None</option>";
-                          for(var i=0; i<apps.length; i++){
-                            $apps_select.append("<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>");
-                          }
-                          // selection += "</select>"
-                          // apps_select.innerHTML = selection;
-                          console.log($apps_select);
-                      }
-                  } else {
-                      console.log(xmlhttp.responseText);
-                  }
-
-                  $('#env-add-modal').openModal();
-                  var env_record = document.getElementById("env-record");
-                  env_record.value = record_id;
-                }
-              }
+              $('#env-add-modal').openModal();
+              var env_record = document.getElementById("env-record");
+              env_record.value = record_id;
             }
 
             function launchRecordModal(project_id){
