@@ -193,7 +193,7 @@ class RecordModel(db.Document):
             data['head']['environment'] = self.environment.extended()
         else:
             data['head']['environment'] = {}
-        if self.parent != '':
+        if self.parent != None and self.parent != '':
             data['head']['parent'] = RecordModel.objects.with_id(self.parent).info()
         else:
             data['head']['parent'] = {}
