@@ -143,16 +143,16 @@ var renderer = {
         // content += "<a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["application"]["name"]+"'><i class='mdi-navigation-apps'></i></a>";
         // content += "<p class='grey-text ultra-small'><i class='mdi-navigation-apps cyan-text text-darken-2'></i><a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");'>"+object["application"]["name"]+"</a></p>";
 
-        content += "<div class='row margin'><div class='input-field col s12 m6 l10'><i class='mdi-navigation-apps prefix cyan-text text-darken-2'></i><input readonly id='env-app-"+object["id"]+"' type='text' value='"+object["application"]["name"]+"'></div><div class='input-field col s12 m6 l2'><a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn waves-effect purple waves-light col s12'>Show</a></div></div>";
-
+        content += "<div class='row margin'><div class='input-field col s12 m6 l10'><i class='mdi-navigation-apps prefix cyan-text text-darken-2'></i><input readonly id='env-app-"+object["id"]+"' type='text' value='"+object["application"]["name"]+"'></div><div class='input-field col s12 m6 l2'><a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn waves-effect cyan waves-light col s12'>Show</a></div></div>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly placeholder='computational,experimental' id='env-group-"+object["id"]+"' type='text' value='"+object["group"]+"'></div></div>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea class='materialize-textarea' readonly placeholder='container-based,vm-based,tool-based,cloud-based,device-based,lab-based,custom-based' id='env-system-"+object["id"]+"' type='text'>"+object["system"]+"</textarea></div></div>";
 
 
         content += "<div class='card-action center-align'>";
 
-        content += "<a onclick='Materialize.toast(\"<span>Env resources view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Env resources view not implemented yet!</span>\", 3000);' class='valign left'><i class='mdi-action-view-list cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
         content += "<a onclick='Materialize.toast(\"<span>Env comments view not implemented yet!</span>\", 3000);' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
+        content += "<a onclick='Materialize.toast(\"<span>Env bundle view not implemented yet!</span>\", 3000);' class='valign'><i class='mdi-editor-insert-drive-file cyan-text text-darken-2'></i><span class='to badge'>"+object["bundle"].substring(0,4)+"..."+object["bundle"].substring(19,23)+"</span></a>";
 
         content += "</div>";
         content += "</div>";                
