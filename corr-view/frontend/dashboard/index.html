@@ -493,7 +493,7 @@
               if(user.session != ""){
                 // var apps_select = document.getElementById("env-app");
                 var $apps_select = $("env-app");
-                console.log(apps_select);
+                console.log($apps_select);
                 var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
                 var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
                 xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
@@ -510,11 +510,11 @@
                           var apps = response["content"]["apps"];
                           // var selection = "<select><option value='none' disabled selected>None</option>";
                           for(var i=0; i<apps.length; i++){
-                            apps_select.append("<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>");
+                            $apps_select.append("<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>");
                           }
                           // selection += "</select>"
                           // apps_select.innerHTML = selection;
-                          console.log(apps_select);
+                          console.log($apps_select);
                       }
                   } else {
                       console.log(xmlhttp.responseText);
