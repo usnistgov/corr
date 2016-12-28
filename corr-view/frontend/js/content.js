@@ -487,7 +487,7 @@ var Space = function (session){
                         content += "</div>";                
                         content += "</div>";
                         content += "</div>";
-                        document.getElementById("records-list").innerHTML += content;
+                        document.getElementById("envs-list").innerHTML += content;
                     }
                 }
             } else {

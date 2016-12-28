@@ -127,7 +127,7 @@ var dashboard = {
         function failed(){
             window.location.replace("/error/?code=404");
         };
-        config.load_xml('dashboard_diffs.xml', [], succeed, failed);
+        config.load_xml('dashboard_envs.xml', [], succeed, failed);
     },
 	query:function(session, options){
         function succeed(xhttp){
