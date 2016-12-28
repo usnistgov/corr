@@ -86,7 +86,7 @@ class EnvironmentModel(db.Document):
         if self.bundle != None:
             data['bundle'] = str(self.bundle.id)
         else:
-            data['bundle'] = ''
+            data['bundle'] = '************************'
 
         data['comments'] = len(self.comments)
         data['resources'] = len(self.resources)

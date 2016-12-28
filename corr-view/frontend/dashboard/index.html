@@ -267,10 +267,7 @@
                   </div>
                </div>
                <div class="row margin">
-                  <div class="input-field col s12">
-                    <select id="env-app">
-                    <option value="none" disabled selected>None</option>
-                    </select>
+                  <div class="input-field col s12" id="env-app">
                   </div>
                 </div>
                 <div class="row margin">
@@ -503,12 +500,13 @@
                           var response = JSON.parse(xmlhttp.responseText);
                           console.log(response);
                           var apps = response["content"]["apps"];
-                          var selection = "";
+                          var selection = "<select><option value='none' disabled selected>None</option>";
                           for(var i=0; i<apps.length; i++){
                             selection += "<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>";
                           }
+                          selection += "</select>"
+                          apps_select.innerHTML = selection;
                           console.log(apps_select);
-                          apps_select.innerHTML += selection;
                       }
                   } else {
                       console.log(xmlhttp.responseText);
