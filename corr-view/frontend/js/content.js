@@ -55,7 +55,7 @@ var Space = function (session){
 
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
