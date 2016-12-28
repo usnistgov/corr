@@ -5,6 +5,7 @@ var Space = function (session){
     this.query_result = "";
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
         xmlhttp.send();
@@ -54,7 +55,7 @@ var Space = function (session){
 
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -90,6 +91,7 @@ var Space = function (session){
     },
     this.apps = function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
         xmlhttp.send();
@@ -129,7 +131,7 @@ var Space = function (session){
 
                         var content = "<div class='col s12 m6 l4'>";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='appRemove(\""+app["name"]+"\",\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -187,6 +189,7 @@ var Space = function (session){
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project id: "+project_id);
+        console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/all");
         }else{
@@ -211,7 +214,7 @@ var Space = function (session){
                         console.log(record);
                         var content = "<div class='col s12 m6 l4' id='"+record["head"]["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         var disable_download = "";
                         if(record["container"] == false){
@@ -300,6 +303,7 @@ var Space = function (session){
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project id: "+project_id);
+        console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/diffs/all");
         }else{
@@ -322,7 +326,7 @@ var Space = function (session){
                         console.log(diff);
                         var content = "<div class='col s12 m6 l4' id='"+diff["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='diffRemove(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -436,6 +440,7 @@ var Space = function (session){
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         console.log("Project id: "+project_id);
+        console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/envs/all");
         }else{
@@ -459,7 +464,7 @@ var Space = function (session){
                         console.log(env);
                         var content = "<div class='col s12 m6 l4' id='"+env["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
-                        content += "<div class='card-image waves-effect waves-block waves-light'><img src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
                         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='envRemove(\""+env["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
@@ -499,6 +504,7 @@ var Space = function (session){
         var xmlhttp = new XMLHttpRequest();
         var query_result = document.getElementById('query-result');
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/search?query="+search);
         xmlhttp.send();
@@ -568,6 +574,7 @@ var Space = function (session){
     },
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
         xmlhttp.send();
@@ -597,6 +604,7 @@ var Space = function (session){
     },
     this.pull = function(project_name, record_id) {
         console.log("Before...");
+        console.log('Cookie session value: '+ Cookies.get('session'));
         window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
         console.log("...After");
     }
@@ -604,11 +612,13 @@ var Space = function (session){
 
 var Record = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     this.save = function(tags, rationels, status) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+this.session+"/record/edit/"+self._id);
         var request = { 'tags': tags, 'rationels': rationels, 'status': status};
         xmlhttp.send(JSON.stringify(request));
@@ -629,6 +639,7 @@ var Record = function (session, _id){
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/record/remove/"+self._id);
         xmlhttp.send();
@@ -651,11 +662,13 @@ var Record = function (session, _id){
 
 var Project = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     this.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+this.session+"/project/edit/"+self._id);
         var request = { 'tags':tags, 'description': description, 'goals': goals};
         xmlhttp.send(JSON.stringify(request));
@@ -676,6 +689,7 @@ var Project = function (session, _id){
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/project/remove/"+self._id);
@@ -699,11 +713,13 @@ var Project = function (session, _id){
 
 var Application = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
     this.save = function(name, network, about, access) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+this.session+"/dashboard/developer/app/update/"+self._id);
         var request = { 'name':name, 'network': network, 'about': about, 'access': access};
         xmlhttp.send(JSON.stringify(request));
@@ -724,6 +740,7 @@ var Application = function (session, _id){
     // Half way optimal. We could have just removed the app div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/dashboard/app/delete/"+self._id);
@@ -747,11 +764,13 @@ var Application = function (session, _id){
 
 var Diff = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
     this.save = function(method, description, status) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+this.session+"/diff/edit/"+self._id);
         var request = { 'method':method, 'description': description, 'status': status};
         xmlhttp.send(JSON.stringify(request));
@@ -772,6 +791,7 @@ var Diff = function (session, _id){
     // Half way optimal. We could have just removed the diff div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/diff/remove/"+self._id);
@@ -795,11 +815,13 @@ var Diff = function (session, _id){
 
 var Environment = function (session, _id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
     this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a env and change its content we reload the whole page.
     this.save = function(group, system) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+this.session+"/env/edit/"+self._id);
         var request = { 'group':group, 'system': system};
         xmlhttp.send(JSON.stringify(request));
@@ -820,6 +842,7 @@ var Environment = function (session, _id){
     // Half way optimal. We could have just removed the env div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         
         xmlhttp.open("DELETE", url+"/private/"+this.session+"/env/remove/"+self._id);

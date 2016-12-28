@@ -41,6 +41,7 @@ Pie chart
 var pieData = [];
 var param = window.location.search.substring(1);
 var parts = param.split("=");
+console.log('Cookie session value: '+ Cookies.get('session'));
 if(parts[0] == "session"){
     var session = parts[1].split("&")[0];
     var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 

@@ -1,5 +1,6 @@
 var renderer = {
     user: function(object, ownership, session, picture){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -24,6 +25,7 @@ var renderer = {
         return content;
     },
     application: function(object, ownership, session){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -50,6 +52,7 @@ var renderer = {
         return content;
     },
     project: function(object, ownership, session){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -75,6 +78,7 @@ var renderer = {
         return content;
     },
     record: function(object, ownership, session){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -100,6 +104,7 @@ var renderer = {
         return content;
     },
     diff: function(object, ownership, session){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -130,6 +135,7 @@ var renderer = {
         return content;
     },
     env: function(object, ownership, session){
+        console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";

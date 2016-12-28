@@ -23,6 +23,8 @@ var user = {
                     var response = JSON.parse(xmlhttp.responseText);
                     this.session = response['session']
                     console.log(this.session);
+                    Cookies.set('session', this.session, { path: '' });
+                    console.log('Cookie session value: '+ Cookies.get('session'));
                     
                     window.location.replace("./?session="+this.session);
                 }
@@ -52,6 +54,8 @@ var user = {
                         var response = JSON.parse(xmlhttp.responseText);
                         this.session = response['session'];
                         console.log(this.session);
+                        Cookies.set('session', this.session, { path: '' });
+                        console.log('Cookie session value: '+ Cookies.get('session'));
                         window.location.replace("../?session="+this.session);
                     }
                 } else {
@@ -71,6 +75,7 @@ var user = {
     },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/logout");
         xmlhttp.send();
@@ -80,6 +85,7 @@ var user = {
                  if(xmlhttp.responseText == ""){
                     console.log("Cloud returned empty response!");
                 }else{
+                    Cookies.remove('session', { path: '' });
                     if(where != "dashboard"){
                         window.location.replace("./");
                     }else{
@@ -94,6 +100,7 @@ var user = {
     },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", this.url+"/private/"+this.session+"/user/update");
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
@@ -147,6 +154,7 @@ var user = {
         var formData = new FormData();
         formData.append("file", file.files[0], file.files[0].name);
         console.log(formData);
+        console.log('Cookie session value: '+ Cookies.get('session'));
         $.ajax({
             url        : this.url+"/private/"+this.session+"/file/upload/"+group+"/"+item_id,
             type       : "POST",
@@ -189,6 +197,7 @@ var user = {
     },
     trusted: function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/trusted");
         xmlhttp.send();
@@ -214,6 +223,7 @@ var user = {
     },
     account: function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/profile");
         xmlhttp.send();
@@ -246,6 +256,7 @@ var user = {
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/renew");
         xmlhttp.send();
@@ -270,9 +281,11 @@ var user = {
         }
     },
     config: function() {
+        console.log('Cookie session value: '+ Cookies.get('session'));
         window.location.replace(this.url+"/private/"+this.session+"/user/config");
     },
     copy_api: function() {
+        console.log('Cookie session value: '+ Cookies.get('session'));
         console.log("Api: "+this.api);
         console.log("Email: "+this.email);
         console.log("Username: "+this.username);
@@ -285,6 +298,7 @@ var user = {
         if(name != ""){
             console.log(name+" -- "+about);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
             var request = { 'name': name, 'about': about, 'access': access};
             xmlhttp.send(JSON.stringify(request));
@@ -317,6 +331,7 @@ var user = {
         if(name != ""){
             console.log(name+" -- "+tags);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/project/create");
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
             xmlhttp.send(JSON.stringify(request));
@@ -354,6 +369,7 @@ var user = {
         if(project_id != ""){
             console.log(project_id+" -- "+status);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/record/create/"+project_id);
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
             xmlhttp.send(JSON.stringify(request));
@@ -389,6 +405,7 @@ var user = {
         if(from != "" && to != ""){
             console.log(from+" -- "+to);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/diff/create");
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
             xmlhttp.send(JSON.stringify(request));
@@ -421,6 +438,7 @@ var user = {
         if(record != ""){
             console.log(record);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/"+this.session+"/env/create/"+record);
             var request = { 'app': application, 'group': group, 'system':system};
             xmlhttp.send(JSON.stringify(request));

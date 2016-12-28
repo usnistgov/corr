@@ -375,6 +375,7 @@
             </div>
         </footer>
 
+        <script type="text/javascript" src="../js/js.cookie.js"></script>
         <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
@@ -404,6 +405,9 @@
         <script type="text/javascript">
             $(document).ready(function() {
               $('.modal-trigger').leanModal();
+              $('#card-image').on('click', function(event) {
+                event.preventDefault();
+              });
             });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");

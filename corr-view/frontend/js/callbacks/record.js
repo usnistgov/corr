@@ -22,12 +22,14 @@ function recordSave(record_id){
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
+    console.log('Cookie session value: '+ Cookies.get('session'));
     var record = new Record(user.session, record_id);
     record.save(tags.value, rationels.value, status.value);
 }
 
 // Record remove callback
 function recordRemove(record_id){
+    console.log('Cookie session value: '+ Cookies.get('session'));
     Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
 }
 
