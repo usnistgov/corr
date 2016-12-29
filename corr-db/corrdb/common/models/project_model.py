@@ -238,7 +238,12 @@ class ProjectModel(db.Document):
         Returns:
             The most recent time a record in the project was record or project data changed.
         """
-        return self.updated_at
+        try:
+            updated = self.update_at
+        except:
+            if self.record_count >0:
+                updated = self.records.order_by('-updated_at').limit(1).first().updated_at
+        return updated
 
     @property
     def duration(self):
