@@ -89,9 +89,9 @@ def env_create(hash_session, record_id):
                     data = json.loads(fk.request.data)
                     try:
                         env = EnvironmentModel(created_at=str(datetime.datetime.utcnow()))
-                        application_id = data.get("app", None)
-                        if application_id and application_id != 'none':
-                            application = ApplicationModel.objects.with_id(application_id)
+                        application_name = data.get("app", None)
+                        if application_name and application_name != '':
+                            application = ApplicationModel.objects(name=application_name).first()
                             if application:
                                 application.records = application.records + 1
                                 application.save()
