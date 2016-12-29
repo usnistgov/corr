@@ -30,6 +30,7 @@ class ProjectModel(db.Document):
         extend: A dictionary of to add other fields to the profile model.
     """
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
+    update_at = db.StringField(default=str(datetime.datetime.utcnow()))
     logo = db.ReferenceField(FileModel)
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE, required=True)
     name = db.StringField(required=True)
@@ -51,6 +52,7 @@ class ProjectModel(db.Document):
         Returns:
             The call to the mongoengine Document save function.
         """
+        self.updated_at = str(datetime.datetime.utcnow())
         return super(ProjectModel, self).save(*args, **kwargs)
 
     def _history(self):
@@ -234,12 +236,9 @@ class ProjectModel(db.Document):
     def last_updated(self):
         """Compute the last time the project was updated based on the records history.
         Returns:
-            The most recent time a record in the project was record.
+            The most recent time a record in the project was record or project data changed.
         """
-        if self.record_count >0:
-            return self.records.order_by('-updated_at').limit(1).first().updated_at
-        else:
-            return self.created_at
+        return self.updated_at
 
     @property
     def duration(self):
@@ -247,9 +246,6 @@ class ProjectModel(db.Document):
         Returns:
             The duration of the project from its creation to its latest update.
         """
-        if self.records == None or len(self.records) == 0:
-            return 0
-        else:
-            last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
-            created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
-            return last_updated_strp-created_strp
+        last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
+        created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
+        return last_updated_strp-created_strp

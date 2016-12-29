@@ -68,6 +68,7 @@ class RecordModel(db.Document):
             The call to the mongoengine Document save function.
         """
         self.updated_at = str(datetime.datetime.utcnow())
+        self.project.save()
         return super(RecordModel, self).save(*args, **kwargs)
     
     def update_fields(self, data):
@@ -108,6 +109,7 @@ class RecordModel(db.Document):
         Returns:
             The record duration.
         """
+
         updated_strp = datetime.datetime.strptime(str(self.updated_at), '%Y-%m-%d %H:%M:%S.%f')
         created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
         return updated_strp-created_strp
@@ -119,8 +121,9 @@ class RecordModel(db.Document):
         """
         data = {}
         data['head'] = {'updated':str(self.updated_at),
-         'id': str(self.id), 'project':self.project.info(), 
+         'id': str(self.id), 'project':self.project.info(), 'duration': str(self.duration),
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
+
         data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
