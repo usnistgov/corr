@@ -268,9 +268,9 @@
                </div>
                <div class="row margin">
                   <div class="input-field col s12">
-                    <select id="env-app">
-                      <option value='none' selected>None</option>
-                    </select>
+                    <i class="mdi-navigation-apps prefix"></i>
+                    <input id="env-app" type="text"></input>
+                    <label for="env-app">Application</label>
                   </div>
                 </div>
                 <div class="row margin">
@@ -408,9 +408,6 @@
         <script type="text/javascript">
             $(document).ready(function() {
               $('.modal-trigger').leanModal();
-              $('select').on('contentChanged', function(){
-                $(this).material_select();
-              });
             });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
@@ -491,16 +488,13 @@
 
             function launchEnvModal(record_id){
               if(user.session != ""){
-                // var apps_select = document.getElementById("env-app");
-                var $apps_select = $("env-app");
-                console.log($apps_select);
                 var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
                 var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
                 xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
                 xmlhttp.send();
                 xmlhttp.onreadystatechange=function()
                 {
-
+                  $('#env-add-modal').openModal();
                   if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                       if(xmlhttp.responseText == ""){
                           console.log("Cloud returned empty response!");
@@ -508,20 +502,18 @@
                           var response = JSON.parse(xmlhttp.responseText);
                           console.log(response);
                           var apps = response["content"]["apps"];
-                          // var selection = "<select><option value='none' disabled selected>None</option>";
-                          for(var i=0; i<apps.length; i++){
-                            $apps_select.append("<option value='"+apps[i]["id"]+"'>"+apps[i]["name"].charAt(0).toUpperCase() + apps[i]["name"].slice(1)+"</option>");
+                          var selection = apps[0]["name"];
+                          for(var i=1; i<apps.length; i++){
+                            selection += ","+apps[i]["name"];
                           }
-                          // selection += "</select>"
-                          // apps_select.innerHTML = selection;
-                          $apps_select.trigger('contentChanged');
-                          console.log($apps_select);
+                          var apps_select = document.getElementById("env-app");
+                          apps_select.placeholder = selection;
+                          console.log(apps_select);
                       }
                   } else {
                       console.log(xmlhttp.responseText);
                   }
-
-                  $('#env-add-modal').openModal();
+                  
                   var env_record = document.getElementById("env-record");
                   env_record.value = record_id;
                 }
