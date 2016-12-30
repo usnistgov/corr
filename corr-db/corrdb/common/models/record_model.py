@@ -111,9 +111,9 @@ class RecordModel(db.Document):
         """
 
         updated_strp = datetime.datetime.strptime(str(self.updated_at), '%Y-%m-%d %H:%M:%S.%f')
-        created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
+        # created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
         today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
-        value = today_strp-last_updated_strp
+        value = today_strp-updated_strp
         return value
 
     def info(self):
