@@ -30,7 +30,7 @@ class ProjectModel(db.Document):
         extend: A dictionary of to add other fields to the profile model.
     """
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
-    update_at = db.StringField(default=str(datetime.datetime.utcnow()))
+    updated_at = db.StringField(default=str(datetime.datetime.utcnow()))
     logo = db.ReferenceField(FileModel)
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE, required=True)
     name = db.StringField(required=True)
@@ -102,7 +102,7 @@ class ProjectModel(db.Document):
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
         # data['owner-profile'] = self.owner.info()['user-name']
         if '0:00' in str(self.duration):
-            data['duration'] = 'now'
+            data['duration'] = 'few secondes ago.'
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
@@ -241,10 +241,12 @@ class ProjectModel(db.Document):
             The most recent time a record in the project was record or project data changed.
         """
         try:
-            updated = self.update_at
+            updated = self.updated_at
         except:
             if self.record_count >0:
                 updated = self.records.order_by('-updated_at').limit(1).first().updated_at
+            else:
+                updated = self.created_at
         return updated
 
     @property
