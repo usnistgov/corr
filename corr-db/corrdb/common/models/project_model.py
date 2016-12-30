@@ -253,4 +253,8 @@ class ProjectModel(db.Document):
         """
         last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
         created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
-        return last_updated_strp-created_strp
+        today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
+        value = today_strp-last_updated_strp
+        if '0:00' in str(value):
+            value = 'now'
+        return value

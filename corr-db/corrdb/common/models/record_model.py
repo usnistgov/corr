@@ -112,7 +112,11 @@ class RecordModel(db.Document):
 
         updated_strp = datetime.datetime.strptime(str(self.updated_at), '%Y-%m-%d %H:%M:%S.%f')
         created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
-        return updated_strp-created_strp
+        today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
+        value = today_strp-last_updated_strp
+        if '0:00' in str(value):
+            value = 'now'
+        return value
 
     def info(self):
         """Build a dictionary structure of an record model instance content.
