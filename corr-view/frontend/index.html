@@ -411,7 +411,7 @@
                 $('.collapsible').collapsible({accordion : false});
             });
             var xmlhttp = new XMLHttpRequest();
-            console.log(this.session);
+            // console.log(this.session);
             xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
             xmlhttp.send();
             xmlhttp.onreadystatechange=function()
@@ -461,26 +461,26 @@
                     console.log("Cannot reach the cloud!");
                 }
             }
-            var param = window.location.search.substring(1);
-            var parts = param.split("=");
+            // var param = window.location.search.substring(1);
+            // var parts = param.split("=");
             // In case home has session key (logged in)
-            if(parts[0] == "session"){
-                user.session = parts[1];
-                console.log(user.session);
+            if(Cookies.get('session') != "undefined"){
+                // user.session = parts[1];
+                // console.log(user.session);
                 // Check that the user is trusted with this session key.
                 user.trusted();
                 user.account();
                 console.log("Api Index: "+this.api);
                 // If the session is trusted, inject user nav menu session tabs and account floating menu.
-                document.getElementById("nav-home-2").href = "./?session="+user.session;
-                document.getElementById("nav-home").href = "./?session="+user.session;
+                document.getElementById("nav-home-2").href = "./";
+                document.getElementById("nav-home").href = "./";
                 document.getElementById("nav-login").remove();
-                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
                 document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-communication-email'></i></a></li></ul>";
 
-                document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
-                document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
-                document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
+                document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
+                document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
+                document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
             }else if(parts[0] == "action"){
                 var scope = parts[1];
                 if (scope == "message_sent"){

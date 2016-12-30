@@ -39,14 +39,14 @@ setInterval(updateBarChart, 3000);
 Pie chart 
 */
 var pieData = [];
-var param = window.location.search.substring(1);
-var parts = param.split("=");
+// var param = window.location.search.substring(1);
+// var parts = param.split("=");
 console.log('Cookie session value: '+ Cookies.get('session'));
-if(parts[0] == "session"){
-    var session = parts[1].split("&")[0];
+if(Cookies.get('session') != "undefined"){
+    // var session = parts[1].split("&")[0];
     var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-    console.log(session);
-    xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+session+"/user/dashboard");
+    // console.log(session);
+    xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/dashboard");
     xmlhttp.send();
     xmlhttp.onreadystatechange=function()
     {

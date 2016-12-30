@@ -416,53 +416,51 @@
             // Extract the parameters session, view and others from the url.
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
-                if(parts[0] == "session"){
-                    user.session = parts[1];
-                }else if(parts[0] == "view"){
+                if(parts[0] == "view"){
                     view_selected = parts[1];
                 }else{
                     options.push(blocks[i]);
                 }
             }
             // Inject the default dashboard view
-            if(user.session != "" && view_selected == ""){
-                dashboard.activity(user.session);
-                var space = new Space(user.session);
+            if(Cookies.get('session') != "undefined" && view_selected == ""){
+                dashboard.activity();
+                var space = new Space();
                 document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
-            else if(user.session != "" && view_selected == "apps"){
-                dashboard.apps(user.session);
+            else if(Cookies.get('session') != "undefined" && view_selected == "apps"){
+                dashboard.apps();
                 document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the projects dashboard view
-            else if(user.session != "" && view_selected == "projects"){
-                dashboard.projects(user.session);
-                var space = new Space(user.session);
+            else if(Cookies.get('session') != "undefined" && view_selected == "projects"){
+                dashboard.projects();
+                var space = new Space();
                 document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the records dashboard view
-            else if(user.session != "" && view_selected == "records"){
-                dashboard.records(user.session, options);
-                var space = new Space(user.session);
+            else if(Cookies.get('session') != "undefined" && view_selected == "records"){
+                dashboard.records(options);
+                var space = new Space();
                 var selected_records = [];
                 document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
             }
             // Inject the diffs dashboard view
-            else if(user.session != "" && view_selected == "diffs"){
-                dashboard.diffs(user.session, options);
+            else if(Cookies.get('session') != "undefined" && view_selected == "diffs"){
+                dashboard.diffs(options);
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the envs dashboard view
-            else if(user.session != "" && view_selected == "envs"){
-                dashboard.envs(user.session, options);
-                var space = new Space(user.session);
+            else if(Cookies.get('session') != "undefined" && view_selected == "envs"){
+                dashboard.envs(options);
+                var space = new Space();
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the query dashboard view
-            else if(user.session != "" && view_selected == "query"){
-                var space = new Space(user.session);
-                dashboard.query(user.session, options);
+            else if(Cookies.get('session') != "undefined" && view_selected == "query"){
+                var space = new Space();
+                dashboard.query(options);
 
                 document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
             }
@@ -472,18 +470,18 @@
             }
 
             // In case home has session key (logged in)
-            if (user.session != ""){
+            if (Cookies.get('session') != "undefined"){
                 // Inject the nav menu and the dashboard floating menu
-                document.getElementById("nav-home-2").href = "../?session="+user.session;
-                document.getElementById("nav-home").href = "../?session="+user.session;
-                document.getElementById("nav-dashboard").href = "./?session="+user.session;
+                document.getElementById("nav-home-2").href = "../";
+                document.getElementById("nav-home").href = "../";
+                document.getElementById("nav-dashboard").href = "./";
 
-                document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings' href='./?session="+user.session+"' ><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings' href='./' ><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
             }
 
             // View switching function
             function view(scope){
-                window.location.replace("./?session="+user.session+"&view="+scope);
+                window.location.replace("./?view="+scope);
             }
 
             function launchEnvModal(record_id){

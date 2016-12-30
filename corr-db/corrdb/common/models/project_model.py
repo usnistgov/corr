@@ -52,7 +52,10 @@ class ProjectModel(db.Document):
         Returns:
             The call to the mongoengine Document save function.
         """
-        self.updated_at = str(datetime.datetime.utcnow())
+        try:
+            self.updated_at = str(datetime.datetime.utcnow())
+        except:
+            pass
         return super(ProjectModel, self).save(*args, **kwargs)
 
     def _history(self):

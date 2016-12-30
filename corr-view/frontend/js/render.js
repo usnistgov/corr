@@ -1,5 +1,5 @@
 var renderer = {
-    user: function(object, ownership, session, picture){
+    user: function(object, ownership, picture){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
@@ -24,7 +24,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    application: function(object, ownership, session){
+    application: function(object, ownership){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
@@ -51,7 +51,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    project: function(object, ownership, session){
+    project: function(object, ownership){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
@@ -77,7 +77,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    record: function(object, ownership, session){
+    record: function(object, ownership){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
@@ -103,7 +103,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    diff: function(object, ownership, session){
+    diff: function(object, ownership){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
@@ -134,7 +134,7 @@ var renderer = {
         content += "</div>";
         return content;
     },
-    env: function(object, ownership, session){
+    env: function(object, ownership){
         console.log('Cookie session value: '+ Cookies.get('session'));
         var content = "<div class='col s12 m6 l4' id='"+object["id"]+"'>";
         content += "<div id='profile-card' class='card'>";

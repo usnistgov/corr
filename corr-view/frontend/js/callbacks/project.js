@@ -18,21 +18,21 @@ function projectSave(project_id){
     var description = document.getElementById('project-desc-'+project_id);
     var goals = document.getElementById('project-goals-'+project_id);
     console.log('Cookie session value: '+ Cookies.get('session'));
-    var project = new Project(user.session, project_id);
+    var project = new Project(project_id);
     project.save(tags.value, description.value, goals.value);
 }
 
 // Project remove callback
 function projectRemove(project_name, project_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
-    Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
 }
 
 // Project remove agreement callback
-function projectRemoveAgree(session, project_id){
+function projectRemoveAgree(project_id){
     console.log("in projectRemoveAgree!");
     console.log('Cookie session value: '+ Cookies.get('session'));
-    var project = new Project(session, project_id);
+    var project = new Project(project_id);
     project.trash();
     window.location.reload();
 }

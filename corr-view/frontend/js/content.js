@@ -1,13 +1,13 @@
-var Space = function (session){
+var Space = function (){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
-    this.session = session;
+    // this.session = session;
     this.dash_content = "";
     this.query_result = "";
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
+        // console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -34,7 +34,7 @@ var Space = function (session){
                         function succeed(xhttp, params){
                             var content = xhttp.responseText;
                             if(document.getElementById("update-project"+params[1]) == null){
-                                content = content.replace(/session/g, params[0]); 
+                                // content = content.replace(/session/g, params[0]); 
                                 content = content.replace(/project_id/g, params[1]);
                                 content = content.replace(/project_name/g, params[2]);
                                 content = content.replace(/project_created/g, params[3]);
@@ -50,7 +50,7 @@ var Space = function (session){
                             window.location.replace("/error/?code=404");
                         };
 
-                        var params = [session, project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
+                        var params = [project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
                         config.load_xml('project_content.xml', params, succeed, failed);
 
                         var content = "<div class='col s12 m6 l4'>";
@@ -70,9 +70,9 @@ var Space = function (session){
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='project-goals-"+project["project"]["id"]+"' type='text' value='"+project["project"]["goals"]+"'></div></div>";
                         content += "<div class='card-action center-align'>";
-                        content += "<a href='./?session="+session+"&view=records&project="+project["project"]["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
-                        content += "<a href='./?session="+session+"&view=diffs&project="+project["project"]["id"]+"' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
-                        content += "<a href='./?session="+session+"&view=envs&project="+project["project"]["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
+                        content += "<a href='./?view=records&project="+project["project"]["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
+                        content += "<a href='./?view=diffs&project="+project["project"]["id"]+"' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
+                        content += "<a href='./?view=envs&project="+project["project"]["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
                         content += "</div>";
                         content += "</div>";
@@ -92,8 +92,8 @@ var Space = function (session){
     this.apps = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/developer/apps");
+        // console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/developer/apps");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -111,7 +111,7 @@ var Space = function (session){
                         function succeed(xhttp, params){
                             var content = xhttp.responseText;
                             if(document.getElementById("update-app"+params[1]) == null){
-                                content = content.replace(/session/g, params[0]); 
+                                // content = content.replace(/session/g, params[0]);
                                 content = content.replace(/app_id/g, params[1]);
                                 content = content.replace(/app_name/g, params[2]);
                                 content = content.replace(/app_created/g, params[3]);
@@ -126,7 +126,7 @@ var Space = function (session){
                             window.location.replace("/error/?code=404");
                         };
 
-                        var params = [session, app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
+                        var params = [app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
                         config.load_xml('app_content.xml', params, succeed, failed);
 
                         var content = "<div class='col s12 m6 l4'>";
@@ -191,11 +191,11 @@ var Space = function (session){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/all");
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/records/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/records/"+project_id);
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/records/"+project_id);
         }
-        console.log(this.session);
+        // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -306,11 +306,11 @@ var Space = function (session){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/diffs/all");
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/diffs/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/diffs/"+project_id);
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/diffs/"+project_id);
         }
-        console.log(this.session);
+        // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -443,11 +443,11 @@ var Space = function (session){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/envs/all");
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/envs/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/envs/"+project_id);
+            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/envs/"+project_id);
         }
-        console.log(this.session);
+        // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -506,8 +506,8 @@ var Space = function (session){
         var query_result = document.getElementById('query-result');
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/search?query="+search);
+        // console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/search?query="+search);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -524,7 +524,7 @@ var Space = function (session){
                     if(!exUser == true){
                         for(var i = 0; i < this.query_result["users"]["count"]; i++){
                             var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];
-                            var user_content = renderer.user(this.query_result["users"]["result"][i], false, this.session, picture_uri);
+                            var user_content = renderer.user(this.query_result["users"]["result"][i], false, Cookies.get('session'), picture_uri);
                             query_result.innerHTML += user_content;
                         }
                         hits += this.query_result["users"]["count"];
@@ -576,8 +576,8 @@ var Space = function (session){
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+this.session+"/dashboard/projects");
+        // console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/projects");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -606,21 +606,21 @@ var Space = function (session){
     this.pull = function(project_name, record_id) {
         console.log("Before...");
         console.log('Cookie session value: '+ Cookies.get('session'));
-        window.location.replace(url+"/private/"+this.session+"/record/pull"+"/"+record_id);
+        window.location.replace(url+"/private/"+Cookies.get('session')+"/record/pull"+"/"+record_id);
         console.log("...After");
     }
 };
 
-var Record = function (session, _id){
+var Record = function (_id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
-    this.session = session;
+    // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     this.save = function(tags, rationels, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+this.session+"/record/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
         var request = { 'tags': tags, 'rationels': rationels, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -641,8 +641,8 @@ var Record = function (session, _id){
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("DELETE", url+"/private/"+this.session+"/record/remove/"+self._id);
+        // console.log(this.session);
+        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/record/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -661,16 +661,16 @@ var Record = function (session, _id){
     }
 };
 
-var Project = function (session, _id){
+var Project = function (_id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
-    this.session = session;
+    // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     this.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+this.session+"/project/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
         var request = { 'tags':tags, 'description': description, 'goals': goals};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -691,9 +691,9 @@ var Project = function (session, _id){
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
+        // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+this.session+"/project/remove/"+self._id);
+        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/project/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -712,16 +712,16 @@ var Project = function (session, _id){
     }
 };
 
-var Application = function (session, _id){
+var Application = function (_id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
-    this.session = session;
+    // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
     this.save = function(name, network, about, access) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+this.session+"/dashboard/developer/app/update/"+self._id);
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/update/"+self._id);
         var request = { 'name':name, 'network': network, 'about': about, 'access': access};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -742,9 +742,9 @@ var Application = function (session, _id){
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
+        // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+this.session+"/dashboard/app/delete/"+self._id);
+        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/dashboard/app/delete/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -763,16 +763,16 @@ var Application = function (session, _id){
     }
 };
 
-var Diff = function (session, _id){
+var Diff = function (_id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
-    this.session = session;
+    // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
     this.save = function(method, description, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+this.session+"/diff/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/diff/edit/"+self._id);
         var request = { 'method':method, 'description': description, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -793,9 +793,9 @@ var Diff = function (session, _id){
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
+        // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+this.session+"/diff/remove/"+self._id);
+        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/diff/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -814,16 +814,16 @@ var Diff = function (session, _id){
     }
 };
 
-var Environment = function (session, _id){
+var Environment = function (_id){
     var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
-    this.session = session;
+    // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a env and change its content we reload the whole page.
     this.save = function(group, system) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+this.session+"/env/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/env/edit/"+self._id);
         var request = { 'group':group, 'system': system};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -844,9 +844,9 @@ var Environment = function (session, _id){
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
+        // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+this.session+"/env/remove/"+self._id);
+        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/env/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
