@@ -40,7 +40,7 @@ def record_remove(hash_session, record_id):
                     if result:
                         logStat(deleted=True, record=record)
                         record.delete()
-                    return fk.redirect('{0}:{1}/dashboard/?session={2}&view=records&project={3}'.format(VIEW_HOST, VIEW_PORT, hash_session, str(record.project.id)))
+                    return fk.redirect('{0}:{1}/dashboard/?view=records&project={2}'.format(VIEW_HOST, VIEW_PORT, str(record.project.id)))
                 else:
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:

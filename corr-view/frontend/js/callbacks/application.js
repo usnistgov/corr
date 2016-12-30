@@ -20,19 +20,19 @@ function appSave(app_id){
     var network = document.getElementById('app-network-'+app_id);
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
-    var app = new Application(user.session, app_id);
+    var app = new Application(app_id);
     app.save(name.value, network.value, about.value, access.value);
 }
 
 // Application remove callback
 function appRemove(app_name, app_id){
-    Materialize.toast("<span>Delete "+app_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/app/remove/"+app_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+app_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/app/remove/"+app_id+"\">Confirm</a>", 5000);
 }
 
 // Application remove agreement callback
-function appRemoveAgree(session, app_id){
+function appRemoveAgree(app_id){
     console.log("in appRemoveAgree!");
-    var app = new Application(session, app_id);
+    var app = new Application(app_id);
     app.trash();
     window.location.reload();
 }

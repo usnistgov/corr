@@ -78,7 +78,7 @@ def project_remove(hash_session, project_id):
                 storage_manager.delete_project_files(project)
                 project.delete()
                 logStat(deleted=True, project=project)
-                return fk.redirect('{0}:{1}/dashboard/?session={2}'.format(VIEW_HOST, VIEW_PORT, hash_session))
+                return fk.redirect('{0}:{1}/dashboard'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:

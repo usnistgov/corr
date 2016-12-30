@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class='card-action center-align'>
-                <a href='./?session=session&amp;view=records&amp;project=project_id' class='valign left'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>project_records</span></a>
+                <a href='./?view=records&amp;project=project_id' class='valign left'><i class='mdi-file-cloud-done cyan-text text-darken-2'></i> <span class='records badge'>project_records</span></a>
                 <a onclick='Materialize.toast(\"&lt;span&gt;Project diffs view not implemented yet!&lt;/span&gt;\", 3000);' class='valign'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>project_diffs</span></a>
                 <a onclick='Materialize.toast(\"&lt;span&gt; Project environments view not implemented yet!&lt;/span&gt;\", 3000);' class='valign right'><i class='mdi-editor-insert-chart cyan-text text-darken-2'></i> <span class='containers badge'>project_envs</span></a>
             </div>

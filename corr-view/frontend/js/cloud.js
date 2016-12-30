@@ -4,7 +4,7 @@ var user = {
     username:"",
     email: "",
     api: "",
-    session: "",
+    // session: "",
     query_result: {},
     login: function() {
         var email = document.getElementById("login-email").value;
@@ -21,12 +21,13 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     var response = JSON.parse(xmlhttp.responseText);
-                    this.session = response['session']
-                    console.log(this.session);
-                    Cookies.set('session', this.session, { path: '' });
+                    // this.session = response['session']
+                    // console.log(this.session);
+                    Cookies.set('session', response['session'], { path: '' });
                     console.log('Cookie session value: '+ Cookies.get('session'));
                     
-                    window.location.replace("./?session="+this.session);
+                    // window.location.replace("./?session="+this.session);
+                    window.location.reload();
                 }
             } else {
                 console.log(xmlhttp.responseText);
@@ -52,11 +53,12 @@ var user = {
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
-                        this.session = response['session'];
-                        console.log(this.session);
-                        Cookies.set('session', this.session, { path: '' });
+                        // this.session = response['session'];
+                        // console.log(this.session);
+                        Cookies.set('session', response['session'], { path: '' });
                         console.log('Cookie session value: '+ Cookies.get('session'));
-                        window.location.replace("../?session="+this.session);
+                        // window.location.replace("../?session="+this.session);
+                        window.location.reload();
                     }
                 } else {
                     var response = xmlhttp.responseText;
@@ -76,8 +78,8 @@ var user = {
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/logout");
+        // console.log(this.session);
+        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/logout");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -101,7 +103,7 @@ var user = {
     update: function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", this.url+"/private/"+this.session+"/user/update");
+        xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/user/update");
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
         if(pwd != pwd_2){
@@ -156,7 +158,7 @@ var user = {
         console.log(formData);
         console.log('Cookie session value: '+ Cookies.get('session'));
         $.ajax({
-            url        : this.url+"/private/"+this.session+"/file/upload/"+group+"/"+item_id,
+            url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id,
             type       : "POST",
             data       : formData, 
             async      : true,
@@ -167,7 +169,8 @@ var user = {
                 if(text == ""){
                     console.log("Cloud returned empty response!");
                 }else{
-                    window.location.replace("../?session="+user.session);
+                    // window.location.replace("../?session="+user.session);
+                    window.location.reload();
                 }
             }
          });
@@ -198,8 +201,8 @@ var user = {
     trusted: function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/trusted");
+        // console.log(this.session);
+        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/trusted");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -224,8 +227,8 @@ var user = {
     account: function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/profile");
+        // console.log(this.session);
+        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/profile");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -257,8 +260,8 @@ var user = {
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+this.session+"/user/renew");
+        // console.log(this.session);
+        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/renew");
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -282,14 +285,14 @@ var user = {
     },
     config: function() {
         console.log('Cookie session value: '+ Cookies.get('session'));
-        window.location.replace(this.url+"/private/"+this.session+"/user/config");
+        window.location.replace(this.url+"/private/"+Cookies.get('session')+"/user/config");
     },
     copy_api: function() {
         console.log('Cookie session value: '+ Cookies.get('session'));
         console.log("Api: "+this.api);
         console.log("Email: "+this.email);
         console.log("Username: "+this.username);
-        console.log("Session: "+this.session);
+        console.log("Session: "+Cookies.get('session'));
     },
     add_app: function() {
         var name = document.getElementById("app-name").value;
@@ -299,7 +302,7 @@ var user = {
             console.log(name+" -- "+about);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/dashboard/developer/app/create");
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/create");
             var request = { 'name': name, 'about': about, 'access': access};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -332,7 +335,7 @@ var user = {
             console.log(name+" -- "+tags);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/project/create");
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/project/create");
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -370,7 +373,7 @@ var user = {
             console.log(project_id+" -- "+status);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/record/create/"+project_id);
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/create/"+project_id);
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -406,7 +409,7 @@ var user = {
             console.log(from+" -- "+to);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/diff/create");
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/diff/create");
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -439,7 +442,7 @@ var user = {
             console.log(record);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+this.session+"/env/create/"+record);
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/env/create/"+record);
             var request = { 'app': application, 'group': group, 'system':system};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()

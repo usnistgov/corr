@@ -40,7 +40,7 @@ def env_remove(hash_session, env_id):
                 if result:
                     logStat(deleted=True, env=env)
                     env.delete()
-                return fk.redirect('{0}:{1}/dashboard/?session={2}&view=envs&project=all'.format(VIEW_HOST, VIEW_PORT, hash_session))
+                return fk.redirect('{0}:{1}/dashboard/?view=envs&project=all'.format(VIEW_HOST, VIEW_PORT))
     else:
        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
 

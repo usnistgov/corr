@@ -18,20 +18,20 @@ function diffSave(diff_id){
     var method = document.getElementById('diff-method-'+diff_id);
     var proposition = document.getElementById('diff-proposition-'+diff_id);
     var status = document.getElementById('diff-status-'+diff_id);
-    var diff = new Diff(user.session, diff_id);
+    var diff = new Diff(diff_id);
     diff.save(method.value, proposition.value, status.value);
 }
 
 // Diff remove callback
 function diffRemove(diff_id){
-    Materialize.toast("<span>Delete "+diff_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/diff/remove/"+diff_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+diff_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/diff/remove/"+diff_id+"\">Confirm</a>", 5000);
 }
 
 // Diff remove agreement callback
-function diffRemoveAgree(session, diff_id){
+function diffRemoveAgree(diff_id){
     console.log("in diffRemoveAgree!");
     console.log('Cookie session value: '+ Cookies.get('session'));
-    var diff = new Diff(session, diff_id);
+    var diff = new Diff(diff_id);
     diff.trash();
     window.location.reload();
 }

@@ -4,8 +4,8 @@ var dashboard = {
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
         };
         function failed(){
@@ -13,15 +13,15 @@ var dashboard = {
         };
         config.load_xml('coming_soon.xml', [], succeed, failed);
     },
-	activity:function(session){
+	activity:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
-            var space = new Space(user.session);
+            var space = new Space();
             space.dashboard();
 
         };
@@ -31,15 +31,15 @@ var dashboard = {
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
     },
-	apps:function(session){
+	apps:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
-            var space = new Space(user.session);
+            var space = new Space();
             space.apps();
 
         };
@@ -49,15 +49,15 @@ var dashboard = {
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
     },
-	projects:function(session){
+	projects:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
-            var space = new Space(user.session);
+            var space = new Space();
             space.dashboard();
         };
         function failed(){
@@ -65,12 +65,12 @@ var dashboard = {
         };
         config.load_xml('dashboard_projects.xml', [], succeed, failed);
     },
-	records:function(session, options){
+	records:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -80,7 +80,7 @@ var dashboard = {
                     project = parts[1];
                 }
             }
-            var space = new Space(user.session);
+            var space = new Space();
             space.records(project);
         };
         function failed(){
@@ -88,12 +88,12 @@ var dashboard = {
         };
         config.load_xml('dashboard_records.xml', [], succeed, failed);
     },
-	diffs:function(session, options){
+	diffs:function(options){
 		function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -104,7 +104,7 @@ var dashboard = {
                 }
             }
 
-            var space = new Space(user.session);
+            var space = new Space();
             space.diffs(project);
         };
         function failed(){
@@ -112,12 +112,12 @@ var dashboard = {
         };
         config.load_xml('dashboard_diffs.xml', [], succeed, failed);
     },
-    envs:function(session, options){
+    envs:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -128,7 +128,7 @@ var dashboard = {
                 }
             }
 
-            var space = new Space(user.session);
+            var space = new Space();
             space.envs(project);
         };
         function failed(){
@@ -136,15 +136,15 @@ var dashboard = {
         };
         config.load_xml('dashboard_envs.xml', [], succeed, failed);
     },
-	query:function(session, options){
+	query:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             console.log('Cookie session value: '+ Cookies.get('session'));
-            user.session = session;
-            console.log(user.session);
+            // user.session = session;
+            // console.log(user.session);
             user.trusted();
 
-            var space = new Space(user.session);
+            var space = new Space();
             // space.search();
 
         };
