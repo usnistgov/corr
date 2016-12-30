@@ -101,6 +101,8 @@ class ProjectModel(db.Document):
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
         # data['owner-profile'] = self.owner.info()['user-name']
+        if '0:00' in str(self.duration):
+            data['duration'] = 'now'
         if self.logo != None:
             data['logo'] = str(self.logo.id)
         else:
@@ -255,6 +257,4 @@ class ProjectModel(db.Document):
         created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
         today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
         value = today_strp-last_updated_strp
-        if '0:00' in str(value):
-            value = 'now'
         return value
