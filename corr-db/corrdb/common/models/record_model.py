@@ -114,8 +114,6 @@ class RecordModel(db.Document):
         created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')
         today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
         value = today_strp-last_updated_strp
-        if '0:00' in str(value):
-            value = 'now'
         return value
 
     def info(self):
@@ -128,6 +126,8 @@ class RecordModel(db.Document):
          'id': str(self.id), 'project':self.project.info(), 'duration': str(self.duration),
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
 
+        if '0:00' in str(self.duration):
+            data['head']['duration'] = 'now'
         data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
