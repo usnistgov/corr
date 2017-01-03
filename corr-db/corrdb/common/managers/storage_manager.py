@@ -257,7 +257,7 @@ class StorageManager:
         else:
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
-                if env.bundle.location != '':
+                if env.bundle != None and env.bundle.location != '':
                     try:
                         bundle_buffer = StringIO()
                         if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
@@ -425,7 +425,7 @@ class StorageManager:
                     self.agent_prepare(zf, 'record', record_dict)
                 except:
                     print(traceback.print_exc())
-                if env != None and env.bundle.location != '':
+                if env != None and env.bundle != None and env.bundle.location != '':
                     try:
                         bundle_buffer = StringIO()
                         if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
