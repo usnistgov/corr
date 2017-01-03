@@ -222,7 +222,7 @@ var Space = function (){
                         }
                         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='recordRemove(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
-                        content += "<a onclick='recordUploadModal(\""+record_from["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-upload tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+                        content += "<a onclick='recordUploadModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-file-cloud-upload tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
 
                         content += "<a onclick=\"space.pull('"+record["head"]["project"]["id"]+"','"+record["head"]["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+"'><i class='mdi-file-cloud-download tooltipped' data-position='top' data-delay='50' data-tooltip='download'></i></a>";
                         content += "<a onclick='launchEnvModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-maps-layers'></i></a>";
