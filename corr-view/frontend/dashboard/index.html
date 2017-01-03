@@ -354,6 +354,65 @@
             </div>
         </div>
 
+        <div id="record-upload-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="record-id" type="text"></input>
+                    <label id="record-id-value" for="record-id">Record</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="upload-group">
+                      <option value="body" disabled selected>Record Body</option>
+                      <option value="input">Record input</option>
+                      <option value="output">Record output</option>
+                      <option value="resource-record">Record resource</option>
+                      <option value="bundle">Env bundle</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <input id="upload-path" class="file-path validate" type="text"></textarea>
+                    <div class="btn">
+                    <span>File</span>
+                    <input id="upload-file" type="file"></input>
+                    </div>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="upload-type" onchange="reloadUploadGuide()">
+                      <option value="json" disabled selected>Json</option>
+                      <option value="yaml">Yaml</option>
+                      <option value="xml">Xml</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <textarea id="upload-guide" readonly class="materialize-textarea"></textarea>
+                    <label id="upload-guide-value" for="upload-guide">Rationels</label>
+                  </div>
+                </div>
+                <div class="row margin" id="record-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.upload_record();" class="btn waves-effect purple waves-light col s12">Upload</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
         <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
         </div>
 
@@ -398,6 +457,8 @@
         <script type="text/javascript" src="../js/wNumb.min.js"></script>
         <script type="text/javascript" src="../js/jquery.nouislider.min.js"></script>
         <script type="text/javascript" src="../js/jquery.liblink.js"></script>
+        <script type="text/javascript" src="../js/xml2json.js"></script>
+        <script type="text/javascript" src="../yaml.js"></script>
 
         <script type="text/javascript" src="../js/init.js"></script>
         <script type="text/javascript" src="../js/render.js"></script>
@@ -537,13 +598,216 @@
               project_ref.readOnly = true;
               record_tags.value = tags;
               record_tags.readOnly = true;
-              record_rationels.value = rationels;
+              guide.value = rationels;
               record_rationels.readOnly = true;
               record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' type='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
               record_status.readOnly = true;
               var add_callback = document.getElementById("record-add-callback");
               add_callback.innerHTML = "";
 
+            }
+
+            function recordUploadModal(record_id){
+              $('#record-upload-modal').openModal();
+              var record = document.getElementById("record-id");
+              var guide = document.getElementById("upload-guide");
+              record.value = record_id;
+              record.readOnly = true;
+              guide.readOnly = true;
+              guide.value = "{\n";
+              guide.value += "\t'system':{\n";
+              guide.value += "\t\t'model':'System76',\n";
+              guide.value += "\t\t'architecture':'x86_64',\n";
+              guide.value += "\t\t'cpu':'Intel CORE i7',\n";
+              guide.value += "\t\t'gpu':'NVIDIA GT9600',\n";
+              guide.value += "\t\t'os':'ubuntu 16.04',\n";
+              guide.value += "\t\t'another_system_info_key':'another_system_info_value',\n";
+              guide.value += "\t\t...,\n";
+              guide.value += "\t},\n";
+              guide.value += "\t'execution':{\n";
+              guide.value += "\t\t'parameters':{\n";
+              guide.value += "\t\t\t'param1':'value1',\n";
+              guide.value += "\t\t\t'param2':'value2',\n";
+              guide.value += "\t\t\t...,\n";
+              guide.value += "\t\t},";
+              guide.value += "\t\t'cmd_line':'command line executed'\n";
+              guide.value += "\t},\n";
+              guide.value += "\t'inputs':[\n";
+              guide.value += "\t\t{\n";
+              guide.value += "\t\t\t'path':'input file_name and extension',\n";
+              guide.value += "\t\t\t'metadata':{\n";
+              guide.value += "\t\t\t\t'encoding':'utf-8',\n";
+              guide.value += "\t\t\t\t'mimetype':'txt/json',\n";
+              guide.value += "\t\t\t\t'size':'2500'\n";
+              guide.value += "\t\t\t}\n";
+              guide.value += "\t\t},";
+              guide.value += "\t\t...,";
+              guide.value += "\t],\n";
+              guide.value += "\t'outputs':[\n";
+              guide.value += "\t\t{\n";
+              guide.value += "\t\t\t'path':'output file_name and extension',\n";
+              guide.value += "\t\t\t'metadata':{\n";
+              guide.value += "\t\t\t\t'encoding':'utf-8',\n";
+              guide.value += "\t\t\t\t'mimetype':'txt/json',\n";
+              guide.value += "\t\t\t\t'size':'2500'\n";
+              guide.value += "\t\t\t}\n";
+              guide.value += "\t\t},";
+              guide.value += "\t\t...,";
+              guide.value += "\t],\n";
+              guide.value += "\t'dependencies':[\n";
+              guide.value += "\t\t{\n";
+              guide.value += "\t\t\t'name':'denpency name',\n";
+              guide.value += "\t\t\t'version':'denpency version',\n";
+              guide.value += "\t\t\t'language':'denpency programming language',\n";
+              guide.value += "\t\t\t'url':'denpency url',\n";
+              guide.value += "\t\t},";
+              guide.value += "\t\t...,";
+              guide.value += "\t],\n";
+              guide.value += "}";
+            }
+
+            function reloadUploadGuide(){
+              var guide = document.getElementById("upload-guide");
+              var upload_type = document.getElementById("upload-type");
+              var type_selected = upload_type.options[upload_type.selectedIndex].text
+              if(type_selected == "json"){
+                guide.value = "{\n";
+                guide.value += "\t'system':{\n";
+                guide.value += "\t\t'model':'System76',\n";
+                guide.value += "\t\t'architecture':'x86_64',\n";
+                guide.value += "\t\t'cpu':'Intel CORE i7',\n";
+                guide.value += "\t\t'gpu':'NVIDIA GT9600',\n";
+                guide.value += "\t\t'os':'ubuntu 16.04',\n";
+                guide.value += "\t\t'another_system_info_key':'another_system_info_value',\n";
+                guide.value += "\t\t...,\n";
+                guide.value += "\t},\n";
+                guide.value += "\t'execution':{\n";
+                guide.value += "\t\t'parameters':{\n";
+                guide.value += "\t\t\t'param1':'value1',\n";
+                guide.value += "\t\t\t'param2':'value2',\n";
+                guide.value += "\t\t\t...,\n";
+                guide.value += "\t\t},";
+                guide.value += "\t\t'cmd_line':'command line executed'\n";
+                guide.value += "\t},\n";
+                guide.value += "\t'inputs':[\n";
+                guide.value += "\t\t{\n";
+                guide.value += "\t\t\t'path':'input file_name and extension',\n";
+                guide.value += "\t\t\t'metadata':{\n";
+                guide.value += "\t\t\t\t'encoding':'utf-8',\n";
+                guide.value += "\t\t\t\t'mimetype':'txt/json',\n";
+                guide.value += "\t\t\t\t'size':'2500'\n";
+                guide.value += "\t\t\t}\n";
+                guide.value += "\t\t},";
+                guide.value += "\t\t...,";
+                guide.value += "\t],\n";
+                guide.value += "\t'outputs':[\n";
+                guide.value += "\t\t{\n";
+                guide.value += "\t\t\t'path':'output file_name and extension',\n";
+                guide.value += "\t\t\t'metadata':{\n";
+                guide.value += "\t\t\t\t'encoding':'utf-8',\n";
+                guide.value += "\t\t\t\t'mimetype':'txt/json',\n";
+                guide.value += "\t\t\t\t'size':'2500'\n";
+                guide.value += "\t\t\t}\n";
+                guide.value += "\t\t},";
+                guide.value += "\t\t...,";
+                guide.value += "\t],\n";
+                guide.value += "\t'dependencies':[\n";
+                guide.value += "\t\t{\n";
+                guide.value += "\t\t\t'name':'denpency name',\n";
+                guide.value += "\t\t\t'version':'denpency version',\n";
+                guide.value += "\t\t\t'language':'denpency programming language',\n";
+                guide.value += "\t\t\t'url':'denpency url',\n";
+                guide.value += "\t\t},";
+                guide.value += "\t\t...,";
+                guide.value += "\t],\n";
+                guide.value += "}";
+              }else if(type_selected == "xml"){
+                guide.value = "<body>\n";
+                guide.value += "\t<system>\n";
+                guide.value += "\t\t<model>x86_64</model>\n";
+                guide.value += "\t\t<architecture>x86_64</architecture>\n";
+                guide.value += "\t\t<cpu>Intel CORE i7</cpu>\n";
+                guide.value += "\t\t<gpu>NVIDIA GT9600</gpu>\n";
+                guide.value += "\t\t<os>ubuntu 16.04</os>\n";
+                guide.value += "\t\t<another_system_info_key>another_system_info_value</another_system_info_key>\n";
+                guide.value += "\t\t...\n";
+                guide.value += "\t</system>\n";
+                guide.value += "\t<execution>\n";
+                guide.value += "\t\t<parameters>\n";
+                guide.value += "\t\t\t<param1>value1</param1>\n";
+                guide.value += "\t\t\t<param2>value2</param2>\n";
+                guide.value += "\t\t\t...\n";
+                guide.value += "\t\t</parameters>";
+                guide.value += "\t\t<cmd_line>command line executed</cmd_line>\n";
+                guide.value += "\t</execution>\n";
+                guide.value += "\t<inputs>\n";
+                guide.value += "\t\t<input>\n";
+                guide.value += "\t\t\t<path>input file_name and extension</path>\n";
+                guide.value += "\t\t\t<metadata>\n";
+                guide.value += "\t\t\t\t<encoding>utf-8</encoding>\n";
+                guide.value += "\t\t\t\t<mimetype>txt:json</mimetype>\n";
+                guide.value += "\t\t\t\t<size>2500</size>\n";
+                guide.value += "\t\t\t</metadata>\n";
+                guide.value += "\t\t</input>";
+                guide.value += "\t\t...";
+                guide.value += "\t</inputs>\n";
+                guide.value += "\t<outputs>\n";
+                guide.value += "\t\t<output>\n";
+                guide.value += "\t\t\t<path>output file_name and extension</path>\n";
+                guide.value += "\t\t\t<metadata>\n";
+                guide.value += "\t\t\t\t<encoding>utf-8</encoding>\n";
+                guide.value += "\t\t\t\t<mimetype>txt:json</mimetype>\n";
+                guide.value += "\t\t\t\t<size>2500</size>\n";
+                guide.value += "\t\t\t</metadata>\n";
+                guide.value += "\t\t</output>";
+                guide.value += "\t\t...";
+                guide.value += "\t</outputs>\n";
+                guide.value += "\t<dependencies>\n";
+                guide.value += "\t\t<dependency>\n";
+                guide.value += "\t\t\t<name>denpency name</name>\n";
+                guide.value += "\t\t\t<version>denpency version</version>\n";
+                guide.value += "\t\t\t<language>denpency programming language</language>\n";
+                guide.value += "\t\t\t<url>denpency url</url>\n";
+                guide.value += "\t\t</dependency>";
+                guide.value += "\t\t...";
+                guide.value += "\t</dependencies>\n";
+                guide.value += "</body>";
+              }else if(type_selected == "yaml"){
+                guide.value += "system:\n";
+                guide.value += "\tmodel: System76\n";
+                guide.value += "\tarchitecture: x86_64\n";
+                guide.value += "\tcpu: Intel CORE i7\n";
+                guide.value += "\tgpu: NVIDIA GT9600\n";
+                guide.value += "\tos: ubuntu 16.04\n";
+                guide.value += "\tanother_system_info_key: another_system_info_value\n";
+                guide.value += "\t...\n";
+                guide.value += "execution:\n";
+                guide.value += "\tparameters:\n";
+                guide.value += "\t\tparam1: value1\n";
+                guide.value += "\t\tparam2: value2\n";
+                guide.value += "\t\t...\n";
+                guide.value += "\tcmd_line: command line executed\n";
+                guide.value += "inputs:\n";
+                guide.value += "\t- path:input file_name and extension',\n";
+                guide.value += "\t  metadata:\n";
+                guide.value += "\t  \tencoding: utf-8\n";
+                guide.value += "\t  \tmimetype: txt/json\n";
+                guide.value += "\t  \tsize: 2500\n";
+                guide.value += "\t- ...";
+                guide.value += "outputs:\n";
+                guide.value += "\t- path: output file_name and extension\n";
+                guide.value += "\t  metadata:\n";
+                guide.value += "\t  \tencoding: utf-8\n";
+                guide.value += "\t  \tmimetype: txt/json\n";
+                guide.value += "\t  \tsize: 2500\n";
+                guide.value += "\t- ...";
+                guide.value += "dependencies:\n";
+                guide.value += "\t- name: denpency name\n";
+                guide.value += "\t  version: denpency version\n";
+                guide.value += "\t  language: denpency programming language\n";
+                guide.value += "\t  url: denpency url\n";
+                guide.value += "\t- ...";
+              }
             }
 
             function projectViewModal(name, tags, description, goals){

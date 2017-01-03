@@ -397,6 +397,83 @@ var user = {
             Materialize.toast('<span>Project id should not be empty.</span>', 3000);
         }
     },
+    upload_record: function() {
+        var record_id = document.getElementById("record-id").value;
+        var uplpad_group = document.getElementById("upload-group").value;
+        var uplpad_type = document.getElementById("upload-type").value;
+        var upload_path = document.getElementById("upload-path").value;
+        var status = document.getElementById("record-status").value;
+        if(record_id != ""){
+            console.log(record_id+" -- "+status);
+            if(upload_group == "body"){
+                var fileclient = new XMLHttpRequest();
+                fileclient.open('GET', '/foo.txt');
+                fileclient.onreadystatechange = function() {
+                    var file_content = fileclient.responseText;
+                    if (fileclient.status >= 200) {
+                        if(file_content == ""){
+                            console.log("Upload file is empty!");
+                            Materialize.toast('<span>The file to upload is empty</span>', 3000);
+                        }else{
+                            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+                            console.log('Cookie session value: '+ Cookies.get('session'));
+                            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
+                            var request = {};
+                            if(upload-type == "json"){
+                                request = JSON.parse(file_content);
+                                console.log("Json Content: "+request);
+                            }else if(upload-type == "xml"){
+                                var x2js = new X2JS();
+                                request = x2js.xml_str2json(file_content);
+                                console.log("Xml Content: "+request);
+                            }else if(upload-type == "yaml"){
+                                request = YAML.parse(file_content);
+                                console.log("Yaml Content: "+request);
+                            }else{
+                                Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
+                            }
+                            xmlhttp.send(JSON.stringify(request));
+                            xmlhttp.onreadystatechange=function()
+                            {
+                                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                                    if(xmlhttp.responseText == ""){
+                                        console.log("Cloud returned empty response!");
+                                    }else{
+                                        var response = xmlhttp.responseText;
+                                        console.log(response);
+
+                                        Materialize.toast('<span>Upload succeeded</span>', 3000);
+                                        window.location.reload();
+                                    }
+                                } else {
+                                    console.log(xmlhttp.responseText);
+                                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                                }
+                            }
+                        }
+                    }else{
+                        console.log(xmlhttp.responseText);
+                                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    }
+                }
+            }else{
+                var upload_file = document.getElementById("upload-file").value;
+                if (uplpad_group != "bundle"){
+                    if (upload_file.files.length > 0) {
+                        console.log("file not empty");
+                        user.upload_file(upload_file, uplpad_group, record_id);
+                    }else{
+                        Materialize.toast('<span>File should not be empty.</span>', 3000);
+                    }
+                }else{
+                    Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
+                }
+            }
+            
+        }else{
+            Materialize.toast('<span>Record id should not be empty.</span>', 3000);
+        }
+    },
     add_diff: function() {
         var record_1 = "";
         var record_2 = "";

@@ -198,6 +198,13 @@ def record_edit(hash_session, record_id):
                                 tags = data.get("tags", ','.join(record.tags))
                                 rationels = data.get("rationels", record.rationels)
                                 r_status = data.get("status", record.status)
+
+                                system = data.get("system", record.system)
+                                execution = data.get("execution", record.execution)
+                                inputs = data.get("inputs", record.inputs)
+                                outputs = data.get("outputs", record.outputs)
+                                dependencies = data.get("dependencies", record.dependencies)
+
                                 record.tags = tags.split(',')
                                 record.rationels = [rationels]
                                 record.status = r_status

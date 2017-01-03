@@ -1668,3 +1668,9 @@ footer.page-footer {
 .front-text {
     font-size: 20px;
 }
+
+#upload-guide {
+    overflow-y: scroll;
+    height: 100px;
+    resize: none;
+}
