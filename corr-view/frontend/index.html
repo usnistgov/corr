@@ -464,7 +464,7 @@
             // var param = window.location.search.substring(1);
             // var parts = param.split("=");
             // In case home has session key (logged in)
-            if(Cookies.get('session') != "undefined"){
+            if(Cookies.get('session') != undefined){
                 // user.session = parts[1];
                 // console.log(user.session);
                 // Check that the user is trusted with this session key.
@@ -481,11 +481,6 @@
                 document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
-            }else if(parts[0] == "action"){
-                var scope = parts[1];
-                if (scope == "message_sent"){
-                    Materialize.toast('<span>Your message has been sent!</span>', 3000);
-                }
             }
 
             // Enter key handlers for login/recover/register and email us.
