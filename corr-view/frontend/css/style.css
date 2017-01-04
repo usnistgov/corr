@@ -1345,6 +1345,9 @@ tr.group:hover {
   color:#fff;
 }
 .login-form {
+  width: 400px;
+}
+.modal-form {
   width: 280px;
 }
 .login-form-text{
