@@ -213,13 +213,22 @@ def record_edit(hash_session, record_id):
                                 outputs = data.get("outputs", record.outputs)
                                 dependencies = data.get("dependencies", record.dependencies)
 
+                                if not isinstance(inputs, list):
+                                    inputs = [inputs]
+
+                                if not isinstance(outputs, list):
+                                    outputs = [outputs]
+
+                                if not isinstance(dependencies, list):
+                                    dependencies = [dependencies]
+
                                 record.system = system
                                 record.execution = execution
                                 record.inputs = inputs
                                 record.outputs = outputs
                                 record.dependencies = dependencies
                                 record.save()
-                                
+
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
                                 print(str(traceback.print_exc()))
