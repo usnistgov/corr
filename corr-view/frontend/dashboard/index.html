@@ -388,7 +388,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row margin type-div">
+                <div class="row margin" id="type-div">
                   <div class="input-field col s12" id="record-status-dropdown">
                     <select id="upload-type" onchange="reloadUploadGuide()">
                       <option value="json" selected>Json</option>
@@ -397,7 +397,7 @@
                     </select>
                   </div>
                 </div>
-                <div class="row margin guide-div">
+                <div class="row margin" id="guide-div">
                   <div class="input-field col s12">
                     <i class="mdi-notification-event-note prefix"></i>
                     <textarea id="upload-guide" readonly class="materialize-textarea"></textarea>
@@ -667,14 +667,14 @@
             function reloadUploadGroup(){
               var group = document.getElementById("upload-group").value;
               var type_div = document.getElementById("type-div");
-              var group_div = document.getElementById("group-div");
+              var guide_div = document.getElementById("guide-div");
               console.log("group: "+group);
               if(group == "body"){
                 type_div.style.display = 'block';
-                group_div.style.display = 'block';
+                guide_div.style.display = 'block';
               }else{
                 type_div.style.display = 'none';
-                group_div.style.display = 'none';
+                guide_div.style.display = 'none';
               }
             }
 
