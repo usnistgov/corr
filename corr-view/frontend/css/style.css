@@ -1345,10 +1345,10 @@ tr.group:hover {
   color:#fff;
 }
 .login-form {
-  width: 400px;
+  width: 280px;
 }
 .modal-form {
-  width: 280px;
+  width: 400px;
 }
 .login-form-text{
   text-transform: uppercase;
