@@ -199,6 +199,11 @@ def record_edit(hash_session, record_id):
                                 rationels = data.get("rationels", ','.join(record.rationels))
                                 r_status = data.get("status", record.status)
 
+                                record.tags = tags.split(',')
+                                record.rationels = rationels.split(',')
+                                record.status = r_status
+                                record.save()
+
                                 body = data.get("body", None)
                                 if body:
                                     data = body
@@ -208,10 +213,13 @@ def record_edit(hash_session, record_id):
                                 outputs = data.get("outputs", record.outputs)
                                 dependencies = data.get("dependencies", record.dependencies)
 
-                                record.tags = tags.split(',')
-                                record.rationels = rationels.split(',')
-                                record.status = r_status
+                                record.system = system
+                                record.execution = execution
+                                record.inputs = inputs
+                                record.outputs = outputs
+                                record.dependencies = dependencies
                                 record.save()
+                                
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
                                 print(str(traceback.print_exc()))
