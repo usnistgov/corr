@@ -409,50 +409,48 @@ var user = {
                 if (file2upload.files.length > 0) {
                     var reader = new FileReader();
                     reader.onload = function() {
-                        console.log(this.result);            
-                   }
-                    console.log(file2upload.files);
-                    var file_content = reader.readAsText(file2upload.files[0]);
-                    console.log(file_content);
-                    if(file_content == ""){
-                        console.log("Upload file is empty!");
-                        Materialize.toast('<span>The file to upload is empty</span>', 3000);
-                    }else{
-                        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-                        console.log('Cookie session value: '+ Cookies.get('session'));
-                        xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
-                        var request = null;
-                        if(uplpad_type == "json"){
-                            request = JSON.parse(file_content);
-                            console.log("Json Content: "+request);
-                        }else if(uplpad_type == "xml"){
-                            var x2js = new X2JS();
-                            request = x2js.xml_str2json(file_content);
-                            console.log("Xml Content: "+request);
-                        }else if(uplpad_type == "yaml"){
-                            request = YAML.parse(file_content);
-                            console.log("Yaml Content: "+request);
+                        var file_content = this.result;
+                        console.log(file_content);
+                        if(file_content == ""){
+                            console.log("Upload file is empty!");
+                            Materialize.toast('<span>The file to upload is empty</span>', 3000);
                         }else{
-                            Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
-                        }
-                        if(request != null){
-                            var xmlhttp = new XMLHttpRequest();
-                            xmlhttp.send(JSON.stringify(request));
-                            xmlhttp.onreadystatechange=function()
-                            {
-                                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                                    if(xmlhttp.responseText == ""){
-                                        console.log("Cloud returned empty response!");
-                                    }else{
-                                        var response = xmlhttp.responseText;
-                                        console.log(response);
+                            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+                            console.log('Cookie session value: '+ Cookies.get('session'));
+                            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
+                            var request = null;
+                            if(uplpad_type == "json"){
+                                request = JSON.parse(file_content);
+                                console.log("Json Content: "+request);
+                            }else if(uplpad_type == "xml"){
+                                var x2js = new X2JS();
+                                request = x2js.xml_str2json(file_content);
+                                console.log("Xml Content: "+request);
+                            }else if(uplpad_type == "yaml"){
+                                request = YAML.parse(file_content);
+                                console.log("Yaml Content: "+request);
+                            }else{
+                                Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
+                            }
+                            if(request != null){
+                                var xmlhttp = new XMLHttpRequest();
+                                xmlhttp.send(JSON.stringify(request));
+                                xmlhttp.onreadystatechange=function()
+                                {
+                                    if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                                        if(xmlhttp.responseText == ""){
+                                            console.log("Cloud returned empty response!");
+                                        }else{
+                                            var response = xmlhttp.responseText;
+                                            console.log(response);
 
-                                        Materialize.toast('<span>Upload succeeded</span>', 3000);
-                                        window.location.reload();
+                                            Materialize.toast('<span>Upload succeeded</span>', 3000);
+                                            window.location.reload();
+                                        }
+                                    } else {
+                                        console.log(xmlhttp.responseText);
+                                        Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                                     }
-                                } else {
-                                    console.log(xmlhttp.responseText);
-                                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                                 }
                             }
                         }
