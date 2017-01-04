@@ -371,7 +371,7 @@
                 <div class="row margin">
                   <div class="input-field col s12" id="record-status-dropdown">
                     <select id="upload-group">
-                      <option value="body" disabled selected>Record Body</option>
+                      <option value="body" selected>Record Body</option>
                       <option value="input">Record input</option>
                       <option value="output">Record output</option>
                       <option value="resource-record">Record resource</option>
@@ -391,7 +391,7 @@
                 <div class="row margin">
                   <div class="input-field col s12" id="record-status-dropdown">
                     <select id="upload-type" onchange="reloadUploadGuide()">
-                      <option value="json" disabled selected>Json</option>
+                      <option value="json" selected>Json</option>
                       <option value="yaml">Yaml</option>
                       <option value="xml">Xml</option>
                     </select>
@@ -685,7 +685,7 @@
                 guide.value += "      'param1':'value1',\n";
                 guide.value += "      'param2':'value2',\n";
                 guide.value += "      ...,\n";
-                guide.value += "    },";
+                guide.value += "    },\n";
                 guide.value += "    'cmd_line':'executed command'\n";
                 guide.value += "  },\n";
                 guide.value += "  'inputs':[\n";
@@ -696,8 +696,8 @@
                 guide.value += "        'mimetype':'txt/json',\n";
                 guide.value += "        'size':'2500'\n";
                 guide.value += "      }\n";
-                guide.value += "    },";
-                guide.value += "    ...,";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
                 guide.value += "  ],\n";
                 guide.value += "  'outputs':[\n";
                 guide.value += "    {\n";
@@ -707,8 +707,8 @@
                 guide.value += "        'mimetype':'txt/json',\n";
                 guide.value += "        'size':'2500'\n";
                 guide.value += "      }\n";
-                guide.value += "    },";
-                guide.value += "    ...,";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
                 guide.value += "  ],\n";
                 guide.value += "  'dependencies':[\n";
                 guide.value += "    {\n";
@@ -716,8 +716,8 @@
                 guide.value += "      'version':'denpency version',\n";
                 guide.value += "      'language':'programming language',\n";
                 guide.value += "      'url':'denpency url',\n";
-                guide.value += "    },";
-                guide.value += "    ...,";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
                 guide.value += "  ],\n";
                 guide.value += "}";
               }else if(type_selected == "Xml"){
@@ -735,7 +735,7 @@
                 guide.value += "      <param1>value1</param1>\n";
                 guide.value += "      <param2>value2</param2>\n";
                 guide.value += "      ...\n";
-                guide.value += "    </parameters>";
+                guide.value += "    </parameters>\n";
                 guide.value += "    <cmd_line>executed command</cmd_line>\n";
                 guide.value += "  </execution>\n";
                 guide.value += "  <inputs>\n";
@@ -746,8 +746,8 @@
                 guide.value += "        <mimetype>txt:json</mimetype>\n";
                 guide.value += "        <size>2500</size>\n";
                 guide.value += "      </metadata>\n";
-                guide.value += "    </input>";
-                guide.value += "    ...";
+                guide.value += "    </input>\n";
+                guide.value += "    ...\n";
                 guide.value += "  </inputs>\n";
                 guide.value += "  <outputs>\n";
                 guide.value += "    <output>\n";
@@ -757,8 +757,8 @@
                 guide.value += "        <mimetype>txt:json</mimetype>\n";
                 guide.value += "        <size>2500</size>\n";
                 guide.value += "      </metadata>\n";
-                guide.value += "    </output>";
-                guide.value += "    ...";
+                guide.value += "    </output>\n";
+                guide.value += "    ...\n";
                 guide.value += "  </outputs>\n";
                 guide.value += "  <dependencies>\n";
                 guide.value += "    <dependency>\n";
@@ -766,8 +766,8 @@
                 guide.value += "      <version>denpency version</version>\n";
                 guide.value += "      <language>programming language</language>\n";
                 guide.value += "      <url>denpency url</url>\n";
-                guide.value += "    </dependency>";
-                guide.value += "    ...";
+                guide.value += "    </dependency>\n";
+                guide.value += "    ...\n";
                 guide.value += "  </dependencies>\n";
                 guide.value += "</body>";
               }else if(type_selected == "Yaml"){
@@ -785,19 +785,19 @@
                 guide.value += "    ...\n";
                 guide.value += "  cmd_line: executed command\n";
                 guide.value += "inputs:\n";
-                guide.value += "  - path:input file_name',\n";
+                guide.value += "  - path: input file_name\n";
                 guide.value += "    metadata:\n";
                 guide.value += "      encoding: utf-8\n";
                 guide.value += "      mimetype: txt/json\n";
                 guide.value += "      size: 2500\n";
-                guide.value += "  - ...";
+                guide.value += "  - ...\n";
                 guide.value += "outputs:\n";
                 guide.value += "  - path: output file_name\n";
                 guide.value += "    metadata:\n";
                 guide.value += "      encoding: utf-8\n";
                 guide.value += "      mimetype: txt/json\n";
                 guide.value += "      size: 2500\n";
-                guide.value += "  - ...";
+                guide.value += "  - ...\n";
                 guide.value += "dependencies:\n";
                 guide.value += "  - name: denpency name\n";
                 guide.value += "    version: denpency version\n";
