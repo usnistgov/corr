@@ -199,6 +199,9 @@ def record_edit(hash_session, record_id):
                                 rationels = data.get("rationels", ','.join(record.rationels))
                                 r_status = data.get("status", record.status)
 
+                                body = data.get("body", None)
+                                if body:
+                                    data = body
                                 system = data.get("system", record.system)
                                 execution = data.get("execution", record.execution)
                                 inputs = data.get("inputs", record.inputs)
