@@ -1,5 +1,5 @@
 var Space = function (){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     // this.session = session;
     this.dash_content = "";
     this.query_result = "";
@@ -612,7 +612,7 @@ var Space = function (){
 };
 
 var Record = function (_id){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
@@ -662,7 +662,7 @@ var Record = function (_id){
 };
 
 var Project = function (_id){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
@@ -713,7 +713,7 @@ var Project = function (_id){
 };
 
 var Application = function (_id){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
@@ -764,7 +764,7 @@ var Application = function (_id){
 };
 
 var Diff = function (_id){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
@@ -815,7 +815,7 @@ var Diff = function (_id){
 };
 
 var Environment = function (_id){
-    var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
