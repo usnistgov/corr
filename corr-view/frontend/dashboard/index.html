@@ -665,10 +665,11 @@
             }
 
             function reloadUploadGroup(){
-              var guide = document.getElementById("upload-group").value;
+              var group = document.getElementById("upload-group").value;
               var type_div = document.getElementById("type-div");
               var group_div = document.getElementById("group-div");
-              if(type_selected == "body"){
+              console.log("group: "+group);
+              if(group == "body"){
                 type_div.style.display = 'block';
                 group_div.style.display = 'block';
               }else{
