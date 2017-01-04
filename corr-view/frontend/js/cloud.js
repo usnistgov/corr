@@ -415,9 +415,7 @@ var user = {
                             console.log("Upload file is empty!");
                             Materialize.toast('<span>The file to upload is empty</span>', 3000);
                         }else{
-                            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
                             console.log('Cookie session value: '+ Cookies.get('session'));
-                            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
                             var request = null;
                             if(uplpad_type == "json"){
                                 request = JSON.parse(file_content);
@@ -434,6 +432,7 @@ var user = {
                             }
                             if(request != null){
                                 var xmlhttp = new XMLHttpRequest();
+                                xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
                                 xmlhttp.send(JSON.stringify(request));
                                 xmlhttp.onreadystatechange=function()
                                 {
