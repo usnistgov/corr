@@ -1348,7 +1348,7 @@ tr.group:hover {
   width: 280px;
 }
 .modal-form {
-  width: 400px;
+  width: 25%;
 }
 .login-form-text{
   text-transform: uppercase;
