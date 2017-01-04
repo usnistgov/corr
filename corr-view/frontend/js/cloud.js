@@ -419,14 +419,14 @@ var user = {
                             console.log('Cookie session value: '+ Cookies.get('session'));
                             xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
                             var request = {};
-                            if(upload-type == "json"){
+                            if(uplpad_type == "json"){
                                 request = JSON.parse(file_content);
                                 console.log("Json Content: "+request);
-                            }else if(upload-type == "xml"){
+                            }else if(uplpad_type == "xml"){
                                 var x2js = new X2JS();
                                 request = x2js.xml_str2json(file_content);
                                 console.log("Xml Content: "+request);
-                            }else if(upload-type == "yaml"){
+                            }else if(uplpad_type == "yaml"){
                                 request = YAML.parse(file_content);
                                 console.log("Yaml Content: "+request);
                             }else{
