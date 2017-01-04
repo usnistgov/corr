@@ -404,7 +404,7 @@ var user = {
         var file2upload = document.getElementById("upload-file");
         if(record_id != ""){
             console.log(record_id+" -- "+upload_group);
-            console.log(uplpad_type+" -- "+upload_path);
+            console.log(uplpad_type+" -- "+file2upload);
             if(upload_group == "body"){
                 if (file2upload.files.length > 0) {
                     var reader = new FileReader();
