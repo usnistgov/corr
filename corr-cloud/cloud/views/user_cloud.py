@@ -609,7 +609,7 @@ def user_picture(hash_session):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
-                picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
                     return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -617,7 +617,7 @@ def user_picture(hash_session):
             else:
                 picture = profile.picture
                 if picture == None:
-                    picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
                         return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
@@ -625,7 +625,7 @@ def user_picture(hash_session):
                 elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.web_get_file('{0}:{2}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
@@ -637,7 +637,7 @@ def user_picture(hash_session):
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
@@ -650,7 +650,7 @@ def user_picture(hash_session):
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                             if picture_buffer == None:
                                 return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                             else:
@@ -660,7 +660,7 @@ def user_picture(hash_session):
                         picture.save()
                         picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
-                            picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                             if picture_buffer != None:
                                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                             else:
@@ -815,7 +815,7 @@ def cloud_public_user_picture(user_id):
         user_model = UserModel.objects.with_id(user_id)
         profile = ProfileModel.objects(user=user_model).first_or_404()
         if profile == None:
-            picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
             if picture_buffer == None:
                 return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -823,7 +823,7 @@ def cloud_public_user_picture(user_id):
         else:
             picture = profile.picture
             if picture == None:
-                picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
                     return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -831,7 +831,7 @@ def cloud_public_user_picture(user_id):
             elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                 picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                 if picture_buffer == None:
-                    picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
@@ -843,7 +843,7 @@ def cloud_public_user_picture(user_id):
                 if picture_buffer != None:
                     return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 else:
-                    picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
                         return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
@@ -856,7 +856,7 @@ def cloud_public_user_picture(user_id):
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
@@ -866,7 +866,7 @@ def cloud_public_user_picture(user_id):
                     picture.save()
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:

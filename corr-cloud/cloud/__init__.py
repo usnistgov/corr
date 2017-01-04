@@ -113,13 +113,13 @@ def merge_dicts(*dict_args):
         result.update(dictionary)
     return result
 
-VIEW_HOST = app.config['VIEW_SETTINGS']['host']
-VIEW_PORT = app.config['VIEW_SETTINGS']['port']
 VIEW_MODE = app.config['VIEW_SETTINGS']['mode']
+VIEW_HOST = '{0}://{1}'.format(VIEW_MODE, app.config['VIEW_SETTINGS']['host'])
+VIEW_PORT = app.config['VIEW_SETTINGS']['port']
 
-API_HOST = app.config['API_SETTINGS']['host']
-API_PORT = app.config['API_SETTINGS']['port']
 API_MODE = app.config['API_SETTINGS']['mode']
+API_HOST = '{0}://{1}'.format(API_MODE, app.config['API_SETTINGS']['host'])
+API_PORT = app.config['API_SETTINGS']['port']
 
 
 from . import views
