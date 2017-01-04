@@ -610,7 +610,7 @@ def app_create(hash_session):
                 data = json.loads(fk.request.data)
                 name = data.get('name', '')
                 about = data.get('about', '')
-                logo_storage = '{0}://{1}:{2}/images/gearsIcon.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT)
+                logo_storage = '{0}:{1}/images/gearsIcon.png'.format(VIEW_HOST, VIEW_PORT)
                 access = 'activated'
                 network = '0.0.0.0'
                 visibile = False
