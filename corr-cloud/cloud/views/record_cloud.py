@@ -196,7 +196,7 @@ def record_edit(hash_session, record_id):
                             data = json.loads(fk.request.data)
                             try:
                                 tags = data.get("tags", ','.join(record.tags))
-                                rationels = data.get("rationels", record.rationels)
+                                rationels = data.get("rationels", ','.join(record.rationels))
                                 r_status = data.get("status", record.status)
 
                                 system = data.get("system", record.system)
@@ -206,7 +206,7 @@ def record_edit(hash_session, record_id):
                                 dependencies = data.get("dependencies", record.dependencies)
 
                                 record.tags = tags.split(',')
-                                record.rationels = [rationels]
+                                record.rationels = rationels.split(',')
                                 record.status = r_status
                                 record.save()
                                 return fk.Response('Record edited', status.HTTP_200_OK)
