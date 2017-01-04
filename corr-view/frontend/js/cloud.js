@@ -402,12 +402,12 @@ var user = {
         var uplpad_group = document.getElementById("upload-group").value;
         var uplpad_type = document.getElementById("upload-type").value;
         var upload_path = document.getElementById("upload-path").value;
-        var status = document.getElementById("record-status").value;
         if(record_id != ""){
-            console.log(record_id+" -- "+status);
+            console.log(record_id+" -- "+uplpad_group);
+            console.log(uplpad_type+" -- "+upload_path);
             if(upload_group == "body"){
                 var fileclient = new XMLHttpRequest();
-                fileclient.open('GET', '/foo.txt');
+                fileclient.open('GET', upload_path);
                 fileclient.onreadystatechange = function() {
                     var file_content = fileclient.responseText;
                     if (fileclient.status >= 200) {
@@ -432,24 +432,24 @@ var user = {
                             }else{
                                 Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                             }
-                            xmlhttp.send(JSON.stringify(request));
-                            xmlhttp.onreadystatechange=function()
-                            {
-                                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                                    if(xmlhttp.responseText == ""){
-                                        console.log("Cloud returned empty response!");
-                                    }else{
-                                        var response = xmlhttp.responseText;
-                                        console.log(response);
+                            // xmlhttp.send(JSON.stringify(request));
+                            // xmlhttp.onreadystatechange=function()
+                            // {
+                            //     if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                            //         if(xmlhttp.responseText == ""){
+                            //             console.log("Cloud returned empty response!");
+                            //         }else{
+                            //             var response = xmlhttp.responseText;
+                            //             console.log(response);
 
-                                        Materialize.toast('<span>Upload succeeded</span>', 3000);
-                                        window.location.reload();
-                                    }
-                                } else {
-                                    console.log(xmlhttp.responseText);
-                                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                                }
-                            }
+                            //             Materialize.toast('<span>Upload succeeded</span>', 3000);
+                            //             window.location.reload();
+                            //         }
+                            //     } else {
+                            //         console.log(xmlhttp.responseText);
+                            //         Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                            //     }
+                            // }
                         }
                     }else{
                         console.log(xmlhttp.responseText);
