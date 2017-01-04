@@ -354,7 +354,7 @@
             </div>
         </div>
 
-        <div id="record-upload-modal" class="modal login-form">
+        <div id="record-upload-modal" class="modal modal-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
                     <label for="picture-input">
@@ -670,6 +670,8 @@
               var guide = document.getElementById("upload-guide");
               var upload_type = document.getElementById("upload-type");
               var type_selected = upload_type.options[upload_type.selectedIndex].text
+              console.log("reloadUploadGuide ... ");
+              coonsole.log(type_selected);
               if(type_selected == "json"){
                 guide.value = "{\n";
                 guide.value += "\t'system':{\n";
