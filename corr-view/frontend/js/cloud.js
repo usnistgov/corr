@@ -421,7 +421,7 @@ var user = {
                         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
                         console.log('Cookie session value: '+ Cookies.get('session'));
                         xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
-                        var request = {};
+                        var request = null;
                         if(uplpad_type == "json"){
                             request = JSON.parse(file_content);
                             console.log("Json Content: "+request);
@@ -435,24 +435,27 @@ var user = {
                         }else{
                             Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                         }
-                        // xmlhttp.send(JSON.stringify(request));
-                        // xmlhttp.onreadystatechange=function()
-                        // {
-                        //     if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                        //         if(xmlhttp.responseText == ""){
-                        //             console.log("Cloud returned empty response!");
-                        //         }else{
-                        //             var response = xmlhttp.responseText;
-                        //             console.log(response);
+                        if(request != null){
+                            var xmlhttp = new XMLHttpRequest();
+                            xmlhttp.send(JSON.stringify(request));
+                            xmlhttp.onreadystatechange=function()
+                            {
+                                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                                    if(xmlhttp.responseText == ""){
+                                        console.log("Cloud returned empty response!");
+                                    }else{
+                                        var response = xmlhttp.responseText;
+                                        console.log(response);
 
-                        //             Materialize.toast('<span>Upload succeeded</span>', 3000);
-                        //             window.location.reload();
-                        //         }
-                        //     } else {
-                        //         console.log(xmlhttp.responseText);
-                        //         Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
-                        //     }
-                        // }
+                                        Materialize.toast('<span>Upload succeeded</span>', 3000);
+                                        window.location.reload();
+                                    }
+                                } else {
+                                    console.log(xmlhttp.responseText);
+                                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                                }
+                            }
+                        }
                     }
                 }else{
                     console.log("There is no file to upload!");
