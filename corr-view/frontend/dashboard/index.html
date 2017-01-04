@@ -401,7 +401,7 @@
                   <div class="input-field col s12">
                     <i class="mdi-notification-event-note prefix"></i>
                     <textarea id="upload-guide" readonly class="materialize-textarea"></textarea>
-                    <label id="upload-guide-value" for="upload-guide">Rationels</label>
+                    <label id="upload-guide-value" for="upload-guide">Guide</label>
                   </div>
                 </div>
                 <div class="row margin" id="record-add-callback">
@@ -620,7 +620,6 @@
               guide.value += "    'cpu':'Intel CORE i7',\n";
               guide.value += "    'gpu':'NVIDIA GT9600',\n";
               guide.value += "    'os':'ubuntu 16.04',\n";
-              guide.value += "    'another_system_info_key':'another_system_info_value',\n";
               guide.value += "    ...,\n";
               guide.value += "  },\n";
               guide.value += "  'execution':{\n";
@@ -629,11 +628,11 @@
               guide.value += "      'param2':'value2',\n";
               guide.value += "      ...,\n";
               guide.value += "    },";
-              guide.value += "    'cmd_line':'command line executed'\n";
+              guide.value += "    'cmd_line':'executed command'\n";
               guide.value += "  },\n";
               guide.value += "  'inputs':[\n";
               guide.value += "    {\n";
-              guide.value += "      'path':'input file_name and extension',\n";
+              guide.value += "      'path':'input file_name',\n";
               guide.value += "      'metadata':{\n";
               guide.value += "        'encoding':'utf-8',\n";
               guide.value += "        'mimetype':'txt/json',\n";
@@ -644,7 +643,7 @@
               guide.value += "  ],\n";
               guide.value += "  'outputs':[\n";
               guide.value += "    {\n";
-              guide.value += "      'path':'output file_name and extension',\n";
+              guide.value += "      'path':'output file_name',\n";
               guide.value += "      'metadata':{\n";
               guide.value += "        'encoding':'utf-8',\n";
               guide.value += "        'mimetype':'txt/json',\n";
@@ -657,7 +656,7 @@
               guide.value += "    {\n";
               guide.value += "      'name':'denpency name',\n";
               guide.value += "      'version':'denpency version',\n";
-              guide.value += "      'language':'denpency programming language',\n";
+              guide.value += "      'language':'programming language',\n";
               guide.value += "      'url':'denpency url',\n";
               guide.value += "    },";
               guide.value += "    ...,";
@@ -679,7 +678,6 @@
                 guide.value += "    'cpu':'Intel CORE i7',\n";
                 guide.value += "    'gpu':'NVIDIA GT9600',\n";
                 guide.value += "    'os':'ubuntu 16.04',\n";
-                guide.value += "    'another_system_info_key':'another_system_info_value',\n";
                 guide.value += "    ...,\n";
                 guide.value += "  },\n";
                 guide.value += "  'execution':{\n";
@@ -688,11 +686,11 @@
                 guide.value += "      'param2':'value2',\n";
                 guide.value += "      ...,\n";
                 guide.value += "    },";
-                guide.value += "    'cmd_line':'command line executed'\n";
+                guide.value += "    'cmd_line':'executed command'\n";
                 guide.value += "  },\n";
                 guide.value += "  'inputs':[\n";
                 guide.value += "    {\n";
-                guide.value += "      'path':'input file_name and extension',\n";
+                guide.value += "      'path':'input file_name',\n";
                 guide.value += "      'metadata':{\n";
                 guide.value += "        'encoding':'utf-8',\n";
                 guide.value += "        'mimetype':'txt/json',\n";
@@ -703,7 +701,7 @@
                 guide.value += "  ],\n";
                 guide.value += "  'outputs':[\n";
                 guide.value += "    {\n";
-                guide.value += "      'path':'output file_name and extension',\n";
+                guide.value += "      'path':'output file_name',\n";
                 guide.value += "      'metadata':{\n";
                 guide.value += "        'encoding':'utf-8',\n";
                 guide.value += "        'mimetype':'txt/json',\n";
@@ -716,7 +714,7 @@
                 guide.value += "    {\n";
                 guide.value += "      'name':'denpency name',\n";
                 guide.value += "      'version':'denpency version',\n";
-                guide.value += "      'language':'denpency programming language',\n";
+                guide.value += "      'language':'programming language',\n";
                 guide.value += "      'url':'denpency url',\n";
                 guide.value += "    },";
                 guide.value += "    ...,";
@@ -730,7 +728,6 @@
                 guide.value += "    <cpu>Intel CORE i7</cpu>\n";
                 guide.value += "    <gpu>NVIDIA GT9600</gpu>\n";
                 guide.value += "    <os>ubuntu 16.04</os>\n";
-                guide.value += "    <another_system_info_key>another_system_info_value</another_system_info_key>\n";
                 guide.value += "    ...\n";
                 guide.value += "  </system>\n";
                 guide.value += "  <execution>\n";
@@ -739,11 +736,11 @@
                 guide.value += "      <param2>value2</param2>\n";
                 guide.value += "      ...\n";
                 guide.value += "    </parameters>";
-                guide.value += "    <cmd_line>command line executed</cmd_line>\n";
+                guide.value += "    <cmd_line>executed command</cmd_line>\n";
                 guide.value += "  </execution>\n";
                 guide.value += "  <inputs>\n";
                 guide.value += "    <input>\n";
-                guide.value += "      <path>input file_name and extension</path>\n";
+                guide.value += "      <path>input file_name</path>\n";
                 guide.value += "      <metadata>\n";
                 guide.value += "        <encoding>utf-8</encoding>\n";
                 guide.value += "        <mimetype>txt:json</mimetype>\n";
@@ -754,7 +751,7 @@
                 guide.value += "  </inputs>\n";
                 guide.value += "  <outputs>\n";
                 guide.value += "    <output>\n";
-                guide.value += "      <path>output file_name and extension</path>\n";
+                guide.value += "      <path>output file_name</path>\n";
                 guide.value += "      <metadata>\n";
                 guide.value += "        <encoding>utf-8</encoding>\n";
                 guide.value += "        <mimetype>txt:json</mimetype>\n";
@@ -767,36 +764,35 @@
                 guide.value += "    <dependency>\n";
                 guide.value += "      <name>denpency name</name>\n";
                 guide.value += "      <version>denpency version</version>\n";
-                guide.value += "      <language>denpency programming language</language>\n";
+                guide.value += "      <language>programming language</language>\n";
                 guide.value += "      <url>denpency url</url>\n";
                 guide.value += "    </dependency>";
                 guide.value += "    ...";
                 guide.value += "  </dependencies>\n";
                 guide.value += "</body>";
               }else if(type_selected == "Yaml"){
-                guide.value += "system:\n";
+                guide.value = "system:\n";
                 guide.value += "  model: System76\n";
                 guide.value += "  architecture: x86_64\n";
                 guide.value += "  cpu: Intel CORE i7\n";
                 guide.value += "  gpu: NVIDIA GT9600\n";
                 guide.value += "  os: ubuntu 16.04\n";
-                guide.value += "  another_system_info_key: another_system_info_value\n";
                 guide.value += "  ...\n";
                 guide.value += "execution:\n";
                 guide.value += "  parameters:\n";
                 guide.value += "    param1: value1\n";
                 guide.value += "    param2: value2\n";
                 guide.value += "    ...\n";
-                guide.value += "  cmd_line: command line executed\n";
+                guide.value += "  cmd_line: executed command\n";
                 guide.value += "inputs:\n";
-                guide.value += "  - path:input file_name and extension',\n";
+                guide.value += "  - path:input file_name',\n";
                 guide.value += "    metadata:\n";
                 guide.value += "      encoding: utf-8\n";
                 guide.value += "      mimetype: txt/json\n";
                 guide.value += "      size: 2500\n";
                 guide.value += "  - ...";
                 guide.value += "outputs:\n";
-                guide.value += "  - path: output file_name and extension\n";
+                guide.value += "  - path: output file_name\n";
                 guide.value += "    metadata:\n";
                 guide.value += "      encoding: utf-8\n";
                 guide.value += "      mimetype: txt/json\n";
@@ -805,7 +801,7 @@
                 guide.value += "dependencies:\n";
                 guide.value += "  - name: denpency name\n";
                 guide.value += "    version: denpency version\n";
-                guide.value += "    language: denpency programming language\n";
+                guide.value += "    language: programming language\n";
                 guide.value += "    url: denpency url\n";
                 guide.value += "  - ...";
               }
