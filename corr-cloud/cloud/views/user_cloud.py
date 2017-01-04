@@ -622,7 +622,7 @@ def user_picture(hash_session):
                         return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                elif picture.location == 'local' and 'http://' not in picture.storage:
+                elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
                         picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
@@ -643,7 +643,7 @@ def user_picture(hash_session):
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
-                    if 'http://' in picture.storage:
+                    if 'http://' in picture.storage or 'https://' in picture.storage:
                         picture.location = 'remote'
                         picture.save()
                         picture_buffer = storage_manager.web_get_file(picture.storage)
@@ -828,7 +828,7 @@ def cloud_public_user_picture(user_id):
                     return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-            elif picture.location == 'local' and 'http://' not in picture.storage:
+            elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                 picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                 if picture_buffer == None:
                     picture_buffer = storage_manager.web_get_file('{0}://{1}:{2}/images/picture.png'.format(VIEW_MODE, VIEW_HOST, VIEW_PORT))
@@ -849,7 +849,7 @@ def cloud_public_user_picture(user_id):
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
-                if 'http://' in picture.storage:
+                if 'http://' in picture.storage or 'https://' in picture.storage:
                     picture.location = 'remote'
                     picture.save()
                     picture_buffer = storage_manager.web_get_file(picture.storage)

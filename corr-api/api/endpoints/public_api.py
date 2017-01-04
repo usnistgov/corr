@@ -63,7 +63,7 @@ def public_app_logo(app_id):
         if app != None:
             name = app.name if app.name != '' and app.name != None else 'unknown'
             logo = app.logo
-            if logo.location == 'local' and 'http://' not in logo.storage:
+            if logo.location == 'local' and ('http://' not in logo.storage and 'https://' not in logo.storage):
                 logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                 if logo_buffer == None:
                     return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
@@ -81,7 +81,7 @@ def public_app_logo(app_id):
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
             else:
                 # solve the file situation and return the appropriate one.
-                if 'http://' in logo.storage:
+                if 'http://' in logo.storage or 'https://' in logo.storage:
                     logo.location = 'remote'
                     logo.save()
                     logo_buffer = storage_manager.web_get_file(logo.storage)
@@ -171,7 +171,7 @@ def public_user_picture(user_id):
                         return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                elif picture.location == 'local' and 'http://' not in picture.storage:
+                elif picture.location == 'local' and ('http://' not in picture.storage and 'https://' not in picture.storage):
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
                         return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
@@ -189,7 +189,7 @@ def public_user_picture(user_id):
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 else:
                     # solve the file situation and return the appropriate one.
-                    if 'http://' in picture.storage:
+                    if 'http://' in picture.storage or 'https://' in picture.storage:
                         picture.location = 'remote'
                         picture.save()
                         picture_buffer = storage_manager.web_get_file(picture.storage)
@@ -315,7 +315,7 @@ def public_project_logo(project_id):
         project = ProjectModel.objects.with_id(project_id)
         if project != None:
             logo = project.logo
-            if logo.location == 'local' and 'http://' not in logo.storage:
+            if logo.location == 'local' and 'http://' not in logo.storage and 'https://' not in logo.storage:
                 logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                 if logo_buffer == None:
                     return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
@@ -333,7 +333,7 @@ def public_project_logo(project_id):
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
             else:
                 # solve the file situation and return the appropriate one.
-                if 'http://' in logo.storage:
+                if 'http://' in logo.storage or 'https://' in logo.storage:
                     logo.location = 'remote'
                     logo.save()
                     logo_buffer = storage_manager.web_get_file(logo.storage)
