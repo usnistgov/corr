@@ -408,6 +408,10 @@ var user = {
             if(upload_group == "body"){
                 if (file2upload.files.length > 0) {
                     var reader = new FileReader();
+                    reader.onload = function() {
+                        console.log(this.result);            
+                   }
+                    console.log(file2upload.files);
                     var file_content = reader.readAsText(file2upload.files[0]);
                     console.log(file_content);
                     if(file_content == ""){
@@ -455,7 +459,7 @@ var user = {
                     Materialize.toast('<span>There is no file to upload</span>', 3000);
                 }
             }else{
-                var file2upload = document.getElementById("upload-file").value;
+                var file2upload = document.getElementById("upload-file");
                 if (upload_group != "bundle"){
                     if (file2upload.files.length > 0) {
                         console.log("file not empty");
