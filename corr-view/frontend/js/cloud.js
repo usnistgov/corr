@@ -31,7 +31,8 @@ var user = {
                 }
             } else {
                 console.log(xmlhttp.responseText);
-                Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                config.error_modal('An error occured during login.', xmlhttp.responseText);
+                // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
             }
         }
     },
@@ -65,14 +66,17 @@ var user = {
                     console.log(response);
                     console.log("Registration failed");
                     if(response == ""){
-                        Materialize.toast('<span>Register failed: Unknown reason.</span>', 3000);
+                        config.error_modal('Register failed', 'Unknown reason');
+                        // Materialize.toast('<span>Register failed: Unknown reason.</span>', 3000);
                     }else{
-                        Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
+                        config.error_modal('Register failed', response);
+                        // Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
                     }
                 }
             }
         }else{
-            Materialize.toast('<span>Passwords mismatch.</span>', 3000);
+            config.error_modal('Register failed', 'Passwords mismatch');
+            // Materialize.toast('<span>Passwords mismatch.</span>', 3000);
         }  
     },
     logout: function(where) {
