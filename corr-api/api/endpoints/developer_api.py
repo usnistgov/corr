@@ -57,7 +57,7 @@ def app_logo(api_token, app_id):
                 if app != None:
                     name = app.name if app.name != '' and app.name != None else 'unknown'
                     logo = app.logo
-                    if logo.location == 'local' and 'http://' not in logo.storage:
+                    if logo.location == 'local' and ('http://' not in logo.storage and 'https://' not in logo.storage):
                         logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
@@ -75,7 +75,7 @@ def app_logo(api_token, app_id):
                                 return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     else:
                         # solve the file situation and return the appropriate one.
-                        if 'http://' in logo.storage:
+                        if 'http://' in logo.storage or 'https://' in logo.storage:
                             logo.location = 'remote'
                             logo.save()
                             logo_buffer = storage_manager.web_get_file(logo.storage)

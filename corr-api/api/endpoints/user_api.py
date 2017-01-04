@@ -465,7 +465,7 @@ def user_picture(api_token, app_token):
                             return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                    elif picture.location == 'local' and 'http://' not in picture.storage:
+                    elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                         picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
@@ -483,7 +483,7 @@ def user_picture(api_token, app_token):
                                 return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
                         # solve the file situation and return the appropriate one.
-                        if 'http://' in picture.storage:
+                        if 'http://' in picture.storage or 'https://' in picture.storage:
                             picture.location = 'remote'
                             picture.save()
                             picture_buffer = storage_manager.web_get_file(picture.storage)
@@ -556,7 +556,7 @@ def user_user_profile_show(api_token, app_token):
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 # User picture:
-# http://0.0.0.0:5100/api/v1/private/07366337c49a026cda30d1cb99679a1b86f7dffb9a44cf9765975a5991d6a849/dad86479d3f0e4b1c6ed17b8ab02a9df4fa65e61761d5952f45770c19fb5194a/user/picture
+# https://0.0.0.0:5100/api/v1/private/07366337c49a026cda30d1cb99679a1b86f7dffb9a44cf9765975a5991d6a849/dad86479d3f0e4b1c6ed17b8ab02a9df4fa65e61761d5952f45770c19fb5194a/user/picture
 
 #Messages
 @app.route(API_URL + '/private/<api_token>/<app_token>/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -1756,7 +1756,7 @@ def user_project_logo(api_token, app_token, project_id):
                         return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                     else:
                         logo = project.logo
-                        if logo.location == 'local' and 'http://' not in logo.storage:
+                        if logo.location == 'local' and 'http://' not in logo.storage and 'https://' not in logo.storage:
                             logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
@@ -1774,7 +1774,7 @@ def user_project_logo(api_token, app_token, project_id):
                                     return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                         else:
                             # solve the file situation and return the appropriate one.
-                            if 'http://' in logo.storage:
+                            if 'http://' in logo.storage or 'https://' in logo.storage:
                                 logo.location = 'remote'
                                 logo.save()
                                 logo_buffer = storage_manager.web_get_file(logo.storage)
