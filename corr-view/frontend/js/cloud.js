@@ -455,6 +455,7 @@ var user = {
                             }
                         }
                     }
+                    reader.readAsText(file2upload.files[0]);
                 }else{
                     console.log("There is no file to upload!");
                     Materialize.toast('<span>There is no file to upload</span>', 3000);
