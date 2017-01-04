@@ -1,6 +1,6 @@
 var client = new XMLHttpRequest();
 var user = {
-    url: "http://"+config.host+":"+config.port+"/cloud/v0.1",
+    url: "https://"+config.host+":"+config.port+"/cloud/v0.1",
     username:"",
     email: "",
     api: "",
@@ -432,7 +432,7 @@ var user = {
                             }
                             if(request != null){
                                 var xmlhttp = new XMLHttpRequest();
-                                var url = "http://"+config.host+":"+config.port+"/cloud/v0.1";
+                                var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
                                 xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
                                 xmlhttp.send(JSON.stringify(request));
                                 xmlhttp.onreadystatechange=function()
