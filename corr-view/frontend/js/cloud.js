@@ -399,11 +399,11 @@ var user = {
     },
     upload_record: function() {
         var record_id = document.getElementById("record-id").value;
-        var uplpad_group = document.getElementById("upload-group").value;
+        var upload_group = document.getElementById("upload-group").value;
         var uplpad_type = document.getElementById("upload-type").value;
         var upload_path = document.getElementById("upload-path").value;
         if(record_id != ""){
-            console.log(record_id+" -- "+uplpad_group);
+            console.log(record_id+" -- "+upload_group);
             console.log(uplpad_type+" -- "+upload_path);
             if(upload_group == "body"){
                 var fileclient = new XMLHttpRequest();
