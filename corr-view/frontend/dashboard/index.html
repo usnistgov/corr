@@ -587,7 +587,8 @@
                 record_from.value = selected_records[0];
                 record_to.value = selected_records[1];
               }else{
-                Materialize.toast('<span>Please select up to two records!</span>', 3000);
+                // Materialize.toast('<span>Please select up to two records!</span>', 3000);
+                config.error_modal('Diff create failed', 'Please select up to two records.')
               }
             }
 
