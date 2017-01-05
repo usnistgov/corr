@@ -21,7 +21,7 @@ from hurry.filesize import size
 import hashlib
 import os
 import mimetypes
-from io import StringIO
+from io import BytesIO
 
 @app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
