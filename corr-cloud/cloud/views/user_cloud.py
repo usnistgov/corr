@@ -589,7 +589,7 @@ def user_config(hash_session):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
             config_buffer = BytesIO()
-            config_content = {'default':{'api':{'host':API_HOST, 'port':API_PORT, 'key':user_model.api_token}}}
+            config_content = {'default':{'api':{'host':API_HOST, 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
             return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
