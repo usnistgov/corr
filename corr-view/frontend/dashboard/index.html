@@ -506,42 +506,42 @@
                 }
             }
             // Inject the default dashboard view
-            if(Cookies.get('session') != 'none' && view_selected == ""){
+            if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
                 dashboard.activity();
                 var space = new Space();
                 document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "apps"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "apps"){
                 dashboard.apps();
                 document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the projects dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "projects"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "projects"){
                 dashboard.projects();
                 var space = new Space();
                 document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the records dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "records"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "records"){
                 dashboard.records(options);
                 var space = new Space();
                 var selected_records = [];
                 document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
             }
             // Inject the diffs dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "diffs"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "diffs"){
                 dashboard.diffs(options);
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the envs dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "envs"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "envs"){
                 dashboard.envs(options);
                 var space = new Space();
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the query dashboard view
-            else if(Cookies.get('session') != 'none' && view_selected == "query"){
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "query"){
                 var space = new Space();
                 dashboard.query(options);
 
@@ -553,7 +553,7 @@
             }
 
             // In case home has session key (logged in)
-            if (Cookies.get('session') != 'none'){
+            if (Cookies.get('session') != undefined && Cookies.get('session') != 'none'){
                 // Inject the nav menu and the dashboard floating menu
                 document.getElementById("nav-home-2").href = "../";
                 document.getElementById("nav-home").href = "../";
