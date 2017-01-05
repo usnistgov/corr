@@ -239,7 +239,7 @@ class StorageManager:
         """
         try:
             print(url)
-            response = requests.get(url, verify='/corr-ssl/corr.crt')
+            response = requests.get(url)
             file_buffer = BytesIO(response.content)
             file_buffer.seek(0)
             return file_buffer
