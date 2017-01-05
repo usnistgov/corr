@@ -237,15 +237,11 @@ class StorageManager:
             Returns:
                 File buffer.
         """
-        try:
-            print(url)
-            response = requests.get(url)
-            file_buffer = BytesIO(response.content)
-            file_buffer.seek(0)
-            return file_buffer
-        except:
-            print(traceback.print_exc())
-            return None
+        print(url)
+        response = requests.get(url)
+        file_buffer = BytesIO(response.content)
+        file_buffer.seek(0)
+        return file_buffer
 
     def prepare_env(self, project=None, env=None):
         """Bundle a project's environment.
