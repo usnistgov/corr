@@ -95,7 +95,7 @@ var user = {
                         Cookies.set('session', 'none', { path: '' });
                         window.location.replace("./");
                     }else{
-                        Cookies.set('session', 'none', { path: '../' });
+                        Cookies.set('session', 'none', { path: '/' });
                         window.location.replace("../");
                     }
                 }
