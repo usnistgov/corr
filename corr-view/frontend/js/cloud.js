@@ -91,7 +91,7 @@ var user = {
                  if(xmlhttp.responseText == ""){
                     console.log("Cloud returned empty response!");
                 }else{
-                    Cookies.remove('session', { path: '' });
+                    Cookies.set('session', 'none', { path: '' });
                     if(where != "dashboard"){
                         window.location.replace("./");
                     }else{
