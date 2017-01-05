@@ -100,7 +100,8 @@ var user = {
                 }
             } else {
                 console.log("Logout failed");
-                Materialize.toast('<span>Logout failed</span>', 3000);
+                config.error_modal('Logout failed', xmlhttp.responseText);
+                // Materialize.toast('<span>Logout failed</span>', 3000);
             }
         }   
     },
@@ -112,7 +113,8 @@ var user = {
         var pwd_2 = document.getElementById('edit-new-password-again').value;
         if(pwd != pwd_2){
             console.log("Passwords mismatch");
-            Materialize.toast('<span>Passwords mismatch</span>', 3000);
+            // Materialize.toast('<span>Passwords mismatch</span>', 3000);
+            config.error_modal('Passwords mismatch','Must provide identical passwords.');
         }else{
             var fname = document.getElementById('view-fname').value;
             var lname = document.getElementById('view-lname').value;
@@ -147,10 +149,11 @@ var user = {
                         console.log("No picture to change");
                         window.location.reload(); 
                     }
-                    Materialize.toast('<span>Update succeeded</span>', 3000);
+                    // Materialize.toast('<span>Update succeeded</span>', 3000);
                 } else {
                     console.log("Update failed");
-                    Materialize.toast('<span>Update failed</span>', 3000);
+                    config.error_modal('Update failed', response);
+                    // Materialize.toast('<span>Update failed</span>', 3000);
                 }
             }
         }
@@ -194,11 +197,12 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     console.log(xmlhttp.responseText);                
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             } else {
-                console.log(xmlhttp.responseText);                
-                Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                console.log(xmlhttp.responseText);     
+                config.error_modal('Recover failed', xmlhttp.responseText);           
+                // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
             }
         }
     },
@@ -280,10 +284,11 @@ var user = {
                     }else{
                         $('#view-api-value').text(this.api);
                     }
-                    Materialize.toast('<span>API Token renewed!</span>', 3000);
+                    // Materialize.toast('<span>API Token renewed!</span>', 3000);
                 }
             } else {
-                window.location.replace("../error/?code=404");
+                config.error_modal('Revew API token failed', xmlhttp.responseText);
+                // window.location.replace("../error/?code=404");
             }
         }
     },
@@ -318,16 +323,18 @@ var user = {
                         var response = xmlhttp.responseText;
                         console.log(response);
 
-                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
                         window.location.reload();
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    config.error_modal('Add app failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
-            Materialize.toast('<span>Name should not be empty.</span>', 3000);
+            config.error_modal('Add app failed', 'Name should not be empty.');
+            // Materialize.toast('<span>Name should not be empty.</span>', 3000);
         }
     },
     add_project: function() {
@@ -355,17 +362,19 @@ var user = {
                             var response = JSON.parse(xmlhttp.responseText);
                             console.log(response);
 
-                            Materialize.toast('<span>'+response['title']+'</span>', 3000);
+                            // Materialize.toast('<span>'+response['title']+'</span>', 3000);
                             window.location.reload();
                         }
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    config.error_modal('Add project failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
-            Materialize.toast('<span>Project name should not be empty.</span>', 3000);
+            config.error_modal('Add project failed', 'Project name should not be empty.');
+            // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }  
     },
     add_record: function() {
@@ -389,16 +398,18 @@ var user = {
                         var response = xmlhttp.responseText;
                         console.log(response);
 
-                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
                         window.location.reload();
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    config.error_modal('Add record failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
-            Materialize.toast('<span>Project id should not be empty.</span>', 3000);
+            config.error_modal('Add project failed', 'Project name should not be empty.');
+            // Materialize.toast('<span>Project id should not be empty.</span>', 3000);
         }
     },
     upload_record: function() {
@@ -417,7 +428,8 @@ var user = {
                         console.log(file_content);
                         if(file_content == ""){
                             console.log("Upload file is empty!");
-                            Materialize.toast('<span>The file to upload is empty</span>', 3000);
+                            config.error_modal('Upload record failed', 'The file to upload cannot be empty.');
+                            // Materialize.toast('<span>The file to upload is empty</span>', 3000);
                         }else{
                             console.log('Cookie session value: '+ Cookies.get('session'));
                             var request = null;
@@ -432,7 +444,8 @@ var user = {
                                 request = YAML.parse(file_content);
                                 console.log("Yaml Content: "+request);
                             }else{
-                                Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
+                                config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
+                                // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                             }
                             if(request != null){
                                 var xmlhttp = new XMLHttpRequest();
@@ -448,12 +461,13 @@ var user = {
                                             var response = xmlhttp.responseText;
                                             console.log(response);
 
-                                            Materialize.toast('<span>Upload succeeded</span>', 3000);
+                                            // Materialize.toast('<span>Upload succeeded</span>', 3000);
                                             window.location.reload();
                                         }
                                     } else {
                                         console.log(xmlhttp.responseText);
-                                        Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                                        config.error_modal('Upload record failed', xmlhttp.responseText);
+                                        // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                                     }
                                 }
                             }
@@ -471,15 +485,18 @@ var user = {
                         console.log("file not empty");
                         user.upload_file(file2upload, upload_group, record_id);
                     }else{
-                        Materialize.toast('<span>File should not be empty.</span>', 3000);
+                        config.error_modal('Upload record failed', 'File should not be empty.');
+                        // Materialize.toast('<span>File should not be empty.</span>', 3000);
                     }
                 }else{
-                    Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
+                    // Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
+                    config.error_modal('Upload record failed', 'Env bundle upload not implemnted yet.');
                 }
             }
             
         }else{
-            Materialize.toast('<span>Record id should not be empty.</span>', 3000);
+            config.error_modal('Upload record failed', 'Record id should not be empty.');
+            // Materialize.toast('<span>Record id should not be empty.</span>', 3000);
         }
     },
     add_diff: function() {
@@ -506,16 +523,18 @@ var user = {
                         var response = xmlhttp.responseText;
                         console.log(response);
 
-                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
                         window.location.reload();
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    config.error_modal('Add diff failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
-            Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
+            config.error_modal('Add diff failed', 'Records from and to should be provided.');
+            // Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
         }
     },
     add_env: function() {
@@ -539,16 +558,18 @@ var user = {
                         var response = xmlhttp.responseText;
                         console.log(response);
 
-                        Materialize.toast('<span>Creation succeeded</span>', 3000);
+                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
                         window.location.reload();
                     }
                 } else {
                     console.log(xmlhttp.responseText);
-                    Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    config.error_modal('Add event failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
-            Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
+            config.error_modal('Add event failed', 'Record should be provided.');
+            // Materialize.toast('<span>Record should not be empty.</span>', 3000);
         }
     }
 };
