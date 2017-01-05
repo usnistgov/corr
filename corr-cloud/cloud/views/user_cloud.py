@@ -817,7 +817,7 @@ def cloud_public_user_picture(user_id):
         if profile == None:
             picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
             if picture_buffer == None:
-                return fk.redirect('{0}:{1}/error/?code=404&reason=profile_none'.format(VIEW_HOST, VIEW_PORT))
+                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
         else:
@@ -825,7 +825,7 @@ def cloud_public_user_picture(user_id):
             if picture == None:
                 picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
-                    return fk.redirect('{0}:{1}/error/?code=404&reason=picture_none'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
@@ -835,7 +835,7 @@ def cloud_public_user_picture(user_id):
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
-                        return fk.redirect('{0}:{1}/error/?code=404&reason=location_none'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
             elif picture.location == 'remote':
@@ -845,7 +845,7 @@ def cloud_public_user_picture(user_id):
                 else:
                     picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
-                        return fk.redirect('{0}:{1}/error/?code=404&reason=remote_none'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
@@ -858,7 +858,7 @@ def cloud_public_user_picture(user_id):
                     else:
                         picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
-                            return fk.redirect('{0}:{1}/error/?code=404&reason=remote_none'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                 else:
@@ -870,7 +870,7 @@ def cloud_public_user_picture(user_id):
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
-                            return fk.redirect('{0}:{1}/error/?code=404&reason=local_none'.format(VIEW_HOST, VIEW_PORT))
+                            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
     else:
