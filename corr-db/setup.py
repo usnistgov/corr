@@ -60,7 +60,7 @@ def make_version():
     return version
 
 setup(name='corrdb',
-      version=make_version(),
+      version='0.1',
       description='Package for CoRR Database Models',
       author='Yannick Congo',
       author_email='yannick.congo@gmail.com',
