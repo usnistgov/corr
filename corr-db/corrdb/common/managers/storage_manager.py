@@ -57,7 +57,7 @@ class StorageManager:
             content = None
             if key != '':
                 if self.config['type'] == 's3':
-                    obj = self.s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/{1}'.format(group,key))
+                    obj = self.s3.Object(bucket_name=self.bucket, key='corr-{0}s/{1}'.format(group,key))
                     res = obj.get()
                     content = res['Body'].read()
                 elif self.config['type'] == 'filesystem':
