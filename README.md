@@ -6,7 +6,7 @@
 </p>
 
 <p align="center"><sup><strong>
-Installation instructions are available at <a href="https://github.com/usnistgov/corr-deploy">CoRR-Deploy</a>.
+Installation instructions are available at <a href="http://corr-deploy.readthedocs.io/en/latest/rst/README.html">CoRR-Deploy</a>.
 </strong></sup></p>
 
 <p align="center"><sup><strong>
