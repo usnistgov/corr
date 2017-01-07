@@ -44,11 +44,13 @@ def user_register():
             organisation = data.get('organisation', 'No organisation provided')
             about = data.get('about', 'Nothing about me yet.')
             if email == '' or '@' not in email or password == '':
-                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Invalid email or password.', status.HTTP_400_BAD_REQUEST)
+                # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 user_model = access_manager.register(email, password, fname, lname, '')
                 if user_model is None:
-                    return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
+                    # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
                     print("Token %s"%user_model.api_token)
@@ -119,12 +121,14 @@ def user_login():
             email = data.get('email', '').lower()
             password = data.get('password', '')
             if email == '' or '@' not in email:
-                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Invalid email.', status.HTTP_400_BAD_REQUEST)
+                # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 try:
                     account = access_manager.login(email, password)
                     if account == None:
-                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response('Unknown account. Please register first.', status.HTTP_401_UNAUTHORIZED)
+                        # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
@@ -132,7 +136,8 @@ def user_login():
                     return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 except:
                     print(str(traceback.print_exc()))
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -163,7 +168,8 @@ def user_logout(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/logout')
             user_model = access_resp[1]
@@ -179,7 +185,8 @@ def user_unregister(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/unregister')
             user_model = access_resp[1]
@@ -194,7 +201,8 @@ def user_dashboard(hash_session):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/dashboard')
             user_model = access_resp[1]
@@ -279,7 +287,8 @@ def user_update(hash_session):
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session)
         if access_resp[1] is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/update')
             user_model = access_resp[1]
@@ -325,7 +334,8 @@ def user_file_upload(hash_session, group, item_id):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
