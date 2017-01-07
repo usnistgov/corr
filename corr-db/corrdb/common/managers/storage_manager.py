@@ -29,7 +29,7 @@ class StorageManager:
 
             # S3 bucket location
             try:
-                self.bucket = config['name']
+                self.bucket = self.config['name']
             except:
                 self.bucket = ""
         elif self.config['type'] == 'filesystem':
