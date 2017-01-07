@@ -127,7 +127,7 @@ def user_login():
                 try:
                     account = access_manager.login(email, password)
                     if account == None:
-                        return fk.Response('Unknown account. Please register first.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.Response('Unknown email or password.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
