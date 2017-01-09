@@ -17,15 +17,8 @@ class StorageManager:
         self.app = app
         self.config = app.config['FILE_STORAGE']
         if self.config['type'] == 's3':
-            aws_path = '~/.aws'
-            if not os.path.exists(aws_path):
-                os.makedirs(aws_path)
-                with open('{0}/config'.format(aws_path), 'w') as config_file:
-                    config_file.write('[default]\nregion = {0}'.format(self.config['location']))
-                with open('{0}/credentials'.format(aws_path), 'w') as credentials_file:
-                    credentials_file.write('[default]\naws_access_key_id = {0}\naws_secret_access_key = {1}'.format(self.config['id'], self.config['key']))
             # Boto s3 instance
-            self.s3 =  boto3.resource('s3')
+            self.s3 =  boto3.resource('s3', aws_access_key_id=self.config['id'], aws_secret_access_key=self.config['key'], region_name=self.config['location'])
 
             # S3 bucket location
             try:
