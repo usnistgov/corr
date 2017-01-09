@@ -65,7 +65,7 @@ class StorageManager:
 
         try:
             if self.config['type'] == 's3':
-                file_buffer = StringIO()
+                file_buffer = BytesIO()
             elif self.config['type'] == 'filesystem':
                 file_buffer = BytesIO()
             file_buffer.write(content)
