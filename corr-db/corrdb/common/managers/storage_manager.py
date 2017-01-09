@@ -21,7 +21,7 @@ class StorageManager:
             if self.config['id'] != '' and self.config['key'] != '':
                 self.s3 =  boto3.resource('s3', aws_access_key_id=self.config['id'], aws_secret_access_key=self.config['key'], region_name=self.config['location'])
             else:
-                self.s3 = boto3.resource('iam')
+                self.s3 = boto3.resource('s3')
             # S3 bucket location
             try:
                 self.bucket = self.config['name']
