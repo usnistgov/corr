@@ -12,7 +12,7 @@ from corrdb.common.models import StatModel
 from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_MODE, VIEW_HOST, VIEW_PORT
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT
 import datetime
 import simplejson as json
 import traceback

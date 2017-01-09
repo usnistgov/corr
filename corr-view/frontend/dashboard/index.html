@@ -599,7 +599,7 @@
               var user_lname = document.getElementById("user-lname");
               var user_organisation = document.getElementById("user-org");
               var user_about = document.getElementById("user-about");
-              var url = "https://"+config.host+":"+config.port+"/cloud/v0.1";
+              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
               user_picture.src = url+"/public/user/picture/"+_id;
               user_fname.value = fname;
               user_fname.readOnly = true;

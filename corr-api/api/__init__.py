@@ -64,5 +64,7 @@ def merge_dicts(*dict_args):
         result.update(dictionary)
     return result
 
+MODE = app.config['MODE']
+
 # import all the api endpoints.
 import api.endpoints
