@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, VIEW_MODE
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
 import datetime
 import simplejson as json
 import traceback
