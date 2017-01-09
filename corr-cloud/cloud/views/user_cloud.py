@@ -11,7 +11,7 @@ from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
 from flask.ext.api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, API_MODE, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE
 import datetime
 import simplejson as json
 import traceback
