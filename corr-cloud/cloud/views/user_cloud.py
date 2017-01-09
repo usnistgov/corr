@@ -635,7 +635,7 @@ def user_picture(hash_session):
                 elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        picture_buffer = storage_manager.web_get_file('{0}:{2}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
