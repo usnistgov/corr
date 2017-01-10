@@ -60,11 +60,11 @@ def diff_create(hash_session):
                             diff.save()
                             return cloud_response(201, 'Diff successfully created.', "The diff was created.")
                         else:
-                            return cloud_response(400, 'Diff not created.', "Both record from and to have to exist.")
+                            return fk.Response('Both record from and to have to exist.', status.HTTP_404_NOT_FOUND)
                     except:
-                        return cloud_response(500, 'diff not created.', str(traceback.print_exc()))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -72,7 +72,7 @@ def diff_create(hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def diff_remove(hash_session, diff_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/remove/<diff_id>')
-    if fk.request.method == 'DELETE':
+    if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is not None:
@@ -81,18 +81,19 @@ def diff_remove(hash_session, diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
+                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
                 if diff.sender == current_user or diff.targeted == current_user:
                     diff.delete()
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
     else:
-       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+       return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/comment/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -107,6 +108,7 @@ def diff_comment(hash_session, diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
+                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -139,14 +141,15 @@ def diff_view(hash_session, diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
+                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
                 return fk.Response(diff.to_json(), mimetype='application/json')
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/diff/edit/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -156,7 +159,7 @@ def diff_edit(hash_session, diff_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/edit/<diff_id>')
@@ -164,47 +167,35 @@ def diff_edit(hash_session, diff_id):
             except:
                 print(str(traceback.print_exc()))
             if diff is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
-                    if diff.sender == current_user:
-                        try:
-                            method = data.get("method", diff.method)
-                            proposition = data.get("proposition", diff.proposition)
-                            d_status = data.get("status", diff.status)
-                            if proposition != diff.proposition or method != diff.method:
-                                if diff.status == "agreed" or diff.status == "denied":
-                                    diff.status = "altered"
-                            if d_status != "":
-                                if diff.status == "agreed" or diff.status == "denied":
-                                    diff.status = "altered"
-                                else:
-                                    diff.status = d_status
-                            if proposition != "":
-                                diff.proposition = proposition
-                            if d_status != "":
+                    try:
+                        method = data.get("method", diff.method)
+                        proposition = data.get("proposition", diff.proposition)
+                        d_status = data.get("status", diff.status)
+                        if proposition != diff.proposition or method != diff.method:
+                            if diff.status == "agreed" or diff.status == "denied":
+                                diff.status = "altered"
+                        if d_status != "":
+                            if diff.status == "agreed" or diff.status == "denied":
+                                diff.status = "altered"
+                            else:
                                 diff.status = d_status
-                            diff.save()
-                            return fk.Response('Diff edited', status.HTTP_200_OK)
-                        except:
-                            print(str(traceback.print_exc()))
-                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
-                    elif diff.target == current_user:
-                        try:
-                            d_status = data.get("status", diff.status)
+                        if proposition != "":
+                            diff.proposition = proposition
+                        if d_status != "":
                             diff.status = d_status
-                            diff.save()
-                            return fk.Response('Diff edited', status.HTTP_200_OK)
-                        except:
-                            print(str(traceback.print_exc()))
-                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
-                    else:
-                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                        diff.save()
+                        return fk.Response('Diff edited', status.HTTP_200_OK)
+                    except:
+                        print(str(traceback.print_exc()))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -217,8 +208,8 @@ def public_diff_view(diff_id):
         except:
             print(str(traceback.print_exc()))
         if diff is None:
-            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
         else:
             return fk.Response(diff.to_json(), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)

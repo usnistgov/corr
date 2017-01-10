@@ -603,7 +603,7 @@ def app_create(hash_session):
     access_resp = access_manager.check_cloud(hash_session)
     current_user = access_resp[1]
     if current_user is None:
-        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
@@ -627,14 +627,15 @@ def app_create(hash_session):
                 logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                 app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
                 if not created:
+                    return fk.Response('Application already exists.', status.HTTP_403_FORBIDDEN)
                     return cloud_response(200, 'Application already exists', app.info())
                 else:
                     logStat(application=app)
                     return cloud_response(201, 'Application created', app.info())
             else:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('No content provided for this creation.', status.HTTP_204_NO_CONTENT)
         else:
-            return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -648,27 +649,27 @@ def app_show(app_id, hash_session):
         if fk.request.method == 'GET':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
-                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
             else:
                 return cloud_response(200, 'Application %s'%app.name, app.extended())
         else:
-            return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/delete/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/remove/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_delete(app_id, hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/delete/<app_id>')
+def app_remove(app_id, hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/remove/<app_id>')
     access_resp = access_manager.check_cloud(hash_session)
     current_user = access_resp[1]
     if current_user is None:
-        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
-        if fk.request.method == 'GET':
+        if fk.request.method in ['GET', 'DELETE']:
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
-                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
             elif app.developer != current_user:
-                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if app.logo.location == 'local':
                     storage_manager.storage_delete_file('logo', app.logo.location)
@@ -677,7 +678,7 @@ def app_delete(app_id, hash_session):
                 logStat(deleted=True, application=application)
                 return cloud_response(200, 'Deletion succeeded', 'The application %s was succesfully deleted.'%app.name)
         else:
-            return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -691,9 +692,9 @@ def app_update(app_id, hash_session):
         if fk.request.method == 'POST':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
-                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
             elif app.developer != current_user:
-                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -742,9 +743,9 @@ def app_update(app_id, hash_session):
                     app.save()
                     return cloud_response(201, 'Application updated', app.info())
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
         else:
-            return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')

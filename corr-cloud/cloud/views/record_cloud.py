@@ -25,7 +25,7 @@ def record_remove(hash_session, record_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/remove/<record_id>')
@@ -33,6 +33,7 @@ def record_remove(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
+                return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
@@ -42,9 +43,9 @@ def record_remove(hash_session, record_id):
                         record.delete()
                     return fk.redirect('{0}:{1}/dashboard/?view=records&project={2}'.format(VIEW_HOST, VIEW_PORT, str(record.project.id)))
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
-       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
+       return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/comment/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -117,16 +118,16 @@ def record_view(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
             else:
                 if record.project.owner == current_user:
                     return fk.Response(record.to_json(), mimetype='application/json')
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/create/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -136,7 +137,7 @@ def record_create(hash_session, project_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/create/<project_id>')
             try:
@@ -144,7 +145,7 @@ def record_create(hash_session, project_id):
             except:
                 print(str(traceback.print_exc()))
             if project is None:
-                return cloud_response(404, 'Record not created.', "The project referenced is unknown.")
+                return fk.Response('Unable to find the referenced project.', status.HTTP_404_NOT_FOUND)
             else:
                 if project.owner == current_user:
                     if fk.request.data:
@@ -165,13 +166,13 @@ def record_create(hash_session, project_id):
                                 return cloud_response(201, 'Record successfully created.', "The record was created.")
                             except:
                                 print(str(traceback.print_exc()))
-                                return cloud_response(500, 'record not created.', str(traceback.print_exc()))
+                                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
                 else:
-                    return cloud_response(401, 'Record not created.', "You are not this project owner.")
+                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/edit/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -181,7 +182,7 @@ def record_edit(hash_session, record_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
             
             try:
@@ -189,7 +190,7 @@ def record_edit(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
             else:
                 if record.project.owner == current_user:
                     if fk.request.data:
@@ -232,13 +233,13 @@ def record_edit(hash_session, record_id):
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
                                 print(str(traceback.print_exc()))
-                                return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -256,6 +257,7 @@ def pull_record(hash_session, record_id):
             except:
                 record = None
                 print(str(traceback.print_exc()))
+                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             if record is None:
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
