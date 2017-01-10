@@ -671,8 +671,8 @@ def app_remove(app_id, hash_session):
             elif app.developer != current_user:
                 return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
-                if app.logo.location == 'local':
-                    storage_manager.storage_delete_file('logo', app.logo.location)
+                # if app.logo.location == 'local':
+                #     storage_manager.storage_delete_file('logo', app.logo.location)
                 app.logo.delete()
                 app.delete()
                 logStat(deleted=True, application=application)

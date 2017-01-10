@@ -751,7 +751,7 @@ var Application = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/app/delete/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/app/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {

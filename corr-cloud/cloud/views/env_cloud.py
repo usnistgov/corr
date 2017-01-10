@@ -36,7 +36,7 @@ def env_remove(hash_session, env_id):
             if env is None:
                 return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
-                result = storage_manager.delete_env_files(env)
+                # result = storage_manager.delete_env_files(env)
                 if result:
                     logStat(deleted=True, env=env)
                     env.delete()
