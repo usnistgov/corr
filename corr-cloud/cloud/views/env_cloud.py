@@ -26,7 +26,7 @@ def env_remove(hash_session, env_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/remove/<env_id>')
@@ -34,7 +34,7 @@ def env_remove(hash_session, env_id):
             except:
                 print(str(traceback.print_exc()))
             if env is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
                 result = storage_manager.delete_env_files(env)
                 if result:
@@ -42,7 +42,7 @@ def env_remove(hash_session, env_id):
                     env.delete()
                 return fk.redirect('{0}:{1}/dashboard/?view=envs&project=all'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
+       return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 @app.route(CLOUD_URL + '/private/<hash_session>/env/view/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
@@ -59,13 +59,13 @@ def env_view(hash_session, env_id):
             except:
                 print(str(traceback.print_exc()))
             if env is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
                 return fk.Response(env.to_json(), mimetype='application/json')
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/env/create/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -83,7 +83,7 @@ def env_create(hash_session, record_id):
             except:
                 print(str(traceback.print_exc()))
             if record is None:
-                return cloud_response(404, 'Environment not created.', "The record referenced is unknown.")
+                return fk.Response('Unable to find the referenced record.', status.HTTP_404_NOT_FOUND)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -113,9 +113,9 @@ def env_create(hash_session, record_id):
                         return cloud_response(201, 'Environment successfully created.', project.history)
                     except:
                         print(str(traceback.print_exc()))
-                        return cloud_response(500, 'environment not created.', str(traceback.print_exc()))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -127,14 +127,14 @@ def env_edit(hash_session, env_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
                 env = EnvironmentModel.objects.with_id(env_id)
             except:
                 print(str(traceback.print_exc()))
             if env is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -147,8 +147,8 @@ def env_edit(hash_session, env_id):
                         return fk.Response('Environment edited', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)

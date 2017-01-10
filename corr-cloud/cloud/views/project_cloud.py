@@ -48,7 +48,7 @@ def project_view(hash_session, project_id):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/view/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
@@ -60,7 +60,7 @@ def project_view(hash_session, project_id):
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))           
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -73,16 +73,16 @@ def project_remove(hash_session, project_id):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/remove/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user):
-                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
                 storage_manager.delete_project_files(project)
                 project.delete()
                 logStat(deleted=True, project=project)
                 return fk.redirect('{0}:{1}/dashboard'.format(VIEW_HOST, VIEW_PORT))
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -165,13 +165,13 @@ def project_create(hash_session):
                         return cloud_response(409, 'Project not created.', "A project with this name already exists.")
                 except:
                     print(str(traceback.print_exc()))
-                    return cloud_response(500, 'Project not created.', str(traceback.print_exc()))
+                    return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                return fk.Response('Nothing to create from', status.HTTP_200_OK)
+                return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -184,7 +184,7 @@ def project_edit(hash_session, project_id):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user):
-                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -217,13 +217,13 @@ def project_edit(hash_session, project_id):
                         return fk.Response('Project updated', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.redirect('{0}:{1}/error/?code=503'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return fk.Response('Nothing to update', status.HTTP_200_OK)
+                    return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
         else:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))       
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
