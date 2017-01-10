@@ -781,7 +781,7 @@ var Diff = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/diff/edit/"+self._id);
-        var request = { 'method':method, 'proposition': proposition, 'status': status};
+        var request = { 'method': method, 'proposition': proposition, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
