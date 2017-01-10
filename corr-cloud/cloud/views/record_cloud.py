@@ -123,9 +123,9 @@ def record_view(hash_session, record_id):
                 if record.project.owner == current_user:
                     return fk.Response(record.to_json(), mimetype='application/json')
                 else:
-                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
+                    return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
         else:
-            eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
+            return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -170,7 +170,7 @@ def record_create(hash_session, project_id):
                     else:
                         return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
                 else:
-                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
+                    return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -237,7 +237,7 @@ def record_edit(hash_session, record_id):
                     else:
                         return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
-                    eturn fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
+                    return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
