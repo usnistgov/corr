@@ -39,7 +39,7 @@ def env_remove(hash_session, env_id):
                 # result = storage_manager.delete_env_files(env)
                 # if result:
                 env.delete()
-                return fk.redirect('{0}:{1}/dashboard/?view=envs&project=all'.format(VIEW_HOST, VIEW_PORT))
+                return cloud_response(200, 'Deletion succeeded', 'The environment %s was succesfully deleted.'%env_id)
     else:
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 

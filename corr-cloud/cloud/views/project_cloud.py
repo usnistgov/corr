@@ -78,7 +78,7 @@ def project_remove(hash_session, project_id):
                 storage_manager.delete_project_files(project)
                 project.delete()
                 logStat(deleted=True, project=project)
-                return fk.redirect('{0}:{1}/dashboard'.format(VIEW_HOST, VIEW_PORT))
+                return cloud_response(200, 'Deletion succeeded', 'The project %s was succesfully deleted.'%project_id)
         else:
             return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
     else:
