@@ -41,7 +41,7 @@ def record_remove(hash_session, record_id):
                     if result:
                         logStat(deleted=True, record=record)
                         record.delete()
-                    return fk.redirect('{0}:{1}/dashboard/?view=records&project={2}'.format(VIEW_HOST, VIEW_PORT, str(record.project.id)))
+                    return cloud_response(200, 'Deletion succeeded', 'The record %s was succesfully deleted.'%record_id)
                 else:
                     return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
     else:
