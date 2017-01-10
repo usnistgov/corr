@@ -180,7 +180,7 @@ def diff_edit(hash_session, diff_id):
                             if diff.status == "agreed" or diff.status == "denied":
                                 diff.status = "altered"
                         if d_method != "":
-                            diff.metod = d_method
+                            diff.method = d_method
                         if proposition != "":
                             diff.proposition = proposition
                         if d_status != "":

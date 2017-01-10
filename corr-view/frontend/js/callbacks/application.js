@@ -32,6 +32,7 @@ function appRemove(app_name, app_id){
 // Application remove agreement callback
 function appRemoveAgree(app_id){
     console.log("in appRemoveAgree!");
+    console.log("App id: "+app_id);
     var app = new Application(app_id);
     app.trash();
     window.location.reload();
