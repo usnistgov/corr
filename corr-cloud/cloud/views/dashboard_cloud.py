@@ -665,17 +665,17 @@ def app_remove(app_id, hash_session):
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
         if fk.request.method in ['GET', 'DELETE']:
-            app = ApplicationModel.objects.with_id(app_id)
-            if app == None:
+            appli = ApplicationModel.objects.with_id(app_id)
+            if appli == None:
                 return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
-            elif app.developer != current_user:
+            elif appli.developer != current_user:
                 return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
                 # if app.logo.location == 'local':
                 #     storage_manager.storage_delete_file('logo', app.logo.location)
                 # app.logo.delete()
-                app.delete()
-                logStat(deleted=True, application=application)
+                appli.delete()
+                logStat(deleted=True, application=appli)
                 return cloud_response(200, 'Deletion succeeded', 'The application %s was succesfully deleted.'%app.name)
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
