@@ -26,7 +26,7 @@ function appSave(app_id){
 
 // Application remove callback
 function appRemove(app_name, app_id){
-    Materialize.toast("<span>Delete "+app_name+"</span><a class=\"btn light-blue\" href=\""+config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/app/remove/"+app_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+app_name+"</span><a class=\"btn light-blue\" onclick='appRemoveAgree(\""+app_id+"\");'>Confirm</a>", 5000);
 }
 
 // Application remove agreement callback

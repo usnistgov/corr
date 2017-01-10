@@ -87,7 +87,7 @@ def diff_remove(hash_session, diff_id):
             else:
                 if diff.sender == current_user or diff.targeted == current_user:
                     diff.delete()
-                    return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
+                    return cloud_response(200, 'Deletion succeeded', 'The diff %s was succesfully deleted.'%diff_id)
                 else:
                     return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -183,6 +183,8 @@ def diff_edit(hash_session, diff_id):
                                 diff.status = "altered"
                             else:
                                 diff.status = d_status
+                        if method != "":
+                            diff.proposition = method
                         if proposition != "":
                             diff.proposition = proposition
                         if d_status != "":

@@ -22,5 +22,14 @@ function envSave(env_id){
 // Env remove callback
 function envRemove(env_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
-    Materialize.toast("<span>Delete "+env_id+"</span><a class=\"btn light-blue\" href=\""+config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/env/remove/"+env_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+env_id+"</span><a class=\"btn light-blue\" onclick='envRemoveAgree(\""+env_id+"\");'>Confirm</a>", 5000);
+}
+
+// Env remove agreement callback
+function envRemoveAgree(env_id){
+    console.log("in envRemoveAgree!");
+    console.log('Cookie session value: '+ Cookies.get('session'));
+    var env = new Environment(env_id);
+    env.trash();
+    window.location.reload();
 }

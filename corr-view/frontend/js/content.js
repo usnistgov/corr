@@ -777,11 +777,11 @@ var Diff = function (_id){
     // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
-    this.save = function(method, description, status) {
+    this.save = function(method, proposition, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/diff/edit/"+self._id);
-        var request = { 'method':method, 'description': description, 'status': status};
+        var request = { 'method':method, 'proposition': proposition, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
