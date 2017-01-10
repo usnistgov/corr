@@ -38,6 +38,7 @@ def env_remove(hash_session, env_id):
             else:
                 # result = storage_manager.delete_env_files(env)
                 # if result:
+                # implement project history en removal: project.history.append(str(env.id))
                 env.delete()
                 return cloud_response(200, 'Deletion succeeded', 'The environment %s was succesfully deleted.'%env_id)
     else:
