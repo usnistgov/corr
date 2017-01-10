@@ -645,7 +645,7 @@ var Record = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/record/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/record/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -698,7 +698,7 @@ var Project = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/project/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -751,7 +751,7 @@ var Application = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/dashboard/app/delete/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/app/delete/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -804,7 +804,7 @@ var Diff = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/diff/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/diff/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -857,7 +857,7 @@ var Environment = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("DELETE", url+"/private/"+Cookies.get('session')+"/env/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/env/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
