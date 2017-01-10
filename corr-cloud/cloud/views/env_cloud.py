@@ -37,9 +37,9 @@ def env_remove(hash_session, env_id):
                 return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
                 # result = storage_manager.delete_env_files(env)
-                if result:
-                    logStat(deleted=True, env=env)
-                    env.delete()
+                # if result:
+                logStat(deleted=True, env=env)
+                env.delete()
                 return fk.redirect('{0}:{1}/dashboard/?view=envs&project=all'.format(VIEW_HOST, VIEW_PORT))
     else:
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)

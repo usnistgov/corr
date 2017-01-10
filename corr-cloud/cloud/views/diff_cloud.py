@@ -87,6 +87,7 @@ def diff_remove(hash_session, diff_id):
             else:
                 if diff.sender == current_user or diff.targeted == current_user:
                     diff.delete()
+                    logStat(deleted=True, diff=diff)
                     return cloud_response(200, 'Deletion succeeded', 'The diff %s was succesfully deleted.'%diff_id)
                 else:
                     return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
@@ -172,19 +173,14 @@ def diff_edit(hash_session, diff_id):
                 if fk.request.data:
                     data = json.loads(fk.request.data)
                     try:
-                        method = data.get("method", diff.method)
+                        d_method = data.get("method", diff.method)
                         proposition = data.get("proposition", diff.proposition)
                         d_status = data.get("status", diff.status)
-                        if proposition != diff.proposition or method != diff.method:
+                        if proposition != diff.proposition or d_method != diff.method:
                             if diff.status == "agreed" or diff.status == "denied":
                                 diff.status = "altered"
-                        if d_status != "":
-                            if diff.status == "agreed" or diff.status == "denied":
-                                diff.status = "altered"
-                            else:
-                                diff.status = d_status
-                        if method != "":
-                            diff.proposition = method
+                        if d_method != "":
+                            diff.proposition = d_method
                         if proposition != "":
                             diff.proposition = proposition
                         if d_status != "":

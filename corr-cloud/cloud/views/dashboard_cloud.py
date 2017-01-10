@@ -673,7 +673,7 @@ def app_remove(app_id, hash_session):
             else:
                 # if app.logo.location == 'local':
                 #     storage_manager.storage_delete_file('logo', app.logo.location)
-                app.logo.delete()
+                # app.logo.delete()
                 app.delete()
                 logStat(deleted=True, application=application)
                 return cloud_response(200, 'Deletion succeeded', 'The application %s was succesfully deleted.'%app.name)
