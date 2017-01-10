@@ -761,11 +761,11 @@ var Application = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
                 } else {
-                    config.error_modal('Record remove failed', xmlhttp.responseText);
+                    config.error_modal('Application remove failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
-                    console.log("Record remove failed");
+                    console.log("Application remove failed");
                 }
             }
         }
