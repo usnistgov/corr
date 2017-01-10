@@ -6,7 +6,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='"+picture+"' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -14,9 +14,9 @@ var renderer = {
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='user-email-"+object["id"]+"' type='text' value='"+object["email"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='user-about-"+object["id"]+"' type='text'>"+object["about"]+"</textarea></div></div>";
         content += "<div class='card-action center-align'>";
-        content += "<a onclick='config.error_modal(\"User apps view failed.\", \"User apps view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'><i class='mdi-navigation-apps cyan-text text-darken-2'></i> <span class='applications badge'>"+object["apps"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"User projects view failed.\", \"User projects view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"User records view failed.\", \"User records view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+object["records"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"User apps view failed.\", \"User apps view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'><i class='mdi-navigation-apps cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'></i> <span class='applications badge'>"+object["apps"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"User projects view failed.\", \"User projects view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"User records view failed.\", \"User records view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'></i> <span class='records badge'>"+object["records"]+"</span></a>";
         content += "</div>";
         content += "</div>";
         content += "</div>";
@@ -33,7 +33,7 @@ var renderer = {
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='config.error_modal(\"Application download failed.\", \"Application download not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
         content += "<a onclick='userViewModal(\""+object["developer"]["id"]+"\",\""+object["developer"]["profile"]["fname"]+"\""+",\""+object["developer"]["profile"]["lname"]+"\",\""+object["developer"]["profile"]["organisation"]+"\",\""+object["developer"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-delay='50' data-tooltip='"+object["developer-name"]+"'><i class='mdi-social-person' data-position='bottom'></i></a>";
-        content += "<a onclick='config.error_modal(\"Application details failed.\", \"Application details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"Application details failed.\", \"Application details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -41,9 +41,9 @@ var renderer = {
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+object["id"]+"' type='text' value='"+object["token"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+object["id"]+"' type='text'>"+object["about"]+"</textarea></div></div>";
         content += "<div class='card-action center-align'>";
-        content += "<a onclick='config.error_modal(\"Application users view failed.\", \"Application users view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'><i class='mdi-social-group-add cyan-text text-darken-2'></i> <span class='users badge'>"+object["users"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Application projects view failed.\", \"Application projects view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Application records view failed.\", \"Application records view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+object["records"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Application users view failed.\", \"Application users view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'><i class='mdi-social-group-add cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'></i> <span class='users badge'>"+object["users"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Application projects view failed.\", \"Application projects view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'></i> <span class='projects badge'>"+object["projects"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Application records view failed.\", \"Application records view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'></i> <span class='records badge'>"+object["records"]+"</span></a>";
         content += "</div>";
         content += "</div>";
         content += "</div>";
@@ -59,7 +59,7 @@ var renderer = {
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='userViewModal(\""+object["owner"]["id"]+"\",\""+object["owner"]["profile"]["fname"]+"\""+",\""+object["owner"]["profile"]["lname"]+"\",\""+object["owner"]["profile"]["organisation"]+"\",\""+object["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'><i class='mdi-social-person'></i></a>";
-        content += "<a onclick='config.error_modal(\"Project details failed\", \"<span>Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"Project details failed\", \"<span>Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -86,7 +86,7 @@ var renderer = {
         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='projectViewModal(\""+object["head"]["project"]["name"]+"\",\""+object["head"]["project"]["tags"]+"\",\""+object["head"]["project"]["description"]+"\",\""+object["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";
         content += "<a onclick=\"space.pull('"+object["head"]["project"]["id"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
-        content += "<a onclick='config.error_modal(\"Record details failed.\", \"Record details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"Record details failed.\", \"Record details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["head"]["created"]+"</p>";
@@ -111,7 +111,7 @@ var renderer = {
         content += "<div class='card-content'>";
         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick=\"space.diff_pull('"+object["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
-        content += "<a onclick='config.error_modal(\"Diff details failed.\", \"Diff details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"Diff details failed.\", \"Diff details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -124,9 +124,9 @@ var renderer = {
         var record_from = object["from"];
         var record_to = object["to"];
 
-        content += "<a onclick='recordViewModal(\""+record_from["head"]["id"]+"\",\""+record_from["head"]["project-name"]+"\",\""+record_from["head"]["tags"]+"\",\""+record_from["head"]["rationels"]+"\",\""+record_from["head"]["status"]+"\");' class='valign left'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+record_from["head"]["id"].substring(0,4)+"..."+record_from["head"]["id"].substring(19,23)+"</span></a>";
-        content += "<a onclick='recordViewModal(\""+record_to["head"]["id"]+"\",\""+record_to["head"]["project-name"]+"\",\""+record_to["head"]["tags"]+"\",\""+record_to["head"]["rationels"]+"\",\""+record_to["head"]["status"]+"\");' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i><span class='to badge'>"+record_to["head"]["id"].substring(0,4)+"..."+record_to["head"]["id"].substring(19,23)+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Diff comments view failed.\", \"Diff comments view not implemented yet!\");' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
+        content += "<a onclick='recordViewModal(\""+record_from["head"]["id"]+"\",\""+record_from["head"]["project-name"]+"\",\""+record_from["head"]["tags"]+"\",\""+record_from["head"]["rationels"]+"\",\""+record_from["head"]["status"]+"\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='record from'><i class='mdi-file-cloud-download cyan-text text-darken-2'></i><span class='from badge'>"+record_from["head"]["id"].substring(0,4)+"..."+record_from["head"]["id"].substring(19,23)+"</span></a>";
+        content += "<a onclick='recordViewModal(\""+record_to["head"]["id"]+"\",\""+record_to["head"]["project-name"]+"\",\""+record_to["head"]["tags"]+"\",\""+record_to["head"]["rationels"]+"\",\""+record_to["head"]["status"]+"\");' class='valign'><i class='mdi-file-cloud-upload cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='record to'></i><span class='to badge'>"+record_to["head"]["id"].substring(0,4)+"..."+record_to["head"]["id"].substring(19,23)+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Diff comments view failed.\", \"Diff comments view not implemented yet!\");' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='comments'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
 
         content += "</div>";
         content += "</div>";                
@@ -142,7 +142,7 @@ var renderer = {
         content += "<div class='card-content'>";
         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='config.error_modal(\"Environment download failed.\", \"Environment download not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped disabled' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
-        content += "<a onclick='config.error_modal(\"Environment details failed.\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled'><i class='mdi-action-visibility tooltipped' data-position='top' data-delay='50' data-tooltip='details'></i></a>";
+        content += "<a onclick='config.error_modal(\"Environment details failed.\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -156,9 +156,9 @@ var renderer = {
 
         content += "<div class='card-action center-align'>";
 
-        content += "<a onclick='config.error_modal(\"Env resources view failed.\", \"Env resources view not implemented yet!\");' class='valign left'><i class='mdi-action-view-list cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Env comments view failed.\", \"Env comments view not implemented yet!\");' class='valign right'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Env bundle view failed.\", \"Env bundle view not implemented yet!\");' class='valign'><i class='mdi-editor-insert-drive-file cyan-text text-darken-2'></i><span class='to badge'>"+object["bundle"].substring(0,4)+"..."+object["bundle"].substring(19,23)+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Env resources view failed.\", \"Env resources view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='resources'><i class='mdi-action-view-list cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Env comments view failed.\", \"Env comments view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='comments'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Env bundle view failed.\", \"Env bundle view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='bundle'><i class='mdi-editor-insert-drive-file cyan-text text-darken-2'></i><span class='to badge'>"+object["bundle"].substring(0,4)+"..."+object["bundle"].substring(19,23)+"</span></a>";
 
         content += "</div>";
         content += "</div>";                

@@ -127,7 +127,7 @@ class RecordModel(db.Document):
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
 
         if '0:00' in str(self.duration):
-            data['head']['duration'] = 'few secondes ago.'
+            data['head']['duration'] = 'few secondes'
         data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)
