@@ -38,7 +38,6 @@ def env_remove(hash_session, env_id):
             else:
                 # result = storage_manager.delete_env_files(env)
                 # if result:
-                logStat(deleted=True, env=env)
                 env.delete()
                 return fk.redirect('{0}:{1}/dashboard/?view=envs&project=all'.format(VIEW_HOST, VIEW_PORT))
     else:
