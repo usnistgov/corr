@@ -782,6 +782,7 @@ var Diff = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/diff/edit/"+self._id);
         var request = { 'method': method, 'proposition': proposition, 'status': status};
+        console.log(request);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
@@ -790,7 +791,7 @@ var Diff = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
                 } else {
                     config.error_modal('Diff update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
