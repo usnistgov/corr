@@ -34,5 +34,4 @@ function projectRemoveAgree(project_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     var project = new Project(project_id);
     project.trash();
-    window.location.reload();
 }

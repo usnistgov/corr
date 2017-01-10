@@ -33,5 +33,4 @@ function diffRemoveAgree(diff_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     var diff = new Diff(diff_id);
     diff.trash();
-    window.location.reload();
 }
