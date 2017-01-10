@@ -25,7 +25,7 @@ function projectSave(project_id){
 // Project remove callback
 function projectRemove(project_name, project_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
-    Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\""+config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
 }
 
 // Project remove agreement callback

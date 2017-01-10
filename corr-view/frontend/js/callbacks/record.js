@@ -30,7 +30,7 @@ function recordSave(record_id){
 // Record remove callback
 function recordRemove(record_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
-    Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\""+config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
 }
 
 function recordSelect(record_id){
