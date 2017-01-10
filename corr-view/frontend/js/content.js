@@ -750,9 +750,9 @@ var Application = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        console.log(url+"/private/"+Cookies.get('session')+"/dashboard/app/remove/"+self._id);
+        console.log(url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/remove/"+self._id);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/app/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/remove/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -761,7 +761,7 @@ var Application = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    // window.location.reload();
+                    window.location.reload();
                 } else {
                     config.error_modal('Application remove failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);

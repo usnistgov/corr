@@ -31,5 +31,4 @@ function envRemoveAgree(env_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     var env = new Environment(env_id);
     env.trash();
-    window.location.reload();
 }

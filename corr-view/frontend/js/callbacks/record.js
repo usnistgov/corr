@@ -39,7 +39,6 @@ function recordRemoveAgree(record_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     var record = new Record(record_id);
     record.trash();
-    window.location.reload();
 }
 
 function recordSelect(record_id){
