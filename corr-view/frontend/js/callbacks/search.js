@@ -8,7 +8,6 @@ function processSearch()
     var recordsQ = document.getElementById("exclude-records").checked;
     var diffsQ = document.getElementById("exclude-diffs").checked;
     var envsQ = document.getElementById("exclude-envs").checked;
-    Materialize.toast("<span>Exclude Users: "+usersQ+" Exclude Apps: "+applicationsQ+" Exclude Projects: "+projectsQ+" Exclude Records: "+recordsQ+" Exclude Diffs: "+diffsQ+" Exclude Envs: "+envsQ+" </span>", 5000);
     space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ, envsQ);
 }
 

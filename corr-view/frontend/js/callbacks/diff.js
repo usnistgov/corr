@@ -24,7 +24,7 @@ function diffSave(diff_id){
 
 // Diff remove callback
 function diffRemove(diff_id){
-    Materialize.toast("<span>Delete "+diff_id+"</span><a class=\"btn light-blue\" href=\""+config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/diff/remove/"+diff_id+"\">Confirm</a>", 5000);
+    Materialize.toast("<span>Delete "+diff_id+"</span><a class=\"btn light-blue\" onclick='diffRemoveAgree(\""+diff_id+"\");'>Confirm</a>", 5000);
 }
 
 // Diff remove agreement callback
