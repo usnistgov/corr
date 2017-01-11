@@ -492,7 +492,7 @@ var user = {
                     reader.readAsText(file2upload.files[0]);
                 }else{
                     console.log("There is no file to upload!");
-                    Materialize.toast('<span>There is no file to upload</span>', 3000);
+                    config.error_modal('Upload record failed', 'There is no file to upload</span>');
                 }
             }else{
                 var file2upload = document.getElementById("upload-file");
