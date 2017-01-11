@@ -492,7 +492,7 @@ var user = {
                     reader.readAsText(file2upload.files[0]);
                 }else{
                     console.log("There is no file to upload!");
-                    config.error_modal('Upload record failed', 'There is no file to upload</span>');
+                    config.error_modal('Upload record failed', 'There is no file to upload');
                 }
             }else{
                 var file2upload = document.getElementById("upload-file");
