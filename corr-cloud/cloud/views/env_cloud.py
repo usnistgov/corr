@@ -43,6 +43,7 @@ def env_remove(hash_session, env_id):
                 for project in ProjectModel.objects(owner=current_user):
                     try:
                         project.history.remove(str(env_id))
+                        project.save()
                     except:
                         pass
                 return cloud_response(200, 'Deletion succeeded', 'The environment %s was succesfully deleted.'%env_id)
