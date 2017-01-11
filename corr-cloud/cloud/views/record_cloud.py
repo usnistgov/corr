@@ -37,10 +37,9 @@ def record_remove(hash_session, record_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
-                    result = storage_manager.delete_record_files(record, logStat)
-                    if result:
-                        logStat(deleted=True, record=record)
-                        record.delete()
+                    storage_manager.delete_record_files(record, logStat)
+                    logStat(deleted=True, record=record)
+                    record.delete()
                     return cloud_response(200, 'Deletion succeeded', 'The record %s was succesfully deleted.'%record_id)
                 else:
                     return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
