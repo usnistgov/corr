@@ -162,7 +162,7 @@ def project_create(hash_session):
                         project.save()
                         return cloud_response(201, 'Project successfully created.', "The project was created.")
                     else:
-                        return cloud_response(409, 'Project not created.', "A project with this name already exists.")
+                        return fk.Response('A project with this name already exists.', status.HTTP_403_FORBIDDEN)
                 except:
                     print(str(traceback.print_exc()))
                     return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)

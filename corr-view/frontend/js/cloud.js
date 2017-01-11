@@ -435,15 +435,30 @@ var user = {
                             console.log('Cookie session value: '+ Cookies.get('session'));
                             var request = null;
                             if(uplpad_type == "json"){
-                                request = JSON.parse(file_content);
-                                console.log("Json Content: "+request);
+                                try {
+                                    request = JSON.parse(file_content);
+                                    console.log("Json Content: "+request);
+                                }
+                                catch(err){
+                                    config.error_modal('Upload record failed', err.message);
+                                }
                             }else if(uplpad_type == "xml"){
                                 var x2js = new X2JS();
-                                request = x2js.xml_str2json(file_content);
-                                console.log("Xml Content: "+request);
+                                try {
+                                    request = x2js.xml_str2json(file_content);
+                                    console.log("Xml Content: "+request);
+                                }
+                                catch(err){
+                                    config.error_modal('Upload record failed', err.message);
+                                }
                             }else if(uplpad_type == "yaml"){
-                                request = YAML.parse(file_content);
-                                console.log("Yaml Content: "+request);
+                                try {
+                                    request = YAML.parse(file_content);
+                                    console.log("Yaml Content: "+request);
+                                }
+                                catch(err){
+                                    config.error_modal('Upload record failed', err.message);
+                                }
                             }else{
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
                                 // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
