@@ -110,7 +110,7 @@ class StorageManager:
         else:
             return [False, "file meta data does not exist or file content is empty."]
 
-    def agent_delete(self, group, path):
+    def agent_delete(self, group, path, key):
         """Agent function that deletes a file in the storage.
             Returns:
                 Deletion status of file.
@@ -154,17 +154,17 @@ class StorageManager:
                         deleted = True
                         break
             elif self.config['type'] == 'filesystem':
-                found = self.agent_delete('bundle', self.storage_path)
+                found = self.agent_delete('bundle', self.storage_path, key)
                 if not found:
-                    found = self.agent_delete('file', self.storage_path)
+                    found = self.agent_delete('file', self.storage_path, key)
                 if not found:
-                    found = self.agent_delete('logo', self.storage_path)
+                    found = self.agent_delete('logo', self.storage_path, key)
                 if not found:
-                    found = self.agent_delete('output', self.storage_path)
+                    found = self.agent_delete('output', self.storage_path, key)
                 if not found:
-                    found = self.agent_delete('picture', self.storage_path)
+                    found = self.agent_delete('picture', self.storage_path, key)
                 if not found:
-                    found = self.agent_delete('resource', self.storage_path)
+                    found = self.agent_delete('resource', self.storage_path, key)
             if not deleted:
                 print("File not deleted")
         return deleted
