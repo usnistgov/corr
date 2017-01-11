@@ -40,7 +40,7 @@ def env_remove(hash_session, env_id):
                 # if result:
                 # implement project history en removal: project.history.append(str(env.id))
                 env.delete()
-                for project in ProjectModel.objects(user=current_user):
+                for project in ProjectModel.objects(owner=current_user):
                     try:
                         project.history.remove(str(env_id))
                     except:
