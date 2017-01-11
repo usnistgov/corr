@@ -624,14 +624,17 @@ def app_create(hash_session):
                 logo_location = 'remote'
                 logo_group = 'logo'
                 
-                logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
-                app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
-                if not created:
+                query_app = ApplicationModel.objects(developer=developer, name=name).first()
+                if query_app:
                     return fk.Response('Application already exists.', status.HTTP_403_FORBIDDEN)
-                    return cloud_response(200, 'Application already exists', app.info())
                 else:
-                    logStat(application=app)
-                    return cloud_response(201, 'Application created', app.info())
+                    logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                    app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
+                    if not created:
+                        return fk.Response('For some reason the application was not created. Try again later.', status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        logStat(application=app)
+                        return cloud_response(201, 'Application created', app.info())
             else:
                 return fk.Response('No content provided for this creation.', status.HTTP_204_NO_CONTENT)
         else:
