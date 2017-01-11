@@ -328,12 +328,14 @@ var user = {
                         window.location.reload();
                     }
                 } else {
+                    $('#app-add-modal').closeModal();
                     console.log(xmlhttp.responseText);
                     config.error_modal('Add app failed', xmlhttp.responseText);
                     // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
+            $('#app-add-modal').closeModal();
             config.error_modal('Add app failed', 'Name should not be empty.');
             // Materialize.toast('<span>Name should not be empty.</span>', 3000);
         }
@@ -368,12 +370,14 @@ var user = {
                         }
                     }
                 } else {
+                    $('#project-add-modal').closeModal();
                     console.log(xmlhttp.responseText);
                     config.error_modal('Add project failed', xmlhttp.responseText);
                     // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
+            $('#project-add-modal').closeModal();
             config.error_modal('Add project failed', 'Project name should not be empty.');
             // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }  
@@ -403,12 +407,14 @@ var user = {
                         window.location.reload();
                     }
                 } else {
+                    $('#record-add-modal').closeModal();
                     console.log(xmlhttp.responseText);
                     config.error_modal('Add record failed', xmlhttp.responseText);
                     // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
+            $('#record-add-modal').closeModal();
             config.error_modal('Add project failed', 'Project name should not be empty.');
             // Materialize.toast('<span>Project id should not be empty.</span>', 3000);
         }
@@ -428,6 +434,7 @@ var user = {
                         var file_content = this.result;
                         console.log(file_content);
                         if(file_content == ""){
+                            $('#record-add-modal').closeModal();
                             console.log("Upload file is empty!");
                             config.error_modal('Upload record failed', 'The file to upload cannot be empty.');
                             // Materialize.toast('<span>The file to upload is empty</span>', 3000);
@@ -440,6 +447,7 @@ var user = {
                                     console.log("Json Content: "+request);
                                 }
                                 catch(err){
+                                    $('#record-add-modal').closeModal();
                                     config.error_modal('Upload record failed', err.message);
                                 }
                             }else if(uplpad_type == "xml"){
@@ -449,6 +457,7 @@ var user = {
                                     console.log("Xml Content: "+request);
                                 }
                                 catch(err){
+                                    $('#record-add-modal').closeModal();
                                     config.error_modal('Upload record failed', err.message);
                                 }
                             }else if(uplpad_type == "yaml"){
@@ -457,9 +466,11 @@ var user = {
                                     console.log("Yaml Content: "+request);
                                 }
                                 catch(err){
+                                    $('#record-add-modal').closeModal();
                                     config.error_modal('Upload record failed', err.message);
                                 }
                             }else{
+                                $('#record-add-modal').closeModal();
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
                                 // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                             }
@@ -481,6 +492,7 @@ var user = {
                                             window.location.reload();
                                         }
                                     } else {
+                                        $('#record-add-modal').closeModal();
                                         console.log(xmlhttp.responseText);
                                         config.error_modal('Upload record failed', xmlhttp.responseText);
                                         // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
@@ -491,8 +503,9 @@ var user = {
                     }
                     reader.readAsText(file2upload.files[0]);
                 }else{
+                    $('#record-add-modal').closeModal();
                     console.log("There is no file to upload!");
-                    Materialize.toast('<span>There is no file to upload</span>', 3000);
+                    config.error_modal('Upload record failed', 'There is no file to upload.');
                 }
             }else{
                 var file2upload = document.getElementById("upload-file");
@@ -501,16 +514,19 @@ var user = {
                         console.log("file not empty");
                         user.upload_file(file2upload, upload_group, record_id);
                     }else{
+                        $('#record-add-modal').closeModal();
                         config.error_modal('Upload record failed', 'File should not be empty.');
                         // Materialize.toast('<span>File should not be empty.</span>', 3000);
                     }
                 }else{
+                    $('#record-add-modal').closeModal();
                     // Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
                     config.error_modal('Upload record failed', 'Env bundle upload not implemnted yet.');
                 }
             }
             
         }else{
+            $('#record-add-modal').closeModal();
             config.error_modal('Upload record failed', 'Record id should not be empty.');
             // Materialize.toast('<span>Record id should not be empty.</span>', 3000);
         }
@@ -543,12 +559,14 @@ var user = {
                         window.location.reload();
                     }
                 } else {
+                    $('#diff-add-modal').closeModal();
                     console.log(xmlhttp.responseText);
                     config.error_modal('Add diff failed', xmlhttp.responseText);
                     // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
+            $('#diff-add-modal').closeModal();
             config.error_modal('Add diff failed', 'Records from and to should be provided.');
             // Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
         }
@@ -578,12 +596,14 @@ var user = {
                         window.location.reload();
                     }
                 } else {
+                    $('#env-add-modal').closeModal();
                     console.log(xmlhttp.responseText);
                     config.error_modal('Add event failed', xmlhttp.responseText);
                     // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
+            $('#env-add-modal').closeModal();
             config.error_modal('Add event failed', 'Record should be provided.');
             // Materialize.toast('<span>Record should not be empty.</span>', 3000);
         }
