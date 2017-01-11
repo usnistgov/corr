@@ -3,6 +3,7 @@ from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
 from corrdb.common.models import RecordModel
+from corrdb.common.models import RecordBodyModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel
 from flask.ext.stormpath import user
