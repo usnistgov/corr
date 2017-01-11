@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, cloud_response, storage_manager, access_manager, data_pop, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
 import datetime
 import simplejson as json
 import traceback
@@ -197,8 +197,11 @@ def record_edit(hash_session, record_id):
                             data = json.loads(fk.request.data)
                             try:
                                 tags = data.get("tags", ','.join(record.tags))
+                                data_pop(data, 'tags')
                                 rationels = data.get("rationels", ','.join(record.rationels))
+                                data_pop(data, 'rationels')
                                 r_status = data.get("status", record.status)
+                                data_pop(data, 'status')
 
                                 record.tags = tags.split(',')
                                 record.rationels = rationels.split(',')
@@ -209,10 +212,15 @@ def record_edit(hash_session, record_id):
                                 if body:
                                     data = body
                                 system = data.get("system", record.system)
+                                data_pop(data, 'system')
                                 execution = data.get("execution", record.execution)
+                                data_pop(data, 'execution')
                                 inputs = data.get("inputs", record.inputs)
+                                data_pop(data, 'inputs')
                                 outputs = data.get("outputs", record.outputs)
+                                data_pop(data, 'outputs')
                                 dependencies = data.get("dependencies", record.dependencies)
+                                data_pop(data, 'dependencies')
 
                                 if not isinstance(inputs, list):
                                     inputs = [inputs]
@@ -229,6 +237,10 @@ def record_edit(hash_session, record_id):
                                 record.outputs = outputs
                                 record.dependencies = dependencies
                                 record.save()
+
+                                # Allow all the extra keys to go inside body.
+                                if len(data) != 0:
+                                    body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
 
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
