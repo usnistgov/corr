@@ -192,7 +192,7 @@ class StorageManager:
         for environment_id in project.history:
             _environment = EnvironmentModel.objects.with_id(environment_id)
             if _environment:
-                if _environment.bundle["scope"] == "local":
+                if _environment.bundle.scope == "local":
                     result = self.storage_delete_file('bundle', _environment.bundle.location)
                     if result:
                         logStat(deleted=True, bundle=_environment.bundle)
