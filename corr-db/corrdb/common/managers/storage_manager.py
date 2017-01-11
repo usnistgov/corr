@@ -195,11 +195,11 @@ class StorageManager:
                 if _environment.bundle and _environment.bundle.scope == "local":
                     result = self.storage_delete_file('bundle', _environment.bundle.location)
                     if result:
-                        logStat(deleted=True, bundle=_environment.bundle)
-                        logStat(deleted=True, environment=_environment)
+                        # logStat(deleted=True, bundle=_environment.bundle)
+                        # logStat(deleted=True, environment=_environment)
                         _environment.bundle.delete()
-                else:
-                    logStat(deleted=True, environment=_environment)
+                # else:
+                #     logStat(deleted=True, environment=_environment)
                 _environment.delete()
 
     def delete_record_files(self, record, logStat):
