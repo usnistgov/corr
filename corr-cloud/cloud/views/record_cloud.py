@@ -39,12 +39,16 @@ def record_remove(hash_session, record_id):
                 if record.project.owner == current_user:
                     storage_manager.delete_record_files(record, logStat)
                     logStat(deleted=True, record=record)
+                    env_id = None
+                    if record.environment:
+                        env_id = str(record.environment.id)
                     record.delete()
-                    try:
-                        record.project.history.remove(str(record.renvironment.id))
-                        record.project.save()
-                    except:
-                        pass
+                    if env_id:
+                        try:
+                            record.project.history.remove(env_id)
+                            record.project.save()
+                        except:
+                            pass
                     return cloud_response(200, 'Deletion succeeded', 'The record %s was succesfully deleted.'%record_id)
                 else:
                     return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
