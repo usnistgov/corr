@@ -111,10 +111,12 @@ def env_create(hash_session, record_id):
                         env.system = system
                         env.save()
                         project = record.project
-                        project.history.append(str(env.id))
-                        project.save()
+                        if record.environment:
+                            project.history.remove(str(record.environment.id))
                         record.environment = env
                         record.save()
+                        project.history.append(str(env.id))
+                        project.save()
                         return cloud_response(201, 'Environment successfully created.', project.history)
                     except:
                         print(str(traceback.print_exc()))
