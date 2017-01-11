@@ -510,7 +510,7 @@ def user_file_upload(hash_session, group, item_id):
                                     item.resources.append(str(_file.id))
                                 elif group == 'bundle':
                                     if item.storage != storage:
-                                        storage_manager.storage_delete_file('bundle',item.storage)
+                                        storage_manager.storage_delete_file('bundle', item.storage, logStat)
                                     item.encoding = encoding
                                     item.size = size
                                     item.storage = storage
@@ -521,7 +521,7 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'picture':
                                     if item.picture != None:
                                         if _file.storage != old_storage:
-                                            deleted = storage_manager.storage_delete_file('picture',old_storage)
+                                            deleted = storage_manager.storage_delete_file('picture',old_storage, logStat)
                                             if deleted:
                                                 logStat(deleted=True, file_obj=item.picture)
                                         else:
@@ -532,7 +532,7 @@ def user_file_upload(hash_session, group, item_id):
                                         item.picture = _file
                                 elif 'logo' in group:
                                     if item.logo.location != storage:
-                                        storage_manager.storage_delete_file('logo',item.logo.storage)
+                                        storage_manager.storage_delete_file('logo',item.logo.storage, logStat)
                                     if item != None:
                                         item.logo = _file
                                 elif 'resource' in group:

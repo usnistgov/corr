@@ -75,7 +75,7 @@ def project_remove(hash_session, project_id):
             if project ==  None or (project != None and project.owner != current_user):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
-                storage_manager.delete_project_files(project)
+                storage_manager.delete_project_files(project, logStat)
                 project.delete()
                 logStat(deleted=True, project=project)
                 return cloud_response(200, 'Deletion succeeded', 'The project %s was succesfully deleted.'%project_id)

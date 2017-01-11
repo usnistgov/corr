@@ -9,7 +9,6 @@ import datetime
 import requests
 import os
 import glob
-from .. import logStat
 
 class StorageManager:
     def __init__(self, app):
@@ -170,7 +169,7 @@ class StorageManager:
                 print("File not deleted")
         return deleted
 
-    def delete_project_files(self, project):
+    def delete_project_files(self, project, logStat):
         """Delete a project files.
         """
         from corrdb.common.models import FileModel
@@ -203,7 +202,7 @@ class StorageManager:
                     logStat(deleted=True, environment=_environment)
                 _environment.delete()
 
-    def delete_record_files(self, record):
+    def delete_record_files(self, record, logStat):
         """Delete a record files.
             Returns:
                 True if all files are deleted.
@@ -212,12 +211,12 @@ class StorageManager:
         final_result = True
         for _file_id in record.resources:
             _file = FileModel.objects.with_id(_file_id)
-            result = self.delete_record_file(_file)
+            result = self.delete_record_file(_file, logStat)
             if not result:
                 final_result = result
         return final_result
 
-    def delete_record_file(self, record_file):
+    def delete_record_file(self, record_file, logStat):
         """Delete a record file and log the stats.
             Returns:
                 Return of the storage_delete_file call.

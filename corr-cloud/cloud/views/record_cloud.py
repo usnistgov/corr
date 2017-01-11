@@ -37,7 +37,7 @@ def record_remove(hash_session, record_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record.project.owner == current_user:
-                    result = storage_manager.delete_record_files(record)
+                    result = storage_manager.delete_record_files(record, logStat)
                     if result:
                         logStat(deleted=True, record=record)
                         record.delete()
@@ -454,7 +454,7 @@ def file_remove(hash_session, file_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if record_file.record.project.owner == current_user:
-                    storage_manager.delete_record_file(record_file)
+                    storage_manager.delete_record_file(record_file, logStat)
                     return fk.Response('Record file removed', status.HTTP_200_OK)
                 else:
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
