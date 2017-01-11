@@ -40,6 +40,11 @@ def env_remove(hash_session, env_id):
                 # if result:
                 # implement project history en removal: project.history.append(str(env.id))
                 env.delete()
+                for project in ProjectModel.objects(user=current_user):
+                    try:
+                        project.history.remove(str(env_id))
+                    except:
+                        pass
                 return cloud_response(200, 'Deletion succeeded', 'The environment %s was succesfully deleted.'%env_id)
     else:
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
