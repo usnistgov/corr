@@ -9,7 +9,7 @@ import datetime
 import requests
 import os
 import glob
-from . import logStat
+from common import logStat
 
 class StorageManager:
     def __init__(self, app):
