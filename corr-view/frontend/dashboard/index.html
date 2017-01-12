@@ -516,18 +516,18 @@
             if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
                 dashboard.activity();
                 var space = new Space();
-                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
             }
             // Inject the applications dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "apps"){
                 dashboard.apps();
-                document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create application'><i class='mdi-content-add'></i></a>";
             }
             // Inject the projects dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "projects"){
                 dashboard.projects();
                 var space = new Space();
-                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
             }
             // Inject the records dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "records"){
