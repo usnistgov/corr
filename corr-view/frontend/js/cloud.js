@@ -458,6 +458,8 @@ var user = {
                                     console.log("Yaml Content: "+request);
                                     request = JSON.stringify(request);
                                     console.log("Yaml Content: "+request);
+                                    request = JSON.parse(file_content);
+                                    console.log("Yaml Content: "+request);
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
