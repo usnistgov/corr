@@ -454,6 +454,7 @@ var user = {
                             }else if(uplpad_type == "yaml"){
                                 try {
                                     // request = YAML.parse(file_content);
+                                    yaml = require('js-yaml');
                                     request = yaml.safeLoad(file_content).json;
                                     console.log("Yaml Content: "+request);
                                 }
