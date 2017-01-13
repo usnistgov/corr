@@ -235,7 +235,6 @@ var user = {
             }else {
                 window.location.replace("../error/?code=404");
             }
-            }
         } 
     },
     account: function() {
