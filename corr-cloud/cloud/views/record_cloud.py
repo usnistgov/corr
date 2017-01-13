@@ -204,65 +204,65 @@ def record_edit(hash_session, record_id):
                 if record.project.owner == current_user:
                     if fk.request.data:
                             data = json.loads(fk.request.data)
-                            # try:
-                            tags = data.get("tags", ','.join(record.tags))
-                            data_pop(data, 'tags')
-                            rationels = data.get("rationels", ','.join(record.rationels))
-                            data_pop(data, 'rationels')
-                            r_status = data.get("status", record.status)
-                            data_pop(data, 'status')
+                            try:
+                                tags = data.get("tags", ','.join(record.tags))
+                                data_pop(data, 'tags')
+                                rationels = data.get("rationels", ','.join(record.rationels))
+                                data_pop(data, 'rationels')
+                                r_status = data.get("status", record.status)
+                                data_pop(data, 'status')
 
-                            record.tags = tags.split(',')
-                            record.rationels = rationels.split(',')
-                            record.status = r_status
-                            record.save()
+                                record.tags = tags.split(',')
+                                record.rationels = rationels.split(',')
+                                record.status = r_status
+                                record.save()
 
-                            body = data.get("body", None)
-                            if body:
-                                data = body
-                            system = data.get("system", record.system)
-                            data_pop(data, 'system')
-                            execution = data.get("execution", record.execution)
-                            data_pop(data, 'execution')
-                            inputs = data.get("inputs", record.inputs)
-                            data_pop(data, 'inputs')
-                            outputs = data.get("outputs", record.outputs)
-                            data_pop(data, 'outputs')
-                            dependencies = data.get("dependencies", record.dependencies)
-                            data_pop(data, 'dependencies')
+                                body = data.get("body", None)
+                                if body:
+                                    data = body
+                                system = data.get("system", record.system)
+                                data_pop(data, 'system')
+                                execution = data.get("execution", record.execution)
+                                data_pop(data, 'execution')
+                                inputs = data.get("inputs", record.inputs)
+                                data_pop(data, 'inputs')
+                                outputs = data.get("outputs", record.outputs)
+                                data_pop(data, 'outputs')
+                                dependencies = data.get("dependencies", record.dependencies)
+                                data_pop(data, 'dependencies')
 
-                            if not isinstance(inputs, list):
-                                inputs = [inputs]
+                                if not isinstance(inputs, list):
+                                    inputs = [inputs]
 
-                            if not isinstance(outputs, list):
-                                outputs = [outputs]
+                                if not isinstance(outputs, list):
+                                    outputs = [outputs]
 
-                            if not isinstance(dependencies, list):
-                                dependencies = [dependencies]
+                                if not isinstance(dependencies, list):
+                                    dependencies = [dependencies]
 
-                            record.system = system
-                            record.execution = execution
-                            record.inputs = inputs
-                            record.outputs = outputs
-                            record.dependencies = dependencies
-                            record.save()
+                                record.system = system
+                                record.execution = execution
+                                record.inputs = inputs
+                                record.outputs = outputs
+                                record.dependencies = dependencies
+                                record.save()
 
-                            # Allow all the extra keys to go inside body.
-                            if len(data) != 0:
-                                body, created = RecordBodyModel.objects.get_or_create(head=record)
-                                if created:
-                                    body.data = data
-                                else:
-                                    already = body.data
-                                    for key, value in data.items():
-                                        already[key] = value
-                                    body.data = already
-                                body.save()
+                                # Allow all the extra keys to go inside body.
+                                if len(data) != 0:
+                                    body, created = RecordBodyModel.objects.get_or_create(head=record)
+                                    if created:
+                                        body.data = data
+                                    else:
+                                        already = body.data
+                                        for key, value in data.items():
+                                            already[key] = value
+                                        body.data = already
+                                    body.save()
 
-                            return fk.Response('Record edited', status.HTTP_200_OK)
-                            # except:
-                            #     print(str(traceback.print_exc()))
-                            #     return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                return fk.Response('Record edited', status.HTTP_200_OK)
+                            except:
+                                print(str(traceback.print_exc()))
+                                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
