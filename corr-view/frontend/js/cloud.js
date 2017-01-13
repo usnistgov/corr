@@ -454,7 +454,9 @@ var user = {
                             }else if(uplpad_type == "yaml"){
                                 try {
                                     // request = YAML.parse(file_content);
-                                    request = jsyaml.safeLoad(file_content).json;
+                                    request = jsyaml.safeLoad(file_content);
+                                    console.log("Yaml Content: "+request);
+                                    request = JSON.stringify(request);
                                     console.log("Yaml Content: "+request);
                                 }
                                 catch(err){
@@ -464,7 +466,7 @@ var user = {
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
                                 // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                             }
-                            if(request != null){
+                            if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
                                 var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
                                 xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
