@@ -688,7 +688,7 @@ def user_truested(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         user_model = access_resp[1]
         if user_model is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/trusted')
             version = 'N/A'
