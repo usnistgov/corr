@@ -103,8 +103,6 @@ var Space = function (){
                     var response = JSON.parse(xmlhttp.responseText);
                     this.dash_content = response;
                     document.getElementById("apps-list").innerHTML = "";
-                    var version = response["version"];
-                    console.log("Version: "+version);
                     for(var i = 0; i < response["content"]["apps"].length; i++){
                         app = response["content"]["apps"][i];
                         console.log(app);
@@ -176,7 +174,6 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("apps-list").innerHTML += content;
                     }
-                    document.getElementById("footer-version").innerHTML = version;
                 }else{
                     console.log("Cloud returned empty response!");
                 }

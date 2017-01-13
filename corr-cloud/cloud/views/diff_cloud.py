@@ -33,7 +33,7 @@ def diff_create(hash_session):
         access_resp = access_manager.check_cloud(hash_session)
         current_user = access_resp[1]
         if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/create')
             if fk.request.data:
