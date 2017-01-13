@@ -249,7 +249,15 @@ def record_edit(hash_session, record_id):
 
                                 # Allow all the extra keys to go inside body.
                                 if len(data) != 0:
-                                    body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
+                                    body, created = RecordBodyModel.objects.get_or_create(head=record)
+                                    if created:
+                                        body.data = data
+                                    else:
+                                        already = body.data
+                                        for key, value in data.items():
+                                            already[key] = value
+                                        body.data = already
+                                    body.save()
 
                                 return fk.Response('Record edited', status.HTTP_200_OK)
                             except:
