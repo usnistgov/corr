@@ -92,10 +92,10 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     if(where != "dashboard"){
-                        Cookies.set('session', 'none', { path: '' });
+                        Cookies.set('session', undefined, { path: '' });
                         window.location.replace("./");
                     }else{
-                        Cookies.set('session', 'none', { path: '/' });
+                        Cookies.set('session', undefined, { path: '/' });
                         window.location.replace("../");
                     }
                 }
