@@ -184,7 +184,7 @@ class StorageManager:
                     file_.delete()
 
         for record in project.records:
-            result = self.delete_record_files(record)
+            result = self.delete_record_files(record, logStat)
             if result:
                 logStat(deleted=True, record=record)
                 record.delete()
