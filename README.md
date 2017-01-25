@@ -13,13 +13,14 @@ Installation instructions are available at <a href="https://github.com/usnistgov
 <a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
 <a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
 <a href="">Panda</a>
+<a href="">CDE</a>
+<a href="">Panda</a>
 <a href="">ICE</a>
 <a href="">T2C2</a>
 <a href="">Taverna</a>
 <a href="">Kepler</a>
 <a href="">Galaxy</a>
 <a href="">Aiida</a>
-<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
 </strong></sup></p>
 
 <p align="center">

@@ -40,7 +40,7 @@ class AccessManager:
                 "given_name" : fname,
                 "middle_name" : mname,
                 "surname" : lname,
-            })
+            }, registration_workflow_enabled=True)
             return (_account, "")
         except Error as re:
             print('Message: %s' %re.message)
