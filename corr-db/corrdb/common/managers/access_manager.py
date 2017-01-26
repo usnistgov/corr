@@ -79,7 +79,9 @@ class AccessManager:
                 if self.type == 'stormpath':
                     failure = self.create_account(email, password, fname, lname, mname)[0] is None
                 if not failure:
-                    (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                    account = UserModel.objects(email=email).first()
+                    if account is None:
+                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                 if self.type == 'mongodb':
                     account.password = hash_pwd
                     account.save()

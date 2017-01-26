@@ -53,13 +53,14 @@ var user = {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
-                        var response = JSON.parse(xmlhttp.responseText);
+                        // var response = JSON.parse(xmlhttp.responseText);
                         // this.session = response['session'];
                         // console.log(this.session);
-                        Cookies.set('session', response['session'], { path: '' });
-                        console.log('Cookie session value: '+ Cookies.get('session'));
+                        // Cookies.set('session', response['session'], { path: '' });
+                        // console.log('Cookie session value: '+ Cookies.get('session'));
                         // window.location.replace("../?session="+this.session);
-                        window.location.reload();
+                        config.error_modal('Register successfull', xmlhttp.responseText);
+                        // window.location.reload();
                     }
                 } else {
                     var response = xmlhttp.responseText;

@@ -59,7 +59,8 @@ def user_register():
                     user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     user_model.retoken()
                     print("Session: %s"%user_model.session)
-                    return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    return fk.Response('Your account was successfully created. Please verify your email by clicking the link we just sent you.', status.HTTP_200_OK)
+                    # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
