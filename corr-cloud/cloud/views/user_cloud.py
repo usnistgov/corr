@@ -59,7 +59,7 @@ def user_register():
                     user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     user_model.retoken()
                     print("Session: %s"%user_model.session)
-                    return fk.Response('Your account was successfully created. Please verify your email by clicking the link we just sent you.', status.HTTP_200_OK)
+                    return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
                     # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -128,7 +128,7 @@ def user_login():
                 try:
                     account = access_manager.login(email, password)
                     if account == None:
-                        return fk.Response('Unknown email or password. Maybe you should register.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
