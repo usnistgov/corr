@@ -65,8 +65,8 @@ def merge_dicts(*dict_args):
     return result
 
 MODE = app.config['MODE']
-ACC_SEC = app.confog['SECURITY_MANAGEMENT']['account']
-CNT_SEC = app.confog['SECURITY_MANAGEMENT']['content']
+ACC_SEC = app.config['SECURITY_MANAGEMENT']['account']
+CNT_SEC = app.config['SECURITY_MANAGEMENT']['content']
 
 # import all the api endpoints.
 import api.endpoints

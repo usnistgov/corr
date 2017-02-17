@@ -120,8 +120,8 @@ VIEW_PORT = app.config['VIEW_SETTINGS']['port']
 API_HOST = '{0}://{1}'.format(MODE, app.config['API_SETTINGS']['host'])
 API_PORT = app.config['API_SETTINGS']['port']
 
-ACC_SEC = app.confog['SECURITY_MANAGEMENT']['account']
-CNT_SEC = app.confog['SECURITY_MANAGEMENT']['content']
+ACC_SEC = app.config['SECURITY_MANAGEMENT']['account']
+CNT_SEC = app.config['SECURITY_MANAGEMENT']['content']
 
 from . import views
 from corrdb.common import models
