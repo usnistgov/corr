@@ -11,7 +11,7 @@ from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
 from flask.ext.api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -90,7 +90,7 @@ def user_password_reset():
 def user_password_change():
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/password/change')        
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -127,9 +127,15 @@ def user_login():
             else:
                 try:
                     account = access_manager.login(email, password)
+
                     if account == None:
                         return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    access = account.extend.get('access', 'verified')
+                    account.extend['access'] = access
+                    account.save()
+                    if access == 'unverified':
+                        return fk.Response('Your account is pending verification from the admin. We appologise for this convenience. For security reasons this instance requires account moderation.', status.HTTP_401_UNAUTHORIZED)
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
@@ -150,7 +156,7 @@ def user_login():
 def user_sync(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/sync')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -167,7 +173,7 @@ def user_sync(hash_session):
 def user_logout(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/logout')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
@@ -184,7 +190,7 @@ def user_logout(hash_session):
 def user_unregister(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/unregister')        
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
@@ -200,7 +206,7 @@ def user_unregister(hash_session):
 def user_dashboard(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/dashboard')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
@@ -286,7 +292,7 @@ def user_dashboard(hash_session):
 def user_update(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/update')  
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
@@ -332,7 +338,7 @@ def user_update(hash_session):
 def user_file_upload(hash_session, group, item_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -593,7 +599,7 @@ def public_version():
 def user_config(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -612,7 +618,7 @@ def user_config(hash_session):
 def user_picture(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/picture')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -686,7 +692,7 @@ def user_picture(hash_session):
 def user_truested(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/trusted')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
@@ -759,7 +765,7 @@ def user_home():
 def user_profile(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/profile')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -781,7 +787,7 @@ def user_profile(hash_session):
 def user_renew(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/renew')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

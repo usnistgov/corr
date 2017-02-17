@@ -5,7 +5,7 @@ from flask.ext.api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
-from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
+from api import app, storage_manager, access_manager, API_URL, ACC_SEC, CNT_SEC, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -40,7 +40,7 @@ def user_search(api_token, app_token, key_words):
             A list of results.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/search/<key_words>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -395,7 +395,7 @@ def user_status(api_token, app_token):
             A string of authorization access.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/status')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -417,7 +417,7 @@ def user_app_connectivity(api_token, app_token):
             A string of accessibility status.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/connectivity')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -440,7 +440,7 @@ def user_picture(api_token, app_token):
             the picture file buffer.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/picture')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -514,7 +514,7 @@ def user_home(api_token, app_token):
             The user home content.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/user/home')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -537,7 +537,7 @@ def user_user_profile_show(api_token, app_token):
             The user profile content.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/profile/show')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -567,7 +567,7 @@ def user_messages(api_token, app_token):
             The list of messages.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/messages')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -595,7 +595,7 @@ def user_message_create(api_token, app_token):
             The created message information.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/create')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -640,7 +640,7 @@ def user_message_show(api_token, app_token, message_id):
             Message full content.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/show/<message_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -669,7 +669,7 @@ def user_message_delete(api_token, app_token, message_id):
             Deletion confirmation.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/delete/<message_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -701,7 +701,7 @@ def user_message_update(api_token, app_token, message_id):
             New message info.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/message/update/<message_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -760,7 +760,7 @@ def user_files(api_token, app_token):
             List of user files.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/files')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -791,7 +791,7 @@ def user_file_upload(api_token, app_token, group, item_id):
             Return the info about the file.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1006,7 +1006,7 @@ def user_file_download(api_token, app_token, file_id):
             The file buffer.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/download/<file_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1076,7 +1076,7 @@ def user_file_create(api_token, app_token):
             The info about the file.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/create')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1137,7 +1137,7 @@ def user_file_show(api_token, app_token, file_id):
             Info of the file.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/show/<file_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1168,7 +1168,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
             Deletion confirmation.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1413,7 +1413,7 @@ def user_file_update(api_token, app_token, file_id):
             New file info.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/file/update/<file_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1474,7 +1474,7 @@ def user_projects(api_token, app_token):
             Projects list.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/projects')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1500,7 +1500,7 @@ def user_projects_clear(api_token, app_token):
             Deletion confirmation.
     """
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/projects/clear')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1525,7 +1525,7 @@ def user_envs_clear(api_token, app_token):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/envs/clear')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1555,7 +1555,7 @@ def user_project_comments(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/comments/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1592,7 +1592,7 @@ def user_project_create(api_token, app_token):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/create')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user == None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1675,7 +1675,7 @@ def user_project_records(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/records/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1710,7 +1710,7 @@ def user_project_show(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/show/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1740,7 +1740,7 @@ def user_project_logo(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/logo/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1808,7 +1808,7 @@ def user_project_delete(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/delete/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1841,7 +1841,7 @@ def user_project_update(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/update/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1924,7 +1924,7 @@ def user_project_download(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/download/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1959,7 +1959,7 @@ def user_project_envs(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/envs/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -1995,7 +1995,7 @@ def user_project_envs_head(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/envs/head')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2028,7 +2028,7 @@ def user_project_env_show(api_token, app_token, project_id, env_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2065,7 +2065,7 @@ def user_project_env_push(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/next/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2142,7 +2142,7 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2216,7 +2216,7 @@ def user_project_env_download(api_token, app_token, project_id, env_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2257,7 +2257,7 @@ def user_records_list(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/project/records/list/<project_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2288,7 +2288,7 @@ def user_records_clear(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/records/clear')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2317,7 +2317,7 @@ def user_record_create(api_token, app_token, project_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/create')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2413,7 +2413,7 @@ def user_record_show(api_token, app_token, record_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/show/<record_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2443,7 +2443,7 @@ def user_record_delete(api_token, app_token, record_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/delete/<record_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2476,7 +2476,7 @@ def user_record_update(api_token, app_token, record_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/update/<record_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2619,7 +2619,7 @@ def user_record_download(api_token, app_token, record_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/record/download/<record_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2653,7 +2653,7 @@ def user_diffs(api_token, app_token):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diffs')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2685,7 +2685,7 @@ def user_diff_create(api_token, app_token):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/create')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2738,7 +2738,7 @@ def user_diff_show(api_token, app_token, diff_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/show/<diff_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2768,7 +2768,7 @@ def user_diff_delete(api_token, app_token, diff_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/delete/<diff_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2803,7 +2803,7 @@ def user_diff_update(api_token, app_token, diff_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/diff/update/<diff_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
@@ -2880,7 +2880,7 @@ def user_resolve_item(api_token, app_token, item_id):
     """
 
     logTraffic(API_URL, endpoint='/private/<api_token>/<app_token>/resolve/<item_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     current_app = access_manager.check_app(app_token)
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')

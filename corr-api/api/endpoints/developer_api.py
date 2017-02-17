@@ -4,7 +4,7 @@ from flask.ext.api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
-from api import app, storage_manager, access_manager, API_URL, api_response
+from api import app, storage_manager, access_manager, API_URL, ACC_SEC, CNT_SEC, api_response
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import FileModel
@@ -20,7 +20,7 @@ import traceback
 @crossdomain(fk=fk, app=app, origin='*')
 def apps_get(api_token):
     logTraffic(API_URL, endpoint='/developer/<api_token>/apps')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         logAccess(API_URL,'api', '/developer/<api_token>/apps')
         print(current_user.group)
@@ -48,7 +48,7 @@ def apps_get(api_token):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_logo(api_token, app_id):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/logo/<app_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         logAccess(API_URL,'api', '/developer/<api_token>/app/logo/<app_id>')
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
@@ -108,7 +108,7 @@ def app_logo(api_token, app_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_access(api_token, app_id):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/access/<app_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
             logAccess(API_URL,'api', '/developer/<api_token>/app/access/<app_id>')
@@ -135,7 +135,7 @@ def app_access(api_token, app_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_search(api_token, app_name):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/search/<app_name>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
             logAccess(API_URL,'api', '/developer/<api_token>/app/search/<app_name>')

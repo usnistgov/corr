@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -22,7 +22,7 @@ import mimetypes
 def project_sync(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/sync/<project_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -45,7 +45,7 @@ def project_view(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/view/<project_id>')
         
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
@@ -67,7 +67,7 @@ def project_view(hash_session, project_id):
 def project_remove(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/remove/<project_id>')
     if fk.request.method in ['GET', 'DELETE']:
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/remove/<project_id>')
@@ -89,7 +89,7 @@ def project_remove(hash_session, project_id):
 def project_comment(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comment/<project_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comment/<project_id>')
@@ -118,7 +118,7 @@ def project_comment(hash_session, project_id):
 def project_comments(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comments/<project_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -137,7 +137,7 @@ def project_comments(hash_session, project_id):
 def project_create(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/create')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/create')
@@ -178,7 +178,7 @@ def project_create(hash_session):
 def project_edit(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/edit/<project_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/edit/<project_id>')
@@ -192,6 +192,7 @@ def project_edit(hash_session, project_id):
                         description = data.get("description", project.description)
                         goals = data.get("goals", project.goals)
                         group = data.get("group", project.group)
+                        access = data.get("access", project.access)
                         tags = data.get("tags", ','.join(project.tags))
                         environment = data.get("environment", {})
                         project.description = description
@@ -230,7 +231,7 @@ def project_edit(hash_session, project_id):
 def project_records(hash_session, project_name):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/record/<project_name>')   
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

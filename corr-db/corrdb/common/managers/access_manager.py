@@ -75,16 +75,19 @@ class AccessManager:
                 if _account != None:
                     account = UserModel.objects(email=email).first()
             if account is None:
-                failure = False
                 if self.type == 'stormpath':
                     failure = self.create_account(email, password, fname, lname, mname)[0] is None
-                if not failure:
                     account = UserModel.objects(email=email).first()
                     if account is None:
                         (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                    if failure:
+                        account.password = hash_pwd
+                        account.save()
                 if self.type == 'mongodb':
                     account.password = hash_pwd
                     account.save()
+                account.extend['access'] = 'unverified' # Pending admin verification.
+                account.save()
         return account
 
     def login(self, email, password):
@@ -203,7 +206,7 @@ class AccessManager:
             users = UserModel.objects()
         return users
 
-    def check_cloud(self, hash_session):
+    def check_cloud(self, hash_session, acc_sec=False, cnt_sec=False):
         """Check that a session is valid.
             Returns:
                 Tuple of Validation Boolean and the account instance.
@@ -219,20 +222,27 @@ class AccessManager:
             print("Allowance: {0}".format(allowance))
             # print "Connected_at: %s"%str(user_model.connected_at)
             if allowance == hash_session:
-                return True, account
+                if acc_sec and account.extend.get('access', 'verified') != 'verified':
+                    return False, account
+                else:
+                    return True, account
             else:
                 return False, account
             
-    def check_api(self, token):
+    def check_api(self, token, acc_sec=False, cnt_sec=False):
         from corrdb.common.models import UserModel
         """Get the user object instance from its api token.
             Returns:
                 The user object instance.
         """
         print([user.extended() for user in UserModel.objects()])
-        return UserModel.objects(api_token=token).first()
+        account = UserModel.objects(api_token=token).first()
+        if account.extend.get('access', 'verified') != 'verified':
+            return None
+        else:
+            return account
 
-    def check_app(self, token):
+    def check_app(self, token, acc_sec=False, cnt_sec=False):
         from corrdb.common.models import ApplicationModel
         """Get the application object instance from its api token.
             Returns:
@@ -243,6 +253,11 @@ class AccessManager:
         else:
             for application in ApplicationModel.objects():
                 print("{0} -- {1}.".format(str(application.developer.id), application.name))
-            return ApplicationModel.objects(app_token=token).first()
+            application = ApplicationModel.objects(app_token=token).first()
+            developer = application.developer
+            if developer.extend.get('access', 'verified') != 'verified':
+                return None
+            else:
+                return application
 
 

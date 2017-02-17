@@ -13,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -28,7 +28,7 @@ import mimetypes
 def private_search(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/search')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -168,7 +168,7 @@ def private_search(hash_session):
 def project_dashboard(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/projects')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -194,7 +194,7 @@ def project_dashboard(hash_session):
 def diffs_dashboard(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/diffs')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -231,7 +231,7 @@ def diffs_dashboard(hash_session, project_id):
 def dashboard_records(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/records/<project_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -260,7 +260,7 @@ def dashboard_records(hash_session, project_id):
 def dashboard_envs(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/envs/<project_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -292,7 +292,7 @@ def dashboard_envs(hash_session, project_id):
 def record_diff(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
@@ -328,7 +328,7 @@ def record_diff(hash_session, record_id):
 def reproducibility_assess(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
@@ -583,7 +583,7 @@ def traffic_cloud():
 @crossdomain(fk=fk, app=app, origin='*')
 def app_all(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/apps')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -601,7 +601,7 @@ def app_all(hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_create(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/create')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
@@ -645,7 +645,7 @@ def app_create(hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_show(app_id, hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/show/<app_id>')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -663,7 +663,7 @@ def app_show(app_id, hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_remove(app_id, hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/remove/<app_id>')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
@@ -688,7 +688,7 @@ def app_remove(app_id, hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_update(app_id, hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/update/<app_id>')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -755,7 +755,7 @@ def app_update(app_id, hash_session):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_logo(app_id, hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/logo/<app_id>')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

@@ -10,7 +10,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, data_pop, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, cloud_response, storage_manager, access_manager, data_pop, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -23,7 +23,7 @@ import mimetypes
 def record_remove(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/remove/<record_id>')     
     if fk.request.method in ['GET', 'DELETE']:
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
@@ -61,7 +61,7 @@ def record_remove(hash_session, record_id):
 def record_comment(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/comment/<record_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
@@ -96,7 +96,7 @@ def record_comment(hash_session, record_id):
 def record_comments(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/comments/<record_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
@@ -118,7 +118,7 @@ def record_comments(hash_session, record_id):
 def record_view(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/view/<record_id>')
     if fk.request.method == 'GET':
-        caccess_resp = access_manager.check_cloud(hash_session)
+        caccess_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
@@ -143,7 +143,7 @@ def record_view(hash_session, record_id):
 def record_create(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/create/<project_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
@@ -188,7 +188,7 @@ def record_create(hash_session, project_id):
 def record_edit(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/edit/<record_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
@@ -212,9 +212,13 @@ def record_edit(hash_session, record_id):
                                 r_status = data.get("status", record.status)
                                 data_pop(data, 'status')
 
+                                r_access = data.get("access", record.access)
+                                data_pop(data, 'access')
+
                                 record.tags = tags.split(',')
                                 record.rationels = rationels.split(',')
                                 record.status = r_status
+                                record.access = r_access
                                 record.save()
 
                                 body = data.get("body", None)
@@ -275,7 +279,7 @@ def record_edit(hash_session, record_id):
 def pull_record(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/pull/<record_id>')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -364,7 +368,7 @@ def public_pull_record(record_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def file_add(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/upload/<record_id>')
-    access_resp = access_manager.check_cloud(hash_session)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     user_model = access_resp[1]
     if user_model is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -428,7 +432,7 @@ def file_download(hash_session, file_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/download/<file_id>')
         
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
@@ -459,7 +463,7 @@ def file_download(hash_session, file_id):
 def file_remove(hash_session, file_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/file/remove/<file_id>')
     if fk.request.method == 'DELETE':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is not None:
             try:

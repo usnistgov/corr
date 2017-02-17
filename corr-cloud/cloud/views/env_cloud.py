@@ -10,7 +10,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -23,7 +23,7 @@ import mimetypes
 def env_remove(hash_session, env_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/remove/<env_id>')     
     if fk.request.method in ['GET', 'DELETE']:
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
@@ -56,7 +56,7 @@ def env_remove(hash_session, env_id):
 def env_view(hash_session, env_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/view/<env_id>')
     if fk.request.method == 'GET':
-        caccess_resp = access_manager.check_cloud(hash_session)
+        caccess_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
@@ -78,7 +78,7 @@ def env_view(hash_session, env_id):
 def env_create(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/create/<record_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -132,7 +132,7 @@ def env_create(hash_session, record_id):
 def env_edit(hash_session, env_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/edit/<env_id>')
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
