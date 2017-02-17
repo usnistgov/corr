@@ -61,3 +61,9 @@ function recordDeselect(record_id){
     var record_update = document.getElementById('select-record-'+record_id);
     record_update.innerHTML = "<a id='select-action' onclick='recordSelect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box-outline-blank'></i></a>";
 }
+
+function recordAccess(record_id){
+    var r_access = document.getElementById('record-access-'+record_id);
+    var record = new Record(record_id);
+    record.access(r_access.value);
+}

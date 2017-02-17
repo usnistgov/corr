@@ -22,6 +22,12 @@ function projectSave(project_id){
     project.save(tags.value, description.value, goals.value);
 }
 
+function projectAccess(project_id){
+    var p_access = document.getElementById('project-access-'+project_id);
+    var project = new Project(project_id);
+    project.access(p_access.value);
+}
+
 // Project remove callback
 function projectRemove(project_name, project_id){
     console.log('Cookie session value: '+ Cookies.get('session'));

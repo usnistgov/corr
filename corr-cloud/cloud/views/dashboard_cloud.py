@@ -42,18 +42,10 @@ def private_search(hash_session):
                     where = []
                     if "!all" in query:
                         where.append("all")
-                    if any(q.lower() in str(user.id) for q in query):
-                        where.append("id")
-                    if any(q.lower() in user.email.lower() for q in query):
-                        where.append("email")
-                    if any(q.lower() in profile.fname.lower() for q in query):
-                        where.append("fname")
-                    if any(q.lower() in profile.lname.lower() for q in query):
-                        where.append("lname")
-                    if any(q.lower() in profile.organisation.lower() for q in query):
-                        where.append("organisation")
-                    if any(q.lower() in profile.about.lower() for q in query):
-                        where.append("about")
+                    if any(q.lower() in str(user.extended()).lower() for q in query):
+                        where.append("selected")
+                    if any(q.lower() in str(profile.extended()).lower() for q in query):
+                        where.append("selected")
                     if len(where) != 0:
                         users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                 applications = []
@@ -61,102 +53,61 @@ def private_search(hash_session):
                     where = []
                     if "!all" in query:
                         where.append("all")
-                    if any(q.lower() in str(appli.id) for q in query):
-                        where.append("id")
-                    if any(q.lower() in appli.name.lower() for q in query):
-                        where.append("name")
-                    if any(q.lower() in appli.about.lower() for q in query):
-                        where.append("about")
+                    if any(q.lower() in str(appli.extended()).lower() for q in query):
+                        where.append("selected")
                     if len(where) != 0:
                         applications.append(appli.extended())
                 projects = []
                 records = []
+                envs = []
                 #scape the records issue.
                 for project in ProjectModel.objects():
                     print(project.name)
-                    if project.access == 'private' or project.access == 'public' or (project.access != 'public' and current_user == project.owner):
+                    if project.access == 'public' or current_user == project.owner:
                         where_project = []
                         if "!all" in query:
                             where_project.append("all")
-                        if any(q.lower() in str(project.id) for q in query):
-                            where_project.append("id")
-                        if any(q.lower() in project.name.lower() for q in query):
-                            where_project.append("name")
-                        if any(q.lower() in project.goals.lower() for q in query):
-                            where_project.append("goals")
-                        if any(q.lower() in project.description.lower() for q in query):
-                            where_project.append("description")
-                        if any(q.lower() in project.group.lower() for q in query):
-                            where_project.append("group")
+                        if any(q.lower() in str(project.extended()).lower() for q in query):
+                            where_project.append("selected")
 
                         if len(where_project) != 0:
                             projects.append(project.extended())
                         
                         for record in RecordModel.objects(project=project):
-                            if record.access == 'private' or record.access == 'public' or (record.project.access != 'public' and current_user == record.project.owner):
+                            if record.access == 'public' or current_user == record.project.owner:
                                 body = record.body
                                 where_record = []
+                                where_env = []
 
                                 if "!all" in query:
                                     where_record.append("all")
-                                if any(q.lower() in str(record.id) for q in query):
-                                    where_record.append("id")
-                                if record.label and any(q.lower() in record.label.lower() for q in query):
-                                    where_record.append("label")
-                                if record.system and any(q.lower() in str(json.dumps(record.system)).lower() for q in query):
-                                    where_record.append("system")
-                                if record.execution and any(q.lower() in str(json.dumps(record.execution)).lower() for q in query):
-                                    where_record.append("execution")
-                                if record.inputs and any(q.lower() in str(json.dumps(record.inputs)).lower() for q in query):
-                                    where_record.append("inputs")
-                                if record.outputs and any(q.lower() in str(json.dumps(record.outputs)).lower() for q in query):
-                                    where_record.append("outputs")
-                                if record.dependencies and any(q.lower() in str(json.dumps(record.dependencies)).lower() for q in query):
-                                    where_record.append("dependencies")
-                                if record.status and any(q.lower() in record.status.lower() for q in query):
-                                    where_record.append("status")
-                                # data contains so much info that most key words are bringing records too.
-                                # if any(q.lower() in str(json.dumps(body.data)).lower() for q in query):
-                                #     where_record.append("data")
+                                    where_env.append("all")
+
+                                if any(q.lower() in str(record.extended()).lower() for q in query):
+                                    where_record.append("selected")
+
                                 if len(where_record) != 0:
                                     records.append(json.loads(record.summary_json()))
 
+                                if record.environment:
+                                    if any(q.lower() in str(record.environment.extended()).lower() for q in query):
+                                        where_env.append("selected")
+
+                                    if len(where_env) != 0:
+                                        envs.append(record.environment.info())
+
                 diffs = []
                 for diff in DiffModel.objects():
-                    if (diff.record_from.access == 'private' or diff.record_to.access == 'private') or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or (diff.record_from.access != 'public' and current_user == diff.record_from.project.owner) or (diff.record_to.access != 'public' and current_user == diff.record_to.project.owner):
+                    if (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                         where = []
                         if "!all" in query:
                             where.append("all")
-                        if any(q.lower() in str(diff.id) for q in query):
-                            where.append("id")
-                        if any(q in str(json.dumps(diff.method)) for q in query):
-                            where.append("method")
-                        if any(q in str(json.dumps(diff.proposition)) for q in query):
-                            where.append("proposition")
-                        if any(q in str(json.dumps(diff.status)) for q in query):
-                            where.append("status")
-                        if any(q in str(json.dumps(diff.comments)) for q in query):
-                            where.append("comments")
+                        if any(q.lower() in str(diff.extended()).lower() for q in query):
+                            where.append("selected")
 
                         if len(where) != 0:
                             diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                 
-                envs = []
-                for env in EnvironmentModel.objects():
-                    where = []
-                    if "!all" in query:
-                        where.append("all")
-                    if any(q.lower() in str(env.id) for q in query):
-                        where.append("id")
-                    if any(q in str(json.dumps(env.group)) for q in query):
-                        where.append("group")
-                    if any(q in str(json.dumps(env.system)) for q in query):
-                        where.append("system")
-                    if any(q in str(json.dumps(env.comments)) for q in query):
-                        where.append("comments")
-
-                    if len(where) != 0:
-                        envs.append(env.info())
                 return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

@@ -25,6 +25,11 @@ var Space = function (){
                         if(project["project"]["records"] == 0){
                             disable_view = "disabled";
                         }
+
+                        var accessible = false;
+                        if(project["project"]["access"] == "public"){
+                            accessible = true;
+                        }
                         // add tooltip
                         // update to inputs
                         // Make records clickable
@@ -67,6 +72,11 @@ var Space = function (){
                         content += "<span class='card-title activator black-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
+                        if(accessible){
+                            content += "<div class='row margin'><div class='switch'>Public : <label>private<input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess("+record["head"]["id"]+");' type='checkbox' checked><span class='lever'></span>public</label></div></div>";
+                        }else{
+                            content += "<div class='row margin'><div class='switch'>Public : <label>private<input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess("+record["head"]["id"]+");' type='checkbox'><span class='lever'></span>public</label></div></div>";
+                        }
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+project["project"]["id"]+"' type='text' value='"+project["project"]["tags"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='project-goals-"+project["project"]["id"]+"' type='text' value='"+project["project"]["goals"]+"'></div></div>";
@@ -218,6 +228,10 @@ var Space = function (){
                         if(record["container"] == false){
                             disable_download = "disabled";
                         }
+                        var accessible = false;
+                        if(record["head"]["access"] == "public"){
+                            accessible = true;
+                        }
                         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='recordRemove(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
                         content += "<a onclick='recordUploadModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-file-cloud-upload'></i></a>";
@@ -233,6 +247,12 @@ var Space = function (){
                         content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
                         content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
+                        
+                        if(accessible){
+                            content += "<div class='row margin'><div class='switch'>Public : <label>private<input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess("+record["head"]["id"]+");' type='checkbox' checked><span class='lever'></span>public</label></div></div>";
+                        }else{
+                            content += "<div class='row margin'><div class='switch'>Public : <label>private<input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess("+record["head"]["id"]+");' type='checkbox'><span class='lever'></span>public</label></div></div>";
+                        }
 
                         if(project_id == "all"){
                             content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+record["head"]["project"]["name"]+"</p>";
@@ -637,6 +657,27 @@ var Record = function (_id){
             }
         }
     },
+    this.access = function(access_value) {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
+        var request = { 'access':access_value};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    console.log("Record access updated.");
+                } else {
+                    console.log("Record access update failed: "+xmlhttp.responseText);
+                    config.error_modal('Record access update failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>Update failed</span>', 5000);
+                }
+            }
+        }
+    },
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
@@ -684,6 +725,27 @@ var Project = function (_id){
                     window.location.reload();
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>Update failed</span>', 5000);
+                }
+            }
+        }
+    },
+    this.access = function(access_value) {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
+        var request = { 'access':access_value};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    console.log("Project access updated.");
+                } else {
+                    console.log("Project access update failed: "+xmlhttp.responseText);
+                    config.error_modal('Project access update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
                 }
             }
