@@ -482,22 +482,6 @@ header .brand-logo {
     font-size: 36px;
   }
 }
-@media only screen and (max-width: 992px) {
-  nav .brand-logo {
-    position:fixed;
-    left:10px;
-  } 
-}
-@media only screen and (max-width: 992px) {
-  nav .brand-logo {
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    -moz-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
-    -o-transform: translateX(-50%);
-    transform: translateX(-50%); 
-  }
-}
 li.search-out:hover{
   background: transparent;
 }
@@ -1692,70 +1676,4 @@ footer.page-footer {
     overflow-y: scroll;
     height: 100px;
     resize: none;
-}
-
-@media only screen and (max-width: 600px) {
-  .hide-on-small-only, .hide-on-small-and-down {
-    display: none !important; 
-  }
-}
-
-@media only screen and (max-width: 992px) {
-  .hide-on-med-and-down {
-    display: none !important; 
-  }
-}
-
-@media only screen and (min-width: 601px) {
-  .hide-on-med-and-up {
-    display: none !important;
-  }
-}
-
-@media only screen and (min-width: 600px) and (max-width: 992px) {
-  .hide-on-med-only {
-    display: none !important;
-  }
-}
-
-@media only screen and (min-width: 993px) {
-  .hide-on-large-only {
-    display: none !important;
-  }
-}
-
-@media only screen and (min-width: 993px) {
-  .show-on-large {
-    display: initial !important;
-  }
-}
-
-@media only screen and (min-width: 600px) and (max-width: 992px) {
-  .show-on-medium {
-    display: initial !important;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .show-on-small {
-    display: initial !important;
-  }
-}
-
-@media only screen and (min-width: 601px) {
-  .show-on-medium-and-up {
-    display: initial !important;
-  }
-}
-
-@media only screen and (max-width: 992px) {
-  .show-on-medium-and-down {
-    display: initial !important;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .center-on-small-only {
-    text-align: center;
-  }
 }
