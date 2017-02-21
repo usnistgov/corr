@@ -64,6 +64,7 @@ function recordDeselect(record_id){
 
 function recordAccess(record_id){
     var r_access = document.getElementById('record-access-'+record_id);
+    console.log(record_id);
     var record = new Record(record_id);
     record.access(r_access.value);
 }
