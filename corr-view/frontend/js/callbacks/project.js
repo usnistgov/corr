@@ -26,6 +26,7 @@ function projectAccess(project_id){
     var p_access = document.getElementById('project-access-'+project_id);
     console.log(project_id);
     var project = new Project(project_id);
+    console.log(p_access.value);
     project.access(p_access.value);
 }
 
