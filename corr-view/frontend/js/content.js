@@ -661,7 +661,11 @@ var Record = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
-        var request = {'access':'public' if access_value == 'on' else 'private'};
+        var access = 'public';
+        if(access_value == 'off'){
+            access = 'private';
+        }
+        var request = {'access':access};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -743,7 +747,10 @@ var Project = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
-        var request = {'access':'public' if access_value == 'on' else 'private'};
+        if(access_value == 'off'){
+            access = 'private';
+        }
+        var request = {'access':access};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
