@@ -661,7 +661,7 @@ var Record = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
-        var request = { 'access':access_value};
+        var request = {'access':'public' if access_value == 'on' else 'private'};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -678,10 +678,10 @@ var Record = function (_id){
                     // Materialize.toast('<span>Update failed</span>', 5000);
                     if(r_access.value == 'on'){
                         r_access.value = 'off';
-                        p_access.removeAttribute("checked");
+                        r_access.removeAttribute("checked");
                     }else{
                         r_access.value = 'on';
-                        p_access.setAttribute("checked");
+                        r_access.setAttribute("checked");
                     }
                 }
             }
@@ -743,7 +743,7 @@ var Project = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
-        var request = { 'access':access_value};
+        var request = {'access':'public' if access_value == 'on' else 'private'};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
