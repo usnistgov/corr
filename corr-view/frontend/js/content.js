@@ -73,9 +73,9 @@ var Space = function (){
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                         if(accessible){
-                            content += "<div class='row margin'><div class='switch col s12'>Public: <label>Off <input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> On</label></div></div>";
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i> <label>Off <input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> On</label></div></div>";
                         }else{
-                            content += "<div class='row margin'><div class='switch col s12'>Public: <label>Off <input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox'><span class='lever'></span></label> On</div></div>";
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i> <label>Off <input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox'><span class='lever'></span></label> On</div></div>";
                         }
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+project["project"]["id"]+"' type='text' value='"+project["project"]["tags"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
@@ -249,9 +249,9 @@ var Space = function (){
                         content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
                         
                         if(accessible){
-                            content += "<div class='row margin'><div class='switch col s12'>Public: <label>Off <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> On</label></div></div>";
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i> <label>Off <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> On</label></div></div>";
                         }else{
-                            content += "<div class='row margin'><div class='switch col s12'>Public: <label>Off <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span> On</label></div></div>";
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i> <label>Off <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span> On</label></div></div>";
                         }
 
                         if(project_id == "all"){
@@ -669,12 +669,20 @@ var Record = function (_id){
             if(xmlhttp.responseText == ""){
                 console.log("Cloud returned empty response!");
             }else{
+                var r_access = document.getElementById('record-access-'+self._id);
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     console.log("Record access updated.");
                 } else {
                     console.log("Record access update failed: "+xmlhttp.responseText);
                     config.error_modal('Record access update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
+                    if(r_access.value == 'on'){
+                        r_access.value = 'off';
+                        p_access.removeAttribute("checked");
+                    }else{
+                        r_access.value = 'on';
+                        p_access.setAttribute("checked");
+                    }
                 }
             }
         }
@@ -743,12 +751,20 @@ var Project = function (_id){
             if(xmlhttp.responseText == ""){
                 console.log("Cloud returned empty response!");
             }else{
+                var p_access = document.getElementById('project-access-'+self._id);
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     console.log("Project access updated.");
                 } else {
                     console.log("Project access update failed: "+xmlhttp.responseText);
                     config.error_modal('Project access update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
+                    if(p_access.value == 'on'){
+                        p_access.value = 'off';
+                        p_access.removeAttribute("checked");
+                    }else{
+                        p_access.value = 'on';
+                        p_access.setAttribute("checked");
+                    }
                 }
             }
         }
