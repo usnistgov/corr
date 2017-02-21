@@ -73,9 +73,9 @@ var Space = function (){
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                         if(accessible){
-                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox' checked><span class='lever'></span></div></div></div>";
+                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><label><input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox' checked><span class='lever'></span></label></div></div></div>";
                         }else{
-                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox'><span class='lever'></span></div></div></div>";
+                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><label><input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox'><span class='lever'></span></label></div></div></div>";
                         }
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+project["project"]["id"]+"' type='text' value='"+project["project"]["tags"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
@@ -249,9 +249,9 @@ var Space = function (){
                         content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
                         
                         if(accessible){
-                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span></div></div></div>";
+                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><label><input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span></label></div></div></div>";
                         }else{
-                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span></div></div></div>";
+                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock-open prefix cyan-text text-darken-2'></i><div class='switch'><label><input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span></label></div></div></div>";
                         }
 
                         if(project_id == "all"){
