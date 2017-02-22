@@ -129,7 +129,7 @@ def record_view(hash_session, record_id):
             if record is None:
                 return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
             else:
-                if record.project.owner == current_user:
+                if record.project.owner == current_user or record.access == 'public':
                     return fk.Response(record.to_json(), mimetype='application/json')
                 else:
                     return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)

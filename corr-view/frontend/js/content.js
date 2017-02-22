@@ -639,7 +639,7 @@ var Record = function (_id){
     self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/record/view/"+self._id);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
