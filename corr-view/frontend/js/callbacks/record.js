@@ -66,6 +66,9 @@ function recordAccess(record_id){
     var r_access = document.getElementById('record-access-'+record_id);
     console.log(record_id);
     var record = new Record(record_id);
-    console.log(r_access.value);
-    record.access(r_access.value);
+    if(record.access == 'private'){
+        record.access('public');
+    }else{
+        record.access('private');
+    }
 }

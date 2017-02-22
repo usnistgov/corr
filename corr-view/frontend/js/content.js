@@ -661,11 +661,7 @@ var Record = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
-        var access = 'public';
-        if(access_value == 'off'){
-            access = 'private';
-        }
-        var request = {'access':access};
+        var request = {'access':access_value};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -680,11 +676,9 @@ var Record = function (_id){
                     console.log("Record access update failed: "+xmlhttp.responseText);
                     config.error_modal('Record access update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
-                    if(r_access.value == 'on'){
-                        r_access.value = 'off';
+                    if(access_value == 'public'){
                         r_access.removeAttribute("checked");
                     }else{
-                        r_access.value = 'on';
                         r_access.setAttribute("checked");
                     }
                 }
@@ -747,10 +741,7 @@ var Project = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
-        if(access_value == 'off'){
-            access = 'private';
-        }
-        var request = {'access':access};
+        var request = {'access':access_value};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -765,11 +756,9 @@ var Project = function (_id){
                     console.log("Project access update failed: "+xmlhttp.responseText);
                     config.error_modal('Project access update failed', xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
-                    if(p_access.value == 'on'){
-                        p_access.value = 'off';
+                    if(access_value == 'public'){
                         p_access.removeAttribute("checked");
                     }else{
-                        p_access.value = 'on';
                         p_access.setAttribute("checked");
                     }
                 }
