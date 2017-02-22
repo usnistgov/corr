@@ -730,9 +730,9 @@ var Project = function (_id){
 
                     console.log(content);
                     if(content['project']['access'] == 'private'){
-                        this.access('public');
+                        access('public');
                     }else{
-                        this.access('private');
+                        access('private');
                     }
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
