@@ -715,6 +715,25 @@ var Project = function (_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
+    self.content = null;
+    this.sync = function() {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    self.content = JSON.parse(xmlhttp.responseText);
+                } else {
+                    config.error_modal('Project update failed', xmlhttp.responseText);
+                }
+            }
+        }
+    },
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     this.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
