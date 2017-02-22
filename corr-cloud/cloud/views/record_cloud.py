@@ -118,7 +118,7 @@ def record_comments(hash_session, record_id):
 def record_view(hash_session, record_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/view/<record_id>')
     if fk.request.method == 'GET':
-        caccess_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
