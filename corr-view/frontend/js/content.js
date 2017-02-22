@@ -714,8 +714,9 @@ var Project = function (_id){
     var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
+    var self = this;
     self._id = _id;
-    this.switchAccess = function() {
+    self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
@@ -730,18 +731,18 @@ var Project = function (_id){
 
                     console.log(content);
                     if(content['project']['access'] == 'private'){
-                        access('public');
+                        self.access('public');
                     }else{
-                        access('private');
+                        self.access('private');
                     }
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
                 }
             }
         }
-    },
+    }
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
-    this.save = function(tags, description, goals) {
+    self.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
@@ -761,8 +762,8 @@ var Project = function (_id){
                 }
             }
         }
-    },
-    this.access = function(access_value) {
+    }
+    self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
@@ -789,9 +790,9 @@ var Project = function (_id){
                 }
             }
         }
-    },
+    }
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
-    this.trash = function () {
+    self.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
@@ -814,6 +815,7 @@ var Project = function (_id){
             }
         }
     }
+    return self;
 };
 
 var Application = function (_id){
