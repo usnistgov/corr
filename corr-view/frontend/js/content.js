@@ -650,7 +650,7 @@ var Record = function (_id){
                     try{
                         content = JSON.parse(xmlhttp.responseText);
                         console.log(content);
-                        if(content['project']['access'] == 'private'){
+                        if(content['head']['access'] == 'private'){
                             self.access('public');
                         }else{
                             self.access('private');
@@ -686,7 +686,7 @@ var Record = function (_id){
             }
         }
     }
-    
+
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
