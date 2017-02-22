@@ -216,6 +216,10 @@ def project_edit(hash_session, project_id):
                                     environment_model.bundle['location'] = remote_bundle
                                 environment_model.save()
                         project.save()
+                        if access == "private":
+                            for record in RecordModel.objects(project=p):
+                                record.access = "private"
+                                record.save()
                         return fk.Response('Project updated', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))
