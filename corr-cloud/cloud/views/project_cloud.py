@@ -198,7 +198,7 @@ def project_edit(hash_session, project_id):
                         project.description = description
                         project.goals = goals
                         project.group = group
-                        project.acess = access
+                        project.access = access
                         project.tags = tags.split(',')
                         if len(environment) != 0:
                             environment_model = EnvironmentModel.objects.with_id(environment['id'])
