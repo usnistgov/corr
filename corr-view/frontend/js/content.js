@@ -729,10 +729,10 @@ var Project = function (_id){
                     content = JSON.parse(xmlhttp.responseText);
 
                     console.log(content);
-                    if(content['access'] == 'private'){
-                        self.access('public');
+                    if(content['project']['access'] == 'private'){
+                        this.access('public');
                     }else{
-                        self.access('private');
+                        this.access('private');
                     }
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
