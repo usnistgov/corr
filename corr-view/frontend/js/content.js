@@ -634,9 +634,38 @@ var Record = function (_id){
     var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
+    var self = this;
     self._id = _id;
+    self.switchAccess = function() {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    try{
+                        content = JSON.parse(xmlhttp.responseText);
+                        console.log(content);
+                        if(content['project']['access'] == 'private'){
+                            self.access('public');
+                        }else{
+                            self.access('private');
+                        }
+                    }catch(err) {
+                        console.log(err);
+                    }
+                } else {
+                    config.error_modal('Project update failed', xmlhttp.responseText);
+                }
+            }
+        }
+    }
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
-    this.save = function(tags, rationels, status) {
+    self.save = function(tags, rationels, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
@@ -656,8 +685,9 @@ var Record = function (_id){
                 }
             }
         }
-    },
-    this.access = function(access_value) {
+    }
+    
+    self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
@@ -684,9 +714,9 @@ var Record = function (_id){
                 }
             }
         }
-    },
+    }
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
-    this.trash = function () {
+    self.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
@@ -708,6 +738,7 @@ var Record = function (_id){
             }
         }
     }
+    return self;
 };
 
 var Project = function (_id){
@@ -727,13 +758,16 @@ var Project = function (_id){
                 console.log("Cloud returned empty response!");
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    content = JSON.parse(xmlhttp.responseText);
-
-                    console.log(content);
-                    if(content['project']['access'] == 'private'){
-                        self.access('public');
-                    }else{
-                        self.access('private');
+                    try{
+                        content = JSON.parse(xmlhttp.responseText);
+                        console.log(content);
+                        if(content['project']['access'] == 'private'){
+                            self.access('public');
+                        }else{
+                            self.access('private');
+                        }
+                    }catch(err) {
+                        console.log(err);
                     }
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
