@@ -715,8 +715,7 @@ var Project = function (_id){
     console.log('Cookie session value: '+ Cookies.get('session'));
     // this.session = session;
     self._id = _id;
-    self.content = null;
-    this.sync = function() {
+    this.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
@@ -727,7 +726,14 @@ var Project = function (_id){
                 console.log("Cloud returned empty response!");
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    self.content = JSON.parse(xmlhttp.responseText);
+                    content = JSON.parse(xmlhttp.responseText);
+
+                    console.log(content);
+                    if(content['access'] == 'private'){
+                        self.access('public');
+                    }else{
+                        self.access('private');
+                    }
                 } else {
                     config.error_modal('Project update failed', xmlhttp.responseText);
                 }

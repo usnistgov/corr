@@ -26,13 +26,7 @@ function projectAccess(project_id){
     var p_access = document.getElementById('project-access-'+project_id);
     console.log(project_id);
     var project = new Project(project_id);
-    project.sync();
-    console.log(project.content);
-    if(project.content['access'] == 'private'){
-        project.access('public');
-    }else{
-        project.access('private');
-    }
+    project.switchAccess();
 }
 
 // Project remove callback
