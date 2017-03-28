@@ -556,6 +556,8 @@
             }
             // Otherwise redirect to a 404
             else{
+              console.log(Cookies.get('session'));
+              console.log(view_selected);
                 window.location.replace("../");
             }
 
