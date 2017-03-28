@@ -6,3 +6,4 @@ import cloud.views.project_cloud
 import cloud.views.record_cloud
 import cloud.views.diff_cloud
 import cloud.views.env_cloud
+from cloud.views.admin_generation import *
