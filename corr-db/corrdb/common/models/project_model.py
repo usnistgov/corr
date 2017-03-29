@@ -155,7 +155,7 @@ class ProjectModel(db.Document):
         Returns:
             The pretty json of the project activity.
         """
-        if not public:
+        if not public or self.owner.group == "admin":
             records_summary = [json.loads(r.summary_json()) for r in self.records]
             return json.dumps({'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
         else:
