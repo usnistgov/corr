@@ -154,7 +154,7 @@ def env_edit(hash_session, env_id):
                 env = EnvironmentModel.objects.with_id(env_id)
                 owned = False
                 for project in ProjectModel.objects(owner=current_user):
-                    if str(env.id) inf project.history:
+                    if str(env.id) in project.history:
                         owned = True
                         break
                 if not owned:
