@@ -562,7 +562,10 @@ def app_all(hash_session):
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
         if fk.request.method == 'GET':
-            apps = ApplicationModel.objects(developer=current_user)
+            if current_user.group == "admin":
+                apps = ApplicationModel.objects()
+            else:
+                apps = ApplicationModel.objects(developer=current_user)
             apps_json = {'total_apps':len(apps), 'apps':[]}
             for application in apps:
                 apps_json['apps'].append(application.extended())

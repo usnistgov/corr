@@ -235,7 +235,7 @@ def user_dashboard(hash_session):
             dashboard["environments_total"] = 0
             dashboard["projects"] = []
             for project in projects:
-                project_dash = {"owner":project.owner.info(), "name":"{0}~{1}".format(project.owner.email, project.name), "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
+                project_dash = {"name":"{0}~{1}".format(project.owner.email, project.name), "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
                 records = RecordModel.objects(project=project)
                 dashboard["records_total"] += len(records)
                 for record in records:

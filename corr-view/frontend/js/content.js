@@ -64,9 +64,6 @@ var Space = function (){
                         content += "<div class='card-content'>";
 
                         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
-                        if(Cookies.get("group") == "admin"){
-                            content += "<a onclick='userViewModal(\""+project["project"]["owner"]["id"]+"\",\""+project["project"]["owner"]["profile"]["fname"]+"\""+",\""+project["project"]["owner"]["profile"]["lname"]+"\",\""+project["project"]["owner"]["profile"]["organisation"]+"\",\""+project["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+project["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
-                        }
                         content += "<a onclick='projectRemove(\""+project["project"]["name"]+"\",\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
                         content += "<a onclick='launchRecordModal(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-upload'></i></a>";
                         content += "<div id='update-project-"+project["project"]["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit and save'><i class='mdi-editor-mode-edit'></i></a></div>";
@@ -256,6 +253,7 @@ var Space = function (){
 
                         if(Cookies.get("group") == "admin"){
                             content += "<a onclick='projectViewModal(\""+record["head"]["project"]["name"]+"\",\""+record["head"]["project"]["tags"]+"\",\""+record["head"]["project"]["description"]+"\",\""+record["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
+                            content += "<a onclick='userViewModal(\""+record["head"]["project"]["owner"]["id"]+"\",\""+record["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                         }
 
                         content += "<div id='select-record-"+record["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
@@ -518,7 +516,7 @@ var Space = function (){
                         if(Cookies.get("group") == "admin"){
                             content += "<a onclick='projectViewModal(\""+env["project"]["name"]+"\",\""+env["project"]["tags"]+"\",\""+env["project"]["description"]+"\",\""+env["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+env["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
                         }
-                        
+
                         content += "<span class='card-title activator grey-text text-darken-4'>"+env["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+env["created"]+"</p>";
                         // if(project_id == "all"){
