@@ -9,6 +9,7 @@ import datetime
 import requests
 import os
 import glob
+import hashlib
 
 class StorageManager:
     def __init__(self, app):
@@ -86,6 +87,7 @@ class StorageManager:
                 accompanying it.
         """
         if file_meta != None and file_obj != None:
+            m = hashlib.md5()
             if file_meta.location == 'local':
                 dest_filename = file_meta.storage
                 try:
@@ -101,11 +103,19 @@ class StorageManager:
                         print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
                         with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
                             obj.write(file_obj.read())
+                    m.update(file_obj.read())
+                    file_meta.checksum = m.hexdigest()
+                    file_meta.save()
                     return [True, "File uploaded successfully"]
                 except:
                     self.app.logger.error(traceback.print_exc())
                     return [False, traceback.format_exc()]
             else:
+                file_obj = self.web_get_file(file_meta.storage)
+                if file_obj:
+                    m.update(file_obj.getvalue())
+                    file_meta.checksum = m.hexdigest()
+                    file_meta.save()
                 return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
         else:
             return [False, "file meta data does not exist or file content is empty."]

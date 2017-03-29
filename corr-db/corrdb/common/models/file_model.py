@@ -26,6 +26,7 @@ class FileModel(db.Document):
     """
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE)
+    checksum = db.StringField()
     encoding = db.StringField()
     mimetype = db.StringField()
     size = db.LongField()
@@ -51,6 +52,13 @@ class FileModel(db.Document):
             data['owner'] = str(self.owner.id)
         else:
             data['owner'] = 'public'
+        try:
+            data["checksum"] = self.checksum
+        except:
+
+            self.checksum = ""
+            self.save()
+            data["checksum"] = self.checksum
         return data
 
     def extended(self):

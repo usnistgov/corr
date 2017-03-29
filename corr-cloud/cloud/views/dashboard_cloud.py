@@ -648,7 +648,7 @@ def app_remove(app_id, hash_session):
             appli = ApplicationModel.objects.with_id(app_id)
             if appli == None:
                 return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
-            elif appli.developer != current_user:
+            elif appli.developer != current_user or current_user != "admin":
                 return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
                 # if app.logo.location == 'local':
