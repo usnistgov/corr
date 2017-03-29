@@ -121,6 +121,9 @@ class AccessManager:
                 account = account_1
             else:
                 account = UserModel.objects(email=email, password=hash_pwd).first()
+        if account and account.group == "unknown":
+            account.group = "user"
+            account.save()
         return account
 
     def logout(self, session_token):
