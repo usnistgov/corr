@@ -221,7 +221,10 @@ def user_dashboard(hash_session):
                 version = __version__
             except:
                 pass
-            projects = ProjectModel.objects(owner=user_model)
+            if user_model.group == "admin":
+                projects = ProjectModel.objects()
+            else:
+                projects = ProjectModel.objects(owner=user_model)
             if profile_model is not None:
                 dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
             dashboard["version"] = version
