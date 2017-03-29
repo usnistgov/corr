@@ -69,7 +69,7 @@ def env_view(hash_session, env_id):
                 # Make sure user own or used this environment.
                 owned = False
                 for project in ProjectModel.objects(owner=current_user):
-                    if str(env.id) inf project.history:
+                    if str(env.id) in project.history:
                         owned = True
                         break
                 if not owned:
