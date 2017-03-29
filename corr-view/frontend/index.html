@@ -494,7 +494,7 @@
             // var param = window.location.search.substring(1);
             // var parts = param.split("=");
             // In case home has session key (logged in)
-            if(Cookies.get('session') != undefined && Cookies.get('session') != 'undefined' && Cookies.get('session') != 'none'){
+            if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
                 // user.session = parts[1];
                 // console.log(user.session);
                 // Check that the user is trusted with this session key.
@@ -512,9 +512,7 @@
                 document.getElementById('update-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
             }else{
-                if(Cookies.get('session') == 'none'){
-                    config.error_modal("User access denied", "You have to log back in.");
-                }
+                config.error_modal("User access denied", "You have to log back in.");
             }
 
             // Enter key handlers for login/recover/register and email us.
