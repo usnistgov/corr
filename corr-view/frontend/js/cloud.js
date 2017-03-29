@@ -226,9 +226,13 @@ var user = {
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
                         var version = response["version"];
+                        var group = response["group"];
                         console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
+                        return group;
                     }
+                }else{
+                    return "unknown";
                 }
                 
             } else if(xmlhttp.status == 401){
@@ -236,6 +240,7 @@ var user = {
                 Cookies.remove('session');
                 // Cookies.set('session', 'none', { path: '' });
                 // Cookies.set('session', 'none', { path: '/' });
+                return "unknown";
             }else {
                 window.location.replace("../error/?code=404");
             }

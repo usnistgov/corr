@@ -164,7 +164,7 @@ def user_sync(hash_session):
             user_model = access_resp[1]
             print(fk.request.path)
             user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'session':user_model.session, 'group':user_model.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -704,7 +704,7 @@ def user_truested(hash_session):
                 version = __version__
             except:
                 pass
-            return fk.Response(json.dumps({'version':version}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'version':version, 'group':user_model.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

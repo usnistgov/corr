@@ -6,7 +6,8 @@ var dashboard = {
             console.log('Cookie session value: '+ Cookies.get('session'));
             // user.session = session;
             // console.log(user.session);
-            user.trusted();
+            var group = user.trusted();
+            console.log("group:" + group);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -19,7 +20,8 @@ var dashboard = {
             console.log('Cookie session value: '+ Cookies.get('session'));
             // user.session = session;
             // console.log(user.session);
-            user.trusted();
+            var group = user.trusted();
+            console.log("group:" + group);
 
             var space = new Space();
             space.dashboard();
