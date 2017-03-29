@@ -512,6 +512,7 @@
                     options.push(blocks[i]);
                 }
             }
+            console.log("Params: "+param);
             // Inject the default dashboard view
             if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
                 dashboard.activity();

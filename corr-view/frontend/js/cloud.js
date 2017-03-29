@@ -93,10 +93,12 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     if(where != "dashboard"){
-                        Cookies.set('session', 'undefined', { path: '' });
+                        // Cookies.set('session', 'undefined', { path: '' });
+                        Cookies.remove('session');
                         window.location.replace("./");
                     }else{
-                        Cookies.set('session', 'undefined', { path: '/' });
+                        Cookies.remove('session');
+                        // Cookies.set('session', 'undefined', { path: '/' });
                         window.location.replace("../");
                     }
                 }
@@ -231,8 +233,9 @@ var user = {
                 
             } else if(xmlhttp.status == 401){
                 console.log(xmlhttp.responseText);
-                Cookies.set('session', 'none', { path: '' });
-                Cookies.set('session', 'none', { path: '/' });
+                Cookies.remove('session');
+                // Cookies.set('session', 'none', { path: '' });
+                // Cookies.set('session', 'none', { path: '/' });
             }else {
                 window.location.replace("../error/?code=404");
             }
