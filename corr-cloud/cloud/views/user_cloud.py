@@ -140,7 +140,7 @@ def user_login():
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
                     account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                    return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    return fk.Response(json.dumps({'session':account.session, 'group':account.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 except:
                     print(str(traceback.print_exc()))
                     return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)

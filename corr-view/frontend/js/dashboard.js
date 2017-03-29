@@ -7,7 +7,6 @@ var dashboard = {
             // user.session = session;
             // console.log(user.session);
             user.trusted();
-            console.log("group:" + user.group);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -21,7 +20,6 @@ var dashboard = {
             // user.session = session;
             // console.log(user.session);
             user.trusted();
-            console.log("group:" + user.group);
 
             var space = new Space();
             space.dashboard();

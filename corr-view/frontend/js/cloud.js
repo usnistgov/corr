@@ -26,6 +26,8 @@ var user = {
                     // console.log(this.session);
                     Cookies.set('session', response['session'], { path: '' });
                     console.log('Cookie session value: '+ Cookies.get('session'));
+                    Cookies.set('group', response['group'], { path: '' });
+                    console.log('Cookie group value: '+ Cookies.get('grup'));
                     
                     // window.location.replace("./?session="+this.session);
                     window.location.reload();
@@ -96,9 +98,11 @@ var user = {
                     if(where != "dashboard"){
                         // Cookies.set('session', 'undefined', { path: '' });
                         Cookies.remove('session');
+                        Cookies.remove('group');
                         window.location.replace("./");
                     }else{
                         Cookies.remove('session');
+                        Cookies.remove('group');
                         // Cookies.set('session', 'undefined', { path: '/' });
                         window.location.replace("../");
                     }
@@ -227,7 +231,6 @@ var user = {
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
                         var version = response["version"];
-                        user.group = response["group"];
                         console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
                     }
@@ -236,6 +239,7 @@ var user = {
             } else if(xmlhttp.status == 401){
                 console.log(xmlhttp.responseText);
                 Cookies.remove('session');
+                Cookies.remove('group');
                 // Cookies.set('session', 'none', { path: '' });
                 // Cookies.set('session', 'none', { path: '/' });
             }else {
