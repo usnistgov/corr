@@ -51,8 +51,18 @@ def diff_create(hash_session):
                     try:
                         record_from = RecordModel.objects.with_id(record_from_id)
                         record_to = RecordModel.objects.with_id(record_to_id)
+                        if current_user.group != "admin":
+                            if record_from.project.owner == current_user:
+                                sender_user = current_user
+                                receiver_user = record_to.owner
+                            else:
+                                sender_user = record_to.project.owner
+                                receiver_user = record_from.project.owner
+                        else:
+                            sender_user = record_from.project.owner
+                            receiver_user = record_to.project.owner
                         if record_to and record_from:
-                            diff = DiffModel(created_at=str(datetime.datetime.utcnow()), sender=current_user, targeted=current_user, record_from=record_from, record_to=record_to)
+                            diff = DiffModel(created_at=str(datetime.datetime.utcnow()), sender=sender_user, targeted=receiver_user, record_from=record_from, record_to=record_to)
                             diff.method = method
                             diff.proposition = proposition
                             diff.status = status
@@ -85,7 +95,7 @@ def diff_remove(hash_session, diff_id):
             if diff is None:
                 return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
-                if diff.sender == current_user or diff.targeted == current_user:
+                if diff.sender == current_user or diff.targeted == current_user or current_user.group == "admin":
                     diff.delete()
                     logStat(deleted=True, diff=diff)
                     return cloud_response(200, 'Deletion succeeded', 'The diff %s was succesfully deleted.'%diff_id)
@@ -170,28 +180,31 @@ def diff_edit(hash_session, diff_id):
             if diff is None:
                 return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
-                if fk.request.data:
-                    data = json.loads(fk.request.data)
-                    try:
-                        d_method = data.get("method", diff.method)
-                        proposition = data.get("proposition", diff.proposition)
-                        d_status = data.get("status", diff.status)
-                        if proposition != diff.proposition or d_method != diff.method:
-                            if diff.status == "agreed" or diff.status == "denied":
-                                diff.status = "altered"
-                        if d_method != "":
-                            diff.method = d_method
-                        if proposition != "":
-                            diff.proposition = proposition
-                        if d_status != "":
-                            diff.status = d_status
-                        diff.save()
-                        return fk.Response('Diff edited', status.HTTP_200_OK)
-                    except:
-                        print(str(traceback.print_exc()))
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                if diff.sender == current_user or diff.targeted == current_user or current_user.group == "admin":
+                    if fk.request.data:
+                        data = json.loads(fk.request.data)
+                        try:
+                            d_method = data.get("method", diff.method)
+                            proposition = data.get("proposition", diff.proposition)
+                            d_status = data.get("status", diff.status)
+                            if proposition != diff.proposition or d_method != diff.method:
+                                if diff.status == "agreed" or diff.status == "denied":
+                                    diff.status = "altered"
+                            if d_method != "":
+                                diff.method = d_method
+                            if proposition != "":
+                                diff.proposition = proposition
+                            if d_status != "":
+                                diff.status = d_status
+                            diff.save()
+                            return fk.Response('Diff edited', status.HTTP_200_OK)
+                        except:
+                            print(str(traceback.print_exc()))
+                            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
-                    return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
+                    return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 

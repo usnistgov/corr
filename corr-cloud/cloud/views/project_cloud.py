@@ -29,7 +29,7 @@ def project_sync(hash_session, project_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/sync/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
-            if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
+            if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 project = {"project":json.loads(p.summary_json())}
@@ -52,7 +52,7 @@ def project_view(hash_session, project_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/view/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
-            if p ==  None or (p != None and p.owner != current_user and p.access != 'public'):
+            if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 project = {"project":json.loads(p.to_json())}
@@ -72,7 +72,7 @@ def project_remove(hash_session, project_id):
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/remove/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
-            if project ==  None or (project != None and project.owner != current_user):
+            if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
                 storage_manager.delete_project_files(project, logStat)
@@ -94,7 +94,7 @@ def project_comment(hash_session, project_id):
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comment/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
-            if project ==  None or (project != None and project.access != 'public'):
+            if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
@@ -125,7 +125,7 @@ def project_comments(hash_session, project_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comments/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
-            if project ==  None or (project != None and project.access != 'public'):
+            if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.Response(json.dumps(project.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
@@ -183,7 +183,7 @@ def project_edit(hash_session, project_id):
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
-            if project ==  None or (project != None and project.owner != current_user):
+            if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
@@ -243,7 +243,7 @@ def project_records(hash_session, project_name):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/record/<project_name>')
             project = ProjectModel.objects(name=project_name).first()
-            if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+            if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 return fk.Response(project.activity_json(), mimetype='application/json')
@@ -256,7 +256,7 @@ def public_project_sync(project_id):
     logTraffic(CLOUD_URL, endpoint='/public/project/sync/<project_id>')
     if fk.request.method == 'GET':
         p = ProjectModel.objects.with_id(project_id)
-        if p ==  None or (p != None and p.access != 'public'):
+        if p ==  None or (p != None and p.access != 'public' and current_user.group == "admin"):
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             project = {"project":json.loads(p.summary_json())}

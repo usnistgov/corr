@@ -63,7 +63,7 @@ def private_search(hash_session):
                 #scape the records issue.
                 for project in ProjectModel.objects():
                     print(project.name)
-                    if project.access == 'public' or current_user == project.owner:
+                    if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
                         where_project = []
                         if "!all" in query:
                             where_project.append("all")
@@ -74,7 +74,7 @@ def private_search(hash_session):
                             projects.append(project.extended())
                         
                         for record in RecordModel.objects(project=project):
-                            if record.access == 'public' or current_user == record.project.owner:
+                            if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                 body = record.body
                                 where_record = []
                                 where_env = []
@@ -98,7 +98,7 @@ def private_search(hash_session):
 
                 diffs = []
                 for diff in DiffModel.objects():
-                    if (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                    if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                         where = []
                         if "!all" in query:
                             where.append("all")
@@ -126,7 +126,10 @@ def project_dashboard(hash_session):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/projects')
             
-            projects = ProjectModel.objects(owner=current_user).order_by('+created_at')
+            if current_user.group == "admin":
+                projects = ProjectModel.objects().order_by('+created_at')
+            else:
+                projects = ProjectModel.objects(owner=current_user).order_by('+created_at')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -151,9 +154,6 @@ def diffs_dashboard(hash_session, project_id):
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/diffs')
-            
-            diffs_send = DiffModel.objects(sender=current_user).order_by('+created_at')
-            diffs_targ = DiffModel.objects(targeted=current_user).order_by('+created_at')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -161,17 +161,29 @@ def diffs_dashboard(hash_session, project_id):
             except:
                 pass
             summaries = []
-            for d in diffs_send:
-                if project_id == "all":
-                    summaries.append(d.info())
-                elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
-                    summaries.append(d.info())
-            for d in diffs_targ:
-                if d not in diffs_send:
+
+            if current_user.group == "admin":
+                diffs = DiffModel.objects().order_by('+created_at')
+                for d in diffs:
                     if project_id == "all":
                         summaries.append(d.info())
                     elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                         summaries.append(d.info())
+            else:
+                diffs_send = DiffModel.objects(sender=current_user).order_by('+created_at')
+                diffs_targ = DiffModel.objects(targeted=current_user).order_by('+created_at')
+                
+                for d in diffs_send:
+                    if project_id == "all":
+                        summaries.append(d.info())
+                    elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
+                        summaries.append(d.info())
+                for d in diffs_targ:
+                    if d not in diffs_send:
+                        if project_id == "all":
+                            summaries.append(d.info())
+                        elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
+                            summaries.append(d.info())
 
             return fk.Response(json.dumps({'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
@@ -189,7 +201,10 @@ def dashboard_records(hash_session, project_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/records/<project_id>')
             if project_id == "all":
-                projects = ProjectModel.objects(owner=current_user)
+                if current_user.group == "admin":
+                    projects = ProjectModel.objects()
+                else:
+                    projects = ProjectModel.objects(owner=current_user)
                 records = {'size':0, 'records':[]}
                 for project in projects:
                     for r in project.records:
@@ -198,7 +213,7 @@ def dashboard_records(hash_session, project_id):
                 return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 project = ProjectModel.objects.with_id(project_id)
-                if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+                if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     print(str(project.activity_json()))
@@ -218,7 +233,10 @@ def dashboard_envs(hash_session, project_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/envs/<project_id>')
             if project_id == "all":
-                projects = ProjectModel.objects(owner=current_user)
+                if current_user.group == "admin":
+                    projects = ProjectModel.objects()
+                else:
+                    projects = ProjectModel.objects(owner=current_user)
                 envs = {'size':0, 'envs':[]}
                 for project in projects:
                     for env in project.envs:
@@ -227,7 +245,7 @@ def dashboard_envs(hash_session, project_id):
                 return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 project = ProjectModel.objects.with_id(project_id)
-                if project ==  None or (project != None and project.owner != current_user and project.access != 'public'):
+                if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     envs = {'size':0, 'envs':[]}
@@ -254,7 +272,7 @@ def record_diff(hash_session, record_id):
             if record is None:
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                if (record.project.owner == current_user) or record.access == 'public':
+                if (record.project.owner == current_user) or record.access == 'public' or current_user.group == "admin":
                     diffs = []
                     founds = DiffModel.objects(record_from=record)
                     if founds != None:
@@ -291,7 +309,7 @@ def reproducibility_assess(hash_session, record_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if request.args:
-                    if record.project.owner == current_user or record.access == 'public':
+                    if record.project.owner == current_user or record.access == 'public' or current_user.group == "admin":
                         repeated = request.args.get('repeated', False)
                         reproduced = request.args.get('reproduced', False)
                         non_repeated = request.args.get('non-repeated', False)
@@ -407,7 +425,7 @@ def public_search():
 
             diffs = []
             for diff in DiffModel.objects():
-                if diff.record_from.access == 'public' and diff.record_to.access == 'public':
+                if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
                     where = []
                     if query in str(json.dumps(diff.diff)):
                         where.append("diff")
@@ -648,7 +666,7 @@ def app_update(app_id, hash_session):
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
                 return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
-            elif app.developer != current_user:
+            elif app.developer != current_user or current_user.group != "admin":
                 return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:

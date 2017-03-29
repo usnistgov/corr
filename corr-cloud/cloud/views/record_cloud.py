@@ -37,7 +37,7 @@ def record_remove(hash_session, record_id):
                 return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                if record.project.owner == current_user:
+                if record.project.owner == current_user or current_user.group == "admin":
                     storage_manager.delete_record_files(record, logStat)
                     logStat(deleted=True, record=record)
                     env_id = None
@@ -72,20 +72,20 @@ def record_comment(hash_session, record_id):
             if record is None:
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                if record.project.owner == current_user:
-                    if fk.request.data:
-                        data = json.loads(fk.request.data)
-                        comment = data.get("comment", {})
-                        if len(comment) != 0:
-                            record.comments.append(comment)
-                            record.save()
-                            return fk.Response('Projject comment posted', status.HTTP_200_OK)
-                        else:
-                            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+                # if record.project.owner == current_user  or current_user.group == "admin":
+                if fk.request.data:
+                    data = json.loads(fk.request.data)
+                    comment = data.get("comment", {})
+                    if len(comment) != 0:
+                        record.comments.append(comment)
+                        record.save()
+                        return fk.Response('Projject comment posted', status.HTTP_200_OK)
                     else:
-                        return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                    return fk.redirect('{0}:{1}/error/?code=415'.format(VIEW_HOST, VIEW_PORT))
+                # else:
+                #     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -129,7 +129,7 @@ def record_view(hash_session, record_id):
             if record is None:
                 return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
             else:
-                if record.project.owner == current_user or record.access == 'public':
+                if record.project.owner == current_user or record.access == 'public' or current_user.group == "admin":
                     return fk.Response(record.to_json(), mimetype='application/json')
                 else:
                     return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
@@ -156,7 +156,7 @@ def record_create(hash_session, project_id):
             if project is None:
                 return fk.Response('Unable to find the referenced project.', status.HTTP_404_NOT_FOUND)
             else:
-                if project.owner == current_user:
+                if project.owner == current_user  or current_user.group == "admin":
                     if fk.request.data:
                             data = json.loads(fk.request.data)
                             try:
@@ -201,7 +201,7 @@ def record_edit(hash_session, record_id):
             if record is None:
                 return fk.Response('Unable to find this record.', status.HTTP_404_NOT_FOUND)
             else:
-                if record.project.owner == current_user:
+                if record.project.owner == current_user  or current_user.group == "admin":
                     if fk.request.data:
                             data = json.loads(fk.request.data)
                             try:

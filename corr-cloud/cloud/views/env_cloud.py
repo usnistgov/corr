@@ -39,13 +39,17 @@ def env_remove(hash_session, env_id):
                 # result = storage_manager.delete_env_files(env)
                 # if result:
                 # implement project history en removal: project.history.append(str(env.id))
-                env.delete()
+                
+                count = 0
                 for project in ProjectModel.objects(owner=current_user):
                     try:
                         project.history.remove(str(env_id))
                         project.save()
+                        count = count + 1
                     except:
                         pass
+                if count > 0:
+                    env.delete()
                 return cloud_response(200, 'Deletion succeeded', 'The environment %s was succesfully deleted.'%env_id)
     else:
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -62,7 +66,16 @@ def env_view(hash_session, env_id):
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/view/<env_id>')
                 env = EnvironmentModel.objects.with_id(env_id)
+                # Make sure user own or used this environment.
+                owned = False
+                for project in ProjectModel.objects(owner=current_user):
+                    if str(env.id) inf project.history:
+                        owned = True
+                        break
+                if not owned:
+                    env = None
             except:
+                env = None
                 print(str(traceback.print_exc()))
             if env is None:
                 return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
@@ -139,6 +152,13 @@ def env_edit(hash_session, env_id):
         else:
             try:
                 env = EnvironmentModel.objects.with_id(env_id)
+                owned = False
+                for project in ProjectModel.objects(owner=current_user):
+                    if str(env.id) inf project.history:
+                        owned = True
+                        break
+                if not owned:
+                    env = None
             except:
                 print(str(traceback.print_exc()))
             if env is None:
