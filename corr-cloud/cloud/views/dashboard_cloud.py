@@ -562,14 +562,16 @@ def app_all(hash_session):
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
         if fk.request.method == 'GET':
-            if current_user.group == "admin":
-                apps = ApplicationModel.objects()
-            else:
-                apps = ApplicationModel.objects(developer=current_user)
+            # Show all the apps for now. Only admin can create them anyways.
+            apps = ApplicationModel.objects()
+            # if current_user.group == "admin":
+            #     apps = ApplicationModel.objects()
+            # else:
+            #     apps = ApplicationModel.objects(developer=current_user)
             apps_json = {'total_apps':len(apps), 'apps':[]}
             for application in apps:
                 apps_json['apps'].append(application.extended())
-            return cloud_response(200, 'Developers applications', apps_json)
+            return cloud_response(200, 'Developers tools', apps_json)
         else:
             return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -582,40 +584,43 @@ def app_create(hash_session):
     if current_user is None:
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
-        if fk.request.method == 'POST':
-            if fk.request.data:
-                data = json.loads(fk.request.data)
-                name = data.get('name', '')
-                about = data.get('about', '')
-                logo_storage = '{0}:{1}/images/gearsIcon.png'.format(VIEW_HOST, VIEW_PORT)
-                access = 'activated'
-                network = '0.0.0.0'
-                visibile = False
-                developer = current_user
-                logo_encoding = ''
-                logo_mimetype = mimetypes.guess_type(logo_storage)[0]
-                logo_buffer = storage_manager.web_get_file(logo_storage)
-                logo_size = logo_buffer.tell()
-                logo_description = 'This is the default image used for applications logos.'
-                logo_name = '{0}-logo.png'.format(name)
-                logo_location = 'remote'
-                logo_group = 'logo'
-                
-                query_app = ApplicationModel.objects(developer=developer, name=name).first()
-                if query_app:
-                    return fk.Response('Application already exists.', status.HTTP_403_FORBIDDEN)
-                else:
-                    logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
-                    app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
-                    if not created:
-                        return fk.Response('For some reason the application was not created. Try again later.', status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    else:
-                        logStat(application=app)
-                        return cloud_response(201, 'Application created', app.info())
-            else:
-                return fk.Response('No content provided for this creation.', status.HTTP_204_NO_CONTENT)
+        if current_user.group != "admin":
+            return fk.Response('Only admins can now create tools.', status.HTTP_401_UNAUTHORIZED)
         else:
-            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
+            if fk.request.method == 'POST':
+                if fk.request.data:
+                    data = json.loads(fk.request.data)
+                    name = data.get('name', '')
+                    about = data.get('about', '')
+                    logo_storage = '{0}:{1}/images/gearsIcon.png'.format(VIEW_HOST, VIEW_PORT)
+                    access = 'activated'
+                    network = '0.0.0.0'
+                    visibile = False
+                    developer = current_user
+                    logo_encoding = ''
+                    logo_mimetype = mimetypes.guess_type(logo_storage)[0]
+                    logo_buffer = storage_manager.web_get_file(logo_storage)
+                    logo_size = logo_buffer.tell()
+                    logo_description = 'This is the default image used for tools logos.'
+                    logo_name = '{0}-logo.png'.format(name)
+                    logo_location = 'remote'
+                    logo_group = 'logo'
+                    
+                    query_app = ApplicationModel.objects(developer=developer, name=name).first()
+                    if query_app:
+                        return fk.Response('Tool already exists.', status.HTTP_403_FORBIDDEN)
+                    else:
+                        logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                        app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
+                        if not created:
+                            return fk.Response('For some reason the tool was not created. Try again later.', status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        else:
+                            logStat(application=app)
+                            return cloud_response(201, 'Tool created', app.info())
+                else:
+                    return fk.Response('No content provided for this creation.', status.HTTP_204_NO_CONTENT)
+            else:
+                return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -629,9 +634,9 @@ def app_show(app_id, hash_session):
         if fk.request.method == 'GET':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
-                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
+                return fk.Response('Unable to find this tool.', status.HTTP_404_NOT_FOUND)
             else:
-                return cloud_response(200, 'Application %s'%app.name, app.extended())
+                return cloud_response(200, 'Tool %s'%app.name, app.extended())
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -647,16 +652,16 @@ def app_remove(app_id, hash_session):
         if fk.request.method in ['GET', 'DELETE']:
             appli = ApplicationModel.objects.with_id(app_id)
             if appli == None:
-                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
+                return fk.Response('Unable to find this tool.', status.HTTP_404_NOT_FOUND)
             elif appli.developer != current_user and current_user.group != "admin":
-                return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
+                return fk.Response('Unauthorized action on this tool.', status.HTTP_401_UNAUTHORIZED)
             else:
                 # if app.logo.location == 'local':
                 #     storage_manager.storage_delete_file('logo', app.logo.location)
                 # app.logo.delete()
                 appli.delete()
                 logStat(deleted=True, application=appli)
-                return cloud_response(200, 'Deletion succeeded', 'The application %s was succesfully deleted.'%app.name)
+                return cloud_response(200, 'Deletion succeeded', 'The tool %s was succesfully deleted.'%app.name)
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -672,9 +677,10 @@ def app_update(app_id, hash_session):
         if fk.request.method == 'POST':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
-                return fk.Response('Unable to find this application.', status.HTTP_404_NOT_FOUND)
-            elif app.developer != current_user or current_user.group != "admin":
-                return fk.Response('Unauthorized action on this application.', status.HTTP_401_UNAUTHORIZED)
+                return fk.Response('Unable to find this tool.', status.HTTP_404_NOT_FOUND)
+            # elif app.developer != current_user or current_user.group != "admin":
+            elif current_user.group != "admin":
+                return fk.Response('Unauthorized action on this tool.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -721,7 +727,7 @@ def app_update(app_id, hash_session):
                     app.network = network
                     app.visibile = visibile
                     app.save()
-                    return cloud_response(201, 'Application updated', app.info())
+                    return cloud_response(201, 'Tool updated', app.info())
                 else:
                     return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
         else:
