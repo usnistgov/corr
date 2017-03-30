@@ -840,21 +840,21 @@ h5.breadcrumbs-header {
   background-size: cover;
 }
 #flight-card .sumatra-tool-bg {
-  background: url(images/sumatra.jpg) no-repeat center center;
+  background: url(../images/sumatra.jpg) no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
 }
 #flight-card .reprozip-tool-bg {
-  background: url(images/reprozip.jpg) no-repeat center center;
+  background: url(../images/reprozip.jpg) no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
 }
 #flight-card .panda-tool-bg {
-  background: url(images/panda.jpg) no-repeat center center;
+  background: url(../images/panda.jpg) no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
