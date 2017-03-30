@@ -833,7 +833,7 @@ h5.breadcrumbs-header {
   /* SASS Internet Explorer */
 }
 #flight-card .card-content-bg {
-  background: url(../images/user-bg.jpg) no-repeat center center;
+  background: cyan;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
