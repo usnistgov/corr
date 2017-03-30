@@ -1,13 +1,13 @@
 <div class="row">
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
-            <div class="card-header amber darken-2">
+            <div class="card-header purple darken-2">
                 <div class="card-title">
                     <h4 class="flight-card-title">Sumatra</h4>
                     <p class="flight-card-date">Version 0.7.0</p>
                 </div>
             </div>
-            <div class="sumatra-tool-bg white-text">
+            <div class="card-content-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
@@ -49,13 +49,13 @@
 
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
-            <div class="card-header amber darken-2">
+            <div class="card-header purple arken-2">
                 <div class="card-title">
                     <h4 class="flight-card-title">ReproZip</h4>
                     <p class="flight-card-date">Version 1.0.x</p>
                 </div>
             </div>
-            <div class="reprozip-tool-bg white-text">
+            <div class="card-content-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
@@ -97,13 +97,13 @@
 
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
-            <div class="card-header amber darken-2">
+            <div class="card-header purple darken-2">
                 <div class="card-title">
                     <h4 class="flight-card-title">Panda</h4>
                     <p class="flight-card-date">Version 1</p>
                 </div>
             </div>
-            <div class="panda-tool-bg white-text">
+            <div class="card-content-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
