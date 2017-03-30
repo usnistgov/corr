@@ -7,7 +7,7 @@
                     <p class="flight-card-date">Version 0.7.0</p>
                 </div>
             </div>
-            <div class="card-content-bg white-text">
+            <div class="sumatra-tool-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
@@ -17,7 +17,7 @@
                             </div>
                         </div>
                         <div class="col s2 m2 l2 center-align">
-                            <i class="mdi-social-domain flight-icon"></i>
+                            <i class="mdi-social-domain"></i>
                         </div>
                         <div class="col s5 m5 l5 center-align">
                             <div class="flight-state">
@@ -31,14 +31,14 @@
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4">Managing and tracking projects</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">Automated electronic lab notebook</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Launching simulations/analyses with automatic recording</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Launching with automatic recording</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4">Numerical simulation or analysis</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">Supporting reproducible research</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Context information, annotation and linking to data</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Context, annotation and data</span></p>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                     <p class="flight-card-date">Version 1.0.x</p>
                 </div>
             </div>
-            <div class="card-content-bg white-text">
+            <div class="reprozip-tool-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
                         <div class="col s2 m2 l2 center-align">
-                            <i class="mdi-social-location-city flight-icon"></i>
+                            <i class="mdi-social-location-city"></i>
                         </div>
                         <div class="col s5 m5 l5 center-align">
                             <div class="flight-state">
@@ -78,15 +78,15 @@
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4"> Allows you to pack your research</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Tracing the systems calls used by the experiment</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Anybody can reproduce the research on a different machine</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Tracing the systems calls</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Anybody can reproduce the research</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">data files, libraries, environment variables</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Automatically identify which files should be included</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Requires Linux OS (docker, VM, ...)</span> C</p>
+                                <p class="small"><span class="grey-text text-lighten-4">data files, libraries, variables</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Automatically include files</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Requires Linux OS (docker, VM, ...)</span></p>
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                     <p class="flight-card-date">Version 1</p>
                 </div>
             </div>
-            <div class="card-content-bg white-text">
+            <div class="panda-tool-bg white-text">
                 <div class="card-content">
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="col s2 m2 l2 center-align">
-                            <i class="mdi-social-location-city flight-icon"></i>
+                            <i class="mdi-social-location-city"></i>
                         </div>
                         <div class="col s5 m5 l5 center-align">
                             <div class="flight-state">
@@ -132,7 +132,7 @@
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">Support of 13 different CPU architectures</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Support of 13 architectures</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">Whole system emulator</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">x86, x86_64, and ARM guests</span></p>
                             </div>
