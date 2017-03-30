@@ -1,0 +1,145 @@
+<div class="row">
+    <div class="col s12 m6 l4">
+        <div id="flight-card" class="card">
+            <div class="card-header amber darken-2">
+                <div class="card-title">
+                    <h4 class="flight-card-title">Sumatra</h4>
+                    <p class="flight-card-date">Version 0.7.0</p>
+                </div>
+            </div>
+            <div class="card-content-bg white-text">
+                <div class="card-content">
+                    <div class="row flight-state-wrapper">
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">Paris</h4>
+                                <p class="ultra-small">France</p>
+                            </div>
+                        </div>
+                        <div class="col s2 m2 l2 center-align">
+                            <i class="mdi-social-domain flight-icon"></i>
+                        </div>
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">CNRS</h4>
+                                <p class="ultra-small">UNIC Unit</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s6 m6 l6 center-align">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">Managing and tracking projects</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Automated electronic lab notebook</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Launching simulations/analyses with automatic recording</span></p>
+                            </div>
+                        </div>
+                        <div class="col s6 m6 l6 center-align flight-state-two">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">Numerical simulation or analysis</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Supporting reproducible research</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Context information, annotation and linking to data</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col s12 m6 l4">
+        <div id="flight-card" class="card">
+            <div class="card-header amber darken-2">
+                <div class="card-title">
+                    <h4 class="flight-card-title">ReproZip</h4>
+                    <p class="flight-card-date">Version 1.0.x</p>
+                </div>
+            </div>
+            <div class="card-content-bg white-text">
+                <div class="card-content">
+                    <div class="row flight-state-wrapper">
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">NewYork</h4>
+                                <p class="ultra-small">USA</p>
+                            </div>
+                        </div>
+                        <div class="col s2 m2 l2 center-align">
+                            <i class="mdi-social-location-city flight-icon"></i>
+                        </div>
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">NYU</h4>
+                                <p class="ultra-small">ViDA lab</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s6 m6 l6 center-align">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4"> Allows you to pack your research</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Tracing the systems calls used by the experiment</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Anybody can reproduce the research on a different machine</span></p>
+                            </div>
+                        </div>
+                        <div class="col s6 m6 l6 center-align flight-state-two">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">data files, libraries, environment variables</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Automatically identify which files should be included</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Requires Linux OS (docker, VM, ...)</span> C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col s12 m6 l4">
+        <div id="flight-card" class="card">
+            <div class="card-header amber darken-2">
+                <div class="card-title">
+                    <h4 class="flight-card-title">Panda</h4>
+                    <p class="flight-card-date">Version 1</p>
+                </div>
+            </div>
+            <div class="card-content-bg white-text">
+                <div class="card-content">
+                    <div class="row flight-state-wrapper">
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">Cambridge</h4>
+                                <p class="ultra-small">USA</p>
+                            </div>
+                        </div>
+                        <div class="col s2 m2 l2 center-align">
+                            <i class="mdi-social-location-city flight-icon"></i>
+                        </div>
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">MIT</h4>
+                                <p class="ultra-small">Lincoln Lab</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s6 m6 l6 center-align">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">Architecture-Neutral Dynamic Analysis</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">It is built upon the QEMU</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Whole-system record/replay execution</span></p>
+                            </div>
+                        </div>
+                        <div class="col s6 m6 l6 center-align flight-state-two">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">Support of 13 different CPU architectures</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Whole system emulator</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">x86, x86_64, and ARM guests</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

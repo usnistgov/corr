@@ -402,6 +402,8 @@
             </div>
         </div>
 
+        <div id="card-widgets"></div>
+
         <footer class="page-footer">
             <div class="footer-copyright">
               <div class="container">
@@ -548,6 +550,17 @@
                     document.getElementById('buttonEmail').click();
                 }
             }
+
+            function tools_succeed(xhttp, params){
+                var content = xhttp.responseText;
+                var container = document.getElementById("card-widgets");
+                container.innerHTML = content;
+            };
+            function tools_failed(){
+                console.log("Error loading tools content.");
+            };
+
+            config.load_xml('tools_content.xml', null, tools_succeed, tools_failed);
         </script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
