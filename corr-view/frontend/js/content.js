@@ -58,7 +58,7 @@ var Space = function (){
                         var params = [project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
                         config.load_xml('project_content.xml', params, succeed, failed);
 
-                        var content = "<div class='col s12 m6 l4'>";
+                        var content = "<div class='col s12 m6 l4' id='project-block-"+record["head"]["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -142,7 +142,7 @@ var Space = function (){
                         var params = [app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
                         config.load_xml('app_content.xml', params, succeed, failed);
 
-                        var content = "<div class='col s12 m6 l4'>";
+                        var content = "<div class='col s12 m6 l4' id='app-block-"+app["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -229,7 +229,7 @@ var Space = function (){
                     for(var i = 0; i < response["records"].length; i++){
                         record = response["records"][i];
                         console.log(record);
-                        var content = "<div class='col s12 m6 l4' id='"+record["head"]["id"]+"'> ";
+                        var content = "<div class='col s12 m6 l4' id='record-block-"+record["head"]["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -357,7 +357,7 @@ var Space = function (){
                     for(var i = 0; i < response["number"]; i++){
                         diff = response["diffs"][i];
                         console.log(diff);
-                        var content = "<div class='col s12 m6 l4' id='"+diff["id"]+"'> ";
+                        var content = "<div class='col s12 m6 l4' id='diff-block-"+diff["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -502,7 +502,7 @@ var Space = function (){
                     for(var i = 0; i < response["envs"].length; i++){
                         env = response["envs"][i];
                         console.log(env);
-                        var content = "<div class='col s12 m6 l4' id='"+env["id"]+"'> ";
+                        var content = "<div class='col s12 m6 l4' id='env-block-"+env["id"]+"'> ";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
@@ -684,7 +684,8 @@ var Record = function (_id){
                         console.log(err);
                     }
                 } else {
-                    config.error_modal('Project update failed', xmlhttp.responseText);
+                    config.error_modal('Project update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                 }
             }
         }
@@ -703,10 +704,12 @@ var Record = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                 } else {
                     // Materialize.toast('<span>Update failed</span>', 5000);
-                    config.error_modal('Update record failed', xmlhttp.responseText);
+                    config.error_modal('Update record failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                 }
             }
         }
@@ -754,11 +757,15 @@ var Record = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    var elem = document.getElementById("record-block-"+self._id);
+                    elem.parentElement.removeChild(elem);
+                    config.error_modal('Deletion succeeded', 'The selected record was deleted.');
                 } else {
-                    config.error_modal('Remove record failed', xmlhttp.responseText);
+                    config.error_modal('Remove record failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
-                    console.log("Record remove failed");
+                    // console.log("Record remove failed");
                 }
             }
         }
@@ -795,7 +802,8 @@ var Project = function (_id){
                         console.log(err);
                     }
                 } else {
-                    config.error_modal('Project update failed', xmlhttp.responseText);
+                    config.error_modal('Project update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                 }
             }
         }
@@ -814,9 +822,11 @@ var Project = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
                 } else {
-                    config.error_modal('Project update failed', xmlhttp.responseText);
+                    config.error_modal('Project update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
                 }
             }
@@ -865,11 +875,15 @@ var Project = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    var elem = document.getElementById("project-block-"+self._id);
+                    elem.parentElement.removeChild(elem);
+                    config.error_modal('Deletion succeeded', 'The selected project was deleted.');
                 } else {
-                    config.error_modal('Project remove failed', xmlhttp.responseText);
+                    config.error_modal('Project remove failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
-                    console.log("Project remove failed");
+                    // console.log("Project remove failed");
                 }
             }
         }
@@ -896,9 +910,11 @@ var Application = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
                 } else {
-                    config.error_modal('Application update failed', xmlhttp.responseText);
+                    config.error_modal('Tool update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
                 }
             }
@@ -920,11 +936,15 @@ var Application = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    var elem = document.getElementById("app-block-"+self._id);
+                    elem.parentElement.removeChild(elem);
+                    config.error_modal('Deletion succeeded', 'The selected tool was deleted.');
                 } else {
-                    config.error_modal('Application remove failed', xmlhttp.responseText);
+                    config.error_modal('Tool remove failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
-                    console.log("Application remove failed");
+                    // console.log("Application remove failed");
                 }
             }
         }
@@ -951,9 +971,11 @@ var Diff = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
                 } else {
-                    config.error_modal('Diff update failed', xmlhttp.responseText);
+                    config.error_modal('Assessment update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Update failed</span>', 5000);
                 }
             }
@@ -974,11 +996,15 @@ var Diff = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    var elem = document.getElementById("diff-block-"+self._id);
+                    elem.parentElement.removeChild(elem);
+                    config.error_modal('Deletion succeeded', 'The selected assessment was deleted.');
                 } else {
-                    config.error_modal('Diff remove failed', xmlhttp.responseText);
+                    config.error_modal('Assessment remove failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
-                    console.log("Diff remove failed");
+                    // console.log("Diff remove failed");
                 }
             }
         }
@@ -1004,10 +1030,12 @@ var Environment = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
                 } else {
                     // Materialize.toast('<span>Update failed</span>', 5000);
-                    config.error_modal('Environment update failed', xmlhttp.responseText);
+                    config.error_modal('Environment update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                 }
             }
         }
@@ -1027,11 +1055,15 @@ var Environment = function (_id){
             }else{
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     // Materialize.toast('<span>Record removal succeeded</span>', 3000);
-                    window.location.reload();
+                    // window.location.reload();
+                    var elem = document.getElementById("env-block-"+self._id);
+                    elem.parentElement.removeChild(elem);
+                    config.error_modal('Deletion succeeded', 'The selected environment was deleted.');
                 } else {
-                    config.error_modal('Environment remove failed', xmlhttp.responseText);
+                    config.error_modal('Environment remove failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Environment removal failed</span>', 3000);
-                    console.log("Environment remove failed");
+                    // console.log("Environment remove failed");
                 }
             }
         }
