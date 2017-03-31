@@ -104,6 +104,63 @@ var Space = function (){
             }
         }
     },
+    this.users = function() {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        // console.log(this.session);
+        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/users");
+        xmlhttp.send();
+        xmlhttp.onreadystatechange=function()
+        {
+            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if(xmlhttp.responseText != ""){
+                    var response = JSON.parse(xmlhttp.responseText);
+                    this.dash_content = response;
+                    document.getElementById("users-list").innerHTML = "";
+                    var version = response["version"];
+                    console.log("Version: "+version);
+                    for(var i = 0; i < response["users"].length; i++){
+                        user = response["users"][i];
+                        console.log(user);
+
+                        var picture_uri = url+"/public/user/picture/"+user["id"];
+
+                        var content = "<div class='col s12 m6 l4'>";
+                        content += "<div id='profile-card' class='card'>";
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
+                        content += "<img src='"+picture_uri+"' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<div id='update-user-"+user["id"]+"'><a id='update-action' onclick='userEdit(\""+user["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+user["created"]+"</p>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-fname-"+user["id"]+"' type='text' value='"+user["fname"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-lname-"+user["id"]+"' type='text' value='"+user["lname"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-auth-"+user["id"]+"' type='text' value='"+user["auth"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-group-"+user["id"]+"' type='text' value='"+user["group"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-org-"+user["id"]+"' type='text' value='"+user["org"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='user-email-"+user["id"]+"' type='text' value='"+user["email"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='user-about-"+user["id"]+"' type='text'>"+user["about"]+"</textarea></div></div>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a onclick='config.error_modal(\"User apps view failed.\", \"User apps view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'><i class='mdi-navigation-apps cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='applications'></i> <span class='applications badge'>"+user["apps"]+"</span></a>";
+                        content += "<a onclick='config.error_modal(\"User projects view failed.\", \"User projects view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'></i> <span class='projects badge'>"+user["projects"]+"</span></a>";
+                        content += "<a onclick='config.error_modal(\"User records view failed.\", \"User records view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2 tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'></i> <span class='records badge'>"+user["records"]+"</span></a>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "<div id='project-"+user["id"]+"-confirm' class='modal'></div>";
+                        content += "</div>";
+                        document.getElementById("users-list").innerHTML += content;
+                    }
+                    document.getElementById("footer-version").innerHTML = version;
+                }else{
+                    console.log("Cloud returned empty response!");
+                }
+            } else {
+                console.log("Dashboard failed");
+            }
+        }
+    },
     this.apps = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
@@ -766,6 +823,39 @@ var Record = function (_id){
                     console.log("Failure: "+xmlhttp.responseText);
                     // Materialize.toast('<span>Record removal failed</span>', 3000);
                     // console.log("Record remove failed");
+                }
+            }
+        }
+    }
+    return self;
+};
+
+var Account = function (_id){
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    console.log('Cookie session value: '+ Cookies.get('session'));
+    // this.session = session;
+    var self = this;
+    self._id = _id;
+    // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
+    self.save = function(fname, lname, group, auth, org, about) {
+        var xmlhttp = new XMLHttpRequest();
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/account/update/"+self._id);
+        var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org};
+        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.onreadystatechange=function()
+        {
+            if(xmlhttp.responseText == ""){
+                console.log("Cloud returned empty response!");
+            }else{
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    // Materialize.toast('<span>Update succeeded</span>', 3000);
+                    // window.location.reload();
+                    config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
+                } else {
+                    config.error_modal('Account update failed', "An error occured while processing your request.");
+                    console.log("Failure: "+xmlhttp.responseText);
+                    // Materialize.toast('<span>Update failed</span>', 5000);
                 }
             }
         }

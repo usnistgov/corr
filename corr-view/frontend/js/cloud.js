@@ -392,6 +392,45 @@ var user = {
             // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }  
     },
+    add_user: function() {
+        var email = document.getElementById("user-email").value;
+        var password = document.getElementById("project-tags").value;
+        var group = document.getElementById("user-group").value;
+        if(email != "" && password != "" && group != ""){
+            console.log(email+" -- "+group);
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+            console.log('Cookie session value: '+ Cookies.get('session'));
+            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/user/register");
+            var request = { 'email': email, 'password': password, 'group':group, 'session':Cookies.get("session")};
+            xmlhttp.send(JSON.stringify(request));
+            xmlhttp.onreadystatechange=function()
+            {
+
+                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                    if(xmlhttp.responseText == ""){
+                        console.log("Cloud returned empty response!");
+                    }else{
+                        if(xmlhttp.responseText == ""){
+                            console.log("Cloud returned empty response!");
+                        }else{
+                            var response = JSON.parse(xmlhttp.responseText);
+                            console.log(response);
+
+                            // Materialize.toast('<span>'+response['title']+'</span>', 3000);
+                            window.location.reload();
+                        }
+                    }
+                } else {
+                    console.log(xmlhttp.responseText);
+                    config.error_modal('Add user failed', xmlhttp.responseText);
+                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                }
+            }
+        }else{
+            config.error_modal('Add user failed', 'User email, password and group should not be empty.');
+            // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
+        }  
+    },
     add_record: function() {
         var project_id = document.getElementById("project-id").value;
         var tags = document.getElementById("record-tags").value;

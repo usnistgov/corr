@@ -385,6 +385,45 @@
             </div>
         </div>
 
+        <div id="user-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="user-email" type="text"></input>
+                    <label id="user-email-value" for="user-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="user-password" type="password"></input>
+                    <label id="user-password-value" for="user-password">Password</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="user-group-dropdown">
+                    <select id="user-group">
+                      <option value="user" disabled selected>User</option>
+                      <option value="developer">Developer</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row margin" id="user-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_user();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
         <div id="record-upload-modal" class="modal modal-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
@@ -563,6 +602,12 @@
 
                 document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
             }
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "users"){
+                dashboard.users(options);
+                var space = new Space();
+
+                document.getElementById("float-menu").innerHTML = "<a onclick='launchUserModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create user'><i class='large mdi-editor-vertical-align-center'></i></a>";
+            }
             // Otherwise redirect to a 404
             else{
               console.log(Cookies.get('session'));
@@ -578,7 +623,12 @@
                 document.getElementById("nav-home").href = "../";
                 document.getElementById("nav-dashboard").href = "./";
 
-                document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                var menu_dash = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li>";
+                if(Cookies.get('group') == "admin"){
+                  menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='users'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('users');\"><i class='large mdi-social-person'></i></a></li>";
+                }
+                menu_dash += "</ul>";
+                document.getElementById("float-settings").innerHTML = menu_dash;
             }
 
             // View switching function
@@ -611,12 +661,16 @@
               }
             }
 
-            function userViewModal(_id, fname, lname, organisation, about){
+            function launchUserModal(){
+              $('#user-add-modal').openModal();
+            }
+
+            function userViewModal(_id, fname, lname, org, about){
               $('#user-view-modal').openModal();
               var user_picture = document.getElementById("user-picture");
               var user_fname = document.getElementById("user-fname");
               var user_lname = document.getElementById("user-lname");
-              var user_organisation = document.getElementById("user-org");
+              var user_org = document.getElementById("user-org");
               var user_about = document.getElementById("user-about");
               var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
               user_picture.src = url+"/public/user/picture/"+_id;
@@ -624,8 +678,8 @@
               user_fname.readOnly = true;
               user_lname.value = lname;
               user_lname.readOnly = true;
-              user_organisation.value = organisation;
-              user_organisation.readOnly = true;
+              user_org.value = org;
+              user_org.readOnly = true;
               user_about.value = about;
               user_about.readOnly = true;
             }

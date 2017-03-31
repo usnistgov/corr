@@ -29,6 +29,8 @@ class UserModel(db.Document):
     session = db.StringField(max_length=256, unique=True)
     possible_group = ["admin", "user", "developer", "public", "unknown"]
     group = db.StringField(default="unknown", choices=possible_group)
+    possible_auth = ["unregistered", "blocked", "approved", "signup"]
+    auth = db.StringField(default="signup", choices=possible_group)
     extend = db.DictField()
 
     def is_authenticated(self):
@@ -127,6 +129,12 @@ class UserModel(db.Document):
         from ..models import ProfileModel
         profile = ProfileModel.objects(user=self).first()
         data['profile'] = profile.extended()
+        try:
+            data["auth"] = self.auth
+        except:
+            self.auth = "signup"
+            self.save()
+            data["auth"] = self.auth
         return data
 
     def extended(self):

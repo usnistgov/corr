@@ -36,7 +36,7 @@ def user_register():
             lname = data.get('lname', 'LastName')
             group = data.get('group', 'user')
             picture_link = data.get('picture', '')
-            admin = data.get('admin', {})
+            admin = data.get('admin', '')
             if picture_link == '':
                 picture = {'scope':'', 'location':''}
             else:
@@ -59,6 +59,11 @@ def user_register():
                     user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     user_model.retoken()
                     print("Session: %s"%user_model.session)
+                    if admin != '':
+                        admin_account = UserModel.objects(session=admin).first()
+                        if admin_account and admin_account.group == "admin":
+                            user_model.group = group
+                            user_model.save()
                     return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
                     # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
@@ -333,6 +338,52 @@ def user_update(hash_session):
                 return fk.Response('Account update succeed', status.HTTP_200_OK)
             else:
                 return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/private/<hash_session>/account/update/<account_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def account_update(hash_session, account_id):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/account/update/<account_id>')  
+    if fk.request.method == 'POST':
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        if access_resp[1] is None:
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/account/update/<account_id>')
+            user_model = access_resp[1]
+            if user_model.group != "admin":
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            else:
+                if fk.request.data:
+                    account_model = UserModel.objects.with_id(account_id)
+                    if account_model is None:
+                        return fk.Response('Unable to find the user account.', status.HTTP_401_UNAUTHORIZED)
+                    else:
+                        data = json.loads(fk.request.data)
+                        profile_model = ProfileModel.objects(user=account_model).first_or_404()
+                        group = data.get("group", account_model.group)
+                        auth = data.get("auth", account_model.auth)
+                        fname = data.get("fname", profile_model.fname)
+                        lname = data.get("lname", profile_model.lname)
+                        organisation = data.get("org", profile_model.organisation)
+                        about = data.get("about", profile_model.about)
+
+                        account_model.group = group
+                        account_model.auth = auth
+
+                        profile_model.fname = fname
+                        profile_model.lname = lname
+                        profile_model.organisation = organisation
+                        profile_model.about = about
+
+                        profile_model.save()
+                        account_model.save()
+
+                        return fk.Response('Account update succeed', status.HTTP_200_OK)
+                else:
+                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

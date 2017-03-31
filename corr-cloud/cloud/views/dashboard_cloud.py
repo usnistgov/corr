@@ -143,6 +143,49 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
+@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
+def users_dashboard(hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/users')
+    if fk.request.method == 'GET':
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        current_user = access_resp[1]
+        if current_user is None:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/users')
+            
+            if current_user.group == "admin":
+                users = UserModel.objects().order_by('+created_at')
+            else:
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            version = 'N/A'
+            try:
+                from corrdb import __version__
+                version = __version__
+            except:
+                pass
+            summaries = []
+            for u in users:
+                profile = ProfileModel.objects(user=u).first()
+                user_info = {}
+                user_info["created"] = str(user.created_at)
+                user_info["id"] = str(user.id)
+                user_info["auth"] = user.auth
+                user_info["group"] = user.group
+                user_info["email"] = user.email
+                user_info["fname"] = profile.fname
+                user_info["lname"] = profile.lname
+                user_info["organisation"] = profile.organisation
+                user_info["about"] = profile.about
+                user_info["apps"] = user.info()['total_apps']
+                user_info["projects"] = user.info()['total_projects']
+                user_info["records"] = user.info()['total_records']
+                summaries.append(user_info)
+            return fk.Response(json.dumps({'version':version, 'number':len(summaries), 'users':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
 @app.route(CLOUD_URL + '/private/<hash_session>/dashboard/diffs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 @crossdomain(fk=fk, app=app, origin='*')
 def diffs_dashboard(hash_session, project_id):

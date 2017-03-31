@@ -49,6 +49,24 @@ var dashboard = {
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
     },
+    users:function(){
+        function succeed(xhttp){
+            dashboard.content.innerHTML = xhttp.responseText;
+            console.log('Cookie session value: '+ Cookies.get('session'));
+            // user.session = session;
+            // console.log(user.session);
+            user.trusted();
+
+            var space = new Space();
+            space.users();
+
+        };
+        function failed(){
+            console.log(window.location.host);
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_users.xml', [], succeed, failed);
+    },
 	projects:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
