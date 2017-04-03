@@ -193,7 +193,7 @@ var user = {
             } else {
                 console.log('finished loading');
                 $.ajax({
-                    url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
+                    url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"/?checksum="+spark.end(),
                     type       : "POST",
                     data       : formData, 
                     async      : true,
