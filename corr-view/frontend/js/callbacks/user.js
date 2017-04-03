@@ -1,6 +1,6 @@
 // User edit callback
 function userEdit(user_id){
-    var user_update = document.getElementById('update-project-'+user_id);
+    var user_update = document.getElementById('update-user-'+user_id);
     user_update.innerHTML = "<a id='update-action' onclick='userSave(\""+user_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
     var fname = document.getElementById('user-fname-'+user_id);
     var lname = document.getElementById('user-lname-'+user_id);
@@ -18,7 +18,7 @@ function userEdit(user_id){
 
 // User save callback
 function userSave(user_id){
-    var user_update = document.getElementById('update-project-'+user_id);
+    var user_update = document.getElementById('update-user-'+user_id);
     user_update.innerHTML = "<a id='update-action' onclick='userEdit(\""+user_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var fname = document.getElementById('user-fname-'+user_id);
     var lname = document.getElementById('user-lname-'+user_id);
