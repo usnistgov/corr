@@ -400,7 +400,7 @@ var user = {
             console.log(email+" -- "+group);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/user/register");
+            xmlhttp.open("POST", this.url+"/public/user/register");
             var request = { 'email': email, 'password': password, 'group':group, 'admin':Cookies.get("session")};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
