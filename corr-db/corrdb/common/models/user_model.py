@@ -30,7 +30,7 @@ class UserModel(db.Document):
     possible_group = ["admin", "user", "developer", "public", "unknown"]
     group = db.StringField(default="unknown", choices=possible_group)
     possible_auth = ["unregistered", "blocked", "approved", "signup"]
-    auth = db.StringField(default="signup", choices=possible_group)
+    auth = db.StringField(default="signup", choices=possible_auth)
     extend = db.DictField()
 
     def is_authenticated(self):
