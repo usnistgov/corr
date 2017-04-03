@@ -48,7 +48,7 @@ def user_register():
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 created, user_model = access_manager.register(email, password, fname, lname, '')
-                if created:
+                if not created:
                     return fk.Response('This email is already used.', status.HTTP_401_UNAUTHORIZED)
                 else:
                     if user_model is None:
