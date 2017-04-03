@@ -64,7 +64,10 @@ def user_register():
                         if admin_account and admin_account.group == "admin":
                             user_model.group = group
                             user_model.save()
-                    return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
+                    if access_manager.secur:
+                        return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification. And wait for admin approval.', status.HTTP_200_OK)
+                    else:
+                        return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
                     # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -136,11 +139,16 @@ def user_login():
                     if account == None:
                         return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
-                    access = account.extend.get('access', 'verified')
-                    account.extend['access'] = access
-                    account.save()
-                    if access == 'unverified':
-                        return fk.Response('Your account is pending verification from the admin. We appologise for this convenience. For security reasons this instance requires account moderation.', status.HTTP_401_UNAUTHORIZED)
+                    if access_manager.secur and account.group != "admin":
+                        # access = account.extend.get('access', 'verified')
+                        # account.extend['access'] = access
+                        # account.save()
+                        if account.auth == 'signup':
+                            return fk.Response('Your account is pending verification from the admin. We appologise for this convenience. For security reasons this instance requires account moderation.', status.HTTP_401_UNAUTHORIZED)
+                        elif account.auth == 'blocked':
+                            return fk.Response('Your account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+                        elif account.auth == 'unregistered':
+                            return fk.Response('You unregistered. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)

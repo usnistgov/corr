@@ -16,6 +16,7 @@ class AccessManager:
         """Initializes an access manager instance.
         """
         self.config = app.config['ACCOUNT_MANAGEMENT']
+        self.secur = app.config['SECURITY_MANAGEMENT']['account']
 
         if self.config['type'] == 'stormpath':
             self.manager = StormpathManager(app)
@@ -89,7 +90,6 @@ class AccessManager:
                         (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                     account.password = hash_pwd
                     account.save()
-                account.extend['access'] = 'unverified' # Pending admin verification.
                 account.save()
         return account
 

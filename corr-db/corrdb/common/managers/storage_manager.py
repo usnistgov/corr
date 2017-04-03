@@ -17,6 +17,7 @@ class StorageManager:
         """
         self.app = app
         self.config = app.config['FILE_STORAGE']
+        self.secur = app.config['SECURITY_MANAGEMENT']['content']
         if self.config['type'] == 's3':
             # Boto s3 instance
             if self.config['id'] != '' and self.config['key'] != '':
