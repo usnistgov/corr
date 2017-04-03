@@ -22,6 +22,7 @@ class BundleModel(db.Document):
     scope = db.StringField(default="unknown", choices=possible_scope)
     location = db.StringField()
     mimetype = db.StringField()
+    checksum = db.StringField()
     size = db.LongField()
     extend = db.DictField()
 
@@ -32,6 +33,12 @@ class BundleModel(db.Document):
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'scope':self.scope,
         'location':self.location, 'size':self.size, 'mimetype':self.mimetype}
+        try:
+            data["checksum"] = self.checksum
+        except:
+            self.checksum = ""
+            self.save()
+            data["checksum"] = self.checksum
         return data
 
     def extended(self):

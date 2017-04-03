@@ -173,24 +173,57 @@ var user = {
         formData.append("file", file.files[0], file.files[0].name);
         console.log(formData);
         console.log('Cookie session value: '+ Cookies.get('session'));
-        $.ajax({
-            url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id,
-            type       : "POST",
-            data       : formData, 
-            async      : true,
-            cache      : false,
-            processData: false,
-            contentType: false,
-            success    : function(text){
-                if(text == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
-                    // window.location.replace("../?session="+user.session);
-                    window.location.reload();
-                }
+        
+        
+        var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+            _file = file.files[0],
+            chunkSize = 2097152,                             // Read in chunks of 2MB
+            chunks = Math.ceil(_file.size / chunkSize),
+            currentChunk = 0,
+            spark = new SparkMD5.ArrayBuffer(),
+            fileReader = new FileReader();
+
+        fileReader.onload = function (e) {
+            console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+            spark.append(e.target.result);                   // Append array buffer
+            currentChunk++;
+
+            if (currentChunk < chunks) {
+                loadNext();
+            } else {
+                console.log('finished loading');
+                $.ajax({
+                    url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
+                    type       : "POST",
+                    data       : formData, 
+                    async      : true,
+                    cache      : false,
+                    processData: false,
+                    contentType: false,
+                    success    : function(text){
+                        if(text == ""){
+                            console.log("Cloud returned empty response!");
+                        }else{
+                            // window.location.replace("../?session="+user.session);
+                            window.location.reload();
+                        }
+                    }
+                 });
             }
-         });
-         event.preventDefault();
+        };
+
+        fileReader.onerror = function () {
+            config.error_modal('oops', 'something went wrong.');
+        };
+
+        function loadNext() {
+            var start = currentChunk * chunkSize,
+                end = ((start + chunkSize) >= _file.size) ? _file.size : start + chunkSize;
+
+            fileReader.readAsArrayBuffer(blobSlice.call(_file, start, end));
+        }
+
+        loadNext();
     },
     recover: function() {
         var email = document.getElementById("recover-email").value;
@@ -413,11 +446,7 @@ var user = {
                         if(xmlhttp.responseText == ""){
                             console.log("Cloud returned empty response!");
                         }else{
-                            var response = JSON.parse(xmlhttp.responseText);
-                            console.log(response);
-
-                            // Materialize.toast('<span>'+response['title']+'</span>', 3000);
-                            window.location.reload();
+                            config.error_modal('user add successfull', xmlhttp.responseText);
                         }
                     }
                 } else {
@@ -560,7 +589,7 @@ var user = {
                     }
                 }else{
                     // Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
-                    config.error_modal('Upload record failed', 'Env bundle upload not implemnted yet.');
+                    config.error_modal('Upload record failed', 'Env bundle upload not implemented yet.');
                 }
             }
             

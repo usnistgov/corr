@@ -91,6 +91,10 @@ class AccessManager:
                     account.password = hash_pwd
                     account.save()
                 account.save()
+                return True, account
+            else:
+                return False, account
+
         return account
 
     def login(self, email, password):

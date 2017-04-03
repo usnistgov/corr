@@ -47,28 +47,31 @@ def user_register():
                 return fk.Response('Invalid email or password.', status.HTTP_400_BAD_REQUEST)
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
-                user_model = access_manager.register(email, password, fname, lname, '')
-                if user_model is None:
-                    # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
-                    return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
+                created, user_model = access_manager.register(email, password, fname, lname, '')
+                if created:
+                    return fk.Response('This email is already used.', status.HTTP_401_UNAUTHORIZED)
                 else:
-                    (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
-                    print("Token %s"%user_model.api_token)
-                    print(fk.request.headers.get('User-Agent'))
-                    print(fk.request.remote_addr)
-                    user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                    user_model.retoken()
-                    print("Session: %s"%user_model.session)
-                    if admin != '':
-                        admin_account = UserModel.objects(session=admin).first()
-                        if admin_account and admin_account.group == "admin":
-                            user_model.group = group
-                            user_model.save()
-                    if access_manager.secur:
-                        return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification. And wait for admin approval.', status.HTTP_200_OK)
+                    if user_model is None:
+                        # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
-                    # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                        (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
+                        print("Token %s"%user_model.api_token)
+                        print(fk.request.headers.get('User-Agent'))
+                        print(fk.request.remote_addr)
+                        user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+                        user_model.retoken()
+                        print("Session: %s"%user_model.session)
+                        if admin != '':
+                            admin_account = UserModel.objects(session=admin).first()
+                            if admin_account and admin_account.group == "admin":
+                                user_model.group = group
+                                user_model.save()
+                        if access_manager.secur:
+                            return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification. And wait for admin approval.', status.HTTP_200_OK)
+                        else:
+                            return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
+                        # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -410,6 +413,10 @@ def user_file_upload(hash_session, group, item_id):
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
             else:
+                if fk.request.args:
+                    checksum = fk.request.args.get('checksum')
+                else:
+                    checksum = None
                 if group == "picture":
                     item_id = str(user_model.id)
                 print("item_id: %s"%item_id)
@@ -566,6 +573,9 @@ def user_file_upload(hash_session, group, item_id):
                                 _file.delete()
                                 return cloud_response(500, 'An error occured', "%s"%uploaded[1])
                             else:
+                                if checksum and checksum != _file.checksum:
+                                    _file.delete()
+                                    return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
                                 logStat(file_obj=_file)
                                 if group == 'input':
                                     item.resources.append(str(_file.id))
@@ -578,8 +588,14 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'diff':
                                     item.resources.append(str(_file.id))
                                 elif group == 'bundle':
+                                    item.checksum = _file.checksum
+                                    del _file
                                     if item.storage != storage:
                                         storage_manager.storage_delete_file('bundle', item.storage, logStat)
+                                        return cloud_response(401, 'Unauthorized upload', "Inconsistent storage location.")
+                                    if checksum and checksum != _file.checksum:
+                                        storage_manager.storage_delete_file('bundle', item.storage, logStat)
+                                        return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
                                     item.encoding = encoding
                                     item.size = size
                                     item.storage = storage

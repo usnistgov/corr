@@ -55,7 +55,6 @@ class FileModel(db.Document):
         try:
             data["checksum"] = self.checksum
         except:
-
             self.checksum = ""
             self.save()
             data["checksum"] = self.checksum
