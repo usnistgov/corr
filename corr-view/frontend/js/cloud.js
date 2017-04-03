@@ -392,7 +392,7 @@ var user = {
             // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }  
     },
-    add_account: function() {
+    add_user: function() {
         var email = document.getElementById("user-email").value;
         var password = document.getElementById("user-password").value;
         var group = document.getElementById("user-group").value;

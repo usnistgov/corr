@@ -34,7 +34,7 @@ function userSave(user_id){
     org.setAttribute("readonly", "");
     about.setAttribute("readonly", "");
     var account = new Account(user_id);
-    account.save(fname.value, lname.value, group.value, auth.value, organization.value, about.value);
+    account.save(fname.value, lname.value, group.value, auth.value, org.value, about.value);
     // Make account object in contents.js and a save function for edit make sure it is in cloud/user/edit.
     // Add auth and group in edit for admin user. Maybe recreate another user edit for admin.
 }
