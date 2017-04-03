@@ -169,18 +169,18 @@ def users_dashboard(hash_session):
             for u in users:
                 profile = ProfileModel.objects(user=u).first()
                 user_info = {}
-                user_info["created"] = str(user.created_at)
-                user_info["id"] = str(user.id)
-                user_info["auth"] = user.auth
-                user_info["group"] = user.group
-                user_info["email"] = user.email
+                user_info["created"] = str(u.created_at)
+                user_info["id"] = str(u.id)
+                user_info["auth"] = u.auth
+                user_info["group"] = u.group
+                user_info["email"] = u.email
                 user_info["fname"] = profile.fname
                 user_info["lname"] = profile.lname
-                user_info["organisation"] = profile.organisation
+                user_info["org"] = profile.organisation
                 user_info["about"] = profile.about
-                user_info["apps"] = user.info()['total_apps']
-                user_info["projects"] = user.info()['total_projects']
-                user_info["records"] = user.info()['total_records']
+                user_info["apps"] = u.info()['total_apps']
+                user_info["projects"] = u.info()['total_projects']
+                user_info["records"] = u.info()['total_records']
                 summaries.append(user_info)
             return fk.Response(json.dumps({'version':version, 'number':len(summaries), 'users':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
