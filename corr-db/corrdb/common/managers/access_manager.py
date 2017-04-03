@@ -84,6 +84,9 @@ class AccessManager:
                         account.password = hash_pwd
                         account.save()
                 if self.type == 'mongodb':
+                    account = UserModel.objects(email=email).first()
+                    if account is None:
+                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                     account.password = hash_pwd
                     account.save()
                 account.extend['access'] = 'unverified' # Pending admin verification.
