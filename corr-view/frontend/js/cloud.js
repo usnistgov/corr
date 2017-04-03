@@ -429,7 +429,7 @@ var user = {
         }else{
             config.error_modal('Add user failed', 'User email, password and group should not be empty.');
             // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
-        }  
+        }
     },
     add_record: function() {
         var project_id = document.getElementById("project-id").value;
