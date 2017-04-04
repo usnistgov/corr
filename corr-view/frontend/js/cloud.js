@@ -192,8 +192,9 @@ var user = {
                 loadNext();
             } else {
                 console.log('finished loading');
+                var url = this.url;
                 $.ajax({
-                    url        : this.url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"/?checksum="+spark.end(),
+                    url        : url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"/?checksum="+spark.end(),
                     type       : "POST",
                     data       : formData, 
                     async      : true,
