@@ -96,6 +96,7 @@ class StorageManager:
                     if file_meta.group != 'descriptive':
                         group = 'corr-%ss'%file_meta.group
                     print(group)
+                    content = file_obj.read()
                     if self.config['type'] == 's3':
                         s3_files = self.s3.Bucket(self.bucket)
                         s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
@@ -103,8 +104,9 @@ class StorageManager:
                         self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
                         print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
                         with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
-                            obj.write(file_obj.read())
-                    m.update(file_obj.read())
+                            obj.write(content)
+
+                    m.update(content)
                     file_meta.checksum = m.hexdigest()
                     file_meta.save()
                     return [True, "File uploaded successfully"]
