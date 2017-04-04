@@ -575,7 +575,7 @@ def user_file_upload(hash_session, group, item_id):
                             else:
                                 if checksum and checksum != _file.checksum:
                                     _file.delete()
-                                    return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
+                                    return cloud_response(401, 'Unauthorized upload', "Invalid checksum received: {0} and computed: {1}".format(checksum, _file.checksum))
                                 logStat(file_obj=_file)
                                 if group == 'input':
                                     item.resources.append(str(_file.id))
