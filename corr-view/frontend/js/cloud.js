@@ -173,6 +173,7 @@ var user = {
         formData.append("file", file.files[0], file.files[0].name);
         console.log(formData);
         console.log('Cookie session value: '+ Cookies.get('session'));
+        var url = this.url;
         
         
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
@@ -192,7 +193,6 @@ var user = {
                 loadNext();
             } else {
                 console.log('finished loading');
-                var url = this.url;
                 $.ajax({
                     url        : url+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"/?checksum="+spark.end(),
                     type       : "POST",
