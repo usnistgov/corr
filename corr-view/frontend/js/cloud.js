@@ -120,6 +120,9 @@ var user = {
         xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/user/update");
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
+        var callback_block = document.getElementById("user-update-callback");
+        var infinite_block = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
+        var button_block = "<div class=\"input-field col s12\"><a onclick=\"return user.update();\" class=\"btn waves-effect purple waves-light col s12 modal-action modal-close\">Update Profile</a></div>";
         if(pwd != pwd_2){
             console.log("Passwords mismatch");
             // Materialize.toast('<span>Passwords mismatch</span>', 3000);
@@ -153,21 +156,23 @@ var user = {
 
                     var file = document.getElementById("picture-input");
                     if (file.files.length > 0) {
-                        user.upload_file(file, 'picture', 'none');
+                        user.upload_file(file, 'picture', 'none', callback_block, button_block);
                     }else{
                         console.log("No picture to change");
-                        window.location.reload(); 
+                        // window.location.reload(); 
+                        callback_block.innerHTML = button_block;
                     }
                     // Materialize.toast('<span>Update succeeded</span>', 3000);
                 } else {
                     console.log("Update failed");
                     config.error_modal('Update failed', response);
+                    callback_block.innerHTML = button_block;
                     // Materialize.toast('<span>Update failed</span>', 3000);
                 }
             }
         }
     },
-    upload_file: function(file, group, item_id) {
+    upload_file: function(file, group, item_id, callback_block, button_block) {
         console.log("File: "+file.files[0].name);
         var formData = new FormData();
         formData.append("file", file.files[0], file.files[0].name);
@@ -206,7 +211,8 @@ var user = {
                             console.log("Cloud returned empty response!");
                         }else{
                             // window.location.replace("../?session="+user.session);
-                            window.location.reload();
+                            // window.location.reload();
+                            callback_block.innerHTML = button_block;
                         }
                     }
                  });
@@ -501,7 +507,11 @@ var user = {
         var upload_group = document.getElementById("upload-group").value;
         var uplpad_type = document.getElementById("upload-type").value;
         var file2upload = document.getElementById("upload-file");
+        var callback_block = document.getElementById("record-upload-callback");
+        var infinite_block = "<div class=\"progress\"><div class=\"indeterminate\"></div></div>";
+        var button_block = "<div class=\"input-field col s12\"><a onclick=\"return user.upload_record();\" class=\"btn waves-effect purple waves-light col s12 modal-action modal-close\">Upload</a></div>";
         if(record_id != ""){
+            callback_block.innerHTML = infinite_block;
             console.log(record_id+" -- "+upload_group);
             console.log(uplpad_type+" -- "+file2upload);
             if(upload_group == "body"){
@@ -524,6 +534,7 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
+                                    callback_block.innerHTML = button_block;
                                 }
                             }else if(uplpad_type == "xml"){
                                 var x2js = new X2JS();
@@ -533,6 +544,7 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
+                                    callback_block.innerHTML = button_block;
                                 }
                             }else if(uplpad_type == "yaml"){
                                 try {
@@ -542,10 +554,12 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
+                                    callback_block.innerHTML = button_block;
                                 }
                             }else{
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
                                 // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
+                                callback_block.innerHTML = button_block;
                             }
                             if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
@@ -562,11 +576,13 @@ var user = {
                                             console.log(response);
 
                                             // Materialize.toast('<span>Upload succeeded</span>', 3000);
-                                            window.location.reload();
+                                            // window.location.reload();
+                                            callback_block.innerHTML = button_block;
                                         }
                                     } else {
                                         console.log(xmlhttp.responseText);
                                         config.error_modal('Upload record failed', xmlhttp.responseText);
+                                        callback_block.innerHTML = button_block;
                                         // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                                     }
                                 }
@@ -583,20 +599,23 @@ var user = {
                 if (upload_group != "bundle"){
                     if (file2upload.files.length > 0) {
                         console.log("file not empty");
-                        user.upload_file(file2upload, upload_group, record_id);
+                        user.upload_file(file2upload, upload_group, record_id, callback_block, button_block);
                     }else{
                         config.error_modal('Upload record failed', 'File should not be empty.');
+                        callback_block.innerHTML = button_block;
                         // Materialize.toast('<span>File should not be empty.</span>', 3000);
                     }
                 }else{
                     // Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
                     config.error_modal('Upload record failed', 'Env bundle upload not implemented yet.');
+                    callback_block.innerHTML = button_block;
                 }
             }
             
         }else{
             config.error_modal('Upload record failed', 'Record id should not be empty.');
             // Materialize.toast('<span>Record id should not be empty.</span>', 3000);
+            callback_block.innerHTML = button_block;
         }
     },
     add_diff: function() {
