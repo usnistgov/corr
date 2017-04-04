@@ -10,6 +10,7 @@ import requests
 import os
 import glob
 import hashlib
+import clamd
 
 class StorageManager:
     def __init__(self, app):
@@ -80,6 +81,24 @@ class StorageManager:
             print(traceback.print_exc())
             return None
 
+    def is_safe(self, content=None):
+        if content:
+            cd = clamd.ClamdUnixSocket()
+            if cd.ping() == 'PONG':
+                cd.reload()
+                file_buffer = BytesIO()
+                file_buffer.write(content)
+                file_buffer.seek(0)
+                result = cd.instream(file_buffer)
+                if result['stream'] == ('OK', None):
+                    return [True, "File is very safe."]
+                else:
+                    return [False, "The file looks malicious."]
+            else:
+                return [False, "Clamd Cannot be reached."]
+        else:
+            return [True, "No content. So it is very safe."]
+
     def storage_upload_file(self, file_meta=None, file_obj=None):
         """Upload a file into the s3 bucket.
             Returns:
@@ -97,29 +116,37 @@ class StorageManager:
                         group = 'corr-%ss'%file_meta.group
                     print(group)
                     content = file_obj.read()
-                    if self.config['type'] == 's3':
-                        s3_files = self.s3.Bucket(self.bucket)
-                        s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
-                    elif self.config['type'] == 'filesystem':
-                        self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
-                        print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
-                        with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
-                            obj.write(content)
+                    safety = self.is_safe(content)
+                    if not safety[0]:
+                        return [False, safety[1]]
+                    else:
+                        if self.config['type'] == 's3':
+                            s3_files = self.s3.Bucket(self.bucket)
+                            s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
+                        elif self.config['type'] == 'filesystem':
+                            self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
+                            print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
+                            with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
+                                obj.write(content)
 
-                    m.update(content)
-                    file_meta.checksum = m.hexdigest()
-                    file_meta.save()
-                    return [True, "File uploaded successfully"]
+                        m.update(content)
+                        file_meta.checksum = m.hexdigest()
+                        file_meta.save()
+                        return [True, "File uploaded successfully"]
                 except:
                     self.app.logger.error(traceback.print_exc())
                     return [False, traceback.format_exc()]
             else:
                 file_obj = self.web_get_file(file_meta.storage)
-                if file_obj:
+                safety = self.is_safe(content)
+                if file_obj and safety[0]:
                     m.update(file_obj.getvalue())
                     file_meta.checksum = m.hexdigest()
                     file_meta.save()
-                return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
+                if safety[0]:
+                    return [True, "Cannot upload a file that is remotely set. It has to be local targeted."]
+                else:
+                    return [False, safety[1]]
         else:
             return [False, "file meta data does not exist or file content is empty."]
 
