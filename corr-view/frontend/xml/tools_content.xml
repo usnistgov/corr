@@ -1,7 +1,4 @@
 <div class="row">
-    <div class="col s12 grid-example"><span class="flow-text">This instance supports the following tools</span>
-</div>
-<div class="row">
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
