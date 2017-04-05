@@ -393,7 +393,61 @@ var user = {
                         console.log(response);
 
                         // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                        window.location.reload();
+                        // window.location.reload();
+                        var app = response['content'];
+                        var app_block_check = document.getElementById("app-block-"+app["id"]);
+                        if(app_block_check == undefined || app_block_check == null){
+                            var content = "<div class='col s12 m6 l4' id='app-block-"+app["id"]+"'>";
+                            content += "<div id='profile-card' class='card'>";
+                            content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                            content += "<div class='card-content'>";
+                            content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                            if(Cookies.get('group') == "admin"){
+                                content += "<a onclick='appRemove(\""+app["name"]+"\",\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
+                            }
+                            content += "<a onclick='config.error_modal(\"Application downoload failed\", \"Application download not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
+                            if(Cookies.get('group') == "admin"){
+                                content += "<div id='update-app-"+app["id"]+"'><a id='update-action' onclick='appEdit(\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
+                            }
+                            content += "<a onclick='config.error_modal(\"Application details failed\", \"Application details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+
+                            content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+app["created"]+"</p>";
+                            content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+app["id"]+"' type='text' value='"+app["name"]+"'></div></div>";
+                            // content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-settings-ethernet prefix cyan-text text-darken-2'></i><input readonly id='app-network-"+app["id"]+"' type='text' value='"+app["network"]+"'></div></div>";
+                            var access_select = [];
+                            access_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><select id='app-access-"+app["id"]+"'>");
+                            access_select.push("<option value='activated' disabled>Choose access</option>");
+                            access_select.push("<option value='blocked'>Blocked</option>");
+                            access_select.push("<option value='deactivated'>Deactivated</option>");
+                            access_select.push("</select></div></div>");
+                            if(app["access"] == "activated"){
+                                access_select[1] = "<option value='activated' disabled selected>Choose access</option>";
+                            }else if(app["access"] == "blocked"){
+                                access_select[2] = "<option value='blocked' selected>Blocked</option>";
+                            }else if(app["access"] == "deactivated"){
+                                access_select[3] = "<option value='deactivated' selected>Deactivated</option>";
+                            }
+                            
+                            for(var j = 0; j < access_select.length; j++){
+                                // content += access_select[j];
+                            }
+
+                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><input readonly placeholder='activated,blocked,deactivated' id='app-access-"+app["id"]+"' type='text' value='"+app["access"]+"'></div></div>";
+                            // if(Cookies.get('group') == "admin"){
+                            content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+app["id"]+"' type='text' value='"+app["token"]+"'></div></div>";
+                            // }
+                            content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+app["id"]+"' type='text' value='"+app["about"]+"'>"+app["about"]+"</textarea></div></div>";
+                            content += "<div class='card-action center-align'>";
+                            content += "<a onclick='config.error_modal(\"Application users view failed\", \"Application users view not implemented yet!\", 3000);' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'><i class='mdi-social-group-add cyan-text text-darken-2'></i> <span class='users badge'>"+app["users"]+"</span></a>";
+                            content += "<a onclick='config.error_modal(\"Application projects view failed\", \"Application projects view not implemented yet!\", 3000);' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='projects'><i class='mdi-file-folder cyan-text text-darken-2'></i> <span class='projects badge'>"+app["projects"]+"</span></a>";
+                            content += "<a onclick='config.error_modal(\"Application records view failed\", \"Application records view not implemented yet!\", 3000);' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+app["records"]+"</span></a>";
+                            content += "</div>";
+                            content += "</div>";
+                            content += "</div>";
+                            content += "<div id='app-"+app["id"]+"-confirm' class='modal'></div>";
+                            content += "</div>";
+                            document.getElementById("apps-list").innerHTML += content;
+                        }
                     }
                 } else {
                     console.log(xmlhttp.responseText);
@@ -430,7 +484,7 @@ var user = {
                             console.log("Cloud returned empty response!");
                         }else{
                             var response = JSON.parse(xmlhttp.responseText);
-                            project = response['content'];
+                            var project = response['content'];
                             console.log(response);
                             var accessible = false;
                             if(project["access"] == "public"){

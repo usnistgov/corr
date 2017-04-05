@@ -303,7 +303,7 @@ def dashboard_envs(project_id):
                     envs = {'size':0, 'envs':[]}
                     for env in project.envs:
                         env_info = env.info()
-                        env["project"] = project.info()
+                        env_info['project'] = project.info()
                         envs['envs'].append(env_info)
                     envs['size'] = len(envs['envs'])
                     return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
