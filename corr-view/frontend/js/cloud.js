@@ -450,7 +450,7 @@ var user = {
                                 content += "<a onclick='userViewModal(\""+project["owner"]["id"]+"\",\""+project["owner"]["profile"]["fname"]+"\""+",\""+project["owner"]["profile"]["lname"]+"\",\""+project["owner"]["profile"]["organisation"]+"\",\""+project["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+project["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                             }
 
-                            content += "<span class='card-title activator black-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                            content += "<span class='card-title activator black-text text-darken-4'> "+project["name"]+"</span>";
                             content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["created"]+"</p>";
                             // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                             if(accessible){
