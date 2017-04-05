@@ -145,6 +145,7 @@ var user = {
             }
             console.log("Fname: "+fname);
             console.log("Lname: "+lname);
+            $('#account-update-modal').closeModal();
             $('#loading-modal').openModal();
             var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
             xmlhttp.send(JSON.stringify(request));
@@ -155,6 +156,7 @@ var user = {
                     console.log(response);
 
                     var file = document.getElementById("picture-input");
+                    console.log(file);
                     if (file.files.length > 0) {
                         user.upload_file(file, 'picture', 'none');
                     }else{

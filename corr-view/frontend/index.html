@@ -259,6 +259,62 @@
             </section>
         </div>
 
+        <div id="loading-modal" class="modal modal-form">
+          <div class="modal-content">
+            <div class="row">
+              <div class="col s12 center">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+                <p>Wait...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="error-display-modal" class="modal modal-form">
             <div class="modal-content">
                 <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
@@ -354,7 +410,7 @@
                 </div>
                 <div class="row margin">
                 <div class="input-field col s12">
-                  <a onclick="window.location.reload();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Cancel</a>
+                  <a class="btn waves-effect purple waves-light col s12 modal-action modal-close">Cancel</a>
                 </div>
               </div>
             </div>
@@ -441,6 +497,10 @@
             $(document).ready(function(){
                 $('.tooltipped').tooltip({delay: 50});
                 $('.collapsible').collapsible({accordion : false});
+            });
+            $('#picture-input').bind('input', function() {
+                var user_picture = document.getElementById("update-user-picture");
+                user_picture.src = $(this).val();
             });
             var xmlhttp = new XMLHttpRequest();
             // console.log(this.session);
