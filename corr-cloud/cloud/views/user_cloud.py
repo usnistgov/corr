@@ -599,10 +599,10 @@ def user_file_upload(group, item_id):
                                     item.checksum = _file.checksum
                                     del _file
                                     if item.storage != storage:
-                                        storage_manager.storage_delete_file('bundle', item.storage, logStat)
+                                        storage_manager.storage_delete_file('bundle', item.storage)
                                         return cloud_response(401, 'Unauthorized upload', "Inconsistent storage location.")
                                     if checksum and checksum != _file.checksum:
-                                        storage_manager.storage_delete_file('bundle', item.storage, logStat)
+                                        storage_manager.storage_delete_file('bundle', item.storage)
                                         return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
                                     item.encoding = encoding
                                     item.size = size
@@ -614,7 +614,7 @@ def user_file_upload(group, item_id):
                                 elif group == 'picture':
                                     if item.picture != None:
                                         if _file.storage != old_storage:
-                                            deleted = storage_manager.storage_delete_file('picture',old_storage, logStat)
+                                            deleted = storage_manager.storage_delete_file('picture',old_storage)
                                             if deleted:
                                                 logStat(deleted=True, file_obj=item.picture)
                                         else:
@@ -625,7 +625,7 @@ def user_file_upload(group, item_id):
                                         item.picture = _file
                                 elif 'logo' in group:
                                     if item.logo.location != storage:
-                                        storage_manager.storage_delete_file('logo',item.logo.storage, logStat)
+                                        storage_manager.storage_delete_file('logo',item.logo.storage)
                                     if item != None:
                                         item.logo = _file
                                 elif 'resource' in group:

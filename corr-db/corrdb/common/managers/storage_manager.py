@@ -194,17 +194,9 @@ class StorageManager:
                         deleted = True
                         break
             elif self.config['type'] == 'filesystem':
-                found = self.agent_delete('bundle', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('file', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('logo', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('output', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('picture', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('resource', self.storage_path, key)
+                found = self.agent_delete(group, self.storage_path, key)
+                if found:
+                    deleted = True
             if not deleted:
                 print("File not deleted")
         return deleted

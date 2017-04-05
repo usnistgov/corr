@@ -768,7 +768,7 @@ def app_update(app_id):
                                 logo_group = 'logo'
                                 logo_description = 'This is the application %s logo.'%name
                                 if app.logo.location == 'local':
-                                    storage_manager.storage_delete_file('logo', app.logo.storage, logStat)
+                                    storage_manager.storage_delete_file('logo', app.logo.storage)
                                 logo.name = logo_name
                                 logo.mimetype=logo_mimetype
                                 logo.size=logo_size
