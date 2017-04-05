@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
@@ -25,17 +25,18 @@ import mimetypes
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/private/<hash_session>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_create(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/create')
+def diff_create():
+    logTraffic(CLOUD_URL, endpoint='/private/diff/create')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/create')
+            logAccess(CLOUD_URL, 'cloud', '/private/diff/create')
             if fk.request.data:
                 data = json.loads(fk.request.data)
                 record_from_id = data.get("record_from", "")
@@ -78,16 +79,17 @@ def diff_create(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/diff/remove/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/diff/remove/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_remove(hash_session, diff_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/remove/<diff_id>')
+def diff_remove(diff_id):
+    logTraffic(CLOUD_URL, endpoint='/private/diff/remove/<diff_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/remove/<diff_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/diff/remove/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -106,16 +108,17 @@ def diff_remove(hash_session, diff_id):
     else:
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/diff/comment/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/diff/comment/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_comment(hash_session, diff_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/comment/<diff_id>')
+def diff_comment(diff_id):
+    logTraffic(CLOUD_URL, endpoint='/private/diff/comment/<diff_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         caccess_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/comment/<diff_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/diff/comment/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -139,16 +142,17 @@ def diff_comment(hash_session, diff_id):
     else:
        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
-@app.route(CLOUD_URL + '/private/<hash_session>/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_view(hash_session, diff_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/view/<diff_id>')
+def diff_view(diff_id):
+    logTraffic(CLOUD_URL, endpoint='/private/diff/view/<diff_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/view/<diff_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/diff/view/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -162,10 +166,11 @@ def diff_view(hash_session, diff_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/diff/edit/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/diff/edit/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diff_edit(hash_session, diff_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/edit/<diff_id>')
+def diff_edit(diff_id):
+    logTraffic(CLOUD_URL, endpoint='/private/diff/edit/<diff_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
@@ -173,7 +178,7 @@ def diff_edit(hash_session, diff_id):
             return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/edit/<diff_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/diff/edit/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -208,7 +213,7 @@ def diff_edit(hash_session, diff_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_diff_view(diff_id):
     logTraffic(CLOUD_URL, endpoint='/public/diff/view/<diff_id>')

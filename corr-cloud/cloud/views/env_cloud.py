@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
 from corrdb.common.models import UserModel
 from corrdb.common.models import ApplicationModel
 from corrdb.common.models import ProjectModel
@@ -18,10 +18,11 @@ import smtplib
 from email.mime.text import MIMEText
 import mimetypes
 
-@app.route(CLOUD_URL + '/private/<hash_session>/env/remove/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/env/remove/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def env_remove(hash_session, env_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/remove/<env_id>')     
+def env_remove(env_id):
+    logTraffic(CLOUD_URL, endpoint='/private/env/remove/<env_id>')
+    hash_session = basicAuthSession(fk.request)     
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
@@ -29,7 +30,7 @@ def env_remove(hash_session, env_id):
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/remove/<env_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/env/remove/<env_id>')
                 env = EnvironmentModel.objects.with_id(env_id)
             except:
                 print(str(traceback.print_exc()))
@@ -55,16 +56,17 @@ def env_remove(hash_session, env_id):
        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/env/view/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/env/view/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def env_view(hash_session, env_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/view/<env_id>')
+def env_view(env_id):
+    logTraffic(CLOUD_URL, endpoint='/private/env/view/<env_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         caccess_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/view/<env_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/env/view/<env_id>')
                 env = EnvironmentModel.objects.with_id(env_id)
                 # Make sure user own or used this environment.
                 owned = False
@@ -86,17 +88,18 @@ def env_view(hash_session, env_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/env/create/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/env/create/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def env_create(hash_session, record_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/create/<record_id>')
+def env_create(record_id):
+    logTraffic(CLOUD_URL, endpoint='/private/env/create/<record_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/create/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/env/create/<record_id>')
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
@@ -140,10 +143,11 @@ def env_create(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/env/edit/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/env/edit/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def env_edit(hash_session, env_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/env/edit/<env_id>')
+def env_edit(env_id):
+    logTraffic(CLOUD_URL, endpoint='/private/env/edit/<env_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]

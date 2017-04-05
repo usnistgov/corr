@@ -46,7 +46,8 @@ if(Cookies.get('session') != undefined){
     // var session = parts[1].split("&")[0];
     var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
     // console.log(session);
-    xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/dashboard");
+    xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/user/dashboard");
+    xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
     xmlhttp.send();
     xmlhttp.onreadystatechange=function()
     {

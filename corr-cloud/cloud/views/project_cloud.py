@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import EnvironmentModel
@@ -17,17 +17,18 @@ import smtplib
 from email.mime.text import MIMEText
 import mimetypes
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_sync(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/sync/<project_id>')
+def project_sync(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/sync/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/sync/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/sync/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
             if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -39,18 +40,18 @@ def project_sync(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_view(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/view/<project_id>')
-        
+def project_view(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/view/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/view/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/view/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
             if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -62,15 +63,16 @@ def project_view(hash_session, project_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/remove/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_remove(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/remove/<project_id>')
+def project_remove(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/remove/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/remove/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/remove/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
@@ -84,15 +86,16 @@ def project_remove(hash_session, project_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/comment/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_comment(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comment/<project_id>')
+def project_comment(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/comment/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comment/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/comment/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -113,17 +116,18 @@ def project_comment(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_comments(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/comments/<project_id>')
+def project_comments(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/comments/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/comments/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/comments/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -132,15 +136,16 @@ def project_comments(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_create(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/create')
+def project_create():
+    logTraffic(CLOUD_URL, endpoint='/private/project/create')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/create')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/create')
             if fk.request.data:
                 data = json.loads(fk.request.data)
                 try:
@@ -173,15 +178,16 @@ def project_create(hash_session):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/edit/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_edit(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/edit/<project_id>')
+def project_edit(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/project/edit/<project_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/edit/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
@@ -231,17 +237,18 @@ def project_edit(hash_session, project_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_records(hash_session, project_name):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/project/record/<project_name>')   
+def project_records(project_name):
+    logTraffic(CLOUD_URL, endpoint='/private/project/record/<project_name>')   
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/project/record/<project_name>')
+            logAccess(CLOUD_URL, 'cloud', '/private/project/record/<project_name>')
             project = ProjectModel.objects(name=project_name).first()
             if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -250,7 +257,7 @@ def project_records(hash_session, project_name):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/project/sync/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_project_sync(project_id):
     logTraffic(CLOUD_URL, endpoint='/public/project/sync/<project_id>')
@@ -269,7 +276,7 @@ def public_project_sync(project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))        
 
-@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_project_records(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/public/project/record/<project_id>')
@@ -282,7 +289,7 @@ def public_project_records(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_project_comments(hash_session, project_id):
     logTraffic(CLOUD_URL, endpoint='/public/project/comments/<project_id>')
@@ -295,7 +302,7 @@ def public_project_comments(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/project/view/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_project_view(project_id):
     logTraffic(CLOUD_URL, endpoint='/public/project/view/<project_id>')

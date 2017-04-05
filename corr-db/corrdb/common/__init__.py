@@ -9,6 +9,7 @@ import datetime
 from datetime import date, timedelta
 from calendar import monthrange
 from functools import update_wrapper
+import base64
 
 def logAccess(component='none', scope='root', endpoint='', app=None):
     """Log the access to the backend.
@@ -125,21 +126,25 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
                 resp = app.make_default_options_response()
             else:
                 resp = fk.make_response(f(*args, **kwargs))
-            if not attach_to_all and fk.request.method != 'OPTIONS':
-                return resp
+            # if not attach_to_all and fk.request.method != 'OPTIONS':
+            #     return resp
 
             h = resp.headers
 
             h['Access-Control-Allow-Origin'] = origin
             h['Access-Control-Allow-Methods'] = get_methods()
             h['Access-Control-Max-Age'] = str(max_age)
-            if headers is not None:
-                h['Access-Control-Allow-Headers'] = headers
+            # if headers is not None:
+            #     h['Access-Control-Allow-Headers'] = headers
+            h['Access-Control-Allow-Headers'] = 'Authorization,Content-Type,Access-Control-Allow-Credentials'
             return resp
 
         f.provide_automatic_options = False
         return update_wrapper(wrapped_function, f)
     return decorator
+
+def basicAuthSession(request):
+    return base64.b64decode(request.headers['Authorization']).split(":")[1]
 
 from .managers import *
 from .core import *

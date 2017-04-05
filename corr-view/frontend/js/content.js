@@ -7,7 +7,8 @@ var Space = function (){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/private/dashboard/projects");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -56,7 +57,7 @@ var Space = function (){
                         };
 
                         var params = [project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
-                        config.load_xml('project_content.xml', params, succeed, failed);
+                        // config.load_xml('project_content.xml', params, succeed, failed);
 
                         var content = "<div class='col s12 m6 l4' id='project-block-"+project["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
@@ -108,7 +109,8 @@ var Space = function (){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/users");
+        xmlhttp.open("GET", url+"/private/dashboard/users");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -165,7 +167,8 @@ var Space = function (){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/developer/apps");
+        xmlhttp.open("GET", url+"/private/dashboard/developer/apps");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -197,7 +200,7 @@ var Space = function (){
                         };
 
                         var params = [app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
-                        config.load_xml('app_content.xml', params, succeed, failed);
+                        // config.load_xml('app_content.xml', params, succeed, failed);
 
                         var content = "<div class='col s12 m6 l4' id='app-block-"+app["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
@@ -265,10 +268,11 @@ var Space = function (){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/records/all");
+            xmlhttp.open("GET", url+"/private/dashboard/records/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/records/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/records/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -395,10 +399,11 @@ var Space = function (){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/diffs/all");
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/diffs/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -539,10 +544,11 @@ var Space = function (){
         console.log("Project id: "+project_id);
         console.log('Cookie session value: '+ Cookies.get('session'));
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/envs/all");
+            xmlhttp.open("GET", url+"/private/dashboard/envs/all");
         }else{
-            xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/envs/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/envs/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         // console.log(this.session);
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
@@ -607,7 +613,8 @@ var Space = function (){
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/search?query="+search);
+        xmlhttp.open("GET", url+"/private/dashboard/search?query="+search);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -678,7 +685,8 @@ var Space = function (){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/projects");
+        xmlhttp.open("GET", url+"/private/dashboard/projects");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -721,7 +729,8 @@ var Record = function (_id){
     self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/record/view/"+self._id);
+        xmlhttp.open("GET", url+"/private/record/view/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -751,7 +760,8 @@ var Record = function (_id){
     self.save = function(tags, rationels, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'tags': tags, 'rationels': rationels, 'status': status};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -775,7 +785,8 @@ var Record = function (_id){
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = {'access':access_value};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
@@ -805,7 +816,8 @@ var Record = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/record/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/record/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -840,7 +852,8 @@ var Account = function (_id){
     self.save = function(fname, lname, group, auth, org, about) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/account/update/"+self._id);
+        xmlhttp.open("POST", url+"/private/account/update/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -872,7 +885,8 @@ var Project = function (_id){
     self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/view/"+self._id);
+        xmlhttp.open("GET", url+"/private/project/view/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -902,7 +916,8 @@ var Project = function (_id){
     self.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'tags':tags, 'description': description, 'goals': goals};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -925,7 +940,8 @@ var Project = function (_id){
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/project/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = {'access':access_value};
         console.log(access_value);
         xmlhttp.send(JSON.stringify(request));
@@ -956,7 +972,8 @@ var Project = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/project/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/project/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -990,7 +1007,8 @@ var Application = function (_id){
     this.save = function(name, network, about, access) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/update/"+self._id);
+        xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'name':name, 'network': network, 'about': about, 'access': access};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -1017,7 +1035,8 @@ var Application = function (_id){
         // console.log(this.session);
         console.log(url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/remove/"+self._id);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/dashboard/developer/app/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -1050,7 +1069,8 @@ var Diff = function (_id){
     this.save = function(method, proposition, status) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/diff/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/diff/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'method': method, 'proposition': proposition, 'status': status};
         console.log(request);
         xmlhttp.send(JSON.stringify(request));
@@ -1077,7 +1097,8 @@ var Diff = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/diff/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/diff/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -1110,7 +1131,8 @@ var Environment = function (_id){
     this.save = function(group, system) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/env/edit/"+self._id);
+        xmlhttp.open("POST", url+"/private/env/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'group':group, 'system': system};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
@@ -1136,7 +1158,8 @@ var Environment = function (_id){
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
         
-        xmlhttp.open("GET", url+"/private/"+Cookies.get('session')+"/env/remove/"+self._id);
+        xmlhttp.open("GET", url+"/private/env/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {

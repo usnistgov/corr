@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ApplicationModel
@@ -23,7 +23,7 @@ import os
 import mimetypes
 from io import BytesIO
 
-@app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_register():
     logTraffic(CLOUD_URL, endpoint='/public/user/register')        
@@ -77,7 +77,7 @@ def user_register():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_password_reset():
     logTraffic(CLOUD_URL, endpoint='/public/user/password/reset')
@@ -96,10 +96,11 @@ def user_password_reset():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_password_change():
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/password/change')        
+    logTraffic(CLOUD_URL, endpoint='/private/user/password/change')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
@@ -108,7 +109,7 @@ def user_password_change():
             if not access_resp[0]:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/password/change')
+                logAccess(CLOUD_URL, 'cloud', '/private/user/password/change')
                 user_model = access_resp[1]
                 if fk.request.data:
                     password = data.get('password', '')
@@ -122,7 +123,7 @@ def user_password_change():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_login():
     logTraffic(CLOUD_URL, endpoint='/public/user/login')
@@ -167,16 +168,17 @@ def user_login():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_sync(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/sync')
+def user_sync():
+    logTraffic(CLOUD_URL, endpoint='/private/user/sync')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/sync')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/sync')
             user_model = access_resp[1]
             print(fk.request.path)
             user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
@@ -184,50 +186,53 @@ def user_sync(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_logout(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/logout')
+def user_logout():
+    logTraffic(CLOUD_URL, endpoint='/private/user/logout')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/logout')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/logout')
             user_model = access_resp[1]
             user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
             return fk.Response('Logout succeed', status.HTTP_200_OK)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_unregister(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/unregister')        
+def user_unregister():
+    logTraffic(CLOUD_URL, endpoint='/private/user/unregister') 
+    hash_session = basicAuthSession(fk.request)       
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/unregister')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/unregister')
             user_model = access_resp[1]
             return fk.redirect('{0}:{1}/error/?code=501'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_dashboard(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/dashboard')
+def user_dashboard():
+    logTraffic(CLOUD_URL, endpoint='/private/user/dashboard')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/dashboard')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/dashboard')
             user_model = access_resp[1]
             profile_model = ProfileModel.objects(user=user_model).first()
             dashboard = {}
@@ -306,17 +311,18 @@ def user_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_update(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/update')  
+def user_update():
+    logTraffic(CLOUD_URL, endpoint='/private/user/update') 
+    hash_session = basicAuthSession(fk.request) 
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/update')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/update')
             user_model = access_resp[1]
             if fk.request.data:
                 data = json.loads(fk.request.data)
@@ -352,17 +358,18 @@ def user_update(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/account/update/<account_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/account/update/<account_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def account_update(hash_session, account_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/account/update/<account_id>')  
+def account_update(account_id):
+    logTraffic(CLOUD_URL, endpoint='/private/account/update/<account_id>')  
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/account/update/<account_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/account/update/<account_id>')
             user_model = access_resp[1]
             if user_model.group != "admin":
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -398,10 +405,11 @@ def account_update(hash_session, account_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_file_upload(hash_session, group, item_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
+def user_file_upload(group, item_id):
+    logTraffic(CLOUD_URL, endpoint='/private/file/upload/<group>/<item_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
@@ -409,7 +417,7 @@ def user_file_upload(hash_session, group, item_id):
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/file/upload/<group>/<item_id>')
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
             else:
@@ -630,7 +638,7 @@ def user_file_upload(hash_session, group, item_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_contactus():
     logTraffic(CLOUD_URL, endpoint='/public/user/contactus')
@@ -657,7 +665,7 @@ def user_contactus():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_version():
     logTraffic(CLOUD_URL, endpoint='/public/version')
@@ -672,17 +680,18 @@ def public_version():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_config(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
+def user_config():
+    logTraffic(CLOUD_URL, endpoint='/private/user/config')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/config')
             config_buffer = BytesIO()
             config_content = {'default':{'app':'', 'api':{'host':API_HOST, 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
@@ -691,17 +700,18 @@ def user_config(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_picture(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/picture')
+def user_picture():
+    logTraffic(CLOUD_URL, endpoint='/private/user/picture')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
                 picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
@@ -765,17 +775,18 @@ def user_picture(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_truested(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/trusted')
+def user_truested():
+    logTraffic(CLOUD_URL, endpoint='/private/user/trusted')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/trusted')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/trusted')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -786,7 +797,7 @@ def user_truested(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_home():
     logTraffic(CLOUD_URL, endpoint='/public/user/home')
@@ -838,17 +849,18 @@ def user_home():
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_profile(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/profile')
+def user_profile():
+    logTraffic(CLOUD_URL, endpoint='/private/user/profile')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/profile')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
             if profile_model == None:
                 profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
@@ -860,24 +872,25 @@ def user_profile(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_renew(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/renew')
+def user_renew():
+    logTraffic(CLOUD_URL, endpoint='/private/user/renew')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/renew')
+            logAccess(CLOUD_URL, 'cloud', '/private/user/renew')
             print(fk.request.path)
             user_model.retoken()
             return fk.Response(json.dumps({'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def cloud_public_user_recover():
     logTraffic(CLOUD_URL, endpoint='/public/user/recover')
@@ -902,7 +915,7 @@ def cloud_public_user_recover():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def cloud_public_user_picture(user_id):
     logTraffic(CLOUD_URL, endpoint='/public/user/picture/<user_id>')

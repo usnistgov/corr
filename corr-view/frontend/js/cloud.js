@@ -87,7 +87,8 @@ var user = {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/logout");
+        xmlhttp.open("GET", this.url+"/private/user/logout");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -117,7 +118,8 @@ var user = {
     update: function() {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/user/update");
+        xmlhttp.open("POST", this.url+"/private/user/update");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
         if(pwd != pwd_2){
@@ -197,13 +199,16 @@ var user = {
             } else {
                 console.log('finished loading');
                 $.ajax({
-                    url        : url_temp+"/private/"+Cookies.get('session')+"/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
+                    url        : url_temp+"/private/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
                     type       : "POST",
                     data       : formData, 
                     async      : true,
                     cache      : false,
                     processData: false,
                     contentType: false,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader ("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                    },
                     success    : function(text){
                         if(text == ""){
                             console.log("Cloud returned empty response!");
@@ -257,7 +262,8 @@ var user = {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/trusted");
+        xmlhttp.open("GET", this.url+"/private/user/trusted");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -289,7 +295,8 @@ var user = {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/profile");
+        xmlhttp.open("GET", this.url+"/private/user/profile");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -322,7 +329,8 @@ var user = {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        xmlhttp.open("GET", this.url+"/private/"+Cookies.get('session')+"/user/renew");
+        xmlhttp.open("GET", this.url+"/private/user/renew");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
@@ -364,7 +372,8 @@ var user = {
             console.log(name+" -- "+about);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/create");
+            xmlhttp.open("POST", this.url+"/private/dashboard/developer/app/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'about': about, 'access': access};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -399,7 +408,8 @@ var user = {
             console.log(name+" -- "+tags);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/project/create");
+            xmlhttp.open("POST", this.url+"/private/project/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -474,7 +484,8 @@ var user = {
             console.log(project_id+" -- "+status);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/record/create/"+project_id);
+            xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -560,7 +571,8 @@ var user = {
                             if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
                                 var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
-                                xmlhttp.open("POST", url+"/private/"+Cookies.get('session')+"/record/edit/"+record_id);
+                                xmlhttp.open("POST", url+"/private/record/edit/"+record_id);
+                                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
                                 xmlhttp.send(JSON.stringify(request));
                                 xmlhttp.onreadystatechange=function()
                                 {
@@ -626,7 +638,8 @@ var user = {
             console.log(from+" -- "+to);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/diff/create");
+            xmlhttp.open("POST", this.url+"/private/diff/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
@@ -661,7 +674,8 @@ var user = {
             console.log(record);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/"+Cookies.get('session')+"/env/create/"+record);
+            xmlhttp.open("POST", this.url+"/private/env/create/"+record);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'app': application, 'group': group, 'system':system};
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()

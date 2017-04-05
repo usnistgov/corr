@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ProjectModel
@@ -23,17 +23,18 @@ import mimetypes
 #The API will return some json response at all times. 
 #I will handle my own status and head and content and stamp
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def private_search(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/search')
+def private_search():
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/search')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/search')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/search')
             if fk.request.args:
                 query = fk.request.args.get("query").split(' ') #single word for now.
                 users = []
@@ -114,17 +115,18 @@ def private_search(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def project_dashboard(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/projects')
+def project_dashboard():
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/projects')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/projects')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/projects')
             
             if current_user.group == "admin":
                 projects = ProjectModel.objects().order_by('+created_at')
@@ -143,17 +145,18 @@ def project_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def users_dashboard(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/users')
+def users_dashboard():
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/users')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/users')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/users')
             
             if current_user.group == "admin":
                 users = UserModel.objects().order_by('+created_at')
@@ -187,17 +190,18 @@ def users_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/diffs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/diffs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def diffs_dashboard(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/diffs')
+def diffs_dashboard(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/diffs')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/diffs')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/diffs')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -233,17 +237,18 @@ def diffs_dashboard(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def dashboard_records(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/records/<project_id>')
+def dashboard_records(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/records/<project_id>')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/records/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/records/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
                     projects = ProjectModel.objects()
@@ -265,17 +270,18 @@ def dashboard_records(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def dashboard_envs(hash_session, project_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/envs/<project_id>')
+def dashboard_envs(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/envs/<project_id>')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/envs/<project_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/envs/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
                     projects = ProjectModel.objects()
@@ -304,15 +310,16 @@ def dashboard_envs(hash_session, project_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def record_diff(hash_session, record_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/record/diff/<record_id>')
+def record_diff(record_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/record/diff/<record_id>')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/record/diff/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/record/diff/<record_id>')
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
@@ -340,16 +347,17 @@ def record_diff(hash_session, record_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/reproducibility/assess/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def reproducibility_assess(hash_session, record_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
+def reproducibility_assess(record_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/reproducibility/assess/<record_id>')
     if fk.request.method == 'GET':
+        hash_session = basicAuthSession(fk.request)
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/dashboard/reproducibility/assess/<record_id>')
+                logAccess(CLOUD_URL, 'cloud', '/private/dashboard/reproducibility/assess/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -406,7 +414,7 @@ def reproducibility_assess(hash_session, record_id):
 
 ### Public access
 
-@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_search():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/search')
@@ -494,7 +502,7 @@ def public_search():
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
-@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_project_dashboard():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
@@ -514,7 +522,7 @@ def public_project_dashboard():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_dashboard_records(project_id):
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/records/<project_id>')
@@ -548,7 +556,7 @@ def public_dashboard_records(project_id):
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
 
-@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_record_diff(record_id):
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/record/diff/<record_id>')
@@ -578,7 +586,7 @@ def public_record_diff(record_id):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/api', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def traffic_api():
     if fk.request.method == 'GET':
@@ -587,7 +595,7 @@ def traffic_api():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/dashboard/traffic/cloud', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def traffic_cloud():
     if fk.request.method == 'GET':
@@ -596,10 +604,11 @@ def traffic_cloud():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_all(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/apps')
+def app_all():
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/apps')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
@@ -619,10 +628,11 @@ def app_all(hash_session):
         else:
             return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_create(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/create')
+def app_create():
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/create')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
@@ -666,10 +676,11 @@ def app_create(hash_session):
             else:
                 return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_show(app_id, hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/show/<app_id>')
+def app_show(app_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/show/<app_id>')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
@@ -684,10 +695,11 @@ def app_show(app_id, hash_session):
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/remove/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/remove/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_remove(app_id, hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/remove/<app_id>')
+def app_remove(app_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/remove/<app_id>')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
@@ -709,10 +721,11 @@ def app_remove(app_id, hash_session):
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_update(app_id, hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/update/<app_id>')
+def app_update(app_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/update/<app_id>')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
@@ -777,10 +790,11 @@ def app_update(app_id, hash_session):
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/<hash_session>/dashboard/developer/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def app_logo(app_id, hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/dashboard/developer/app/logo/<app_id>')
+def app_logo(app_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/logo/<app_id>')
+    hash_session = basicAuthSession(fk.request)
     access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
     current_user = access_resp[1]
     if current_user is None:
