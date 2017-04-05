@@ -165,7 +165,7 @@ def project_create():
                         project.group = group
                         project.tags = [tags]
                         project.save()
-                        return cloud_response(201, 'Project successfully created.', "The project was created.")
+                        return cloud_response(201, 'Project successfully created.', project.info())
                     else:
                         return fk.Response('A project with this name already exists.', status.HTTP_403_FORBIDDEN)
                 except:

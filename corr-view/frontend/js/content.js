@@ -59,7 +59,7 @@ var Space = function (){
                         var params = [project["project"]["id"], project["project"]["name"], project["project"]["created"], project["project"]["duration"], project["project"]["description"], project["project"]["goals"], project["project"]["records"], project["project"]["diffs"], project["project"]["environments"]];
                         // config.load_xml('project_content.xml', params, succeed, failed);
 
-                        var content = "<div class='col s12 m6 l4' id='project-block-"+project["id"]+"'>";
+                        var content = "<div class='col s12 m6 l4' id='project-block-"+project["project"]["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
