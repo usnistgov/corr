@@ -432,6 +432,10 @@ var user = {
                             var response = JSON.parse(xmlhttp.responseText);
                             project = response['content'];
                             console.log(response);
+                            var accessible = false;
+                            if(project["project"]["access"] == "public"){
+                                accessible = true;
+                            }
 
                             // Materialize.toast('<span>'+response['title']+'</span>', 3000);
                             // window.location.reload();
