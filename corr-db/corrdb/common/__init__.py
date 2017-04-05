@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from calendar import monthrange
 from functools import update_wrapper
 import base64
+from werkzeug.http import parse_authorization_header
 
 def logAccess(component='none', scope='root', endpoint='', app=None):
     """Log the access to the backend.
@@ -144,7 +145,8 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
     return decorator
 
 def basicAuthSession(request):
-    return base64.b64decode(request.headers['Authorization']).split(":")[1]
+    result = parse_authorization_header(request.headers.get('authorization'))
+    return result.password
 
 from .managers import *
 from .core import *
