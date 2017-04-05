@@ -680,18 +680,17 @@ def public_version():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_config():
-    logTraffic(CLOUD_URL, endpoint='/private/user/config')
-    hash_session = basicAuthSession(fk.request)
+def user_config(hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/config')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
             config_buffer = BytesIO()
             config_content = {'default':{'app':'', 'api':{'host':API_HOST, 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
@@ -700,18 +699,17 @@ def user_config():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_picture():
-    logTraffic(CLOUD_URL, endpoint='/private/user/picture')
-    hash_session = basicAuthSession(fk.request)
+def user_picture(hash_session):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/picture')
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/picture')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
                 picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))

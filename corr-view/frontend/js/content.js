@@ -1033,7 +1033,7 @@ var Application = function (_id){
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         // console.log(this.session);
-        console.log(url+"/private/"+Cookies.get('session')+"/dashboard/developer/app/remove/"+self._id);
+        console.log(url+"/private/dashboard/developer/app/remove/"+self._id);
         
         xmlhttp.open("GET", url+"/private/dashboard/developer/app/remove/"+self._id);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));

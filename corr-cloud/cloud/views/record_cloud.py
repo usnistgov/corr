@@ -280,18 +280,17 @@ def record_edit(record_id):
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@app.route(CLOUD_URL + '/private/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@app.route(CLOUD_URL + '/private/<hash_session>/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def pull_record(record_id):
-    logTraffic(CLOUD_URL, endpoint='/private/record/pull/<record_id>')
-    hash_session = basicAuthSession(fk.request)
+def pull_record(hash_session, record_id):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/record/pull/<record_id>')
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/record/pull/<record_id>')
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
