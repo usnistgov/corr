@@ -1,10 +1,13 @@
 <div class="row">
+    <div class="col s12 grid-example"><span class="flow-text">This instance supports the following tools</span>
+</div>
+<div class="row">
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
                 <div class="card-title">
                     <h4 class="flight-card-title">Sumatra</h4>
-                    <p class="flight-card-date">Version 0.7.0</p>
+                    <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-sumatra">Version 0.7.0</a></p>
                 </div>
             </div>
             <div class="card-content-bg white-text">
@@ -52,7 +55,7 @@
             <div class="card-header blue-grey">
                 <div class="card-title">
                     <h4 class="flight-card-title">ReproZip</h4>
-                    <p class="flight-card-date">Version 1.0.x</p>
+                    <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-reprozip">Version 1.0.x</a></p>
                 </div>
             </div>
             <div class="card-content-bg white-text">
@@ -100,7 +103,7 @@
             <div class="card-header blue-grey">
                 <div class="card-title">
                     <h4 class="flight-card-title">Panda</h4>
-                    <p class="flight-card-date">Version 1</p>
+                    <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-panda">Version 1</a></p>
                 </div>
             </div>
             <div class="card-content-bg white-text">
