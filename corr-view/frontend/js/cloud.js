@@ -433,7 +433,7 @@ var user = {
                             project = response['content'];
                             console.log(response);
                             var accessible = false;
-                            if(project["project"]["access"] == "public"){
+                            if(project["access"] == "public"){
                                 accessible = true;
                             }
 
