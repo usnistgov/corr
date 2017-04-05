@@ -496,11 +496,13 @@
                 $('.collapsible').collapsible({accordion : false});
             });
             console.log("User-picture object: "+$('#picture-input'));
-            $('#picture-input').bind('input', function() {
-                var user_picture = document.getElementById("update-user-picture");
-                console.log("Picture input: "+$(this).val());
-                user_picture.src = $(this).val();
-            });
+            var picture_input = document.getElementById("picture-input");
+            picture_input.onchange = function () {
+                console.log("Picture input: "+this.value;
+                document.getElementById('account-user-picture').src = this.value;
+                document.getElementById('update-user-picture').src = this.value;
+                document.getElementById('profile-user-picture').src = this.value;
+            };
             var xmlhttp = new XMLHttpRequest();
             // console.log(this.session);
             xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
