@@ -127,7 +127,7 @@ var Space = function (){
 
                         var picture_uri = url+"/public/user/picture/"+account["id"];
 
-                        var content = "<div class='col s12 m6 l4'>";
+                        var content = "<div class='col s12 m6 l4 id='user-block-"+account["id"]+"'>";
                         content += "<div id='profile-card' class='card'>";
                         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                         content += "<div class='card-content'>";
