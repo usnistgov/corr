@@ -953,7 +953,7 @@ var Project = function (_id){
                 var p_access = document.getElementById('project-access-'+self._id);
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     console.log("Project access updated.");
-                    config.error_modal('Project access updated', 'Your project and its records are now all: '+access_value+".");
+                    config.error_modal('Project access updated', 'Your project is now: '+access_value+".");
                 } else {
                     console.log("Project access update failed: "+xmlhttp.responseText);
                     config.error_modal('Project access update failed', xmlhttp.responseText);
