@@ -389,7 +389,7 @@ var user = {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
-                        var response = xmlhttp.responseText;
+                        var response = JSON.parse(xmlhttp.responseText);
                         console.log(response);
 
                         // Materialize.toast('<span>Creation succeeded</span>', 3000);
