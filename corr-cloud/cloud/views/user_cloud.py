@@ -67,6 +67,21 @@ def user_register():
                             if admin_account and admin_account.group == "admin":
                                 user_model.group = group
                                 user_model.save()
+                                user_info = {}
+                                user_info["created"] = str(user_model.created_at)
+                                user_info["id"] = str(user_model.id)
+                                user_info["auth"] = user_model.auth
+                                user_info["group"] = user_model.group
+                                user_info["email"] = user_model.email
+                                user_info["fname"] = profile_model.fname
+                                user_info["lname"] = profile_model.lname
+                                user_info["org"] = profile_model.organisation
+                                user_info["about"] = profile_model.about
+                                user_info["apps"] = user_model.info()['total_apps']
+                                user_info["projects"] = user_model.info()['total_projects']
+                                user_info["records"] = user_model.info()['total_records']
+                                return cloud_response(201, 'Your account was successfully created', user_info)
+
                         if access_manager.secur:
                             return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification. And wait for admin approval.', status.HTTP_200_OK)
                         else:
