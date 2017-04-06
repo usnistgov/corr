@@ -706,6 +706,7 @@
             }
 
             function launchDiffModal(){
+              console.log(selected_records.length);
               if(selected_records.length == 2){
                 $('#diff-add-modal').openModal();
                 var record_from = document.getElementById("diff-from");
