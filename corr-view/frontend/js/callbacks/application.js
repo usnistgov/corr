@@ -7,7 +7,7 @@ function appEdit(app_id){
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
     name.removeAttribute("readonly");
-    network.removeAttribute("readonly");
+    // network.removeAttribute("readonly");
     about.removeAttribute("readonly");
     access.removeAttribute("readonly");
 }
