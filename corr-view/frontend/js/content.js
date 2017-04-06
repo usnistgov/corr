@@ -188,7 +188,6 @@ var Space = function (){
                                 content = content.replace(/app_id/g, params[1]);
                                 content = content.replace(/app_name/g, params[2]);
                                 content = content.replace(/app_created/g, params[3]);
-                                content = content.replace(/app_network/g, params[4]);
                                 content = content.replace(/app_access/g, params[5]);
                                 content = content.replace(/app_storage/g, params[6]);
                                 content = content.replace(/app_token/g, params[7]);
@@ -199,7 +198,7 @@ var Space = function (){
                             window.location.replace("/error/?code=404");
                         };
 
-                        var params = [app["id"], app["name"], app["created"], app["network"], app["access"], app["storage"], app["token"], app["about"]];
+                        var params = [app["id"], app["name"], app["created"], app["access"], app["storage"], app["token"], app["about"]];
                         // config.load_xml('app_content.xml', params, succeed, failed);
 
                         var content = "<div class='col s12 m6 l4' id='app-block-"+app["id"]+"'>";
@@ -1004,12 +1003,12 @@ var Application = function (_id){
     // this.session = session;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
-    this.save = function(name, network, about, access) {
+    this.save = function(name, about, access) {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        var request = { 'name':name, 'network': network, 'about': about, 'access': access};
+        var request = { 'name':name, 'about': about, 'access': access};
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {

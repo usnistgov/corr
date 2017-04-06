@@ -3,7 +3,7 @@ function appEdit(app_id){
     var app_update = document.getElementById('update-app-'+app_id);
     app_update.innerHTML = "<a id='update-action' onclick='appSave(\""+app_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
     var name = document.getElementById('app-name-'+app_id);
-    var network = document.getElementById('app-network-'+app_id);
+    // var network = document.getElementById('app-network-'+app_id);
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
     name.removeAttribute("readonly");
@@ -17,11 +17,11 @@ function appSave(app_id){
     var app_update = document.getElementById('update-app-'+app_id);
     app_update.innerHTML = "<a id='update-action' onclick='appEdit(\""+app_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var name = document.getElementById('app-name-'+app_id);
-    var network = document.getElementById('app-network-'+app_id);
+    // var network = document.getElementById('app-network-'+app_id);
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
     var app = new Application(app_id);
-    app.save(name.value, network.value, about.value, access.value);
+    app.save(name.value, about.value, access.value);
 }
 
 // Application remove callback
