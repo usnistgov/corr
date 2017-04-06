@@ -559,7 +559,7 @@ var user = {
             xmlhttp.onreadystatechange=function()
             {
 
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if (xmlhttp.readyState == 4 && ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304)) {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
@@ -600,7 +600,9 @@ var user = {
                                 content += "<div id='project-"+account["id"]+"-confirm' class='modal'></div>";
                                 content += "</div>";
                                 document.getElementById("users-list").innerHTML += content;
-                                config.error_modal('user add successfull', xmlhttp.responseText);
+                                var user_block_check = document.getElementById("user-block-"+account["id"]);
+                                console.log(user_block_check);
+                                // config.error_modal('user add successfull', xmlhttp.responseText);
                             }
                         }
                     }
