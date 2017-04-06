@@ -177,7 +177,12 @@ def record_create(project_id):
                                 record.access = access
                                 record.extend = {"uploaded":content}
                                 record.save()
-                                return cloud_response(201, 'Record successfully created.', "The record was created.")
+                                project_content = {"project":json.loads(project.summary_json())}
+                                records = []
+                                for r in RecordModel.objects(project=project):
+                                    records.append(r)
+                                project_content["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
+                                return cloud_response(201, 'Record successfully created.', project_content)
                             except:
                                 print(str(traceback.print_exc()))
                                 return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -269,7 +274,7 @@ def record_edit(record_id):
                                         body.data = already
                                     body.save()
 
-                                return fk.Response(json.loads(record.summary_json()), mimetype='application/json')
+                                return fk.Response(record.summary_json(), mimetype='application/json')
                             except:
                                 print(str(traceback.print_exc()))
                                 return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
