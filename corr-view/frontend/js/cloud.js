@@ -607,7 +607,7 @@ var user = {
                         }
                     }
                 } else {
-                    if (xmlhttp.readyState == 4){
+                    if (xmlhttp.readyState == 4 && (xmlhttp.status == 500 || xmlhttp.status == 404)){
                         console.log(xmlhttp.responseText);
                         config.error_modal('Add user failed', xmlhttp.responseText);
                         // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
