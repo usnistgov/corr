@@ -600,7 +600,7 @@ var user = {
                         console.log("Cloud returned empty response!");
                     }else{
                         try{
-                            var project = JSON.parse(xmlhttp.responseText);
+                            var project = JSON.parse(xmlhttp.responseText)['content'];
                             var project_content = document.getElementById("project-block-"+project_id);
                             var content = "<div id='profile-card' class='card'>";
                             var accessible = false;
