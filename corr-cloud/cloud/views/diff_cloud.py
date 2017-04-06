@@ -55,7 +55,7 @@ def diff_create():
                         if current_user.group != "admin":
                             if record_from.project.owner == current_user:
                                 sender_user = current_user
-                                receiver_user = record_to.owner
+                                receiver_user = record_to.project.owner
                             else:
                                 sender_user = record_to.project.owner
                                 receiver_user = record_from.project.owner
