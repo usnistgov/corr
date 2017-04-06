@@ -642,7 +642,7 @@ var user = {
                             content += "</div>";
                             content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
                         
-                            record_content.innerHTML = content;
+                            project_content.innerHTML = content;
                             $('#loading-modal').closeModal();
                             config.error_modal('Add record successfull', 'Your changes to the project were accepted.');
                         }catch(err){
@@ -772,7 +772,7 @@ var user = {
                                                     content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span> Public</label></div></div>";
                                                 }
 
-                                                if(project_id == "all"){
+                                                if(record_id == "all"){
                                                     content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+record["head"]["project"]["name"]+"</p>";
                                                 }
                                                 content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
