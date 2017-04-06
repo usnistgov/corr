@@ -269,7 +269,7 @@ def record_edit(record_id):
                                         body.data = already
                                     body.save()
 
-                                return fk.Response('Record edited', status.HTTP_200_OK)
+                                    return fk.Response(json.loads(record.summary_json()), mimetype='application/json')
                             except:
                                 print(str(traceback.print_exc()))
                                 return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
