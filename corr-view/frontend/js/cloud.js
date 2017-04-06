@@ -572,6 +572,7 @@ var user = {
 
                             var picture_uri = url_temp+"/public/user/picture/"+account["id"];
                             var user_block_check = document.getElementById("user-block-"+account["id"]);
+                            console.log(user_block_check);
                             if(user_block_check == undefined || user_block_check == null){
                                 var content = "<div class='col s12 m6 l4 id='user-block-"+account["id"]+"'>";
                                 content += "<div id='profile-card' class='card'>";
