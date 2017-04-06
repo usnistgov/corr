@@ -786,6 +786,7 @@ var user = {
                                                 $('#loading-modal').closeModal();
                                                 config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                                             }catch(err) {
+                                                console.log(xmlhttp.responseText);
                                                 console.log(err);
                                                 config.error_modal('Upload record failed', err);
                                             }
