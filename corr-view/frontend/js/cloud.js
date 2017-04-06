@@ -903,7 +903,8 @@ var user = {
                         console.log(response);
 
                         // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                        window.location.reload();
+                        // window.location.reload();
+                        window.location.replace("./?view=diffs");
                     }
                 } else {
                     console.log(xmlhttp.responseText);
