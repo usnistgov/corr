@@ -602,14 +602,16 @@ var user = {
                                 document.getElementById("users-list").innerHTML += content;
                                 var user_block_check = document.getElementById("user-block-"+account["id"]);
                                 console.log(user_block_check);
-                                // config.error_modal('user add successfull', xmlhttp.responseText);
+                                config.error_modal('user add successfull', xmlhttp.responseText);
                             }
                         }
                     }
                 } else {
-                    console.log(xmlhttp.responseText);
-                    config.error_modal('Add user failed', xmlhttp.responseText);
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    if (xmlhttp.readyState == 4){
+                        console.log(xmlhttp.responseText);
+                        config.error_modal('Add user failed', xmlhttp.responseText);
+                        // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
+                    }
                 }
             }
         }else{
