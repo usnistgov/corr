@@ -670,7 +670,7 @@ def app_create():
                             return fk.Response('For some reason the tool was not created. Try again later.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                         else:
                             logStat(application=app)
-                            return cloud_response(201, 'Tool created', app.info())
+                            return cloud_response(201, 'Tool created', app.extended())
                 else:
                     return fk.Response('No content provided for this creation.', status.HTTP_204_NO_CONTENT)
             else:
