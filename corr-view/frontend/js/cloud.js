@@ -684,105 +684,111 @@ var user = {
                                         if(xmlhttp.responseText == ""){
                                             console.log("Cloud returned empty response!");
                                         }else{
-                                            var record = JSON.parse(xmlhttp.responseText);
-                                            var record_content = document.getElementById("record-block-"+record_id);
-                                            var content = "<div id='profile-card' class='card'>";
-                                            content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
-                                            content += "<div class='card-content'>";
-                                            var disable_download = "";
-                                            if(record["container"] == false){
-                                                disable_download = "disabled";
+                                            try{
+                                                var record = JSON.parse(xmlhttp.responseText);
+                                                var record_content = document.getElementById("record-block-"+record_id);
+                                                var content = "<div id='profile-card' class='card'>";
+                                                content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                                                content += "<div class='card-content'>";
+                                                var disable_download = "";
+                                                if(record["container"] == false){
+                                                    disable_download = "disabled";
+                                                }
+                                                var accessible = false;
+                                                if(record["head"]["access"] == "public"){
+                                                    accessible = true;
+                                                }
+                                                content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                                                content += "<a onclick='recordRemove(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
+                                                content += "<a onclick='recordUploadModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-file-cloud-upload'></i></a>";
+
+                                                content += "<a onclick=\"space.pull('"+record["head"]["project"]["id"]+"','"+record["head"]["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+" tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
+                                                content += "<a onclick='launchEnvModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environment'><i class='mdi-maps-layers'></i></a>";
+
+                                                content += "<div id='update-record-"+record["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
+                                                content += "<a onclick='config.error_modal(\"Record details failed\", \"Record details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+
+                                                if(Cookies.get("group") == "admin"){
+                                                    content += "<a onclick='projectViewModal(\""+record["head"]["project"]["name"]+"\",\""+record["head"]["project"]["tags"]+"\",\""+record["head"]["project"]["description"]+"\",\""+record["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
+                                                    content += "<a onclick='userViewModal(\""+record["head"]["project"]["owner"]["id"]+"\",\""+record["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
+                                                }
+
+                                                content += "<div id='select-record-"+record["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
+
+                                                content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
+                                                content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
+                                                content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
+                                                
+                                                if(accessible){
+                                                    content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
+                                                }else{
+                                                    content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span> Public</label></div></div>";
+                                                }
+
+                                                if(project_id == "all"){
+                                                    content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+record["head"]["project"]["name"]+"</p>";
+                                                }
+                                                content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
+                                                content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+record["head"]["id"]+"' type='text' value='"+record["head"]["rationels"]+"'></div></div>";
+                                                
+                                                var status_select = [];
+                                                status_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><select id='record-status-"+record["head"]["id"]+"'>");
+                                                status_select.push("<option value='unknown' disabled>Choose status</option>");
+                                                status_select.push("<option value='finished'>Finished</option>");
+                                                status_select.push("<option value='crashed'>Crashed</option>");
+                                                status_select.push("<option value='terminated'>Terminated</option>");
+                                                status_select.push("<option value='started'>Started</option>");
+                                                status_select.push("<option value='starting'>Starting</option>");
+                                                status_select.push("<option value='paused'>Paused</option>");
+                                                status_select.push("<option value='sleeping'>Sleeping</option>");
+                                                status_select.push("<option value='resumed'>Resumed</option>");
+                                                status_select.push("<option value='running'>Running</option>");
+                                                status_select.push("</select></div></div>");
+                                                if(record["head"]["status"] == "unknown"){
+                                                    status_select[1] = "<option value='unknown' disabled selected>Choose status</option>";
+                                                }else if(record["head"]["status"] == "finished"){
+                                                    status_select[2] = "<option value='finished' selected>Finished</option>";
+                                                }else if(record["head"]["status"] == "crashed"){
+                                                    status_select[3] = "<option value='crashed' selected>Crashed</option>>";
+                                                }else if(record["head"]["status"] == "terminated"){
+                                                    status_select[4] = "<option value='terminated' selected>Terminated</option>";
+                                                }else if(record["head"]["status"] == "starting"){
+                                                    status_select[5] = "<option value='starting' selected>Started</option>";
+                                                }else if(record["head"]["status"] == "started"){
+                                                    status_select[6] = "<option value='started' selected>Starting</option>";
+                                                }else if(record["head"]["status"] == "paused"){
+                                                    status_select[7] = "<option value='paused' selected>Paused</option>";
+                                                }else if(record["head"]["status"] == "sleeping"){
+                                                    status_select[8] = "<option value='sleeping' selected>Sleeping</option>";
+                                                }else if(record["head"]["status"] == "resumed"){
+                                                    status_select[9] = "<option value='resumed' selected>Resumed</option>";
+                                                }else if(record["head"]["status"] == "running"){
+                                                    status_select[10] = "<option value='running' selected>Running</option>";
+                                                }
+                                                
+                                                for(var j = 0; j < status_select.length; j++){
+                                                    // content += status_select[j];
+                                                }
+
+                                                content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
+                                                
+                                                content += "<div class='card-action center-align'>";
+                                                content += "<a onclick='config.error_modal(\"Record inputs view failed\", \"Record inputs view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='inputs'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
+                                                content += "<a onclick='config.error_modal(\"Record outputs view failed\", \"Record outputs view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='outputs'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
+                                                content += "<a onclick='config.error_modal(\"Record dependencies view failed\", \"Record dependencies view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='dependencies'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
+                                                content += "</div>";
+                                                content += "</div>";                
+                                                content += "</div>";
+                                                record_content.innerHTML = content;
+
+                                                // Materialize.toast('<span>Upload succeeded</span>', 3000);
+                                                // window.location.reload();
+                                                $('#loading-modal').closeModal();
+                                                config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
+                                            }catch(err) {
+                                                console.log(err);
+                                                config.error_modal('Upload record failed', err);
                                             }
-                                            var accessible = false;
-                                            if(record["head"]["access"] == "public"){
-                                                accessible = true;
-                                            }
-                                            content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
-                                            content += "<a onclick='recordRemove(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
-                                            content += "<a onclick='recordUploadModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-file-cloud-upload'></i></a>";
-
-                                            content += "<a onclick=\"space.pull('"+record["head"]["project"]["id"]+"','"+record["head"]["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right "+disable_download+" tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
-                                            content += "<a onclick='launchEnvModal(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environment'><i class='mdi-maps-layers'></i></a>";
-
-                                            content += "<div id='update-record-"+record["head"]["id"]+"'><a id='update-action' onclick='recordEdit(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
-                                            content += "<a onclick='config.error_modal(\"Record details failed\", \"Record details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
-
-                                            if(Cookies.get("group") == "admin"){
-                                                content += "<a onclick='projectViewModal(\""+record["head"]["project"]["name"]+"\",\""+record["head"]["project"]["tags"]+"\",\""+record["head"]["project"]["description"]+"\",\""+record["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
-                                                content += "<a onclick='userViewModal(\""+record["head"]["project"]["owner"]["id"]+"\",\""+record["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
-                                            }
-
-                                            content += "<div id='select-record-"+record["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
-
-                                            content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
-                                            content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
-                                            content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
-                                            
-                                            if(accessible){
-                                                content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
-                                            }else{
-                                                content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox'><span class='lever'></span> Public</label></div></div>";
-                                            }
-
-                                            if(project_id == "all"){
-                                                content += "<p class='grey-text ultra-small'><i class='mdi-file-folder cyan-text text-darken-2'></i> "+record["head"]["project"]["name"]+"</p>";
-                                            }
-                                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
-                                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+record["head"]["id"]+"' type='text' value='"+record["head"]["rationels"]+"'></div></div>";
-                                            
-                                            var status_select = [];
-                                            status_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><select id='record-status-"+record["head"]["id"]+"'>");
-                                            status_select.push("<option value='unknown' disabled>Choose status</option>");
-                                            status_select.push("<option value='finished'>Finished</option>");
-                                            status_select.push("<option value='crashed'>Crashed</option>");
-                                            status_select.push("<option value='terminated'>Terminated</option>");
-                                            status_select.push("<option value='started'>Started</option>");
-                                            status_select.push("<option value='starting'>Starting</option>");
-                                            status_select.push("<option value='paused'>Paused</option>");
-                                            status_select.push("<option value='sleeping'>Sleeping</option>");
-                                            status_select.push("<option value='resumed'>Resumed</option>");
-                                            status_select.push("<option value='running'>Running</option>");
-                                            status_select.push("</select></div></div>");
-                                            if(record["head"]["status"] == "unknown"){
-                                                status_select[1] = "<option value='unknown' disabled selected>Choose status</option>";
-                                            }else if(record["head"]["status"] == "finished"){
-                                                status_select[2] = "<option value='finished' selected>Finished</option>";
-                                            }else if(record["head"]["status"] == "crashed"){
-                                                status_select[3] = "<option value='crashed' selected>Crashed</option>>";
-                                            }else if(record["head"]["status"] == "terminated"){
-                                                status_select[4] = "<option value='terminated' selected>Terminated</option>";
-                                            }else if(record["head"]["status"] == "starting"){
-                                                status_select[5] = "<option value='starting' selected>Started</option>";
-                                            }else if(record["head"]["status"] == "started"){
-                                                status_select[6] = "<option value='started' selected>Starting</option>";
-                                            }else if(record["head"]["status"] == "paused"){
-                                                status_select[7] = "<option value='paused' selected>Paused</option>";
-                                            }else if(record["head"]["status"] == "sleeping"){
-                                                status_select[8] = "<option value='sleeping' selected>Sleeping</option>";
-                                            }else if(record["head"]["status"] == "resumed"){
-                                                status_select[9] = "<option value='resumed' selected>Resumed</option>";
-                                            }else if(record["head"]["status"] == "running"){
-                                                status_select[10] = "<option value='running' selected>Running</option>";
-                                            }
-                                            
-                                            for(var j = 0; j < status_select.length; j++){
-                                                // content += status_select[j];
-                                            }
-
-                                            content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
-                                            
-                                            content += "<div class='card-action center-align'>";
-                                            content += "<a onclick='config.error_modal(\"Record inputs view failed\", \"Record inputs view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='inputs'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
-                                            content += "<a onclick='config.error_modal(\"Record outputs view failed\", \"Record outputs view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='outputs'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
-                                            content += "<a onclick='config.error_modal(\"Record dependencies view failed\", \"Record dependencies view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='dependencies'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
-                                            content += "</div>";
-                                            content += "</div>";                
-                                            content += "</div>";
-                                            record_content.innerHTML = content;
-
-                                            // Materialize.toast('<span>Upload succeeded</span>', 3000);
-                                            // window.location.reload();
-                                            $('#loading-modal').closeModal();
                                         }
                                     } else {
                                         console.log(xmlhttp.responseText);
