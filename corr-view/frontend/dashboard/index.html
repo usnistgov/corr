@@ -706,7 +706,6 @@
             }
 
             function launchDiffModal(){
-              console.log(selected_records.length);
               if(selected_records.length == 2){
                 $('#diff-add-modal').openModal();
                 var record_from = document.getElementById("diff-from");
@@ -715,7 +714,7 @@
                 record_to.value = selected_records[1];
               }else{
                 // Materialize.toast('<span>Please select up to two records!</span>', 3000);
-                config.error_modal('Diff create failed', 'Please select up to two records.')
+                config.error_modal('Diff create failed', 'Please select only two records.')
               }
             }
 
