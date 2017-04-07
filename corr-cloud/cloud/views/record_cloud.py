@@ -177,6 +177,12 @@ def record_create(project_id):
                                 record.access = access
                                 record.extend = {"uploaded":content}
                                 record.save()
+                                if len(project.history) > 0:
+                                    head = project.history[-1]
+                                    env = EnvironmentModel.objects.with_id(head)
+                                    if env:
+                                        record.environment = env
+                                        record.save()
                                 # project_content = {"project":json.loads(project.summary_json())}
                                 # records = []
                                 # for r in RecordModel.objects(project=project):
