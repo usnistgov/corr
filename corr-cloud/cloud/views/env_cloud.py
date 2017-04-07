@@ -6,6 +6,8 @@ from corrdb.common.models import EnvironmentModel
 from corrdb.common.models import RecordModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel
+from corrdb.common.models import VersionModel
+from corrdb.common.models import BundleModel
 from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
@@ -135,6 +137,69 @@ def env_create(record_id):
                         project.history.append(str(env.id))
                         project.save()
                         return cloud_response(201, 'Environment successfully created.', project.history)
+                    except:
+                        print(str(traceback.print_exc()))
+                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                else:
+                    return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/private/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def env_next(project_id):
+    logTraffic(CLOUD_URL, endpoint='/private/env/next/<project_id>')
+    hash_session = basicAuthSession(fk.request)
+    if fk.request.method == 'POST':
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        current_user = access_resp[1]
+        if current_user is None:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/env/next/<project_id>')
+            try:
+                project = ProjectModel.objects.with_id(project_id)
+            except:
+                print(str(traceback.print_exc()))
+            if project is None:
+                return fk.Response('Unable to find the referenced project.', status.HTTP_404_NOT_FOUND)
+            else:
+                if fk.request.data:
+                    data = json.loads(fk.request.data)
+                    try:
+                        env = EnvironmentModel(created_at=str(datetime.datetime.utcnow()))
+                        application_name = data.get("app", None)
+                        if application_name and application_name != '':
+                            application = ApplicationModel.objects(name=application_name).first()
+                            if application:
+                                application.records = application.records + 1
+                                application.save()
+                                if str(current_user.id) not in application.users:
+                                    application.users.append(str(current_user.id))
+                                    application.save()
+                                env.application = application
+
+                        group = data.get("group", "unknown")
+                        system = data.get("system", "undefined")
+                        env.group = group
+                        env.system = system
+                        env.save()
+                        version = VersionModel(created_at=str(datetime.datetime.utcnow()))
+                        system = data.get("version", "unknown")
+                        version.system = system
+                        version.save()
+                        env.version = version
+                        env.save()
+                        bundle = BundleModel(created_at=str(datetime.datetime.utcnow()))
+                        bundle.scope = 'local'
+                        bundle.save()
+                        env.bundle = bundle
+                        env.save()
+                        project.history.append(str(env.id))
+                        project.save()
+                        project_content = json.loads(project.summary_json())
+                        project_content["env"] = {"bundle-id":str(bundle.id)}
+                        return cloud_response(201, 'Environment successfully created.', project_content)
                     except:
                         print(str(traceback.print_exc()))
                         return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)

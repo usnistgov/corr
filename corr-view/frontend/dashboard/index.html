@@ -293,8 +293,8 @@
                <div class="row margin">
                   <div class="input-field col s12">
                     <i class="mdi-file-cloud-download prefix"></i>
-                    <input id="env-record" type="text"></input>
-                    <label for="env-record">Record</label>
+                    <input id="env-project" type="text"></input>
+                    <label for="env-project">Project</label>
                   </div>
                </div>
                <div class="row margin">
@@ -324,6 +324,38 @@
                       <option value="lab-based">Lab</option>
                       <option value="custom-based">Custom</option>
                     </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-version">
+                      <option value="unknown" disabled selected>Version Control</option>
+                      <option value="unknown">Unknown</option>
+                      <option value="git">Git</option>
+                      <option value="mercurial">Mercurial</option>
+                      <option value="subversion">Subversion</option>
+                      <option value="cvs">Cvs</option>
+                      <option value="bazaar">Bazaar</option>
+                      <option value="arch">Arch</option>
+                      <option value="monotone">Monotone</option>
+                      <option value="fastcst">Fastcst</option>
+                      <option value="opencm">Opencm</option>
+                      <option value="vesta">Vesta</option>
+                      <option value="codeville">Codeville</option>
+                      <option value="darcs">Darcs</option>
+                      <option value="bitkeeper">Bitkeeper</option>
+                      <option value="perforce">Perforce</option>
+                      <option value="clearcase">Clearcase</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12">
+                    <input id="bundle-path" class="file-path validate" type="text"></input>
+                    <div class="btn">
+                      <span>File</span>
+                      <input id="bundle-file" type="file"></input>
+                    </div>
                   </div>
                 </div>
                 <div class="row margin">
@@ -695,10 +727,10 @@
                 window.location.replace("./?view="+scope);
             }
 
-            function launchEnvModal(record_id){
+            function launchEnvModal(project_id){
               $('#env-add-modal').openModal();
-              var env_record = document.getElementById("env-record");
-              env_record.value = record_id;
+              var env_project = document.getElementById("env-project");
+              env_project.value = project_id;
             }
 
             function launchRecordModal(project_id){

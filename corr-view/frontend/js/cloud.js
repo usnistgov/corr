@@ -502,6 +502,7 @@ var user = {
                                 content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
                                 content += "<a onclick='projectRemove(\""+project["name"]+"\",\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
                                 content += "<a onclick='launchRecordModal(\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-upload'></i></a>";
+                                content += "<a onclick='launchEnvModal(\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environment'><i class='mdi-maps-layers'></i></a>";
                                 content += "<div id='update-project-"+project["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit and save'><i class='mdi-editor-mode-edit'></i></a></div>";
                                 content += "<a onclick='config.error_modal(\"Project details failed\", \"Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
@@ -961,17 +962,20 @@ var user = {
         }
     },
     add_env: function() {
-        var record = document.getElementById("env-record").value;
+        var project = document.getElementById("env-project").value;
         var application = document.getElementById("env-app").value;
         var group = document.getElementById("env-group").value;
         var system = document.getElementById("env-system").value;
+        var version = document.getElementById("env-version").value;
+        var bundle = document.getElementById("bundle-file");
         if(record != ""){
             console.log(record);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/env/create/"+record);
+            xmlhttp.open("POST", this.url+"/private/env/next/"+project);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            var request = { 'app': application, 'group': group, 'system':system};
+            var request = { 'app': application, 'group': group, 'system':system, 'version':version};
+            $('#loading-modal').openModal();
             xmlhttp.send(JSON.stringify(request));
             xmlhttp.onreadystatechange=function()
             {
@@ -979,11 +983,56 @@ var user = {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
-                        var response = xmlhttp.responseText;
-                        console.log(response);
+                        var project = JSON.parse(xmlhttp.responseText)['content'];
+                        var project_content = document.getElementById("project-block-"+project_id);
+                        var content = "<div id='profile-card' class='card'>";
+                        var accessible = false;
+                        if(project["access"] == "public"){
+                            accessible = true;
+                        }
+                        // Materialize.toast('<span>'+response['title']+'</span>', 3000);
+                        // window.location.reload();
+                        content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
+                        content += "<div class='card-content'>";
+
+                        content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
+                        content += "<a onclick='projectRemove(\""+project["name"]+"\",\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
+                        content += "<a onclick='launchRecordModal(\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-upload'></i></a>";
+                        content += "<div id='update-project-"+project["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit and save'><i class='mdi-editor-mode-edit'></i></a></div>";
+                        content += "<a onclick='config.error_modal(\"Project details failed\", \"Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+
+                        if(Cookies.get("group") == "admin"){
+                            content += "<a onclick='userViewModal(\""+project["owner"]["id"]+"\",\""+project["owner"]["profile"]["fname"]+"\""+",\""+project["owner"]["profile"]["lname"]+"\",\""+project["owner"]["profile"]["organisation"]+"\",\""+project["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+project["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
+                        }
+
+                        content += "<span class='card-title activator black-text text-darken-4'> "+project["name"]+"</span>";
+                        content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["created"]+"</p>";
+                        // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
+                        if(accessible){
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["id"]+"' onclick='projectAccess(\""+project["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
+                        }else{
+                            content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["id"]+"' onclick='projectAccess(\""+project["id"]+"\");' type='checkbox'><span class='lever'></span></label> Public</div></div>";
+                        }
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+project["id"]+"' type='text' value='"+project["tags"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["id"]+"' type='text' value='"+project["description"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='project-goals-"+project["id"]+"' type='text' value='"+project["goals"]+"'></div></div>";
+                        content += "<div class='card-action center-align'>";
+                        content += "<a href='./?view=records&project="+project["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+project["records"]+"</span></a>";
+                        content += "<a href='./?view=diffs&project="+project["id"]+"' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["diffs"]+"</span></a>";
+                        content += "<a href='./?view=envs&project="+project["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["environments"]+"</span></a>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "</div>";
+                        content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
+                    
+                        project_content.innerHTML = content;
 
                         // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                        window.location.reload();
+                        // window.location.reload();
+                        if (bundle.files.length > 0) {
+                            console.log("file not empty");
+                            user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
+                        }
                     }
                 } else {
                     console.log(xmlhttp.responseText);
