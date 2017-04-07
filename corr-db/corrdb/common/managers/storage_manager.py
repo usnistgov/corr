@@ -504,8 +504,8 @@ class StorageManager:
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
                 self.agent_prepare(zf, 'diff', diff.info())
-                record_path = "record-{0}".format(record['head']['id'])
                 for record in records:
+                    record_path = "record-{0}".format(record['head']['id'])
                     env = record.environment
                     record_dict = record.extended()
                     environment = record_dict['head']['environment']
