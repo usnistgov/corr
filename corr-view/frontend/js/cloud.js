@@ -968,8 +968,8 @@ var user = {
         var system = document.getElementById("env-system").value;
         var version = document.getElementById("env-version").value;
         var bundle = document.getElementById("bundle-file");
-        if(record != ""){
-            console.log(record);
+        if(project != ""){
+            console.log(project);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/env/next/"+project);
@@ -1041,7 +1041,7 @@ var user = {
                 }
             }
         }else{
-            config.error_modal('Add event failed', 'Record should be provided.');
+            config.error_modal('Add event failed', 'Project should be provided.');
             // Materialize.toast('<span>Record should not be empty.</span>', 3000);
         }
     }
