@@ -9,6 +9,7 @@ from corrdb.common.models import FileModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
+from corrdb.common.models import BundleModel
 from flask.ext.api import status
 import flask as fk
 from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
