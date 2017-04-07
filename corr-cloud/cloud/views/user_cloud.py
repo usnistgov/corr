@@ -614,7 +614,7 @@ def user_file_upload(group, item_id):
                                 elif group == 'bundle':
                                     item.checksum = _file.checksum
                                     del _file
-                                    if item.storage != storage:
+                                    if item.storage and item.storage != storage:
                                         storage_manager.storage_delete_file('bundle', item.storage)
                                         return cloud_response(401, 'Unauthorized upload', "Inconsistent storage location.")
                                     if checksum and checksum != _file.checksum:
