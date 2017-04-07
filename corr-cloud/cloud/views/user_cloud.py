@@ -625,6 +625,7 @@ def user_file_upload(group, item_id):
                                     item.storage = storage
                                     item.mimetype = mimetype
                                     item.save()
+                                    return cloud_response(201, 'New bundle file uploaded', item.info())
                                 elif 'attach' in group:
                                     item.attachments.append(str(_file.id))
                                 elif group == 'picture':
@@ -648,6 +649,7 @@ def user_file_upload(group, item_id):
                                     item.resources.append(str(_file.id))
                                 if item != None:
                                     item.save()
+
                                 return cloud_response(201, 'New file created', _file.info())
                 else:
                     return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
