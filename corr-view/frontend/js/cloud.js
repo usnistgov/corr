@@ -962,17 +962,17 @@ var user = {
         }
     },
     add_env: function() {
-        var project = document.getElementById("env-project").value;
+        var project_id = document.getElementById("env-project").value;
         var application = document.getElementById("env-app").value;
         var group = document.getElementById("env-group").value;
         var system = document.getElementById("env-system").value;
         var version = document.getElementById("env-version").value;
         var bundle = document.getElementById("bundle-file");
-        if(project != ""){
-            console.log(project);
+        if(project_id != ""){
+            console.log(project_id);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             console.log('Cookie session value: '+ Cookies.get('session'));
-            xmlhttp.open("POST", this.url+"/private/env/next/"+project);
+            xmlhttp.open("POST", this.url+"/private/env/next/"+project_id);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'app': application, 'group': group, 'system':system, 'version':version};
             $('#loading-modal').openModal();
