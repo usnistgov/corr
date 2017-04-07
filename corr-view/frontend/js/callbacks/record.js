@@ -42,11 +42,16 @@ function recordRemoveAgree(record_id){
 }
 
 function recordSelect(record_id){
+    var left_float = document.getElementById("results-display");
     selected_records.push(record_id);
     console.log("Record: "+record_id+" selected!");
     console.log(selected_records);
     var record_update = document.getElementById('select-record-'+record_id);
     record_update.innerHTML = "<a id='deselect-action' onclick='recordDeselect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box'></i></a>";
+    if(selected_records.length == 2){
+        left_float.innerHTML = "<i class='large mdi-editor-vertical-align-center'></i>";
+        left_float.setAttribute( "onClick", "launchDiffModal();");
+    }
 }
 
 function recordDeselect(record_id){
@@ -55,6 +60,10 @@ function recordDeselect(record_id){
             selected_records.splice(i,1);
             break;
         }
+    }
+    if(selected_records.length == 1){
+        left_float.innerHTML = hits;
+        left_float.removeAttribute( "onClick");
     }
     console.log("Record: "+record_id+" deselected!");
     console.log(selected_records);

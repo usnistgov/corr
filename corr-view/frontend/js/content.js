@@ -626,7 +626,6 @@ var Space = function (){
                     var response = JSON.parse(xmlhttp.responseText);
                     this.query_result = response;
                     console.log(this.query_result);
-                    var hits = 0;
                     if(!exUser == true){
                         for(var i = 0; i < this.query_result["users"]["count"]; i++){
                             var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];

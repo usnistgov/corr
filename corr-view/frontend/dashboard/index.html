@@ -655,6 +655,7 @@
             // Inject the query dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "query"){
                 var space = new Space();
+                var hits = 0;
                 dashboard.query(options);
 
                 document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
