@@ -224,6 +224,9 @@ var user = {
                             }
                             $('#loading-modal').closeModal();
                         }
+                    },
+                    error: function(xhr){
+                        $('#loading-modal').closeModal();
                     }
                  });
             }
