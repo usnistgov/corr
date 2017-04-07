@@ -1032,6 +1032,8 @@ var user = {
                         if (bundle.files.length > 0) {
                             console.log("file not empty");
                             user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
+                        }else{
+                            $('#loading-modal').closeModal();
                         }
                     }
                 } else {
