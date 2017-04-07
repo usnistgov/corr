@@ -229,3 +229,32 @@ def public_diff_view(diff_id):
             return fk.Response(diff.to_json(), mimetype='application/json')
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@app.route(CLOUD_URL + '/private/<hash_session>/diff/download/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def download_diff(hash_session, diff_id):
+    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/diff/download/<diff_id>')
+    if fk.request.method == 'GET':
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        current_user = access_resp[1]
+        if current_user is None:
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/download/<diff_id>')
+            try:
+                diff = DiffModel.objects.with_id(diff_id)
+            except:
+                diff = None
+                print(str(traceback.print_exc()))
+                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if diff is None:
+                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+            else:
+                prepared = storage_manager.prepare_diff(diff)
+                if prepared[0] == None:
+                    print("Unable to retrieve a diff to download.")
+                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                else:
+                    return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

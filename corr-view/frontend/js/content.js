@@ -426,7 +426,7 @@ var Space = function (){
                         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='diffRemove(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-action-delete'></i></a>";
                         content += "<a onclick='config.error_modal(\"Diff comment failed\", \"Diff comment not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='comment'><i class='mdi-editor-insert-comment'></i></a>";
-                        content += "<a onclick='config.error_modal(\"Diff download failed\", \"Diff download not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
+                        content += "<a onclick=\"space.pull_diff('"+diff["id"]+"');\"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
                         content += "<div id='update-diff-"+diff["id"]+"'><a id='update-action' onclick='diffEdit(\""+diff["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<a onclick='config.error_modal(\"Diff details failed\", \"Diff details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
@@ -724,6 +724,14 @@ var Space = function (){
         console.log("Before...");
         console.log('Cookie session value: '+ Cookies.get('session'));
         window.location.replace(url+"/private/"+Cookies.get('session')+"/env/download"+"/"+env_id);
+        console.log("...After");
+        $('#loading-modal').closeModal();
+    },
+    this.pull_diff = function(diff_id) {
+        $('#loading-modal').openModal();
+        console.log("Before...");
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        window.location.replace(url+"/private/"+Cookies.get('session')+"/diff/download"+"/"+diff_id);
         console.log("...After");
         $('#loading-modal').closeModal();
     }

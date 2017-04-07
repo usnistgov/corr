@@ -316,6 +316,7 @@ class StorageManager:
 
         return [memory_file, "project-%s-env-%s.zip"%(str(project.id), str(env.id))]
 
+
     def prepare_project(self, project=None):
         """Bundle an entire project
             Returns:
@@ -379,9 +380,9 @@ class StorageManager:
         if record == None:
             return [None, '']
         else:
-            env = record.environment
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
+                env = record.environment
                 record_dict = record.extended()
                 environment = record_dict['head']['environment']
                 del record_dict['head']['environment']
@@ -487,4 +488,127 @@ class StorageManager:
             memory_file.seek(0)
 
         return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
-        
+
+    def prepare_diff(self, diff=None):
+        """Bundle a diff.
+            Returns:
+                Zip file buffer of a diff's content.
+        """
+        if diff == None:
+            return [None, '']
+        else:
+            records = []
+            records.append(diff.record_from)
+            records.append(diff.record_to)
+           
+            memory_file = BytesIO()
+            with zipfile.ZipFile(memory_file, 'w') as zf:
+                self.agent_prepare(zf, 'diff', diff.info())
+                record_path = "record-{0}".format(record['head']['id'])
+                for record in records:
+                    env = record.environment
+                    record_dict = record.extended()
+                    environment = record_dict['head']['environment']
+                    del record_dict['head']['environment']
+                    comments = record_dict['head']['comments']
+                    del record_dict['head']['comments']
+                    resources = record_dict['head']['resources']
+                    del record_dict['head']['resources']
+                    inputs = record_dict['head']['inputs']
+                    del record_dict['head']['inputs']
+                    outputs = record_dict['head']['outputs']
+                    del record_dict['head']['outputs']
+                    dependencies = record_dict['head']['dependencies']
+                    del record_dict['head']['dependencies']
+                    application = record_dict['head']['application']
+                    del record_dict['head']['application']
+                    parent = record_dict['head']['parent']
+                    del record_dict['head']['parent']
+                    body = record_dict['body']
+                    del record_dict['body']
+                    execution = record_dict['head']['execution']
+                    del record_dict['head']['execution']
+                    project = record.project.info()
+                    try:
+                        self.agent_prepare(zf, '{0}/project'.format(record_path), project)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/comments'.format(record_path), comments)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/resources'.format(record_path), resources)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/inputs'.format(record_path), inputs)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/outputs'.format(record_path), outputs)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/dependencies'.format(record_path), dependencies)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/application'.format(record_path), application)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/parent'.format(record_path), parent)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/body'.format(record_path), body)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/execution'.format(record_path), execution)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/environment'.format(record_path), environment)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/record'.format(record_path), record_dict)
+                    except:
+                        print(traceback.print_exc())
+                    if env != None and env.bundle != None and env.bundle.storage != '':
+                        try:
+                            bundle_buffer = StringIO()
+                            if 'http://' in env.bundle.storage or 'https://' in env.bundle.storage:
+                                bundle_buffer = self.web_get_file(env.bundle.storage)
+                            else:
+                                bundle_buffer = self.storage_get_file('bundle', env.bundle.storage)
+
+                            data = zipfile.ZipInfo("%s/bundle.%s"%(record_path, env.bundle.storage.split("/")[-1].split(".")[-1]))
+                            data.date_time = time.localtime(time.time())[:6]
+                            data.compress_type = zipfile.ZIP_DEFLATED
+                            data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
+                            zf.writestr(data, bundle_buffer.read())
+                        except:
+                            print(traceback.print_exc())
+                    for resource in resources:
+                        try:
+                            bundle_buffer = StringIO()
+                            data = None
+                            if 'http://' in resource['storage'] or 'https://' in resource['storage']:
+                                bundle_buffer = self.web_get_file(resource['storage'])
+                                data = zipfile.ZipInfo("%s/%s-%s"%(record_path, resource['group'], resource['storage'].split('/')[-1]))
+                            else:
+                                bundle_buffer = self.storage_get_file(resource['group'], resource['storage'])
+                                data = zipfile.ZipInfo("%s/%s-%s"%(record_path, resource['group'], resource['storage']))
+                            data.date_time = time.localtime(time.time())[:6]
+                            data.compress_type = zipfile.ZIP_DEFLATED
+                            data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
+                            zf.writestr(data, bundle_buffer.read())
+                        except:
+                            print(traceback.print_exc())
+                
+            memory_file.seek(0)
+
+        return [memory_file, "diff-%s.zip"%(str(diff.id))]
