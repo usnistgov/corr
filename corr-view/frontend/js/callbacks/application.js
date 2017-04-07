@@ -3,11 +3,9 @@ function appEdit(app_id){
     var app_update = document.getElementById('update-app-'+app_id);
     app_update.innerHTML = "<a id='update-action' onclick='appSave(\""+app_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
     var name = document.getElementById('app-name-'+app_id);
-    // var network = document.getElementById('app-network-'+app_id);
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
     name.removeAttribute("readonly");
-    // network.removeAttribute("readonly");
     about.removeAttribute("readonly");
     access.removeAttribute("readonly");
 }
@@ -17,7 +15,6 @@ function appSave(app_id){
     var app_update = document.getElementById('update-app-'+app_id);
     app_update.innerHTML = "<a id='update-action' onclick='appEdit(\""+app_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var name = document.getElementById('app-name-'+app_id);
-    // var network = document.getElementById('app-network-'+app_id);
     var about = document.getElementById('app-about-'+app_id);
     var access = document.getElementById('app-access-'+app_id);
     var app = new Application(app_id);
@@ -31,8 +28,6 @@ function appRemove(app_name, app_id){
 
 // Application remove agreement callback
 function appRemoveAgree(app_id){
-    console.log("in appRemoveAgree!");
-    console.log("App id: "+app_id);
     var app = new Application(app_id);
     app.trash();
 }

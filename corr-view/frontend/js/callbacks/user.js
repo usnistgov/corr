@@ -26,7 +26,6 @@ function userSave(user_id){
     var auth = document.getElementById('user-auth-'+user_id);
     var org = document.getElementById('user-org-'+user_id);
     var about = document.getElementById('user-about-'+user_id);
-    console.log('Cookie session value: '+ Cookies.get('session'));
     fname.setAttribute("readonly", "");
     lname.setAttribute("readonly", "");
     group.setAttribute("readonly", "");

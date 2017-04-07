@@ -22,21 +22,17 @@ function recordSave(record_id){
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
-    console.log('Cookie session value: '+ Cookies.get('session'));
     var record = new Record(record_id);
     record.save(tags.value, rationels.value, status.value);
 }
 
 // Record remove callback
 function recordRemove(record_id){
-    console.log('Cookie session value: '+ Cookies.get('session'));
     Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" onclick='recordRemoveAgree(\""+record_id+"\");'>Confirm</a>", 5000);
 }
 
 // Record remove agreement callback
 function recordRemoveAgree(record_id){
-    console.log("in recordRemoveAgree!");
-    console.log('Cookie session value: '+ Cookies.get('session'));
     var record = new Record(record_id);
     record.trash();
 }
@@ -44,8 +40,6 @@ function recordRemoveAgree(record_id){
 function recordSelect(record_id){
     var left_float = document.getElementById("results-display");
     selected_records.push(record_id);
-    console.log("Record: "+record_id+" selected!");
-    console.log(selected_records);
     var record_update = document.getElementById('select-record-'+record_id);
     record_update.innerHTML = "<a id='deselect-action' onclick='recordDeselect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box'></i></a>";
     if(selected_records.length == 2){
@@ -68,15 +62,12 @@ function recordDeselect(record_id){
         left_float.removeAttribute( "onClick");
         left_float.setAttribute( "data-tooltip", "number of hits");
     }
-    console.log("Record: "+record_id+" deselected!");
-    console.log(selected_records);
     var record_update = document.getElementById('select-record-'+record_id);
     record_update.innerHTML = "<a id='select-action' onclick='recordSelect(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-toggle-check-box-outline-blank'></i></a>";
 }
 
 function recordAccess(record_id){
     var r_access = document.getElementById('record-access-'+record_id);
-    console.log(record_id);
     var record = new Record(record_id);
     record.switchAccess();
 }

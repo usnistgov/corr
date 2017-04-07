@@ -496,19 +496,15 @@
                 $('.collapsible').collapsible({accordion : false});
             });
             var xmlhttp = new XMLHttpRequest();
-            // console.log(this.session);
             xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
             xmlhttp.send();
             xmlhttp.onreadystatechange=function()
             {
-                console.log(xmlhttp.responseText);
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    console.log(xmlhttp.responseText);
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
                         // Data provisioned by the cloud service.
                         var version = response["version"];
                         var users = response["users"];
@@ -522,40 +518,18 @@
                         document.getElementById("total-projects").innerHTML = projects["number"];
                         document.getElementById("total-records").innerHTML = records["number"];
                         document.getElementById("total-storage").innerHTML = storage["size"];
-                        console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
                         document.getElementById("total-apps").innerHTML = apps["size"];
                         document.getElementById("total-traffic").innerHTML = traffic["size"];
-                        // Logging provisioned and injected values.
-                        console.log("Total Users:"+users["number"]);
-                        console.log("Total Projects:"+projects["number"]);
-                        console.log("Total Records:"+records["number"]);
-                        console.log("Total Storage:"+storage["size"]);
-                        console.log("CoRR Version:"+version);
-                        console.log("Total Apps:"+apps["size"]);
-                        console.log("Total Traffic:"+traffic["size"]);
-                        console.log("++Total Users:"+document.getElementById("total-users").value);
-                        console.log("++Total Projects:"+document.getElementById("total-projects").value);
-                        console.log("++Total Records:"+document.getElementById("total-records").value);
-                        console.log("++Total Stage:"+document.getElementById("total-storage").value);
-                        console.log("++CoRR Version:"+document.getElementById("footer-version").value);
-                        console.log("++Total Apps:"+document.getElementById("total-apps").value);
-                        console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
                     }
                 } else {
                     console.log("Cannot reach the cloud!");
                 }
             }
-            // var param = window.location.search.substring(1);
-            // var parts = param.split("=");
-            // In case home has session key (logged in)
             if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
-                // user.session = parts[1];
-                // console.log(user.session);
                 // Check that the user is trusted with this session key.
                 user.trusted();
                 user.account();
-                console.log("Api Index: "+this.api);
                 // If the session is trusted, inject user nav menu session tabs and account floating menu.
                 document.getElementById("nav-home-2").href = "./";
                 document.getElementById("nav-home").href = "./";
@@ -566,8 +540,6 @@
                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('update-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
-            }else{
-                // config.error_modal("User access denied", "You have to log back in.");
             }
 
             // Enter key handlers for login/recover/register and email us.

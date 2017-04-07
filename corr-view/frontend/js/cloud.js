@@ -5,12 +5,10 @@ var user = {
     email: "",
     api: "",
     group:"unknown",
-    // session: "",
     query_result: {},
     login: function() {
         var email = document.getElementById("login-email").value;
         var password = document.getElementById("login-password").value;
-        console.log(email+" -- "+password)
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", this.url+"/public/user/login");
         var request = { 'email': email, 'password': password }
@@ -22,20 +20,13 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     var response = JSON.parse(xmlhttp.responseText);
-                    // this.session = response['session']
-                    // console.log(this.session);
                     Cookies.set('session', response['session'], { path: '' });
-                    console.log('Cookie session value: '+ Cookies.get('session'));
                     Cookies.set('group', response['group'], { path: '' });
-                    console.log('Cookie group value: '+ Cookies.get('grup'));
                     
-                    // window.location.replace("./?session="+this.session);
                     window.location.reload();
                 }
             } else {
-                console.log(xmlhttp.responseText);
                 config.error_modal('An error occured during login.', xmlhttp.responseText);
-                // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
             }
         }
     },
@@ -45,7 +36,6 @@ var user = {
         var password = document.getElementById("register-password").value;
         var password_again = document.getElementById("register-password-again").value;
         if(password == password_again){
-            console.log(username+" -- "+email+" -- "+password);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
             xmlhttp.open("POST", this.url+"/public/user/register");
             var request = { 'email': email, 'password': password, 'username':username };
@@ -56,37 +46,23 @@ var user = {
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
-                        // var response = JSON.parse(xmlhttp.responseText);
-                        // this.session = response['session'];
-                        // console.log(this.session);
-                        // Cookies.set('session', response['session'], { path: '' });
-                        // console.log('Cookie session value: '+ Cookies.get('session'));
-                        // window.location.replace("../?session="+this.session);
                         config.error_modal('Register successfull', xmlhttp.responseText);
-                        // window.location.reload();
                     }
                 } else {
                     var response = xmlhttp.responseText;
-                    console.log(response);
-                    console.log("Registration failed");
                     if(response == ""){
                         config.error_modal('Register failed', 'Unknown reason');
-                        // Materialize.toast('<span>Register failed: Unknown reason.</span>', 3000);
                     }else{
                         config.error_modal('Register failed', response);
-                        // Materialize.toast('<span>Register failed: '+response+'</span>', 3000);
                     }
                 }
             }
         }else{
             config.error_modal('Register failed', 'Passwords mismatch');
-            // Materialize.toast('<span>Passwords mismatch.</span>', 3000);
         }  
     },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
-        console.log('Cookie session value: '+ Cookies.get('session'));
-        // console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/user/logout");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
@@ -97,34 +73,28 @@ var user = {
                     console.log("Cloud returned empty response!");
                 }else{
                     if(where != "dashboard"){
-                        // Cookies.set('session', 'undefined', { path: '' });
                         Cookies.remove('session');
                         Cookies.remove('group');
                         window.location.replace("./");
                     }else{
                         Cookies.remove('session');
                         Cookies.remove('group');
-                        // Cookies.set('session', 'undefined', { path: '/' });
                         window.location.replace("../");
                     }
                 }
             } else {
-                console.log("Logout failed");
                 config.error_modal('Logout failed', xmlhttp.responseText);
-                // Materialize.toast('<span>Logout failed</span>', 3000);
             }
         }   
     },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
-        console.log('Cookie session value: '+ Cookies.get('session'));
         xmlhttp.open("POST", this.url+"/private/user/update");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
         if(pwd != pwd_2){
             console.log("Passwords mismatch");
-            // Materialize.toast('<span>Passwords mismatch</span>', 3000);
             config.error_modal('Passwords mismatch','Must provide identical passwords.');
         }else{
             var fname = document.getElementById('view-fname').value;
@@ -143,8 +113,6 @@ var user = {
             if(about == "None"){
                 about = ""
             }
-            console.log("Fname: "+fname);
-            console.log("Lname: "+lname);
             $('#account-update-modal').closeModal();
             $('#loading-modal').openModal();
             var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
@@ -153,34 +121,24 @@ var user = {
             {
                 if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                     var response = xmlhttp.responseText;
-                    console.log(response);
 
                     var file = document.getElementById("picture-input");
-                    console.log(file);
                     if (file.files.length > 0) {
                         $('#loading-modal').closeModal();
                         user.upload_file(file, 'picture', 'none');
                     }else{
-                        console.log("No picture to change");
-                        // window.location.reload(); 
                         $('#loading-modal').closeModal();
                     }
-                    // Materialize.toast('<span>Update succeeded</span>', 3000);
                 } else {
-                    console.log("Update failed");
                     $('#loading-modal').closeModal();
                     config.error_modal('Update failed', response);
-                    // Materialize.toast('<span>Update failed</span>', 3000);
                 }
             }
         }
     },
     upload_file: function(file, group, item_id) {
-        console.log("File: "+file.files[0].name);
         var formData = new FormData();
         formData.append("file", file.files[0], file.files[0].name);
-        console.log(formData);
-        console.log('Cookie session value: '+ Cookies.get('session'));
         var url_temp = this.url;
         $('#loading-modal').openModal();
         
@@ -193,14 +151,13 @@ var user = {
             fileReader = new FileReader();
 
         fileReader.onload = function (e) {
-            console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+            // console.log('read chunk nr', currentChunk + 1, 'of', chunks);
             spark.append(e.target.result);                   // Append array buffer
             currentChunk++;
 
             if (currentChunk < chunks) {
                 loadNext();
             } else {
-                console.log('finished loading');
                 $.ajax({
                     url        : url_temp+"/private/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
                     type       : "POST",
@@ -216,8 +173,6 @@ var user = {
                         if(text == ""){
                             console.log("Cloud returned empty response!");
                         }else{
-                            // window.location.replace("../?session="+user.session);
-                            // window.location.reload();
                             if(group=="picture"){
                                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                                 document.getElementById('update-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
@@ -249,7 +204,6 @@ var user = {
     },
     recover: function() {
         var email = document.getElementById("recover-email").value;
-        console.log(email+" -- recover")
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", this.url+"/public/user/recover");
         var request = { 'email': email}
@@ -259,45 +213,33 @@ var user = {
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
                 if(xmlhttp.responseText == ""){
                     console.log("Cloud returned empty response!");
-                }else{
-                    console.log(xmlhttp.responseText);                
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             } else {
-                console.log(xmlhttp.responseText);     
                 config.error_modal('Recover failed', xmlhttp.responseText);           
-                // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
             }
         }
     },
     trusted: function() {
         var xmlhttp = new XMLHttpRequest();
-        console.log('Cookie session value: '+ Cookies.get('session'));
-        // console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/user/trusted");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
         xmlhttp.onreadystatechange=function()
         {
             if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                console.log(xmlhttp.responseText);
                 if(xmlhttp.responseText != ""){
                     if(xmlhttp.responseText == ""){
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
                         var version = response["version"];
-                        console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
                     }
                 }
                 
             } else if(xmlhttp.status == 401){
-                console.log(xmlhttp.responseText);
                 Cookies.remove('session');
                 Cookies.remove('group');
-                // Cookies.set('session', 'none', { path: '' });
-                // Cookies.set('session', 'none', { path: '/' });
             }else {
                 window.location.replace("../error/?code=404");
             }
@@ -305,8 +247,6 @@ var user = {
     },
     account: function() {
         var xmlhttp = new XMLHttpRequest();
-        console.log('Cookie session value: '+ Cookies.get('session'));
-        // console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/user/profile");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
@@ -330,7 +270,6 @@ var user = {
                     document.getElementById('view-lname').value = this.lname;
                     document.getElementById('view-org').value = this.organisation;
                     document.getElementById('view-about').value = this.about;
-                    console.log("Account Api: "+this.api);
                 }
             } else {
                 window.location.replace("../error/?code=404");
@@ -339,8 +278,6 @@ var user = {
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
-        console.log('Cookie session value: '+ Cookies.get('session'));
-        // console.log(this.session);
         xmlhttp.open("GET", this.url+"/private/user/renew");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
@@ -357,16 +294,13 @@ var user = {
                     }else{
                         $('#view-api-value').text(this.api);
                     }
-                    // Materialize.toast('<span>API Token renewed!</span>', 3000);
                 }
             } else {
                 config.error_modal('Revew API token failed', xmlhttp.responseText);
-                // window.location.replace("../error/?code=404");
             }
         }
     },
     config: function() {
-        console.log('Cookie session value: '+ Cookies.get('session'));
         window.location.replace(this.url+"/private/"+Cookies.get('session')+"/user/config");
     },
     copy_api: function() {
@@ -381,9 +315,7 @@ var user = {
         var about = document.getElementById("app-about").value;
         var access = document.getElementById("app-access").value;
         if(name != ""){
-            console.log(name+" -- "+about);
-            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
             xmlhttp.open("POST", this.url+"/private/dashboard/developer/app/create");
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'about': about, 'access': access};
@@ -395,10 +327,6 @@ var user = {
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
-
-                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                        // window.location.reload();
                         var app = response['content'];
                         var app_block_check = document.getElementById("app-block-"+app["id"]);
                         if(app_block_check == undefined || app_block_check == null){
@@ -418,7 +346,6 @@ var user = {
 
                             content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+app["created"]+"</p>";
                             content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+app["id"]+"' type='text' value='"+app["name"]+"'></div></div>";
-                            // content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-settings-ethernet prefix cyan-text text-darken-2'></i><input readonly id='app-network-"+app["id"]+"' type='text' value='"+app["network"]+"'></div></div>";
                             var access_select = [];
                             access_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><select id='app-access-"+app["id"]+"'>");
                             access_select.push("<option value='activated' disabled>Choose access</option>");
@@ -432,15 +359,9 @@ var user = {
                             }else if(app["access"] == "deactivated"){
                                 access_select[3] = "<option value='deactivated' selected>Deactivated</option>";
                             }
-                            
-                            for(var j = 0; j < access_select.length; j++){
-                                // content += access_select[j];
-                            }
 
                             content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-lock prefix cyan-text text-darken-2'></i><input readonly placeholder='activated,blocked,deactivated' id='app-access-"+app["id"]+"' type='text' value='"+app["access"]+"'></div></div>";
-                            // if(Cookies.get('group') == "admin"){
                             content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+app["id"]+"' type='text' value='"+app["token"]+"'></div></div>";
-                            // }
                             content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><textarea readonly class='materialize-textarea' id='app-about-"+app["id"]+"' type='text' value='"+app["about"]+"'>"+app["about"]+"</textarea></div></div>";
                             content += "<div class='card-action center-align'>";
                             content += "<a onclick='config.error_modal(\"Application users view failed\", \"Application users view not implemented yet!\", 3000);' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='users'><i class='mdi-social-group-add cyan-text text-darken-2'></i> <span class='users badge'>"+app["users"]+"</span></a>";
@@ -455,14 +376,11 @@ var user = {
                         }
                     }
                 } else {
-                    console.log(xmlhttp.responseText);
                     config.error_modal('Add app failed', xmlhttp.responseText);
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
             config.error_modal('Add app failed', 'Name should not be empty.');
-            // Materialize.toast('<span>Name should not be empty.</span>', 3000);
         }
     },
     add_project: function() {
@@ -471,9 +389,7 @@ var user = {
         var description = document.getElementById("project-description").value;
         var goals = document.getElementById("project-goals").value;
         if(name != ""){
-            console.log(name+" -- "+tags);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/private/project/create");
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
@@ -490,15 +406,12 @@ var user = {
                         }else{
                             var response = JSON.parse(xmlhttp.responseText);
                             var project = response['content'];
-                            console.log(response);
                             var accessible = false;
                             if(project["access"] == "public"){
                                 accessible = true;
                             }
                             var project_block_check = document.getElementById("project-block-"+project["id"]);
                             if(project_block_check == undefined || project_block_check == null){
-                                // Materialize.toast('<span>'+response['title']+'</span>', 3000);
-                                // window.location.reload();
                                 var content = "<div class='col s12 m6 l4' id='project-block-"+project["id"]+"'>";
                                 content += "<div id='profile-card' class='card'>";
                                 content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
@@ -517,7 +430,6 @@ var user = {
 
                                 content += "<span class='card-title activator black-text text-darken-4'> "+project["name"]+"</span>";
                                 content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["created"]+"</p>";
-                                // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                                 if(accessible){
                                     content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["id"]+"' onclick='projectAccess(\""+project["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
                                 }else{
@@ -540,14 +452,11 @@ var user = {
                         }
                     }
                 } else {
-                    console.log(xmlhttp.responseText);
                     config.error_modal('Add project failed', xmlhttp.responseText);
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
             config.error_modal('Add project failed', 'Project name should not be empty.');
-            // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }  
     },
     add_user: function() {
@@ -555,9 +464,7 @@ var user = {
         var password = document.getElementById("user-password").value;
         var group = document.getElementById("user-group").value;
         if(email != "" && password != "" && group != ""){
-            console.log(email+" -- "+group);
             var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
             xmlhttp.open("POST", this.url+"/public/user/register");
             var request = { 'email': email, 'password': password, 'group':group, 'admin':Cookies.get("session")};
             xmlhttp.send(JSON.stringify(request));
@@ -574,11 +481,9 @@ var user = {
                         }else{
                             var response = JSON.parse(xmlhttp.responseText);
                             var account = response['content'];
-                            console.log(account);
 
                             var picture_uri = url_temp+"/public/user/picture/"+account["id"];
                             var user_block_check = document.getElementById("user-block-"+account["id"]);
-                            console.log(user_block_check);
                             if(user_block_check == undefined || user_block_check == null){
                                 var content = "<div class='col s12 m6 l4 id='user-block-"+account["id"]+"'>";
                                 content += "<div id='profile-card' class='card'>";
@@ -607,7 +512,6 @@ var user = {
                                 content += "</div>";
                                 document.getElementById("users-list").innerHTML += content;
                                 var user_block_check = document.getElementById("user-block-"+account["id"]);
-                                console.log(user_block_check);
                                 config.error_modal('user add successfull', xmlhttp.responseText);
                             }
                         }
@@ -615,8 +519,6 @@ var user = {
                 } else {
                     try{
                         var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
-                        // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                     }catch(err){
                         console.log(xmlhttp.responseText);
                         config.error_modal('Add user failed', xmlhttp.responseText);
@@ -625,7 +527,6 @@ var user = {
             }
         }else{
             config.error_modal('Add user failed', 'User email, password and group should not be empty.');
-            // Materialize.toast('<span>Project name should not be empty.</span>', 3000);
         }
     },
     add_record: function() {
@@ -634,9 +535,7 @@ var user = {
         var rationels = document.getElementById("record-rationels").value;
         var status = document.getElementById("record-status").value;
         if(project_id != ""){
-            console.log(project_id+" -- "+status);
-            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
             xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
@@ -656,8 +555,6 @@ var user = {
                             if(project["access"] == "public"){
                                 accessible = true;
                             }
-                            // Materialize.toast('<span>'+response['title']+'</span>', 3000);
-                            // window.location.reload();
                             content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                             content += "<div class='card-content'>";
 
@@ -673,7 +570,6 @@ var user = {
 
                             content += "<span class='card-title activator black-text text-darken-4'> "+project["name"]+"</span>";
                             content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["created"]+"</p>";
-                            // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                             if(accessible){
                                 content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["id"]+"' onclick='projectAccess(\""+project["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
                             }else{
@@ -700,16 +596,13 @@ var user = {
                         }
                     }
                 } else {
-                    console.log(xmlhttp.responseText);
                     $('#loading-modal').closeModal();
                     config.error_modal('Add record failed', xmlhttp.responseText);
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
             $('#loading-modal').closeModal();
             config.error_modal('Add project failed', 'Project name should not be empty.');
-            // Materialize.toast('<span>Project id should not be empty.</span>', 3000);
         }
     },
     upload_record: function() {
@@ -720,25 +613,18 @@ var user = {
 
         if(record_id != ""){
             $('#loading-modal').openModal();
-            console.log(record_id+" -- "+upload_group);
-            console.log(uplpad_type+" -- "+file2upload);
             if(upload_group == "body"){
                 if (file2upload.files.length > 0) {
                     var reader = new FileReader();
                     reader.onload = function() {
                         var file_content = this.result;
-                        console.log(file_content);
                         if(file_content == ""){
-                            console.log("Upload file is empty!");
                             config.error_modal('Upload record failed', 'The file to upload cannot be empty.');
-                            // Materialize.toast('<span>The file to upload is empty</span>', 3000);
                         }else{
-                            console.log('Cookie session value: '+ Cookies.get('session'));
                             var request = null;
                             if(uplpad_type == "json"){
                                 try {
                                     request = JSON.parse(file_content);
-                                    console.log("Json Content: "+request);
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
@@ -748,7 +634,6 @@ var user = {
                                 var x2js = new X2JS();
                                 try {
                                     request = x2js.xml_str2json(file_content);
-                                    console.log("Xml Content: "+request);
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
@@ -756,9 +641,7 @@ var user = {
                                 }
                             }else if(uplpad_type == "yaml"){
                                 try {
-                                    // request = YAML.parse(file_content);
                                     request = jsyaml.safeLoad(file_content);
-                                    console.log("Yaml Content: "+request);
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
@@ -766,7 +649,6 @@ var user = {
                                 }
                             }else{
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
-                                // Materialize.toast('<span>Upload supports only json, xml or yaml.</span>', 3000);
                                 $('#loading-modal').closeModal();
                             }
                             if(request != null && request != undefined){
@@ -862,10 +744,6 @@ var user = {
                                                 }else if(record["head"]["status"] == "running"){
                                                     status_select[10] = "<option value='running' selected>Running</option>";
                                                 }
-                                                
-                                                for(var j = 0; j < status_select.length; j++){
-                                                    // content += status_select[j];
-                                                }
 
                                                 content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
                                                 
@@ -877,23 +755,16 @@ var user = {
                                                 content += "</div>";                
                                                 content += "</div>";
                                                 record_content.innerHTML = content;
-
-                                                // Materialize.toast('<span>Upload succeeded</span>', 3000);
-                                                // window.location.reload();
                                                 $('#loading-modal').closeModal();
                                                 config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                                             }catch(err) {
-                                                console.log(xmlhttp.responseText);
-                                                console.log(err);
                                                 $('#loading-modal').closeModal();
                                                 config.error_modal('Upload record failed', err);
                                             }
                                         }
                                     } else {
-                                        console.log(xmlhttp.responseText);
                                         $('#loading-modal').closeModal();
                                         config.error_modal('Upload record failed', xmlhttp.responseText);
-                                        // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                                     }
                                 }
                             }
@@ -902,22 +773,18 @@ var user = {
                     reader.readAsText(file2upload.files[0]);
                 }else{
                     $('#loading-modal').closeModal();
-                    console.log("There is no file to upload!");
                     config.error_modal('Upload record failed', 'There is no file to upload');
                 }
             }else{
                 var file2upload = document.getElementById("upload-file");
                 if (upload_group != "bundle"){
                     if (file2upload.files.length > 0) {
-                        console.log("file not empty");
                         user.upload_file(file2upload, upload_group, record_id);
                     }else{
                         $('#loading-modal').closeModal();
                         config.error_modal('Upload record failed', 'File should not be empty.');
-                        // Materialize.toast('<span>File should not be empty.</span>', 3000);
                     }
                 }else{
-                    // Materialize.toast('<span>Env bundle upload not implemented yet.</span>', 3000);
                     $('#loading-modal').closeModal();
                     config.error_modal('Upload record failed', 'Env bundle upload not implemented yet.');
                 }
@@ -926,7 +793,6 @@ var user = {
         }else{
             $('#loading-modal').closeModal();
             config.error_modal('Upload record failed', 'Record id should not be empty.');
-            // Materialize.toast('<span>Record id should not be empty.</span>', 3000);
         }
     },
     add_diff: function() {
@@ -938,9 +804,7 @@ var user = {
         var proposition = document.getElementById("diff-proposition").value;
         var status = document.getElementById("diff-status").value;
         if(from != "" && to != ""){
-            console.log(from+" -- "+to);
-            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
             xmlhttp.open("POST", this.url+"/private/diff/create");
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
@@ -952,21 +816,14 @@ var user = {
                         console.log("Cloud returned empty response!");
                     }else{
                         var response = xmlhttp.responseText;
-                        console.log(response);
-
-                        // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                        // window.location.reload();
                         window.location.replace("./?view=diffs");
                     }
                 } else {
-                    console.log(xmlhttp.responseText);
                     config.error_modal('Add diff failed', xmlhttp.responseText);
-                    // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                 }
             }
         }else{
             config.error_modal('Add diff failed', 'Records from and to should be provided.');
-            // Materialize.toast('<span>Record from and to should not be empty.</span>', 3000);
         }
     },
     add_env: function() {
@@ -978,8 +835,7 @@ var user = {
         var bundle = document.getElementById("bundle-file");
         if(project_id != ""){
             console.log(project_id);
-            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-            console.log('Cookie session value: '+ Cookies.get('session'));
+            var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
             xmlhttp.open("POST", this.url+"/private/env/next/"+project_id);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'app': application, 'group': group, 'system':system, 'version':version};
@@ -1001,8 +857,6 @@ var user = {
                             if(project["access"] == "public"){
                                 accessible = true;
                             }
-                            // Materialize.toast('<span>'+response['title']+'</span>', 3000);
-                            // window.location.reload();
                             content += "<div class='card-image waves-effect waves-block waves-light'><img disabled class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
                             content += "<div class='card-content'>";
 
@@ -1019,7 +873,6 @@ var user = {
 
                             content += "<span class='card-title activator black-text text-darken-4'> "+project["name"]+"</span>";
                             content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["created"]+"</p>";
-                            // content += "<p><i class='mdi-device-access-alarm cyan-text text-darken-2'></i> "+project["project"]["duration"].split(",")[0].split(".")[0]+"</p>";
                             if(accessible){
                                 content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["id"]+"' onclick='projectAccess(\""+project["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
                             }else{
@@ -1040,10 +893,7 @@ var user = {
                             project_content.innerHTML = content;
                             $('#loading-modal').closeModal();
 
-                            // Materialize.toast('<span>Creation succeeded</span>', 3000);
-                            // window.location.reload();
                             if (bundle.files.length > 0) {
-                                console.log("file not empty");
                                 $('#loading-modal').closeModal();
                                 user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
                             }
@@ -1053,12 +903,9 @@ var user = {
                     $('#loading-modal').closeModal();
                     try{
                         var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
                         $('#loading-modal').closeModal();
-                        // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                     }catch(err){
                         if(xmlhttp.responseText != ""){
-                            console.log(xmlhttp.responseText);
                             $('#loading-modal').closeModal();
                             config.error_modal('Add event failed', xmlhttp.responseText);
                         }
@@ -1068,7 +915,6 @@ var user = {
         }else{
             $('#loading-modal').closeModal();
             config.error_modal('Add event failed', 'Project should be provided.');
-            // Materialize.toast('<span>Record should not be empty.</span>', 3000);
         }
     }
 };

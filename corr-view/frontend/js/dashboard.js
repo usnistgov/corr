@@ -3,9 +3,6 @@ var dashboard = {
     coming_soon:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
         };
         function failed(){
@@ -16,9 +13,6 @@ var dashboard = {
 	activity:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
@@ -26,7 +20,6 @@ var dashboard = {
 
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
@@ -34,9 +27,6 @@ var dashboard = {
 	apps:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
@@ -44,7 +34,6 @@ var dashboard = {
 
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
@@ -52,9 +41,6 @@ var dashboard = {
     users:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
@@ -62,7 +48,6 @@ var dashboard = {
 
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_users.xml', [], succeed, failed);
@@ -70,9 +55,6 @@ var dashboard = {
 	projects:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
@@ -86,9 +68,6 @@ var dashboard = {
 	records:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -109,9 +88,6 @@ var dashboard = {
 	diffs:function(options){
 		function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -133,9 +109,6 @@ var dashboard = {
     envs:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
@@ -157,17 +130,11 @@ var dashboard = {
 	query:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
-            // space.search();
-
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_query.xml', [], succeed, failed);

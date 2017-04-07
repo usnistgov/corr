@@ -12,7 +12,6 @@ function diffEdit(diff_id){
 
 // Diff save callback
 function diffSave(diff_id){
-    console.log('Cookie session value: '+ Cookies.get('session'));
     var diff_update = document.getElementById('update-diff-'+diff_id);
     diff_update.innerHTML = "<a id='update-action' onclick='diffEdit(\""+diff_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var method = document.getElementById('diff-method-'+diff_id);
@@ -29,8 +28,6 @@ function diffRemove(diff_id){
 
 // Diff remove agreement callback
 function diffRemoveAgree(diff_id){
-    console.log("in diffRemoveAgree!");
-    console.log('Cookie session value: '+ Cookies.get('session'));
     var diff = new Diff(diff_id);
     diff.trash();
 }

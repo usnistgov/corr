@@ -39,13 +39,8 @@ setInterval(updateBarChart, 3000);
 Pie chart 
 */
 var pieData = [];
-// var param = window.location.search.substring(1);
-// var parts = param.split("=");
-console.log('Cookie session value: '+ Cookies.get('session'));
 if(Cookies.get('session') != undefined){
-    // var session = parts[1].split("&")[0];
-    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-    // console.log(session);
+    var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/user/dashboard");
     xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
     xmlhttp.send();
@@ -54,7 +49,6 @@ if(Cookies.get('session') != undefined){
         if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
             if(xmlhttp.responseText != ""){
                 var response = JSON.parse(xmlhttp.responseText);
-                console.log(response);
                 var projects_total = response["projects_total"];
                 var records_total = response["records_total"];
                 var environments_total = response["environments_total"];
@@ -72,7 +66,6 @@ if(Cookies.get('session') != undefined){
                 dataBarChart["datasets"] = [];
                 doughnutData = [];
                 color = "#000000";
-                console.log(data);
                 if(response["projects"].length > 0){
                     for(var i = 0; i < response["projects"].length; i++){
                         var project = response["projects"][i];
@@ -97,8 +90,6 @@ if(Cookies.get('session') != undefined){
                             highlightStroke: "rgba(70, 191, 189, 0.9)",
                             data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                         };
-
-                        // console.log(dataset);
 
                         dataset["data"][0] = project["records"]["January"]["number"];
                         dataset["data"][1] = project["records"]["February"]["number"];
@@ -158,8 +149,6 @@ if(Cookies.get('session') != undefined){
                         data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                     };
 
-                    // console.log(dataset);
-
                     dataset["data"][0] = 0;
                     dataset["data"][1] = 0;
                     dataset["data"][2] = 0;
@@ -195,7 +184,6 @@ if(Cookies.get('session') != undefined){
                     data["datasets"].push(dataset);
                     dataBarChart["datasets"].push(dataset);
                 }
-                console.log(data);
                 try{
                     var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
                     window.trendingLineChart = new Chart(trendingLineChart).Line(data, {        
@@ -254,12 +242,10 @@ if(Cookies.get('session') != undefined){
                             tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label        
                             responsive : true
                         });
-                    console.log(data);
                 }
                 catch(err) {
                     console.log(err.message);
                 }
-                console.log(data);
             }else{
                 console.log("Cloud returned empty response!");
             }
