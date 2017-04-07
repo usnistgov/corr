@@ -1050,8 +1050,10 @@ var user = {
                         console.log(response);
                         // Materialize.toast('<span>'+xmlhttp.responseText+'</span>', 3000);
                     }catch(err){
-                        console.log(xmlhttp.responseText);
-                        config.error_modal('Add event failed', xmlhttp.responseText);
+                        if(xmlhttp.responseText != ""){
+                            console.log(xmlhttp.responseText);
+                            config.error_modal('Add event failed', xmlhttp.responseText);
+                        }
                     }
                 }
             }
