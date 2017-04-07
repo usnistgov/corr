@@ -452,15 +452,15 @@ class StorageManager:
                     self.agent_prepare(zf, 'record', record_dict)
                 except:
                     print(traceback.print_exc())
-                if env != None and env.bundle != None and env.bundle.location != '':
+                if env != None and env.bundle != None and env.bundle.storage != '':
                     try:
                         bundle_buffer = StringIO()
-                        if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
-                            bundle_buffer = self.web_get_file(env.bundle.location)
+                        if 'http://' in env.bundle.storage or 'https://' in env.bundle.storage:
+                            bundle_buffer = self.web_get_file(env.bundle.storage)
                         else:
-                            bundle_buffer = self.storage_get_file('bundle', env.bundle.location)
+                            bundle_buffer = self.storage_get_file('bundle', env.bundle.storage)
 
-                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
+                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.storage.split("/")[-1].split(".")[-1]))
                         data.date_time = time.localtime(time.time())[:6]
                         data.compress_type = zipfile.ZIP_DEFLATED
                         data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
