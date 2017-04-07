@@ -12,7 +12,7 @@ class BundleModel(db.Document):
         created_at: A string value of the creation timestamp.
         possible_scope: A list of all the possible places to get the bundle.
         scope: A string value of the current location with unknown as default.
-        location: A string containing the url to the location of the bundle file.
+        storage: A string containing the url to the storage of the bundle file.
         mimetype: A string the type/format of the bundle file.
         size: A Long value of the bundle size.
         extend: A dictionary of to add other fields to the bundle model.
@@ -20,7 +20,7 @@ class BundleModel(db.Document):
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
     possible_scope = ["local", "remote", "unknown"]
     scope = db.StringField(default="unknown", choices=possible_scope)
-    location = db.StringField()
+    storage = db.StringField()
     mimetype = db.StringField()
     checksum = db.StringField()
     size = db.LongField()
@@ -32,7 +32,7 @@ class BundleModel(db.Document):
             The dictionary content of the bundle model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'scope':self.scope,
-        'location':self.location, 'size':self.size, 'mimetype':self.mimetype}
+        'storage':self.storage, 'size':self.size, 'mimetype':self.mimetype}
         try:
             data["checksum"] = self.checksum
         except:
