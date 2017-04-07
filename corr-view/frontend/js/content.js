@@ -571,7 +571,7 @@ var Space = function (){
                         content += "<div class='card-content'>";
                         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<a onclick='envRemove(\""+env["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
-                        content += "<a onclick='config.error_modal(\"Environment pull failed\", \"Environment pull not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
+                        content += "<a onclick='onclick=\"space.pull_env('"+env["id"]+"');\"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
                         content += "<div id='update-env-"+env["id"]+"'><a id='update-action' onclick='envEdit(\""+env["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<a onclick='config.error_modal(\"Environment details failed\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
@@ -712,10 +712,20 @@ var Space = function (){
         }
     },
     this.pull = function(project_name, record_id) {
+        $('#loading-modal').openModal();
         console.log("Before...");
         console.log('Cookie session value: '+ Cookies.get('session'));
         window.location.replace(url+"/private/"+Cookies.get('session')+"/record/pull"+"/"+record_id);
         console.log("...After");
+        $('#loading-modal').closeModal();
+    },
+    this.pull_env = function(env_id) {
+        $('#loading-modal').openModal();
+        console.log("Before...");
+        console.log('Cookie session value: '+ Cookies.get('session'));
+        window.location.replace(url+"/private/"+Cookies.get('session')+"/env/download"+"/"+env_id);
+        console.log("...After");
+        $('#loading-modal').closeModal();
     }
 };
 
