@@ -51,10 +51,12 @@ function recordSelect(record_id){
     if(selected_records.length == 2){
         left_float.innerHTML = "<i class='large mdi-editor-vertical-align-center'></i>";
         left_float.setAttribute( "onClick", "launchDiffModal();");
+        left_float.setAttribute( "data-tooltip", "create diff from selection");
     }
 }
 
 function recordDeselect(record_id){
+    var left_float = document.getElementById("results-display");
     for(var i=0; i<selected_records.length; i++){
         if(selected_records[i]==record_id){
             selected_records.splice(i,1);
@@ -64,6 +66,7 @@ function recordDeselect(record_id){
     if(selected_records.length == 1){
         left_float.innerHTML = hits;
         left_float.removeAttribute( "onClick");
+        left_float.setAttribute( "data-tooltip", "number of hits");
     }
     console.log("Record: "+record_id+" deselected!");
     console.log(selected_records);
