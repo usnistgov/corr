@@ -300,7 +300,8 @@ def dashboard_envs(project_id):
                     projects = ProjectModel.objects(owner=current_user)
                 envs = {'size':0, 'envs':[]}
                 for project in projects:
-                    for env in project.envs:
+                    for env_id in project.history:
+                        env = EnvironmentModel.objects.with_id(env_id)
                         env_info = env.info()
                         env["project"] = project.info()
                         envs['envs'].append(env_info)
@@ -312,7 +313,8 @@ def dashboard_envs(project_id):
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
                     envs = {'size':0, 'envs':[]}
-                    for env in project.envs:
+                    for env_id in project.history:
+                        env = EnvironmentModel.objects.with_id(env_id)
                         env_info = env.info()
                         env_info['project'] = project.info()
                         envs['envs'].append(env_info)
