@@ -505,7 +505,7 @@ class StorageManager:
             with zipfile.ZipFile(memory_file, 'w') as zf:
                 self.agent_prepare(zf, 'diff', diff.info())
                 for record in records:
-                    record_path = "record-{0}".format(record['head']['id'])
+                    record_path = "record-{0}".format(str(record.id))
                     env = record.environment
                     record_dict = record.extended()
                     environment = record_dict['head']['environment']
