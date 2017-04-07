@@ -142,7 +142,7 @@ var renderer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='onclick=\"space.pull_env('"+object["id"]+"');\"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";        
+        content += "<a onclick=\"space.pull_env('"+object["id"]+"');\"' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";        
         content += "<a onclick='config.error_modal(\"Environment details failed.\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
         content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
