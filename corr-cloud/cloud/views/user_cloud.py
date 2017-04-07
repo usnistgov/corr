@@ -613,13 +613,13 @@ def user_file_upload(group, item_id):
                                     item.resources.append(str(_file.id))
                                 elif group == 'bundle':
                                     item.checksum = _file.checksum
-                                    del _file
                                     if item.storage and item.storage != storage:
                                         storage_manager.storage_delete_file('bundle', item.storage)
                                         return cloud_response(401, 'Unauthorized upload', "Inconsistent storage location.")
                                     if checksum and checksum != _file.checksum:
                                         storage_manager.storage_delete_file('bundle', item.storage)
                                         return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
+                                    del _file
                                     item.encoding = encoding
                                     item.size = size
                                     item.storage = storage
