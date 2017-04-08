@@ -506,15 +506,11 @@
                 $('.collapsible').collapsible({accordion : false});
             });
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
-            xmlhttp.send();
             xmlhttp.onreadystatechange=function()
             {
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    if(xmlhttp.responseText == ""){
-                        console.log("Cloud returned empty response!");
-                    }else{
-                        var response = JSON.parse(xmlhttp.responseText);
+                if(this.readyState == 4){
+                    if (this.status == 200) {
+                        var response = JSON.parse(this.responseText);
                         // Data provisioned by the cloud service.
                         var version = response["version"];
                         var users = response["users"];
@@ -531,11 +527,13 @@
                         document.getElementById("footer-version").innerHTML = version;
                         document.getElementById("total-apps").innerHTML = apps["size"];
                         document.getElementById("total-traffic").innerHTML = traffic["size"];
+                    } else {
+                        config.error_modal('An error occured.', this.responseText);
                     }
-                } else {
-                    console.log("Cannot reach the cloud!");
                 }
             }
+            xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
+            xmlhttp.send();
             if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
                 // Check that the user is trusted with this session key.
                 user.trusted();
