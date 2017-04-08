@@ -18,6 +18,9 @@ function projectSave(project_id){
     var description = document.getElementById('project-desc-'+project_id);
     var goals = document.getElementById('project-goals-'+project_id);
     var project = new Project(project_id);
+    tags.setAttribute("readonly", "");
+    description.setAttribute("readonly", "");
+    goals.setAttribute("readonly", "");
     project.save(tags.value, description.value, goals.value);
 }
 

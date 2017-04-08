@@ -23,6 +23,9 @@ function recordSave(record_id){
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
     var record = new Record(record_id);
+    tags.setAttribute("readonly", "");
+    rationels.setAttribute("readonly", "");
+    status.setAttribute("readonly", "");
     record.save(tags.value, rationels.value, status.value);
 }
 

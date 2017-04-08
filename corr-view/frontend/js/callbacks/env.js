@@ -15,6 +15,8 @@ function envSave(env_id){
     var group = document.getElementById('env-group-'+env_id);
     var system = document.getElementById('env-system-'+env_id);
     var env = new Environment(env_id);
+    group.setAttribute("readonly", "");
+    system.setAttribute("readonly", "");
     env.save(group.value, system.value);
 }
 
