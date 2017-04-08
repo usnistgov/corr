@@ -374,6 +374,11 @@
                     <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Account</a>
                   </div>
                 </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                      <a onclick="$('#account-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -405,10 +410,10 @@
                   </div>
                 </div>
                 <div class="row margin">
-                <div class="input-field col s12">
-                  <a class="btn waves-effect purple waves-light col s12 modal-action modal-close">Cancel</a>
+                    <div class="input-field col s12">
+                      <a onclick="$('#account-update-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                    </div>
                 </div>
-              </div>
             </div>
         </div>
 
@@ -452,6 +457,11 @@
                   <div class="input-field col s12">
                     <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Profile</a>
                   </div>
+                </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                      <a onclick="$('#profile-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                    </div>
                 </div>
             </div>
         </div>

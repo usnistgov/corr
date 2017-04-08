@@ -138,6 +138,11 @@
                     <label id="user-about-value" for="user-about">About</label>
                   </div>
                 </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-view-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -174,6 +179,11 @@
                 <div class="row margin" id="app-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#app-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -217,6 +227,11 @@
                 <div class="row margin" id="project-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_project();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#project-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -269,15 +284,17 @@
                   <div class="input-field col s12">
                     <select id="diff-status">
                       <option value="proposed" disabled selected>Proposed</option>
-                      <!-- <option value="proposed">Proposed</option> -->
-                      <!-- <option value="agreed">Agreed</option>
-                      <option value="denied">Denied</option> -->
                     </select>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <a onclick="return user.add_diff();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#diff-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -362,6 +379,11 @@
                     <a onclick="return user.add_env();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
                   </div>
                 </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#env-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -407,10 +429,14 @@
                     </select>
                   </div>
                 </div>
-
                 <div class="row margin" id="record-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -446,10 +472,14 @@
                     </select>
                   </div>
                 </div>
-
                 <div class="row margin" id="user-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_user();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -507,6 +537,11 @@
                 <div class="row margin" id="record-upload-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.upload_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Upload</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-upload-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
