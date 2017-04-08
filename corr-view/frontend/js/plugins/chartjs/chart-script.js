@@ -42,13 +42,11 @@ var pieData = [];
 if(Cookies.get('session') != undefined){
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/user/dashboard");
-    xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-    xmlhttp.send();
     xmlhttp.onreadystatechange=function()
     {
-        if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-            if(xmlhttp.responseText != ""){
-                var response = JSON.parse(xmlhttp.responseText);
+        if(this.readyState == 4){
+            if (this.status == 200) {
+                var response = JSON.parse(this.responseText);
                 var projects_total = response["projects_total"];
                 var records_total = response["records_total"];
                 var environments_total = response["environments_total"];
@@ -247,13 +245,12 @@ if(Cookies.get('session') != undefined){
                     console.log(err.message);
                 }
             }else{
-                console.log("Cloud returned empty response!");
+                config.error_modal('An error occured.', this.responseText);
             }
-
-        } else {
-            console.log("Cannot reach the cloud!");
         }
     }
+    xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+    xmlhttp.send();
 }else{
     window.onload = function(){
         var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
