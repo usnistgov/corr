@@ -604,14 +604,21 @@ var Chartist = {
   Chartist.createChartRect = function (svg, options, fallbackPadding) {
     var yOffset = options.axisY ? options.axisY.offset || 0 : 0,
       xOffset = options.axisX ? options.axisX.offset || 0 : 0,
-      w = Chartist.stripUnit(options.width) || svg.width(),
-      h = Chartist.stripUnit(options.height) || svg.height(),
-      normalizedPadding = Chartist.normalizePadding(options.chartPadding, fallbackPadding);
+      normalizedPadding = Chartist.normalizePadding(options.chartPadding, fallbackPadding)
+    if(svg != undefined){
+      var w = Chartist.stripUnit(options.width) || svg.width();
+      var h = Chartist.stripUnit(options.height) || svg.height();
+      var x2_value = Math.max(w - normalizedPadding.right, normalizedPadding.right + yOffset);
+      var y1_value = Math.max(h - normalizedPadding.bottom - xOffset, normalizedPadding.bottom);
+    }else{
+      x2_value = 0;
+      y1_value = 0;
+    }
 
     return {
       x1: normalizedPadding.left + yOffset,
-      y1: Math.max(h - normalizedPadding.bottom - xOffset, normalizedPadding.bottom),
-      x2: Math.max(w - normalizedPadding.right, normalizedPadding.right + yOffset),
+      y1: y1_value,
+      x2: x2_value,
       y2: normalizedPadding.top,
       width: function () {
         return this.x2 - this.x1;
