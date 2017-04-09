@@ -674,7 +674,6 @@
                     options.push(blocks[i]);
                 }
             }
-            console.log("Params: "+param);
             // Inject the default dashboard view
             if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
                 dashboard.activity();
@@ -736,8 +735,6 @@
             }
             // Otherwise redirect to a 404
             else{
-              console.log(Cookies.get('session'));
-              console.log(view_selected);
               // window.location.replace("../");
               config.error_modal("User access denied", "You have to log back in.");
             }
@@ -891,7 +888,6 @@
               var group = document.getElementById("upload-group").value;
               var type_div = document.getElementById("type-div");
               var guide_div = document.getElementById("guide-div");
-              console.log("group: "+group);
               if(group == "body"){
                 type_div.style.display = 'block';
                 guide_div.style.display = 'block';
@@ -905,8 +901,6 @@
               var guide = document.getElementById("upload-guide");
               var upload_type = document.getElementById("upload-type");
               var type_selected = upload_type.options[upload_type.selectedIndex].text
-              console.log("reloadUploadGuide ... ");
-              console.log(type_selected);
               if(type_selected == "Json"){
                 guide.value = "{\n";
                 guide.value += "  'system':{\n";
