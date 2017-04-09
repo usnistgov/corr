@@ -55,7 +55,6 @@ var user = {
     },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -75,11 +74,11 @@ var user = {
             } 
         };
         xmlhttp.open("GET", this.url+"/private/user/logout");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();   
     },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var pwd = document.getElementById('edit-new-password').value;
         var pwd_2 = document.getElementById('edit-new-password-again').value;
         if(pwd != pwd_2){
@@ -124,6 +123,7 @@ var user = {
                 }
             };
             xmlhttp.open("POST", this.url+"/private/user/update");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }
     },
@@ -211,7 +211,6 @@ var user = {
     },
     trusted: function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -229,11 +228,11 @@ var user = {
             }
         };
         xmlhttp.open("GET", this.url+"/private/user/trusted");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
     account: function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -258,11 +257,11 @@ var user = {
             }
         };
         xmlhttp.open("GET", this.url+"/private/user/profile");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -280,6 +279,7 @@ var user = {
             }
         };
         xmlhttp.open("GET", this.url+"/private/user/renew");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
     config: function() {
@@ -298,7 +298,6 @@ var user = {
         var access = document.getElementById("app-access").value;
         if(name != ""){
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'about': about, 'access': access};
             xmlhttp.onreadystatechange = function()
             {
@@ -358,6 +357,7 @@ var user = {
                 } 
             };
             xmlhttp.open("POST", this.url+"/private/dashboard/developer/app/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
             config.error_modal('Add app failed', 'Name should not be empty.');
@@ -370,7 +370,6 @@ var user = {
         var goals = document.getElementById("project-goals").value;
         if(name != ""){
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
             xmlhttp.onreadystatechange = function()
             {
@@ -427,6 +426,7 @@ var user = {
                 }
             };
             xmlhttp.open("POST", this.url+"/private/project/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
             config.error_modal('Add project failed', 'Project name should not be empty.');
@@ -498,7 +498,6 @@ var user = {
         var status = document.getElementById("record-status").value;
         if(project_id != ""){
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
             $('#loading-modal').openModal();
             xmlhttp.onreadystatechange = function()
@@ -554,6 +553,7 @@ var user = {
                 }
             };
             xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
             $('#loading-modal').closeModal();
@@ -609,7 +609,6 @@ var user = {
                             if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
                                 var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
-                                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
                                 xmlhttp.onreadystatechange = function()
                                 {
                                     if(this.readyState == 4){
@@ -714,6 +713,7 @@ var user = {
                                     }
                                 };
                                 xmlhttp.open("POST", url+"/private/record/edit/"+record_id);
+                                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
                                 xmlhttp.send(JSON.stringify(request));
                             }
                         }
@@ -753,7 +753,6 @@ var user = {
         var status = document.getElementById("diff-status").value;
         if(from != "" && to != ""){
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
             xmlhttp.onreadystatechange = function()
             {
@@ -767,6 +766,7 @@ var user = {
                 }
             };
             xmlhttp.open("POST", this.url+"/private/diff/create");
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
             config.error_modal('Add diff failed', 'Records from and to should be provided.');
@@ -782,7 +782,6 @@ var user = {
         if(project_id != ""){
             console.log(project_id);
             var xmlhttp = new XMLHttpRequest();
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             var request = { 'app': application, 'group': group, 'system':system, 'version':version};
             $('#loading-modal').openModal();
             xmlhttp.onreadystatechange = function()
@@ -843,6 +842,7 @@ var user = {
                 }
             };
             xmlhttp.open("POST", this.url+"/private/env/next/"+project_id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
             $('#loading-modal').closeModal();
