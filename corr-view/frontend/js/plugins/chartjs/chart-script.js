@@ -309,7 +309,7 @@ if(Cookies.get('session') != undefined){
             });
         }
         var trendingBarChartBlock = document.getElementById("trending-bar-chart");
-        if(trendingBarChartBlock != null)
+        if(trendingBarChartBlock != null){
             var trendingBarChart = trendingBarChartBlock.getContext("2d");
             window.trendingBarChart = new Chart(trendingBarChart).Bar(dataBarChart,{
                 scaleShowGridLines : false,///Boolean - Whether grid lines are shown across the chart
