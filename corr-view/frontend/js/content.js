@@ -458,9 +458,9 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("diffs-list").innerHTML += content;
                     }
-                }
-            } else{
+                }else{
                 config.error_modal('Dashboard diffs failed', this.responseText);
+                }
             }
         };
         if(project_id == "all"){
@@ -537,10 +537,9 @@ var Space = function (){
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         xmlhttp.onreadystatechange = function()
         {
-            var query_result = document.getElementById('query-result');
-            query_result.innerHTML = "";
             if(this.readyState == 4){
                 if (this.status == 200) {
+                    query_result.innerHTML = "";
                     var response = JSON.parse(this.responseText);
                     this.query_result = response;
                     if(!exUser == true){
