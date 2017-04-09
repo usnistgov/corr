@@ -183,8 +183,10 @@ if(Cookies.get('session') != undefined){
                     dataBarChart["datasets"].push(dataset);
                 }
                 try{
-                    var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
-                    window.trendingLineChart = new Chart(trendingLineChart).Line(data, {        
+                    var trendingLineChartBlock = document.getElementById("trending-line-chart");
+                    if(trendingLineChartBlock != null){
+                        var trendingLineChart = trendingLineChartBlock.getContext("2d");
+                        window.trendingLineChart = new Chart(trendingLineChart).Line(data, {        
                         scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart        
                         scaleGridLineColor : "rgba(255,255,255,0.4)",//String - Colour of the grid lines        
                         scaleGridLineWidth : 1,//Number - Width of the grid lines        
@@ -221,25 +223,32 @@ if(Cookies.get('session') != undefined){
                         tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
                         responsive: true
                         });
-                    var doughnutChart = document.getElementById("doughnut-chart").getContext("2d");
-                    window.myDoughnut = new Chart(doughnutChart).Doughnut(doughnutData, {
-                        segmentStrokeColor : "#fff",
-                        tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label        
-                        percentageInnerCutout : 50,
-                        animationSteps : 15,
-                        segmentStrokeWidth : 4,
-                        animateScale: true,
-                        percentageInnerCutout : 60,
-                        responsive : true
-                    });
-                    var trendingBarChart = document.getElementById("trending-bar-chart").getContext("2d");
-                    window.trendingBarChart = new Chart(trendingBarChart).Bar(dataBarChart,{
-                        scaleShowGridLines : false,///Boolean - Whether grid lines are shown across the chart
-                        showScale: true,
-                        animationSteps:15,
-                        tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label        
-                        responsive : true
-                    });
+                    }
+                    var doughnutChartBlock = document.getElementById("doughnut-chart");
+                    if(doughnutChartBlock != null){
+                        var doughnutChart = doughnutChartBlock.getContext("2d");
+                        window.myDoughnut = new Chart(doughnutChart).Doughnut(doughnutData, {
+                            segmentStrokeColor : "#fff",
+                            tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label        
+                            percentageInnerCutout : 50,
+                            animationSteps : 15,
+                            segmentStrokeWidth : 4,
+                            animateScale: true,
+                            percentageInnerCutout : 60,
+                            responsive : true
+                        });
+                    }
+                    var trendingBarChartBlock = document.getElementById("trending-bar-chart");
+                    if(trendingBarChartBlock != null){
+                        var trendingBarChart = trendingBarChartBlock.getContext("2d");
+                        window.trendingBarChart = new Chart(trendingBarChart).Bar(dataBarChart,{
+                            scaleShowGridLines : false,///Boolean - Whether grid lines are shown across the chart
+                            showScale: true,
+                            animationSteps:15,
+                            tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label        
+                            responsive : true
+                        });
+                    }
                 }
                 catch(err) {
                     console.log(err.message);
