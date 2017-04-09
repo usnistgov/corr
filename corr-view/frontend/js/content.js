@@ -4,14 +4,11 @@ var Space = function (){
     this.query_result = "";
     this.dashboard = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/dashboard/projects");
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText != ""){
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     this.dash_content = response;
                     document.getElementById("projects-list").innerHTML = "";
                     var version = response["version"];
@@ -85,23 +82,21 @@ var Space = function (){
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{
-                    console.log("Cloud returned empty response!");
+                    config.error_modal('Dashboard home failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard failed");
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/projects");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.users = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/dashboard/users");
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText != ""){
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     this.dash_content = response;
                     document.getElementById("users-list").innerHTML = "";
                     var version = response["version"];
@@ -139,23 +134,21 @@ var Space = function (){
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{
-                    console.log("Cloud returned empty response!");
+                    config.error_modal('Dashboard users failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard failed");
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/users");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.apps = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/dashboard/developer/apps");
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText != ""){
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     this.dash_content = response;
                     document.getElementById("apps-list").innerHTML = "";
                     for(var i = 0; i < response["content"]["apps"].length; i++){
@@ -223,31 +216,23 @@ var Space = function (){
                         document.getElementById("apps-list").innerHTML += content;
                     }
                 }else{
-                    console.log("Cloud returned empty response!");
+                    config.error_modal('Dashboard apps failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard failed");
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/developer/apps");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.records = function(project_id) {
         document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();
-        if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/records/all");
-        }else{
-            xmlhttp.open("GET", url+"/private/dashboard/records/"+project_id);
-        }
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     document.getElementById("records-list").innerHTML = "";
                     this.dash_content = response;
                     var records = response["records"];
@@ -346,30 +331,28 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("records-list").innerHTML += content;
                     }
+                }else{
+                    config.error_modal('Dashboard records failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard failed");
             }
+        };
+        if(project_id == "all"){
+            xmlhttp.open("GET", url+"/private/dashboard/records/all");
+        }else{
+            xmlhttp.open("GET", url+"/private/dashboard/records/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.diffs = function(project_id) {
         document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();
-        if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/diffs/all");
-        }else{
-            xmlhttp.open("GET", url+"/private/dashboard/diffs/"+project_id);
-        }
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     document.getElementById("diffs-list").innerHTML = "";
                     this.dash_content = response;
                     
@@ -476,29 +459,26 @@ var Space = function (){
                         document.getElementById("diffs-list").innerHTML += content;
                     }
                 }
-            } else {
-                console.log("Dashboard failed");
+            } else{
+                config.error_modal('Dashboard diffs failed', this.responseText);
             }
+        };
+        if(project_id == "all"){
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/all");
+        }else{
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.envs = function(project_id) {
         document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
-        var xmlhttp = new XMLHttpRequest();
-        if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/envs/all");
-        }else{
-            xmlhttp.open("GET", url+"/private/dashboard/envs/"+project_id);
-        }
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     document.getElementById("envs-list").innerHTML = "";
                     this.dash_content = response;
                     var envs = response["envs"];
@@ -537,28 +517,31 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("envs-list").innerHTML += content;
                     }
+                } else{
+                    config.error_modal('Dashboard envs failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard failed");
             }
+        };
+        var xmlhttp = new XMLHttpRequest();
+        if(project_id == "all"){
+            xmlhttp.open("GET", url+"/private/dashboard/envs/all");
+        }else{
+            xmlhttp.open("GET", url+"/private/dashboard/envs/"+project_id);
         }
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv) {
         var xmlhttp = new XMLHttpRequest();
         var query_result = document.getElementById('query-result');
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
-        xmlhttp.open("GET", url+"/private/dashboard/search?query="+search);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
             var query_result = document.getElementById('query-result');
             query_result.innerHTML = "";
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
-                    var response = JSON.parse(xmlhttp.responseText);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
                     this.query_result = response;
                     if(!exUser == true){
                         for(var i = 0; i < this.query_result["users"]["count"]; i++){
@@ -605,25 +588,23 @@ var Space = function (){
                     }
                     var display = document.getElementById('results-display');
                     display.innerHTML = hits;
+                }else {
+                    config.error_modal('Query failed', this.responseText);
                 }
-            } else {
-                config.error_modal('Query failed', xmlhttp.responseText);
             }
-        }   
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/search?query="+search);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.exportToJson = function () {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/dashboard/projects");
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                if(xmlhttp.responseText == ""){
-                    console.log("Cloud returned empty response!");
-                }else{
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var pom = document.createElement('a');
-                    pom.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(JSON.parse(xmlhttp.responseText), null, 2)));
+                    pom.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(JSON.parse(this.responseText), null, 2)));
                     pom.setAttribute('download', 'dashboard.json');
 
                     if (document.createEvent) {
@@ -634,11 +615,14 @@ var Space = function (){
                     else {
                         pom.click();
                     }
+                }else {
+                    config.error_modal('Dashboard download failed', this.responseText);
                 }
-            } else {
-                console.log("Dashboard download failed");
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/projects");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     },
     this.pull = function(project_name, record_id) {
         $('#loading-modal').openModal();
@@ -663,30 +647,24 @@ var Record = function (_id){
     self._id = _id;
     self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/record/view/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    try{
-                        content = JSON.parse(xmlhttp.responseText);
-                        if(content['head']['access'] == 'private'){
-                            self.access('public');
-                        }else{
-                            self.access('private');
-                        }
-                    }catch(err) {
-                        console.log(err);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    content = JSON.parse(this.responseText);
+                    if(content['head']['access'] == 'private'){
+                        self.access('public');
+                    }else{
+                        self.access('private');
                     }
                 } else {
                     config.error_modal('Project update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/record/view/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     self.save = function(tags, rationels, status) {
@@ -695,43 +673,37 @@ var Record = function (_id){
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'tags': tags, 'rationels': rationels, 'status': status};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                 } else {
-                    // Materialize.toast('<span>Update failed</span>', 5000);
                     $('#loading-modal').closeModal();
                     config.error_modal('Update record failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     }
 
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = {'access':access_value};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
+            if(this.readyState == 4){
                 var r_access = document.getElementById('record-access-'+self._id);
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Record access updated', 'Your record is now: '+access_value+".");
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Record access update failed', xmlhttp.responseText);
+                    config.error_modal('Record access update failed', this.responseText);
                     if(access_value == 'public'){
                         r_access.removeAttribute("checked");
                     }else{
@@ -739,22 +711,20 @@ var Record = function (_id){
                     }
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     }
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
     self.trash = function () {
         var xmlhttp = new XMLHttpRequest();
         console.log('Cookie session value: '+ Cookies.get('session'));
-        xmlhttp.open("GET", url+"/private/record/remove/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         $('#loading-modal').openModal();
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var elem = document.getElementById("record-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
@@ -764,7 +734,10 @@ var Record = function (_id){
                     config.error_modal('Remove record failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/record/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+         xmlhttp.send();
     }
     return self;
 };
@@ -776,17 +749,12 @@ var Account = function (_id){
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     self.save = function(fname, lname, group, auth, org, about) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/account/update/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
                 } else {
@@ -794,7 +762,10 @@ var Account = function (_id){
                     config.error_modal('Account update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/account/update/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     }
     return self;
 };
@@ -805,45 +776,34 @@ var Project = function (_id){
     self._id = _id;
     self.switchAccess = function() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", url+"/private/project/view/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    try{
-                        content = JSON.parse(xmlhttp.responseText);
-                        if(content['project']['access'] == 'private'){
-                            self.access('public');
-                        }else{
-                            self.access('private');
-                        }
-                    }catch(err) {
-                        console.log(err);
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    content = JSON.parse(this.responseText);
+                    if(content['project']['access'] == 'private'){
+                        self.access('public');
+                    }else{
+                        self.access('private');
                     }
                 } else {
                     config.error_modal('Project update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/project/view/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     self.save = function(tags, description, goals) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'tags':tags, 'description': description, 'goals': goals};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
                 } else {
@@ -851,28 +811,26 @@ var Project = function (_id){
                     config.error_modal('Project update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     }
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = {'access':access_value};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
+           if(this.readyState == 4){
                 var p_access = document.getElementById('project-access-'+self._id);
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+                if (this.status == 200) {
                     console.log("Project access updated.");
                     $('#loading-modal').closeModal();
                     config.error_modal('Project access updated', 'Your project is now: '+access_value+".");
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Project access update failed', xmlhttp.responseText);
+                    config.error_modal('Project access update failed', this.responseText);
                     if(access_value == 'public'){
                         p_access.removeAttribute("checked");
                     }else{
@@ -880,22 +838,19 @@ var Project = function (_id){
                     }
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     }
     // Half way optimal. We could have just removed the record div instead of reloading the whole page. TODO
     self.trash = function () {
         var xmlhttp = new XMLHttpRequest();
-        
-        xmlhttp.open("GET", url+"/private/project/remove/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         $('#loading-modal').openModal();
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var elem = document.getElementById("project-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
@@ -905,7 +860,10 @@ var Project = function (_id){
                     config.error_modal('Project remove failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/project/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
     return self;
 };
@@ -916,17 +874,12 @@ var Application = function (_id){
     // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
     this.save = function(name, about, access) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'name':name, 'about': about, 'access': access};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
                 } else {
@@ -934,22 +887,19 @@ var Application = function (_id){
                     config.error_modal('Tool update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     },
     // Half way optimal. We could have just removed the app div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
-        
-        xmlhttp.open("GET", url+"/private/dashboard/developer/app/remove/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         $('#loading-modal').openModal();
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var elem = document.getElementById("app-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
@@ -959,7 +909,10 @@ var Application = function (_id){
                     config.error_modal('Tool remove failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/developer/app/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
 };
 
@@ -969,17 +922,12 @@ var Diff = function (_id){
     // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
     this.save = function(method, proposition, status) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/diff/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'method': method, 'proposition': proposition, 'status': status};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
                 } else {
@@ -987,22 +935,19 @@ var Diff = function (_id){
                     config.error_modal('Assessment update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/diff/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     },
     // Half way optimal. We could have just removed the diff div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
-        
-        xmlhttp.open("GET", url+"/private/diff/remove/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         $('#loading-modal').openModal();
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var elem = document.getElementById("diff-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
@@ -1012,7 +957,10 @@ var Diff = function (_id){
                     config.error_modal('Assessment remove failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/diff/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
 };
 
@@ -1022,17 +970,12 @@ var Environment = function (_id){
     // This way of doing is not optimal as we do not atomically update a env and change its content we reload the whole page.
     this.save = function(group, system) {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", url+"/private/env/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         var request = { 'group':group, 'system': system};
         $('#loading-modal').openModal();
-        xmlhttp.send(JSON.stringify(request));
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
                 } else {
@@ -1040,22 +983,19 @@ var Environment = function (_id){
                     config.error_modal('Environment update failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("POST", url+"/private/env/edit/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
     },
     // Half way optimal. We could have just removed the env div instead of reloading the whole page. TODO
     this.trash = function () {
         var xmlhttp = new XMLHttpRequest();
-        
-        xmlhttp.open("GET", url+"/private/env/remove/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         $('#loading-modal').openModal();
-        xmlhttp.send();
-        xmlhttp.onreadystatechange=function()
+        xmlhttp.onreadystatechange = function()
         {
-            if(xmlhttp.responseText == ""){
-                console.log("Cloud returned empty response!");
-            }else{
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
+            if(this.readyState == 4){
+                if (this.status == 200) {
                     var elem = document.getElementById("env-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
@@ -1065,6 +1005,9 @@ var Environment = function (_id){
                     config.error_modal('Environment remove failed', "An error occured while processing your request.");
                 }
             }
-        }
+        };
+        xmlhttp.open("GET", url+"/private/env/remove/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();
     }
 };
