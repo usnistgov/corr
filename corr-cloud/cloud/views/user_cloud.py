@@ -276,14 +276,13 @@ def user_dashboard():
                 records = RecordModel.objects(project=project)
                 dashboard["records_total"] += len(records)
                 dashboard["environments_total"] += len(project.history)
+                size = 0
+                # try:
+                #     environment = record.environment
+                #     size = environment.bundle.size
+                # except:
+                #     size = 0
                 for record in records:
-                    environment = record.environment
-                    size = 0
-                    try:
-                        size = environment.bundle.size
-                    except:
-                        size = 0
-
                     month = str(record.created_at).split("-")[1]
                     if month == "01":
                         project_dash["records"]["January"]["number"] += 1
