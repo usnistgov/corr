@@ -280,7 +280,7 @@ def user_dashboard():
                     environment = record.environment
                     size = 0
                     try:
-                        size = environment.bundle["size"]
+                        size = environment.bundle.size
                     except:
                         size = 0
 
