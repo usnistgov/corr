@@ -275,12 +275,14 @@ def user_dashboard():
                 project_dash = {"name":"{0}~{1}".format(project.owner.email, project.name), "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
                 records = RecordModel.objects(project=project)
                 dashboard["records_total"] += len(records)
-                environment = EnvironmentModel.objects.with_id(project.history[-1])
+
                 size = 0
-                try:
-                    size = environment.bundle["size"]
-                except:
-                    size = 0
+                if len(project.history) >= 0:
+                    environment = EnvironmentModel.objects.with_id(project.history[-1])
+                    try:
+                        size = environment.bundle["size"]
+                    except:
+                        size = 0
                 dashboard["environments_total"] += size
                 for record in records:
                     month = str(record.created_at).split("-")[1]
