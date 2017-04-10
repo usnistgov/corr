@@ -277,7 +277,7 @@ def user_dashboard():
                 dashboard["records_total"] += len(records)
 
                 size = 0
-                if len(project.history) >= 0:
+                if len(project.history) > 0:
                     environment = EnvironmentModel.objects.with_id(project.history[-1])
                     try:
                         size = environment.bundle["size"]
