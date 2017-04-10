@@ -279,6 +279,14 @@ def user_dashboard():
                 size = 0
                 for record in records:
                     month = str(record.created_at).split("-")[1]
+                    try:
+                        env = record.environment
+                        if env:
+                            bundle = env.bundle
+                            if bundle:
+                                size = long(bundle.size)
+                    except:
+                        pass
                     if month == "01":
                         project_dash["records"]["January"]["number"] += 1
                         project_dash["records"]["January"]["size"] += size
