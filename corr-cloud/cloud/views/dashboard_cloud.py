@@ -24,10 +24,10 @@ import mimetypes
 #I will handle my own status and head and content and stamp
 
 # Query language that follows reference relationship in models.
-# ![val1,val2,...] => looking for these values (empty means all)
-# ?[mod1,mod2,...] => looking in models (all means all)
-# ~[] => include models and models depending on them
-# ~() => only models that depends on them. 
+# ![val1,val2,...] => looking for these values (empty means all).
+# ?[mod1,mod2,...] => looking in models (all means all) (>|<|>=|<=modX.fieldY)
+# ~ at end => include models and models depending on them
+# none => only models that depends on them. 
 # | => pipe the result of the precedent to another query. ? is not accepted here
 # & => adding another query as a separate one to merge their results.
 # There is no or because these are enoug. we are not working on conditionals.
