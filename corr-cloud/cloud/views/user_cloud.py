@@ -279,7 +279,7 @@ def user_dashboard():
                 size = 0
                 try:
                     environment = EnvironmentModel.objects.with_id(project.history[-1])
-                    size = environment.bundle["size"]
+                    size = environment.bundle.size
                 except:
                     size = 0
                 dashboard["environments_total"] += size
