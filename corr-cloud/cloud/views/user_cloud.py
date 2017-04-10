@@ -277,11 +277,6 @@ def user_dashboard():
                 dashboard["records_total"] += len(records)
                 dashboard["environments_total"] += len(project.history)
                 size = 0
-                # try:
-                #     environment = record.environment
-                #     size = environment.bundle.size
-                # except:
-                #     size = 0
                 for record in records:
                     month = str(record.created_at).split("-")[1]
                     if month == "01":
