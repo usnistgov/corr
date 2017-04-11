@@ -535,7 +535,7 @@ def processRequest(request):
         for context in contexts:
             for key, value in context.items():
                     context[key] = list(set(value))
-        return (message, contexts)
+        return ("{0} {1}".format(message,queries), contexts)
     else:
         return ("{0} {1}".format(message,queries), None)
 
