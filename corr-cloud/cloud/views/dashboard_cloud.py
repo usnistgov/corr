@@ -13,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
+from cloud import app, cloud_response, storage_manager, access_manager, processRequest, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -860,3 +860,14 @@ def app_logo(app_id):
                 return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
         else:
             return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+
+@app.route(CLOUD_URL + '/public/dashboard/query', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def public_query_dashboard():
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
+    if fk.request.method == 'GET':
+        message, context = processRequest(fk.request.args.get("req"))
+        return cloud_response(200, message, context)
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

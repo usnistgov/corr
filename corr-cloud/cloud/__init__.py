@@ -6,7 +6,18 @@ from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel  
+from corrdb.common.models import RecordModel
+from corrdb.common.models import BundleModel
+from corrdb.common.models import VersionModel
 from corrdb.common.models import AccessModel
+from corrdb.common.models import FileModel
+from corrdb.common.models import CommentModel
+from corrdb.common.models import MessageModel
+from corrdb.common.models import ProfileModel
+from corrdb.common.models import EnvironmentModel
+from corrdb.common.models import RecordBodyModel
+from corrdb.common.models import DiffModel
+
 from io import StringIO
 from io import BytesIO
 import zipfile
@@ -155,6 +166,8 @@ def query_parse(request=None):
             queries.append(query_pipes)
     return queries
 
+# processRequest("![yannick,sumatra]?[0.user.email,1.file]~|![]?[profile]|![]?[profile]~")
+
 allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
 
 def query_analyse(queries=None):
@@ -215,9 +228,97 @@ def query_analyse(queries=None):
             included.append(included_here)
     return (True, "Query syntax is correct.", included)
 
+def queryModelGeneric(objectModel, field, value):
+    try:
+        if field != "*" and value != "*":
+            return [o for o in objectModel.objects() if o.info()[field] == value]
+        elif field == "*" and value != "*":
+            return [o for o in objectModel.objects() if value in str(o.info())]
+        elif field != "*" and value == "*":
+            return [o for o in objectModel.objects() if o.info()[field] != ""]
+        else:
+            return objectModel.objects()
+    except:
+        return []
+
+def queryContextGeneric(context, field, value):
+    try:
+        if field != "*" and value != "*":
+            return [o for o in context if o.info()[field] == value]
+        elif field == "*" and value != "*":
+            return [o for o in context if value in str(o.info())]
+        elif field != "*" and value == "*":
+            return [o for o in context if o.info()[field] != ""]
+        else:
+            return context
+    except:
+        return []
+
+def queryModel(context, name, field, value):
+    print(name)
+    print(field)
+    print(value)
+    if name == "user":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            print(queryModelGeneric(UserModel, field, value))
+            return queryModelGeneric(UserModel, field, value)
+    elif name == "version":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(VersionModel, field, value)
+    elif name == "record":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(VersionModel, field, value)
+    elif name == "project":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(ProjectModel, field, value)
+    elif name == "file":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(FileModel, field, value)
+    elif name == "profile":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(ProfileModel, field, value)
+    elif name == "env":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(EnvironmentModel, field, value)
+    elif name == "diff":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(DiffModel, field, value)
+    elif name == "tool":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(ApplicationModel, field, value)
+    elif name == "bundle":
+        if context:
+            return queryContextGeneric(context[name], field, value)
+        else:
+            return queryModelGeneric(BundleModel, field, value)
+    else:
+        if context:
+            return context
+        else:
+            return []
+
 def executeQuery(context, query):
     print("execute query...")
     print(query)
+    context_current = context
     if query["models"]:
         for model in query["models"]:
             target_value = None
@@ -251,11 +352,13 @@ def executeQuery(context, query):
                     target_value = query["values"]
                 else:
                     target_value = "*"
-            # check if query is piped and do process request based on that.
             if not query["piped"]:
-                
+                objs = queryModel(None, target_model, target_field, target_value)
+                for obj in objs:
+                    if obj not in context_current[target_model]:
+                        context_current[target_model].append(obj)
             else:
-
+                context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
         target_model = "*"
@@ -264,7 +367,26 @@ def executeQuery(context, query):
             target_value = query["values"]
         else:
             target_value = "*"
+        if not query["piped"]:
+            if target_model == "*":
+                for model in allowed_models:
+                    objs = queryModel(None, model, target_field, target_value)
+                    for obj in objs:
+                        if obj not in context_current[model]:
+                            context_current[model].append(obj)
+            else:
+                objs = queryModel(None, target_model, target_field, target_value)
+                for obj in objs:
+                    if obj not in context_current[target_model]:
+                        context_current[target_model].append(obj)
+        else:
+            if target_model == "*":
+                for model in allowed_models:
+                    context_current[model] = queryModel(context_current, model, target_field, target_value)
+            else:
+                context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
         print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
+    return context_current
 
 
 def processRequest(request):
