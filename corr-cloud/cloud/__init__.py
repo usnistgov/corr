@@ -417,14 +417,14 @@ def executeQuery(context, query):
                         context_current[target_model].append(obj)
                         if query["tree"]:
                             deps = fetchDependencies(target_model, obj)
-                            for key, value in context_current.items():
+                            for key, value in deps.items():
                                 context_current[key].extend(deps[key])
             else:
                 context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
                 if query["tree"]:
                     for obj in context_current[target_model]:
                         deps = fetchDependencies(target_model, obj)
-                        for key, value in context_current.items():
+                        for key, value in deps.items():
                             context_current[key].extend(deps[key])
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
@@ -443,7 +443,7 @@ def executeQuery(context, query):
                             context_current[model].append(obj)
                             if query["tree"]:
                                 deps = fetchDependencies(model, obj)
-                                for key, value in context_current.items():
+                                for key, value in deps.items():
                                     context_current[key].extend(deps[key])
             else:
                 objs = queryModel(None, target_model, target_field, target_value)
@@ -452,7 +452,7 @@ def executeQuery(context, query):
                         context_current[target_model].append(obj)
                         if query["tree"]:
                             deps = fetchDependencies(target_model, obj)
-                            for key, value in context_current.items():
+                            for key, value in deps.items():
                                 context_current[key].extend(deps[key])
         else:
             if target_model == "*":
@@ -461,14 +461,14 @@ def executeQuery(context, query):
                     if query["tree"]:
                         for obj in context_current[model]:
                             deps = fetchDependencies(model, obj)
-                            for key, value in context_current.items():
+                            for key, value in deps.items():
                                 context_current[key].extend(deps[key])
             else:
                 context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
                 if query["tree"]:
                     for obj in context_current[target_model]:
                         deps = fetchDependencies(target_model, obj)
-                        for key, value in context_current.items():
+                        for key, value in deps.items():
                             context_current[key].extend(deps[key])
         print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     return context_current
