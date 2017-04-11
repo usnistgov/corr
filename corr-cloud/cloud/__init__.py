@@ -314,8 +314,8 @@ def fetchDependencies(name, obj):
     elif name == "bundle":
         envs = EnvironmentModel.objects(bundle=obj)
         deps["env"] = envs
-    else:
-        return deps
+
+    return deps
 
 def queryModel(context, name, field, value):
     if name == "user":
