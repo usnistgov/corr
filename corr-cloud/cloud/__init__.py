@@ -150,7 +150,7 @@ def query_parse(request=None):
                 if len(pipe_parts) - pipe_index - 1 > 0:
                     next_piped = True
                 blocks = pipe_parts[pipe_index].split("]")
-                if(len(blocks) == 3):
+                if len(blocks) == 3 and "~" in blocks[2]:
                     query["tree"] = True
                 if "![" in blocks[0]:
                     index_val = 0
@@ -333,7 +333,7 @@ def queryModel(context, name, field, value):
         if context:
             return queryContextGeneric(context[name], field, value)
         else:
-            return queryModelGeneric(VersionModel, field, value)
+            return queryModelGeneric(RecordModel, field, value)
     elif name == "project":
         if context:
             return queryContextGeneric(context[name], field, value)
