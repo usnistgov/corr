@@ -537,7 +537,7 @@ def processRequest(request):
                     context[key] = list(set(value))
         return (message, contexts)
     else:
-        return (message, None)
+        return ("{0} {1}".format(message,queries), None)
 
 def queryResponseDict(contexts):
     contexts_json = []
