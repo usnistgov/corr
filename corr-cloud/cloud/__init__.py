@@ -231,7 +231,7 @@ def query_analyse(queries=None):
 def queryModelGeneric(objectModel, field, value):
     try:
         if field != "*" and value != "*":
-            if "," in value:
+            if len(value) > 0:
                 if objectModel == RecordModel:
                     return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value.split(","))]
                 else:
@@ -242,7 +242,7 @@ def queryModelGeneric(objectModel, field, value):
                 else:
                     return [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
         elif field == "*" and value != "*":
-            if "," in value:
+            if len(value) > 0:
                 if objectModel == RecordModel:
                     return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value.split(","))]
                 else:
@@ -265,7 +265,7 @@ def queryModelGeneric(objectModel, field, value):
 def queryContextGeneric(context, name, field, value):
     try:
         if field != "*" and value != "*":
-            if "," in value:
+            if len(value) > 0:
                 if name == "record":
                     return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value.split(","))]
                 else:
@@ -276,7 +276,7 @@ def queryContextGeneric(context, name, field, value):
                 else:
                     return [o for o in context if value.lower() in str(o.extended()[field]).lower()]
         elif field == "*" and value != "*":
-            if "," in value:
+            if len(value) > 0:
                 return [el for el in context if any(val in str(el.extended()).lower() for val in value.split(","))]
             else:
                 return [o for o in context if value.lower() in str(o.extended()).lower()]
