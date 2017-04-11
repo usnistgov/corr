@@ -23,7 +23,7 @@ from io import BytesIO
 import zipfile
 import simplejson as json
 import time
-import traceback 
+import traceback
 import datetime
 
 import requests
@@ -255,9 +255,6 @@ def queryContextGeneric(context, field, value):
         return []
 
 def queryModel(context, name, field, value):
-    print(name)
-    print(field)
-    print(value)
     if name == "user":
         if context:
             return queryContextGeneric(context[name], field, value)
@@ -316,8 +313,6 @@ def queryModel(context, name, field, value):
             return []
 
 def executeQuery(context, query):
-    print("execute query...")
-    print(query)
     context_current = context
     if query["models"]:
         for model in query["models"]:
@@ -414,6 +409,13 @@ def processRequest(request):
         return (message, contexts)
     else:
         return (message, None)
+
+def queryResponseDict(context):
+    context_json = {}
+    for key, value in context.items():
+        context_json[key] = [val.info() for val in value]
+    return context_json
+
 
 from . import views
 from corrdb.common import models
