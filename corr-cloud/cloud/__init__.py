@@ -376,7 +376,7 @@ def queryModel(context, name, field, value):
         if context:
             return queryContextGeneric(context[name], name, field, value)
         else:
-            return queryModelGeneric(FileModel, name, field, value)
+            return queryModelGeneric(FileModel, field, value)
     elif name == "profile":
         if context:
             return queryContextGeneric(context[name], name, field, value)
