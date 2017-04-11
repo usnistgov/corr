@@ -275,7 +275,7 @@ def fetchDependencies(name, obj):
         projects = ProjectModel.objects(owner=obj)
         deps["project"] = projects
         tools = ApplicationModel.objects(developer=obj)
-        deps["tools"] = tools
+        deps["tool"] = tools
     elif name == "version":
         envs = EnvironmentModel.objects(version=obj)
         deps["env"] = envs
@@ -299,7 +299,7 @@ def fetchDependencies(name, obj):
         records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
         deps["record"] = records
         tools = ApplicationModel.objects(logo=obj)
-        deps["tools"] = tools
+        deps["tool"] = tools
         envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
         deps["env"] = envs
         diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
