@@ -169,19 +169,19 @@ def query_parse(request=None):
 # processRequest("![yannick,sumatra]?[0.user.email,1.file]~|![]?[profile]|![]?[profile]~")
 
 allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
+relationships = {}
+relationships["user"] = ["project", "file", "profile", "tool"]
+relationships["version"] = ["env"]
+relationships["record"] = ["diff"]
+relationships["project"] = ["record"]
+relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+relationships["profile"] = []
+relationships["env"] = ["project", "record"]
+relationships["diff"] = []
+relationships["tool"] = []
+relationships["bundle"] = ["env"]
 
 def query_analyse(queries=None):
-    relationships = {}
-    relationships["user"] = ["project", "file", "profile", "tool"]
-    relationships["version"] = ["env"]
-    relationships["record"] = ["diff"]
-    relationships["project"] = ["record"]
-    relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
-    relationships["profile"] = []
-    relationships["env"] = ["project", "record"]
-    relationships["diff"] = []
-    relationships["tool"] = []
-    relationships["bundle"] = ["env"]
     if len(queries) > 0 and len(queries[0]) > 0:
         included = []
         for querie in queries:
@@ -231,7 +231,7 @@ def query_analyse(queries=None):
 def queryModelGeneric(objectModel, field, value):
     try:
         if field != "*" and value != "*":
-            return [o for o in objectModel.objects() if o.info()[field] == value]
+            return [o for o in objectModel.objects() if value in str(o.info()[field])]
         elif field == "*" and value != "*":
             return [o for o in objectModel.objects() if value in str(o.info())]
         elif field != "*" and value == "*":
@@ -244,7 +244,7 @@ def queryModelGeneric(objectModel, field, value):
 def queryContextGeneric(context, field, value):
     try:
         if field != "*" and value != "*":
-            return [o for o in context if o.info()[field] == value]
+            return [o for o in context if value in str(o.info()[field])]
         elif field == "*" and value != "*":
             return [o for o in context if value in str(o.info())]
         elif field != "*" and value == "*":
@@ -253,6 +253,69 @@ def queryContextGeneric(context, field, value):
             return context
     except:
         return []
+
+relationships["user"] = ["project", "file", "profile", "tool"]
+relationships["version"] = ["env"]
+relationships["record"] = ["diff"]
+relationships["project"] = ["record"]
+relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+relationships["profile"] = []
+relationships["env"] = ["project", "record"]
+relationships["diff"] = []
+relationships["tool"] = []
+relationships["bundle"] = ["env"]
+
+def fetchDependencies(name, obj):
+    deps = {}
+    if name == "user":
+        profiles = ProfileModel.objects(user=obj)
+        deps["profile"] = profiles
+        files = FileModel.objects(owner=obj)
+        deps["file"] = files
+        projects = ProjectModel.objects(owner=obj)
+        deps["project"] = projects
+        tools = ApplicationModel.objects(developer=obj)
+        deps["tools"] = tools
+    elif name == "version":
+        envs = EnvironmentModel.objects(version=obj)
+        deps["env"] = envs
+    elif name == "record":
+        diffs_from = DiffModel.objects(record_from=obj)
+        deps["diff"] = diffs_from
+        diffs_to = DiffModel.objects(record_to=obj)
+        for rec in diffs_to:
+            if rec not in deps["diff"]:
+                deps["diff"].append(rec)
+    elif name == "project":
+        records = RecordModel.objects(project=obj)
+        deps["record"] = records
+    elif name == "file":
+        projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
+        logo_projects = ProjectModel.objects(logo=obj)
+        for pr in logo_projects:
+            if pr not in projects:
+                projects.append(pr)
+        deps["project"] = projects
+        records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
+        deps["record"] = records
+        tools = ApplicationModel.objects(logo=obj)
+        deps["tools"] = tools
+        envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
+        deps["env"] = envs
+        diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
+        deps["diff"] = diffs
+        profiles = ProfileModel.objects(picture=obj)
+        deps["profile"] = profiles
+    elif name == "env":
+        records = RecordModel.objects(environment=obj)
+        deps["record"] = records
+        projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
+        deps["project"] = projects
+    elif name == "bundle":
+        envs = EnvironmentModel.objects(bundle=obj)
+        deps["env"] = envs
+    else:
+        return deps
 
 def queryModel(context, name, field, value):
     if name == "user":
@@ -352,8 +415,17 @@ def executeQuery(context, query):
                 for obj in objs:
                     if obj not in context_current[target_model]:
                         context_current[target_model].append(obj)
+                        if query["tree"]:
+                            deps = fetchDependencies(target_model, obj)
+                            for key, value in context_current.items():
+                                context_current[key].extend(deps[key])
             else:
                 context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
+                if query["tree"]:
+                    for obj in context_current[target_model]:
+                        deps = fetchDependencies(target_model, obj)
+                        for key, value in context_current.items():
+                            context_current[key].extend(deps[key])
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
         target_model = "*"
@@ -369,17 +441,35 @@ def executeQuery(context, query):
                     for obj in objs:
                         if obj not in context_current[model]:
                             context_current[model].append(obj)
+                            if query["tree"]:
+                                deps = fetchDependencies(model, obj)
+                                for key, value in context_current.items():
+                                    context_current[key].extend(deps[key])
             else:
                 objs = queryModel(None, target_model, target_field, target_value)
                 for obj in objs:
                     if obj not in context_current[target_model]:
                         context_current[target_model].append(obj)
+                        if query["tree"]:
+                            deps = fetchDependencies(target_model, obj)
+                            for key, value in context_current.items():
+                                context_current[key].extend(deps[key])
         else:
             if target_model == "*":
                 for model in allowed_models:
                     context_current[model] = queryModel(context_current, model, target_field, target_value)
+                    if query["tree"]:
+                        for obj in context_current[model]:
+                            deps = fetchDependencies(model, obj)
+                            for key, value in context_current.items():
+                                context_current[key].extend(deps[key])
             else:
                 context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
+                if query["tree"]:
+                    for obj in context_current[target_model]:
+                        deps = fetchDependencies(target_model, obj)
+                        for key, value in context_current.items():
+                            context_current[key].extend(deps[key])
         print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     return context_current
 
@@ -406,6 +496,9 @@ def processRequest(request):
                 pipe = query[pipe_index]
                 context = executeQuery(context, pipe)
             contexts.append(context)
+        for context in contexts:
+            for key, value in context.items():
+                    context[key] = list(set(value))
         return (message, contexts)
     else:
         return (message, None)
