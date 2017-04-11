@@ -471,42 +471,23 @@ def executeQuery(context, query):
         else:
             target_value = "*"
         if not query["piped"]:
-            if target_model == "*":
-                for model in allowed_models:
-                    objs = queryModel(None, model, target_field, target_value)
-                    for obj in objs:
-                        if obj not in context_current[model]:
-                            context_current[model].append(obj)
-                            if query["tree"]:
-                                deps = fetchDependencies(model, obj)
-                                for key, value in deps.items():
-                                    context_current[key].extend(deps[key])
-            else:
-                objs = queryModel(None, target_model, target_field, target_value)
+            for model in allowed_models:
+                objs = queryModel(None, model, target_field, target_value)
                 for obj in objs:
-                    if obj not in context_current[target_model]:
-                        context_current[target_model].append(obj)
+                    if obj not in context_current[model]:
+                        context_current[model].append(obj)
                         if query["tree"]:
-                            deps = fetchDependencies(target_model, obj)
-                            for key, value in deps.items():
-                                context_current[key].extend(deps[key])
-        else:
-            if target_model == "*":
-                for model in allowed_models:
-                    context_current[model] = queryModel(context_current, model, target_field, target_value)
-                    if query["tree"]:
-                        for obj in context_current[model]:
                             deps = fetchDependencies(model, obj)
                             for key, value in deps.items():
                                 context_current[key].extend(deps[key])
-            else:
-                context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
+        else:
+            for model in allowed_models:
+                context_current[model] = queryModel(context_current, model, target_field, target_value)
                 if query["tree"]:
-                    for obj in context_current[target_model]:
-                        deps = fetchDependencies(target_model, obj)
+                    for obj in context_current[model]:
+                        deps = fetchDependencies(model, obj)
                         for key, value in deps.items():
                             context_current[key].extend(deps[key])
-        print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     return context_current
 
 
