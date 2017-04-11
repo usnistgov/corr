@@ -423,7 +423,10 @@ def executeQuery(context, query):
                         if len(blocks) == 2:
                             if bl_index == 0:
                                 target_field = blocks[bl_index+1]
-                                target_value = "*"
+                                if query["values"]:
+                                    target_value = query["values"]
+                                else:
+                                    target_value = "*"
                             else:
                                 if query["values"]:
                                     target_value = query["values"][bl_index-1]
