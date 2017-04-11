@@ -412,11 +412,12 @@ def processRequest(request):
 
 def queryResponseDict(contexts):
     contexts_json = []
-    for context in contexts:
-        context_json = {}
-        for key, value in context.items():
-            context_json[key] = [val.info() for val in value]
-        contexts_json.append(context_json)
+    if contexts:
+        for context in contexts:
+            context_json = {}
+            for key, value in context.items():
+                context_json[key] = [val.info() for val in value]
+            contexts_json.append(context_json)
     return contexts_json
 
 
