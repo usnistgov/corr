@@ -419,7 +419,7 @@ def executeQuery(context, query):
                     target_value = query["values"]
                 else:
                     target_value = "*"
-            if target_value == "*" and len(query["values"]) > 0:
+            if target_value == "*" and query["values"]:
                 for target_value in query["values"]:
                     if not query["piped"]:
                         objs = queryModel(None, target_model, target_field, target_value)
@@ -462,7 +462,7 @@ def executeQuery(context, query):
             target_value = query["values"]
         else:
             target_value = "*"
-        if target_value == "*" and len(query["values"]) > 0:
+        if target_value == "*" and query["values"]:
             for target_value in query["values"]:
                 if not query["piped"]:
                     if target_model == "*":
