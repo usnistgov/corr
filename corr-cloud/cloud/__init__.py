@@ -231,11 +231,20 @@ def query_analyse(queries=None):
 def queryModelGeneric(objectModel, field, value):
     try:
         if field != "*" and value != "*":
-            return [o for o in objectModel.objects() if value in str(o.info()[field])]
+            if objectModel == RecordModel:
+                return [o for o in objectModel.objects() if value in str(o.extended()["head"][field]) or value in str(o.extended()["body"][field])]
+            else:
+                return [o for o in objectModel.objects() if value in str(o.info()[field])]
         elif field == "*" and value != "*":
-            return [o for o in objectModel.objects() if value in str(o.info())]
+            if objectModel == RecordModel:
+                return [o for o in objectModel.objects() if value in str(o.extended())]
+            else:
+                return [o for o in objectModel.objects() if value in str(o.info())]
         elif field != "*" and value == "*":
-            return [o for o in objectModel.objects() if o.info()[field] != ""]
+            if objectModel == RecordModel:
+                return [o for o in objectModel.objects() if o.extended()[field] != ""]
+            else:
+                return [o for o in objectModel.objects() if o.info()[field] != ""]
         else:
             return objectModel.objects()
     except:
@@ -268,51 +277,51 @@ relationships["bundle"] = ["env"]
 def fetchDependencies(name, obj):
     deps = {}
     if name == "user":
-        profiles = ProfileModel.objects(user=obj)
+        profiles = [el for el in ProfileModel.objects(user=obj)]
         deps["profile"] = profiles
-        files = FileModel.objects(owner=obj)
+        files = [el for el in FileModel.objects(owner=obj)]
         deps["file"] = files
-        projects = ProjectModel.objects(owner=obj)
+        projects = [el for el in ProjectModel.objects(owner=obj)]
         deps["project"] = projects
-        tools = ApplicationModel.objects(developer=obj)
+        tools = [el for el in ApplicationModel.objects(developer=obj)]
         deps["tool"] = tools
     elif name == "version":
-        envs = EnvironmentModel.objects(version=obj)
+        envs = [el for el in EnvironmentModel.objects(version=obj)]
         deps["env"] = envs
     elif name == "record":
-        diffs_from = DiffModel.objects(record_from=obj)
+        diffs_from = [el for el in DiffModel.objects(record_from=obj)]
         deps["diff"] = diffs_from
-        diffs_to = DiffModel.objects(record_to=obj)
+        diffs_to = [el for el in DiffModel.objects(record_to=obj)]
         for rec in diffs_to:
             if rec not in deps["diff"]:
                 deps["diff"].append(rec)
     elif name == "project":
-        records = RecordModel.objects(project=obj)
+        records = [el for el in RecordModel.objects(project=obj)]
         deps["record"] = records
     elif name == "file":
         projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
-        logo_projects = ProjectModel.objects(logo=obj)
+        logo_projects = [el for el in ProjectModel.objects(logo=obj)]
         for pr in logo_projects:
             if pr not in projects:
                 projects.append(pr)
         deps["project"] = projects
         records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
         deps["record"] = records
-        tools = ApplicationModel.objects(logo=obj)
+        tools = [el for el in ApplicationModel.objects(logo=obj)]
         deps["tool"] = tools
         envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
         deps["env"] = envs
         diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
         deps["diff"] = diffs
-        profiles = ProfileModel.objects(picture=obj)
+        profiles = [el for el in ProfileModel.objects(picture=obj)]
         deps["profile"] = profiles
     elif name == "env":
-        records = RecordModel.objects(environment=obj)
+        records = [el for el in RecordModel.objects(environment=obj)]
         deps["record"] = records
         projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
         deps["project"] = projects
     elif name == "bundle":
-        envs = EnvironmentModel.objects(bundle=obj)
+        envs = [el for el in EnvironmentModel.objects(bundle=obj)]
         deps["env"] = envs
 
     return deps
@@ -509,7 +518,10 @@ def queryResponseDict(contexts):
         for context in contexts:
             context_json = {}
             for key, value in context.items():
-                context_json[key] = [val.info() for val in value]
+                if key == "record":
+                    context_json[key] = [val.extended() for val in value]
+                else:
+                    context_json[key] = [val.info() for val in value]
             contexts_json.append(context_json)
     return contexts_json
 
