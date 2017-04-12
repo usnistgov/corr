@@ -355,7 +355,6 @@ def queryModel(context, name, field, value):
         if context:
             return queryContextGeneric(context[name], name, field, value)
         else:
-            print(queryModelGeneric(UserModel, field, value))
             return queryModelGeneric(UserModel, field, value)
     elif name == "version":
         if context:
@@ -451,10 +450,11 @@ def executeQuery(context, query):
                 for obj in objs:
                     if obj not in context_current[target_model]:
                         context_current[target_model].append(obj)
-                        if query["tree"]:
-                            deps = fetchDependencies(target_model, obj)
-                            for key, value in deps.items():
-                                context_current[key].extend(deps[key])
+                if query["tree"]:
+                    for obj in context_current[target_model]:
+                        deps = fetchDependencies(target_model, obj)
+                        for key, value in deps.items():
+                            context_current[key].extend(deps[key])
             else:
                 context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
                 if query["tree"]:
@@ -476,10 +476,11 @@ def executeQuery(context, query):
                 for obj in objs:
                     if obj not in context_current[model]:
                         context_current[model].append(obj)
-                        if query["tree"]:
-                            deps = fetchDependencies(model, obj)
-                            for key, value in deps.items():
-                                context_current[key].extend(deps[key])
+                if query["tree"]:
+                    for obj in current_models[model]:
+                        deps = fetchDependencies(model, obj)
+                        for key, value in deps.items():
+                            context_current[key].extend(deps[key])
         else:
             for model in allowed_models:
                 context_current[model] = queryModel(context_current, model, target_field, target_value)
