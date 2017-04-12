@@ -73,8 +73,8 @@ def private_search():
                         for profile in context["profile"]:
                             user = profile.user
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
-                        # for appli in context["tool"]:
-                        #     applications.append(appli.extended())
+                        for appli in context["tool"]:
+                            applications.append(appli.extended())
                         # for project in context["project"]:
                         #     if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
                         #         projects.append(project.extended())
