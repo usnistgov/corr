@@ -75,12 +75,12 @@ def private_search():
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                         for appli in context["tool"]:
                             applications.append(appli.extended())
-                        # for project in context["project"]:
-                        #     if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                        #         projects.append(project.extended())
-                        # for record in context["record"]:
-                        #     if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                        #         records.append(json.loads(record.summary_json()))
+                        for project in context["project"]:
+                            if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                                projects.append(project.extended())
+                        for record in context["record"]:
+                            if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                records.append(json.loads(record.summary_json()))
                         # for env in context["env"]:
                         #     records = RecordModel.objects(environment=env)
                         #     for record in records:
