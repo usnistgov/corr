@@ -112,27 +112,27 @@ def private_search():
                             if not skip:
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
-                        for env in context["env"]:
-                            records = RecordModel.objects(environment=env)
-                            for record in records:
-                                skip = False
-                                for cn_i in range(context_index):
-                                    if env in contexts[cn_i]["env"]:
-                                        skip = True
-                                        break
-                                if not skip:
-                                    if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                        envs.append(env.info())
-                                        break
-                        # for diff in context["diff"]:
-                        #     skip = False
-                        #     for cn_i in range(context_index):
-                        #         if diff in contexts[cn_i]["diff"]:
-                        #             skip = True
-                        #             break
-                        #     if not skip:
-                        #         if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
-                        #             diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                        # for env in context["env"]:
+                        #     records = RecordModel.objects(environment=env)
+                        #     for record in records:
+                        #         skip = False
+                        #         for cn_i in range(context_index):
+                        #             if env in contexts[cn_i]["env"]:
+                        #                 skip = True
+                        #                 break
+                        #         if not skip:
+                        #             if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                        #                 envs.append(env.info())
+                        #                 break
+                        for diff in context["diff"]:
+                            skip = False
+                            for cn_i in range(context_index):
+                                if diff in contexts[cn_i]["diff"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                                    diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     response = {}
                     response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
