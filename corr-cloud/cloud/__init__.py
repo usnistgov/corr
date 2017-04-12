@@ -477,7 +477,7 @@ def executeQuery(context, query):
                     if obj not in context_current[model]:
                         context_current[model].append(obj)
                 if query["tree"]:
-                    for obj in current_models[model]:
+                    for obj in context_current[model]:
                         deps = fetchDependencies(model, obj)
                         for key, value in deps.items():
                             context_current[key].extend(deps[key])
