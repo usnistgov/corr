@@ -112,18 +112,18 @@ def private_search():
                             if not skip:
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
-                        # for env in context["env"]:
-                        #     records = RecordModel.objects(environment=env)
-                        #     for record in records:
-                        #         skip = False
-                        #         for cn_i in range(context_index):
-                        #             if env in contexts[cn_i]["env"]:
-                        #                 skip = True
-                        #                 break
-                        #         if not skip:
-                        #             if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                        #                 envs.append(env.info())
-                        #                 break
+                        for env in context["env"]:
+                            records = RecordModel.objects(environment=env)
+                            for record in records:
+                                skip = False
+                                for cn_i in range(context_index):
+                                    if env in contexts[cn_i]["env"]:
+                                        skip = True
+                                        break
+                                if not skip:
+                                    if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                        envs.append(env.info())
+                                        break
                         for diff in context["diff"]:
                             skip = False
                             for cn_i in range(context_index):
@@ -137,9 +137,10 @@ def private_search():
                     response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
                     response['projects'] = {'count':len(projects), 'result':projects}
+                    response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    response['envs'] = {'count':len(envs), 'result':envs}
+                    return cloud_response(500, 'Error processing the query', [df.info() for df in context["diff"]])
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

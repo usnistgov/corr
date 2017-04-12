@@ -544,6 +544,7 @@ var Space = function (){
                     if(response["code"] == 500){
                         config.error_modal('Query failed', response["content"]);
                     }else{
+                        hits = 0;
                         this.query_result = response["content"];
                         if(!exUser == true){
                             for(var i = 0; i < this.query_result["users"]["count"]; i++){
