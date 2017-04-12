@@ -867,7 +867,7 @@ def app_logo(app_id):
 def public_query_dashboard():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
     if fk.request.method == 'GET':
-        message, context = processRequest(fk.request.args.get("req"))
+        message, context = processRequest("&".join(fk.request.args).split("req=")[1])
         return cloud_response(200, message, queryResponseDict(context))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
