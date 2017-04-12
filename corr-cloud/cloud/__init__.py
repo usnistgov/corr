@@ -229,63 +229,63 @@ def query_analyse(queries=None):
     return (True, "Query syntax is correct.", included)
 
 def queryModelGeneric(objectModel, field, value):
-    try:
-        if field != "*" and value != "*":
-            if len(value) > 0:
-                if objectModel == RecordModel:
-                    return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value.split(","))]
-                else:
-                    return [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value.split(","))]
-            else:
-                if objectModel == RecordModel:
-                    return [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
-                else:
-                    return [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
-        elif field == "*" and value != "*":
-            if len(value) > 0:
-                if objectModel == RecordModel:
-                    return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value.split(","))]
-                else:
-                    return [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value.split(","))]
-            else:
-                if objectModel == RecordModel:
-                    return [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
-                else:
-                    return [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
-        elif field != "*" and value == "*":
+    # try:
+    if field != "*" and value != "*":
+        if len(value) > 0:
             if objectModel == RecordModel:
-                return [o for o in objectModel.objects() if o.extended()[field] != ""]
+                return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value.split(","))]
             else:
-                return [o for o in objectModel.objects() if o.info()[field] != ""]
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value.split(","))]
         else:
-            return [el for el in objectModel.objects()]
-    except:
-        return []
+            if objectModel == RecordModel:
+                return [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
+            else:
+                return [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
+    elif field == "*" and value != "*":
+        if len(value) > 0:
+            if objectModel == RecordModel:
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value.split(","))]
+            else:
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value.split(","))]
+        else:
+            if objectModel == RecordModel:
+                return [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
+            else:
+                return [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
+    elif field != "*" and value == "*":
+        if objectModel == RecordModel:
+            return [o for o in objectModel.objects() if o.extended()[field] != ""]
+        else:
+            return [o for o in objectModel.objects() if o.info()[field] != ""]
+    else:
+        return [el for el in objectModel.objects()]
+    # except:
+    #     return []
 
 def queryContextGeneric(context, name, field, value):
-    try:
-        if field != "*" and value != "*":
-            if len(value) > 0:
-                if name == "record":
-                    return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value.split(","))]
-                else:
-                    return [el for el in context if any(val in str(el.extended()[field]).lower() for val in value.split(","))]
+    # try:
+    if field != "*" and value != "*":
+        if len(value) > 0:
+            if name == "record":
+                return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value.split(","))]
             else:
-                if name == "record":
-                    return [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
-                else:
-                    return [o for o in context if value.lower() in str(o.extended()[field]).lower()]
-        elif field == "*" and value != "*":
-            if len(value) > 0:
-                return [el for el in context if any(val in str(el.extended()).lower() for val in value.split(","))]
-            else:
-                return [o for o in context if value.lower() in str(o.extended()).lower()]
-        elif field != "*" and value == "*":
-            return [o for o in context if o.info()[field] != ""]
+                return [el for el in context if any(val in str(el.extended()[field]).lower() for val in value.split(","))]
         else:
-            return context
-    except:
-        return []
+            if name == "record":
+                return [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
+            else:
+                return [o for o in context if value.lower() in str(o.extended()[field]).lower()]
+    elif field == "*" and value != "*":
+        if len(value) > 0:
+            return [el for el in context if any(val in str(el.extended()).lower() for val in value.split(","))]
+        else:
+            return [o for o in context if value.lower() in str(o.extended()).lower()]
+    elif field != "*" and value == "*":
+        return [o for o in context if o.info()[field] != ""]
+    else:
+        return context
+    # except:
+    #     return []
 
 relationships["user"] = ["project", "file", "profile", "tool"]
 relationships["version"] = ["env"]
