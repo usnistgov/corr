@@ -91,7 +91,7 @@ def private_search():
                         #     if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                         #         diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     response = {}
-                    response['user'] = {'count':len(users), 'result':users}
+                    response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
                     response['projects'] = {'count':len(projects), 'result':projects}
                     response['records'] = {'count':len(records), 'result':records}
