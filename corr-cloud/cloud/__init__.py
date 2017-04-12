@@ -233,9 +233,9 @@ def queryModelGeneric(objectModel, field, value):
     if field != "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value.split(","))]
+                return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
             else:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value.split(","))]
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value)]
         else:
             if objectModel == RecordModel:
                 return [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
@@ -244,9 +244,9 @@ def queryModelGeneric(objectModel, field, value):
     elif field == "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value.split(","))]
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value)]
             else:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value.split(","))]
+                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value)]
         else:
             if objectModel == RecordModel:
                 return [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
@@ -267,9 +267,9 @@ def queryContextGeneric(context, name, field, value):
     if field != "*" and value != "*":
         if len(value) > 0:
             if name == "record":
-                return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value.split(","))]
+                return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value)]
             else:
-                return [el for el in context if any(val in str(el.extended()[field]).lower() for val in value.split(","))]
+                return [el for el in context if any(val in str(el.extended()[field]).lower() for val in value)]
         else:
             if name == "record":
                 return [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
@@ -277,7 +277,7 @@ def queryContextGeneric(context, name, field, value):
                 return [o for o in context if value.lower() in str(o.extended()[field]).lower()]
     elif field == "*" and value != "*":
         if len(value) > 0:
-            return [el for el in context if any(val in str(el.extended()).lower() for val in value.split(","))]
+            return [el for el in context if any(val in str(el.extended()).lower() for val in value)]
         else:
             return [o for o in context if value.lower() in str(o.extended()).lower()]
     elif field != "*" and value == "*":
