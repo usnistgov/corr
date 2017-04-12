@@ -596,7 +596,7 @@ var Space = function (){
                 }
             }
         };
-        xmlhttp.open("GET", url+"/private/dashboard/search?query="+search);
+        xmlhttp.open("GET", url+"/private/dashboard/search?req="+search);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
