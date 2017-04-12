@@ -73,23 +73,23 @@ def private_search():
                         for profile in context["profile"]:
                             user = profile.user
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
-                        for appli in context["tool"]:
-                            applications.append(appli.extended())
-                        for project in context["project"]:
-                            if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                                projects.append(project.extended())
-                        for record in context["record"]:
-                            if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                records.append(json.loads(record.summary_json()))
-                        for env in context["env"]:
-                            records = RecordModel.objects(environment=env)
-                            for record in records:
-                                if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                    envs.append(env.info())
-                                    break
-                        for diff in context["diff"]:
-                            if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
-                                diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                        # for appli in context["tool"]:
+                        #     applications.append(appli.extended())
+                        # for project in context["project"]:
+                        #     if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                        #         projects.append(project.extended())
+                        # for record in context["record"]:
+                        #     if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                        #         records.append(json.loads(record.summary_json()))
+                        # for env in context["env"]:
+                        #     records = RecordModel.objects(environment=env)
+                        #     for record in records:
+                        #         if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                        #             envs.append(env.info())
+                        #             break
+                        # for diff in context["diff"]:
+                        #     if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                        #         diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     response = {}
                     response['user'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
