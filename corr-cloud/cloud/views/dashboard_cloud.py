@@ -140,7 +140,7 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    return cloud_response(500, 'Error processing the query', [df.info() for df in context["diff"]])
+                    return cloud_response(500, 'Error processing the query', [[df.info() for df in context["diff"]] for context in contexts])
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
