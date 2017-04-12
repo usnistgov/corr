@@ -66,36 +66,67 @@ def private_search():
                     records = []
                     envs = []
                     diffs = []
-                    for context in contexts:
+                    for context_index in range(len(contexts)):
+                        context = contexts[context_index]
                         for user in context["user"]:
-                            profile = ProfileModel.objects(user=user)[0]
-                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                            skip = False
+                            for cn_i in range(context_index):
+                                if user in contexts[cn_i]["user"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                profile = ProfileModel.objects(user=user)[0]
+                                users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                         for profile in context["profile"]:
-                            user = profile.user
-                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                            skip = False
+                            for cn_i in range(context_index):
+                                if profile.user in contexts[cn_i]["user"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                user = profile.user
+                                users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                         for appli in context["tool"]:
-                            applications.append(appli.extended())
+                            skip = False
+                            for cn_i in range(context_index):
+                                if appli in contexts[cn_i]["tool"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                applications.append(appli.extended())
                         for project in context["project"]:
-                            if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                                projects.append(project.extended())
+                            skip = False
+                            for cn_i in range(context_index):
+                                if project in contexts[cn_i]["project"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                                    projects.append(project.extended())
                         for record in context["record"]:
-                            if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                records.append(json.loads(record.summary_json()))
+                            skip = False
+                            for cn_i in range(context_index):
+                                if record in contexts[cn_i]["record"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                    records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
                             records = RecordModel.objects(environment=env)
                             for record in records:
-                                if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                    envs.append(env.info())
-                                    break
+                                skip = False
+                                for cn_i in range(context_index):
+                                    if env in contexts[cn_i]["env"]:
+                                        skip = True
+                                        break
+                                if not skip:
+                                    if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                        envs.append(env.info())
+                                        break
                         # for diff in context["diff"]:
                         #     if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                         #         diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
-                    users = list(set(users))
-                    applications = list(set(applications))
-                    projects = list(set(projects))
-                    records = list(set(records))
-                    diffs = list(set(diffs))
-                    envs = list(set(envs))
                     response = {}
                     response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
