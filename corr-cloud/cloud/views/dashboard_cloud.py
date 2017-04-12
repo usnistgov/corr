@@ -124,15 +124,15 @@ def private_search():
                                     if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                         envs.append(env.info())
                                         break
-                        for diff in context["diff"]:
-                            skip = False
-                            for cn_i in range(context_index):
-                                if diff in contexts[cn_i]["diff"]:
-                                    skip = True
-                                    break
-                            if not skip:
-                                if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
-                                    diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                        # for diff in context["diff"]:
+                        #     skip = False
+                        #     for cn_i in range(context_index):
+                        #         if diff in contexts[cn_i]["diff"]:
+                        #             skip = True
+                        #             break
+                        #     if not skip:
+                        #         if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                        #             diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     response = {}
                     response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
@@ -140,7 +140,7 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    return cloud_response(500, 'Error processing the query', [len(diffs), len(users), len(applications)])
+                    # return cloud_response(500, 'Error processing the query', [len(diffs), len(users), len(applications)])
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
