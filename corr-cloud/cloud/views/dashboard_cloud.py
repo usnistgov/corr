@@ -112,18 +112,18 @@ def private_search():
                             if not skip:
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
-                        # for env in context["env"]:
-                        #     records = RecordModel.objects(environment=env)
-                        #     for record in records:
-                        #         skip = False
-                        #         for cn_i in range(context_index):
-                        #             if env in contexts[cn_i]["env"]:
-                        #                 skip = True
-                        #                 break
-                        #         if not skip:
-                        #             if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                        #                 envs.append(env.info())
-                        #                 break
+                        for env in context["env"]:
+                            if len(envs) < 1:
+                                for record in RecordModel.objects(environment=env):
+                                    skip = False
+                                    for cn_i in range(context_index):
+                                        if env in contexts[cn_i]["env"]:
+                                            skip = True
+                                            break
+                                    if not skip:
+                                        if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                            envs.append(env.info())
+                                            break
                         for diff in context["diff"]:
                             skip = False
                             for cn_i in range(context_index):
