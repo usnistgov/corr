@@ -872,8 +872,8 @@ def public_query_dashboard():
             if key == "req":
                 _request = "{0}".format(value)
             else:
-                _request = "{0}{1}{2}".format(_request, key, value)
+                _request = "{0}&{1}{2}".format(_request, key, value)
         message, context = processRequest(_request)
-        return cloud_response(200, _request, queryResponseDict(context))
+        return cloud_response(200, message, queryResponseDict(context))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
