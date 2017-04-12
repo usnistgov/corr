@@ -53,10 +53,10 @@ def private_search():
                         _request = "{0}".format(value)
                     else:
                         _request = "{0}&{1}{2}".format(_request, key, value)
-                try:
-                    message, contexts = processRequest(_request)
-                except:
-                    return cloud_response(500, 'Error processing the query', _request)
+                # try:
+                message, contexts = processRequest(_request)
+                # except:
+                #     return cloud_response(500, 'Error processing the query', _request)
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:
