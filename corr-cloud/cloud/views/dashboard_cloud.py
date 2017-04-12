@@ -56,9 +56,9 @@ def private_search():
                 try:
                     message, contexts = processRequest(_request)
                 except:
-                    cloud_response(500, 'Error processing the query', _request)
+                    return cloud_response(500, 'Error processing the query', _request)
                 if contexts is None:
-                    cloud_response(500, 'Error processing the query', message)
+                    return cloud_response(500, 'Error processing the query', message)
                 else:
                     users = []
                     applications = []
