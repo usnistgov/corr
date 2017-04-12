@@ -541,52 +541,56 @@ var Space = function (){
                 if (this.status == 200) {
                     query_result.innerHTML = "";
                     var response = JSON.parse(this.responseText);
-                    this.query_result = response;
-                    if(!exUser == true){
-                        for(var i = 0; i < this.query_result["users"]["count"]; i++){
-                            var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];
-                            var user_content = renderer.user(this.query_result["users"]["result"][i], false, picture_uri);
-                            query_result.innerHTML += user_content;
+                    if(response["code"] == 500){
+                        config.error_modal('Query failed', response["content"]);
+                    }else{
+                        this.query_result = response["content"];
+                        if(!exUser == true){
+                            for(var i = 0; i < this.query_result["users"]["count"]; i++){
+                                var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];
+                                var user_content = renderer.user(this.query_result["users"]["result"][i], false, picture_uri);
+                                query_result.innerHTML += user_content;
+                            }
+                            hits += this.query_result["users"]["count"];
                         }
-                        hits += this.query_result["users"]["count"];
-                    }
-                    if(!exApp == true){
-                        for(var i = 0; i < this.query_result["applications"]["count"]; i++){
-                            var app_content = renderer.application(this.query_result["applications"]["result"][i], false);
-                            query_result.innerHTML += app_content;
+                        if(!exApp == true){
+                            for(var i = 0; i < this.query_result["applications"]["count"]; i++){
+                                var app_content = renderer.application(this.query_result["applications"]["result"][i], false);
+                                query_result.innerHTML += app_content;
+                            }
+                            hits += this.query_result["applications"]["count"];
                         }
-                        hits += this.query_result["applications"]["count"];
-                    }
-                    if(!exProject == true){
-                        for(var i = 0; i < this.query_result["projects"]["count"]; i++){
-                            var project_content = renderer.project(this.query_result["projects"]["result"][i], false);
-                            query_result.innerHTML += project_content;
+                        if(!exProject == true){
+                            for(var i = 0; i < this.query_result["projects"]["count"]; i++){
+                                var project_content = renderer.project(this.query_result["projects"]["result"][i], false);
+                                query_result.innerHTML += project_content;
+                            }
+                            hits += this.query_result["projects"]["count"];
                         }
-                        hits += this.query_result["projects"]["count"];
-                    }
-                    if(!exRecord == true){
-                        for(var i = 0; i < this.query_result["records"]["count"]; i++){
-                            var record_content = renderer.record(this.query_result["records"]["result"][i], false);
-                            query_result.innerHTML += record_content;
+                        if(!exRecord == true){
+                            for(var i = 0; i < this.query_result["records"]["count"]; i++){
+                                var record_content = renderer.record(this.query_result["records"]["result"][i], false);
+                                query_result.innerHTML += record_content;
+                            }
+                            hits += this.query_result["records"]["count"];
                         }
-                        hits += this.query_result["records"]["count"];
-                    }
-                    if(!exDiff == true){
-                        for(var i = 0; i < this.query_result["diffs"]["count"]; i++){
-                            var diff_content = renderer.diff(this.query_result["diffs"]["result"][i], false);
-                            query_result.innerHTML += diff_content;
+                        if(!exDiff == true){
+                            for(var i = 0; i < this.query_result["diffs"]["count"]; i++){
+                                var diff_content = renderer.diff(this.query_result["diffs"]["result"][i], false);
+                                query_result.innerHTML += diff_content;
+                            }
+                            hits += this.query_result["diffs"]["count"];
                         }
-                        hits += this.query_result["diffs"]["count"];
-                    }
-                    if(!exEnv == true){
-                        for(var i = 0; i < this.query_result["envs"]["count"]; i++){
-                            var env_content = renderer.env(this.query_result["envs"]["result"][i], false);
-                            query_result.innerHTML += env_content;
+                        if(!exEnv == true){
+                            for(var i = 0; i < this.query_result["envs"]["count"]; i++){
+                                var env_content = renderer.env(this.query_result["envs"]["result"][i], false);
+                                query_result.innerHTML += env_content;
+                            }
+                            hits += this.query_result["envs"]["count"];
                         }
-                        hits += this.query_result["envs"]["count"];
+                        var display = document.getElementById('results-display');
+                        display.innerHTML = hits;
                     }
-                    var display = document.getElementById('results-display');
-                    display.innerHTML = hits;
                 }else {
                     config.error_modal('Query failed', this.responseText);
                 }

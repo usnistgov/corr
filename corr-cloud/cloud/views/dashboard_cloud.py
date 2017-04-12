@@ -47,80 +47,49 @@ def private_search():
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/dashboard/search')
             if fk.request.args:
-                query = fk.request.args.get("query").split(' ') #single word for now.
-                users = []
-                for user in UserModel.objects():
-                    profile = ProfileModel.objects(user=user)[0]
-                    where = []
-                    if "!all" in query:
-                        where.append("all")
-                    if any(q.lower() in str(user.extended()).lower() for q in query):
-                        where.append("selected")
-                    if any(q.lower() in str(profile.extended()).lower() for q in query):
-                        where.append("selected")
-                    if len(where) != 0:
-                        users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
-                applications = []
-                for appli in ApplicationModel.objects():
-                    where = []
-                    if "!all" in query:
-                        where.append("all")
-                    if any(q.lower() in str(appli.extended()).lower() for q in query):
-                        where.append("selected")
-                    if len(where) != 0:
-                        applications.append(appli.extended())
-                projects = []
-                records = []
-                envs = []
-                #scape the records issue.
-                for project in ProjectModel.objects():
-                    print(project.name)
-                    if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                        where_project = []
-                        if "!all" in query:
-                            where_project.append("all")
-                        if any(q.lower() in str(project.extended()).lower() for q in query):
-                            where_project.append("selected")
-
-                        if len(where_project) != 0:
-                            projects.append(project.extended())
-                        
-                        for record in RecordModel.objects(project=project):
+                _request = ""
+                for key, value in fk.request.args.items():
+                    if key == "req":
+                        _request = "{0}".format(value)
+                    else:
+                        _request = "{0}&{1}{2}".format(_request, key, value)
+                message, contexts = processRequest(_request)
+                if contexts is None:
+                    cloud_response(500, 'Error processing the query', message)
+                else:
+                    users = []
+                    applications = []
+                    projects = []
+                    records = []
+                    envs = []
+                    diffs = []
+                    for context in contexts:
+                        for user in context["user"]:
+                            profile = ProfileModel.objects(user=user)[0]
+                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                        for profile in context["profile"]:
+                            user = profile.user
+                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                        for appli in context["tool"]:
+                            applications.append(appli.extended())
+                        for project in context["project"]:
+                            if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                                projects.append(project.extended())
+                        for record in context["record"]:
                             if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                body = record.body
-                                where_record = []
-                                where_env = []
-
-                                if "!all" in query:
-                                    where_record.append("all")
-                                    where_env.append("all")
-
-                                if any(q.lower() in str(record.extended()).lower() for q in query):
-                                    where_record.append("selected")
-
-                                if len(where_record) != 0:
-                                    records.append(json.loads(record.summary_json()))
-
-                                if record.environment:
-                                    if any(q.lower() in str(record.environment.extended()).lower() for q in query):
-                                        where_env.append("selected")
-
-                                    if len(where_env) != 0:
-                                        envs.append(record.environment.info())
-
-                diffs = []
-                for diff in DiffModel.objects():
-                    if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
-                        where = []
-                        if "!all" in query:
-                            where.append("all")
-                        if any(q.lower() in str(diff.extended()).lower() for q in query):
-                            where.append("selected")
-
-                        if len(where) != 0:
-                            diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
-                
-                return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                                records.append(json.loads(record.summary_json()))
+                        for env in context["env"]:
+                            records = RecordModel.objects(environment=env)
+                            for record in records:
+                                if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                    envs.append(env.info())
+                                    break
+                        for diff in context["diff"]:
+                            if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                                diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                    
+                    return cloud_response(200, message, {'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}})
+                    # return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'applications':{'count':len(applications), 'result':applications}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}, 'envs':{'count':len(envs), 'result':envs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
