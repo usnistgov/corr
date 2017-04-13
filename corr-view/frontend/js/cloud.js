@@ -20,10 +20,10 @@ var user = {
                     Cookies.set('group', response['group'], { path: '' });
                     
                     window.location.reload();
+                }else {
+                    config.error_modal('An error occured during login.', this.responseText);
                 }
-            } else {
-                config.error_modal('An error occured during login.', this.responseText);
-            }
+            } 
         };
         xmlhttp.open("POST", this.url+"/public/user/login");
         xmlhttp.send(JSON.stringify(request));
@@ -40,7 +40,7 @@ var user = {
             {
                 if(this.readyState == 4){
                     if (this.status == 200) {
-                        config.error_modal('Register successfull', 'Your account was created.');
+                        config.error_modal('Register successfull', this.responseText);
                         console.log("Cloud returned empty response!");
                     }else{
                         config.error_modal('Register failed', this.responseText);
@@ -371,6 +371,7 @@ var user = {
         if(name != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
+            $('#loading-modal').openModal();
             xmlhttp.onreadystatechange = function()
             {
                 if(this.readyState == 4){
@@ -419,6 +420,9 @@ var user = {
                             content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
                             content += "</div>";
                             document.getElementById("projects-list").innerHTML += content;
+                            $('#loading-modal').closeModal();
+                            config.error_modal('Add project successfull', 'Your changes to the dashboard were accepted.');
+                            drawDashboard();
                         }
                     } else {
                         config.error_modal('Add project failed', this.responseText);
@@ -546,6 +550,7 @@ var user = {
                         project_content.innerHTML = content;
                         $('#loading-modal').closeModal();
                         config.error_modal('Add record successfull', 'Your changes to the project were accepted.');
+                        drawDashboard();
                     }else {
                         $('#loading-modal').closeModal();
                         config.error_modal('Add record failed', this.responseText);
