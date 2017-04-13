@@ -113,17 +113,18 @@ def private_search():
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
-                            for record in RecordModel.objects(environment=env):
-                                skip = False
-                                for cn_i in range(context_index):
-                                    if env in contexts[cn_i]["env"]:
-                                        skip = True
-                                        break
-                                if not skip:
-                                    if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                        if env.info()["application"]["name"] != "unknown":
-                                            envs.append(env.info())
-                                        break
+                            envs.append(env.info())
+                            # for record in RecordModel.objects(environment=env):
+                            #     skip = False
+                            #     for cn_i in range(context_index):
+                            #         if env in contexts[cn_i]["env"]:
+                            #             skip = True
+                            #             break
+                            #     if not skip:
+                            #         if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                            #             if env.info()["application"]["name"] != "unknown":
+                            #                 envs.append(env.info())
+                            #             break
                         for diff in context["diff"]:
                             skip = False
                             for cn_i in range(context_index):
