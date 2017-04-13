@@ -165,10 +165,10 @@ def user_login():
                         # account.save()
                         if account.auth == 'signup':
                             return fk.Response('Your account is pending verification from the admin. We appologise for this convenience. For security reasons this instance requires account moderation.', status.HTTP_401_UNAUTHORIZED)
-                        elif account.auth == 'blocked':
-                            return fk.Response('Your account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
-                        elif account.auth == 'unregistered':
-                            return fk.Response('You unregistered. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+                    if account.auth == 'blocked':
+                        return fk.Response('Your account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+                    elif account.auth == 'unregistered':
+                        return fk.Response('You unregistered. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
