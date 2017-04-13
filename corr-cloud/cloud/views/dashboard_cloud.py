@@ -33,6 +33,9 @@ import mimetypes
 # There is no or because these are enoug. we are not working on conditionals.
 # I have to prove that this is enough for query in this case.
 
+# TODO:
+# Make it include more operations: < > ==
+# Make it more human like.
 
 @app.route(CLOUD_URL + '/private/dashboard/search', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -53,10 +56,9 @@ def private_search():
                         _request = "{0}".format(value)
                     else:
                         _request = "{0}&{1}{2}".format(_request, key, value)
-                # try:
+                if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
+                    _request = "![{0}]?[]".format(_request)
                 message, contexts = processRequest(_request)
-                # except:
-                #     return cloud_response(500, 'Error processing the query', _request)
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:
@@ -124,17 +126,6 @@ def private_search():
                                         if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
                                             envs.append(env.info())
                                         break
-                            # for record in RecordModel.objects(environment=env):
-                            #     skip = False
-                            #     for cn_i in range(context_index):
-                            #         if env in contexts[cn_i]["env"]:
-                            #             skip = True
-                            #             break
-                            #     if not skip:
-                            #         if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                            #             if env.info()["application"]["name"] != "unknown":
-                            #                 envs.append(env.info())
-                            #             break
                         for diff in context["diff"]:
                             skip = False
                             for cn_i in range(context_index):
@@ -151,7 +142,6 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    # return cloud_response(500, 'Error processing the query', [len(diffs), len(users), len(applications)])
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
