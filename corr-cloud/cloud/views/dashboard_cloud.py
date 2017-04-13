@@ -121,7 +121,7 @@ def private_search():
                                         break
                                 if not skip:
                                     if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                        if env.info()["application"]["name"] == "unknown":
+                                        if env.info()["application"]["name"] != "unknown":
                                             envs.append(env.info())
                                         break
                         for diff in context["diff"]:
