@@ -113,7 +113,17 @@ def private_search():
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
-                            envs.append(env.info())
+                            skip = False
+                            for cn_i in range(context_index):
+                                if env in contexts[cn_i]["env"]:
+                                    skip = True
+                                    break
+                            if not skip:
+                                for project in ProjectModel.objects():
+                                    if str(env.id) in project.history:
+                                        if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                                            envs.append(env.info())
+                                        break
                             # for record in RecordModel.objects(environment=env):
                             #     skip = False
                             #     for cn_i in range(context_index):
