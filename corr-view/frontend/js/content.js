@@ -708,7 +708,6 @@ var Record = function (_id){
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Record access update failed', this.responseText);
-                    console.log(access_value);
                     if(access_value == 'public'){
                         r_access.removeAttribute("checked");
                     }else{

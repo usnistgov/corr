@@ -235,8 +235,8 @@ def record_edit(record_id):
                                 record.tags = tags.split(',')
                                 record.rationels = rationels.split(',')
                                 record.status = r_status
-                                if record.access != r_access and record.project.access == "private":
-                                    return fk.Response('Unauthorized action on this record. Record access cannot be changed when project is private.', status.HTTP_401_UNAUTHORIZED)
+                                # if record.access != r_access and record.project.access == "private":
+                                #     return fk.Response('Unauthorized action on this record. Record access cannot be changed when project is private.', status.HTTP_401_UNAUTHORIZED)
                                 record.access = r_access
                                 record.save()
 
