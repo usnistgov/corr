@@ -82,7 +82,7 @@ class StorageManager:
             return None
 
     def is_safe(self, content=None):
-        if self.secur:
+        if not self.secur:
             return [True, "Security is not required."]
         else:
             if content:
