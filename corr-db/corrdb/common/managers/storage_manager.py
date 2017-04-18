@@ -82,22 +82,25 @@ class StorageManager:
             return None
 
     def is_safe(self, content=None):
-        if content:
-            cd = clamd.ClamdUnixSocket()
-            if cd.ping() == 'PONG':
-                cd.reload()
-                file_buffer = BytesIO()
-                file_buffer.write(content)
-                file_buffer.seek(0)
-                result = cd.instream(file_buffer)
-                if result['stream'] == ('OK', None):
-                    return [True, "File is very safe."]
-                else:
-                    return [False, "The file looks malicious."]
-            else:
-                return [False, "Clamd Cannot be reached."]
+        if self.secur:
+            return [True, "Security is not required."]
         else:
-            return [True, "No content. So it is very safe."]
+            if content:
+                cd = clamd.ClamdUnixSocket()
+                if cd.ping() == 'PONG':
+                    cd.reload()
+                    file_buffer = BytesIO()
+                    file_buffer.write(content)
+                    file_buffer.seek(0)
+                    result = cd.instream(file_buffer)
+                    if result['stream'] == ('OK', None):
+                        return [True, "File is very safe."]
+                    else:
+                        return [False, "The file looks malicious."]
+                else:
+                    return [False, "Clamd Cannot be reached."]
+            else:
+                return [True, "No content. So it is very safe."]
 
     def storage_upload_file(self, file_meta=None, file_obj=None):
         """Upload a file into the s3 bucket.
