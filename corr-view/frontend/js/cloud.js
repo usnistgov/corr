@@ -163,10 +163,25 @@ var user = {
                         if(text == ""){
                             console.log("Cloud returned empty response!");
                         }else{
+                            try{
+                                var response  = JSON.parse(text);
+                                var code = response["code"];
+                                var title = response["title"];
+                                var content = response["content"];
+                                if(code != 200 && code != 201){
+                                    $('#loading-modal').closeModal();
+                                    config.error_modal(title, content);
+                                }
+                            }catch(err){
+
+                            }
+
                             if(group=="picture"){
                                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                                 document.getElementById('update-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
+                                $('#loading-modal').closeModal();
+                            }else{
                                 $('#loading-modal').closeModal();
                             }
                         }
