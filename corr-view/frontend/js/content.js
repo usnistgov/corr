@@ -474,6 +474,7 @@ var Space = function (){
     this.envs = function(project_id) {
         document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
+        var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -522,7 +523,6 @@ var Space = function (){
                 }
             }
         };
-        var xmlhttp = new XMLHttpRequest();
         if(project_id == "all"){
             xmlhttp.open("GET", url+"/private/dashboard/envs/all");
         }else{
