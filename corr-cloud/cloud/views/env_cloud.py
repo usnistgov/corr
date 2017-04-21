@@ -28,7 +28,7 @@ def env_remove(env_id):
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
-        if current_user is None:
+        if current_user is None :
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
@@ -164,6 +164,8 @@ def env_next(project_id):
             if project is None:
                 return fk.Response('Unable to find the referenced project.', status.HTTP_404_NOT_FOUND)
             else:
+                if project.owner != current_user:
+                    return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
                 if fk.request.data:
                     data = json.loads(fk.request.data)
                     try:
