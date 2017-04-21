@@ -529,7 +529,8 @@ def user_file_upload(group, item_id):
                             else:
                                 owner = rec_temp.project.owner
                             if user_model != owner:
-                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                                return cloud_response(401, 'Unauthorized upload', "Unauthorized owner.")
+                                # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                         elif group == 'picture':
                             item = ProfileModel.objects(user=user_model).first()
                             owner = item.user
@@ -653,7 +654,8 @@ def user_file_upload(group, item_id):
 
                                 return cloud_response(201, 'New file created', _file.info())
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                    return cloud_response(204, 'No content provided', "No data in the request")
+                    # return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
