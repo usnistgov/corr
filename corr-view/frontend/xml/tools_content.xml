@@ -125,9 +125,9 @@
                     <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">Architecture-Neutral Dynamic Analysis</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Dynamic Analysis</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">It is built upon the QEMU</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Whole-system record/replay execution</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Record/replay execution</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
