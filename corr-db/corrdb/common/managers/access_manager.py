@@ -49,8 +49,8 @@ class AccessManager:
             print('Developer Message: %s' %re.developer_message)
             print('More Information: %s' %re.more_info)
             print('Error Code: %s' %str(re.code))
-            print('Message message: %s' %re.message['message'])
-            return (None, re.message['message'])
+            print('Message message: %s' %re.message)
+            return (None, re.message)
 
     def register(self, email, password, fname, lname, mname):
         """Registration handler.
