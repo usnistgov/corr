@@ -125,7 +125,7 @@ class StorageManager:
                     else:
                         if self.config['type'] == 's3':
                             s3_files = self.s3.Bucket(self.bucket)
-                            s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
+                            s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=content)
                         elif self.config['type'] == 'filesystem':
                             self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
                             print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
