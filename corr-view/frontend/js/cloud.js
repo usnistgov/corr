@@ -588,7 +588,6 @@ var user = {
         var file2upload = document.getElementById("upload-file");
 
         if(record_id != ""){
-            $('#loading-modal').openModal();
             if(upload_group == "body"){
                 if (file2upload.files.length > 0) {
                     var reader = new FileReader();
@@ -597,6 +596,7 @@ var user = {
                         if(file_content == ""){
                             config.error_modal('Upload record failed', 'The file to upload cannot be empty.');
                         }else{
+                            $('#loading-modal').openModal();
                             var request = null;
                             if(uplpad_type == "json"){
                                 try {
@@ -741,7 +741,6 @@ var user = {
                     }
                     reader.readAsText(file2upload.files[0]);
                 }else{
-                    $('#loading-modal').closeModal();
                     config.error_modal('Upload record failed', 'There is no file to upload');
                 }
             }else{
@@ -750,17 +749,14 @@ var user = {
                     if (file2upload.files.length > 0) {
                         user.upload_file(file2upload, upload_group, record_id);
                     }else{
-                        $('#loading-modal').closeModal();
                         config.error_modal('Upload record failed', 'File should not be empty.');
                     }
                 }else{
-                    $('#loading-modal').closeModal();
                     config.error_modal('Upload record failed', 'Env bundle upload not implemented yet.');
                 }
             }
             
         }else{
-            $('#loading-modal').closeModal();
             config.error_modal('Upload record failed', 'Record id should not be empty.');
         }
     },
@@ -853,7 +849,6 @@ var user = {
                         $('#loading-modal').closeModal();
 
                         if (bundle.files.length > 0) {
-                            $('#loading-modal').closeModal();
                             user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
                         }
                     } else {
@@ -866,7 +861,6 @@ var user = {
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
             xmlhttp.send(JSON.stringify(request));
         }else{
-            $('#loading-modal').closeModal();
             config.error_modal('Add event failed', 'Project should be provided.');
         }
     }
