@@ -349,10 +349,11 @@
 
         <div id="account-modal" class="modal login-form">
             <div class="modal-content">
-                <div class="row">
-                  <div class="input-field col s12 center">
-                    <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
-                  </div>
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
+                    <label for="picture-input">
+                        <img src="images/picture.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <input id="picture-input" type="file" style="display: none;"/>
                 </div>
                 <div class="divider"></div>
                 <div class="row margin">
@@ -371,32 +372,6 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Account</a>
-                  </div>
-                </div>
-                <div class="row margin">
-                    <div class="input-field col s12">
-                      <a onclick="$('#account-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="account-update-modal" class="modal login-form">
-            <div class="modal-content">
-                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
-                    <label for="picture-input">
-                        <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
-                    </label>
-                    <input id="picture-input" type="file" style="display: none;"/>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
                     <i class="mdi-action-lock-outline prefix"></i>
                     <input id="edit-new-password" type="password">
                     <label for="edit-new-password">New Password</label>
@@ -411,12 +386,17 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a onclick="return user.update();" class="btn waves-effect waves-light col s12 modal-action modal-close">Confirm</a>
+                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Account</a>
                   </div>
                 </div>
                 <div class="row margin">
                     <div class="input-field col s12">
-                      <a onclick="$('#account-update-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                      <a onclick="$('#account-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                     </div>
                 </div>
             </div>

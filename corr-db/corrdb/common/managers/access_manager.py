@@ -125,7 +125,10 @@ class AccessManager:
                 if account_1.password == None:
                     account_1.password = hash_pwd
                     account_1.save()
-                account = account_1
+                    account = account_1
+                else:
+                    if account_1.password == hash_pwd:
+                        account = account_1
             else:
                 account = UserModel.objects(email=email, password=hash_pwd).first()
         if account and account.group == "unknown":
@@ -193,14 +196,15 @@ class AccessManager:
                 if acc.email == user_model.email:
                     account = acc
                     break
-            if account is not None:
+            if account:
                 account.password = password
         elif self.type == 'api-token':
             pass
         elif self.type == 'mongodb':
             account = user_model
             account.password = hash_pwd
-        account.save()
+        if account:
+            account.save()
         return account
 
     def accounts(self):
