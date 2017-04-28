@@ -641,7 +641,6 @@
         <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
         <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
         <script type="text/javascript" src="../js/plugins/jvectormap/vectormap-script.js"></script>
-        <script type="text/javascript" src="../js/plugins.js"></script>
         <script type="text/javascript" src="../js/clipboard.min.js"></script>
         <script type="text/javascript" src="../js/wNumb.min.js"></script>
         <script type="text/javascript" src="../js/jquery.nouislider.min.js"></script>
@@ -683,6 +682,8 @@
                   document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
                 }
                 js.src = "../js/plugins/chartist-js/chartist.min.js";
+                head.appendChild(js);
+                js.src = "../js/plugins.js";
                 head.appendChild(js);
             }
             // Inject the applications dashboard view
