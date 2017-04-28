@@ -531,7 +531,7 @@ var Space = function (){
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv) {
+    this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public) {
         var xmlhttp = new XMLHttpRequest();
         var query_result = document.getElementById('query-result');
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
@@ -597,8 +597,12 @@ var Space = function (){
                 }
             }
         };
-        xmlhttp.open("GET", url+"/private/dashboard/search?req="+search);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        if(public == true){
+            xmlhttp.open("GET", url+"/public/dashboard/search?req="+search);
+        }else{
+            xmlhttp.open("GET", url+"/private/dashboard/search?req="+search);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        }
         xmlhttp.send();
     },
     this.exportToJson = function () {

@@ -29,16 +29,16 @@
                     <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">Managing and tracking projects</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Automated electronic lab notebook</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Launching with automatic recording</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Managing, Tracking</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Automated Notebook</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Automatic Recording</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">Numerical simulation or analysis</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Supporting reproducible research</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Context, annotation and data</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Simulation, Analysis</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Make Reproducible</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Annotation, Data</span></p>
                             </div>
                         </div>
                     </div>
@@ -77,16 +77,16 @@
                     <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4"> Allows you to pack your research</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Tracing the systems calls</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Anybody can reproduce the research</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4"> Rsearch Packaging</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Tracing calls</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">100% reproducible</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
                             <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">data files, libraries, variables</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Automatically include files</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Requires a Linux OS</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">data, libraries</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Auto-include Files</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Requires Linux</span></p>
                             </div>
                         </div>
                     </div>
@@ -126,15 +126,14 @@
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4">Dynamic Analysis</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">It is built upon the QEMU</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Record/replay execution</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">From QEMU</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Record Replay</span></p>
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
-                            <div class="flight-info">
-                                <p class="small"><span class="grey-text text-lighten-4">Support of 13 architectures</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">Whole system emulator</span></p>
-                                <p class="small"><span class="grey-text text-lighten-4">x86, x86_64, and ARM guests</span></p>
+                            <div class="flight-info">13 Architectures</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">System Emulator</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">x86, ARM</span></p>
                             </div>
                         </div>
                     </div>

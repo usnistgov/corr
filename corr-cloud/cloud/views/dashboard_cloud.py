@@ -454,85 +454,103 @@ def reproducibility_assess(record_id):
 def public_search():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/search')
     if fk.request.method == 'GET':
+        logAccess(CLOUD_URL, 'cloud', '/public/dashboard/search')
         if fk.request.args:
-            query = fk.request.args.get("query").split(" ") #single word for now.
-            users = []
-            for user in UserModel.objects():
-                profile = ProfileModel.objects(user=user)
-                where = []
-                if query in user.email:
-                    where.append("email")
-                if query in profile.fname:
-                    where.append("fname")
-                if query in profile.lname:
-                    where.append("lname")
-                if query in profile.organisation:
-                    where.append("organisation")
-                if query in profile.about:
-                    where.append("about")
-                if len(where) != 0:
-                    users.append({"id":str(user.id), "email":user.email, "fname":profile.fname, "lname":profile.lname, "organisation":profile.organisation, "about":profile.about})
-            projects = []
-            records = []
-            for project in ProjectModel.objects():
-                if project.access == 'public':
-                    where_project = []
-                    if query in project.name:
-                        where_project.append("name")
-                    if query in project.goals:
-                        where_project.append("goals")
-                    if query in project.description:
-                        where_project.append("description")
-                    if query in project.group:
-                        where_project.append("group")
-
-                    if len(where_project) != 0:
-                        projects.append({"user":str(project.owner.id), "id":str(project.id), "name":project.name, "created":str(project.created_at), "duration":str(project.duration)})
-                    
-                    for record in RecordModel.objects(project=project):
-                        if record.access == 'public':
-                            body = record.body
-                            where_record = []
-                            
-                            if query in record.label:
-                                where_record.append("label")
-                            if query in str(json.dumps(record.system)):
-                                where_record.append("system")
-                            if query in str(json.dumps(record.program)):
-                                where_record.append("program")
-                            if query in str(json.dumps(record.inputs)):
-                                where_record.append("inputs")
-                            if query in str(json.dumps(record.outputs)):
-                                where_record.append("outputs")
-                            if query in str(json.dumps(record.dependencies)):
-                                where_record.append("dependencies")
-                            if query in record.status:
-                                where_record.append("status")
-                            if query in str(json.dumps(body.data)):
-                                where_record.append("data")
-
-                            if len(where_record) != 0:
-                                records.append({"user":str(record.project.owner.id), "project":str(record.project.id), "id":str(record.id), "label":record.label, "created":str(record.created_at), "status":record.status})
-
-            diffs = []
-            for diff in DiffModel.objects():
-                if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
-                    where = []
-                    if query in str(json.dumps(diff.diff)):
-                        where.append("diff")
-                    if query in diff.proposition:
-                        where.append("proposition")
-                    if query in diff.status:
-                        where.append("status")
-                    if query in str(json.dumps(diff.comments)):
-                        where.append("comments")
-
-                    if len(where) != 0:
-                        diffs.append({"id":str(diff.id), "from":str(diff.record_from.id), "to":str(diff.record_to.id), "sender":str(diff.sender.id), "targeted":str(diff.targeted.id), "proposition":diff.proposition, "status":diff.status})
-                
-            return fk.Response(json.dumps({'users':{'count':len(users), 'result':users}, 'projects':{'count':len(projects), 'result':projects}, 'records':{'count':len(records), 'result':records}, 'diffs':{'count':len(diffs), 'result':diffs}}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            _request = ""
+            for key, value in fk.request.args.items():
+                if key == "req":
+                    _request = "{0}".format(value)
+                else:
+                    _request = "{0}&{1}{2}".format(_request, key, value)
+            if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
+                _request = "![{0}]?[]".format(_request)
+            message, contexts = processRequest(_request)
+            if contexts is None:
+                return cloud_response(500, 'Error processing the query', message)
+            else:
+                users = []
+                applications = []
+                projects = []
+                records = []
+                envs = []
+                diffs = []
+                for context_index in range(len(contexts)):
+                    context = contexts[context_index]
+                    for user in context["user"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if user in contexts[cn_i]["user"]:
+                                skip = True
+                                break
+                        if not skip:
+                            profile = ProfileModel.objects(user=user)[0]
+                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                    for profile in context["profile"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if profile.user in contexts[cn_i]["user"]:
+                                skip = True
+                                break
+                        if not skip:
+                            user = profile.user
+                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                    for appli in context["tool"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if appli in contexts[cn_i]["tool"]:
+                                skip = True
+                                break
+                        if not skip:
+                            applications.append(appli.extended())
+                    for project in context["project"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if project in contexts[cn_i]["project"]:
+                                skip = True
+                                break
+                        if not skip:
+                            if project.access == 'public':
+                                projects.append(project.extended())
+                    for record in context["record"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if record in contexts[cn_i]["record"]:
+                                skip = True
+                                break
+                        if not skip:
+                            if record.access == 'public':
+                                records.append(json.loads(record.summary_json()))
+                    for env in context["env"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if env in contexts[cn_i]["env"]:
+                                skip = True
+                                break
+                        if not skip:
+                            for project in ProjectModel.objects():
+                                if str(env.id) in project.history:
+                                    if project.access == 'public':
+                                        envs.append(env.info())
+                                    break
+                    for diff in context["diff"]:
+                        skip = False
+                        for cn_i in range(context_index):
+                            if diff in contexts[cn_i]["diff"]:
+                                skip = True
+                                break
+                        if not skip:
+                            if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
+                                diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                response = {}
+                response['users'] = {'count':len(users), 'result':users}
+                response['applications'] = {'count':len(applications), 'result':applications}
+                response['projects'] = {'count':len(projects), 'result':projects}
+                response['envs'] = {'count':len(envs), 'result':envs}
+                response['records'] = {'count':len(records), 'result':records}
+                response['diffs'] = {'count':len(diffs), 'result':diffs}
+                return cloud_response(200, message, response)
         else:
-            return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
