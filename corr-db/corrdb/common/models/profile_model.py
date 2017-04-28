@@ -24,8 +24,8 @@ class ProfileModel(db.Document):
     fname = db.StringField(required=True)
     lname = db.StringField(required=True)
     picture = db.ReferenceField(FileModel)
-    organisation = db.StringField()
-    about = db.StringField()
+    organisation = db.StringField(default="No organisation provided")
+    about = db.StringField(default="Nothing about me yet.")
     extend = db.DictField()
 
     def info(self):
