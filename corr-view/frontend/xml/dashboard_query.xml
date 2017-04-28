@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col s12 m12 l12">
         <div class="input-field">
-          <input id="search" type="text" required="" onkeypress="searchKeyPress(event);"/>
+          <input id="search" type="text" required="" onkeypress="searchKeyPress(event, false);"/>
           <label for="search" class="">
             <i class="mdi-action-search"></i>
           </label>
