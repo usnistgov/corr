@@ -131,7 +131,8 @@
                             </div>
                         </div>
                         <div class="col s6 m6 l6 center-align flight-state-two">
-                            <div class="flight-info">13 Architectures</span></p>
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">13 Architectures</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">System Emulator</span></p>
                                 <p class="small"><span class="grey-text text-lighten-4">x86, ARM</span></p>
                             </div>
