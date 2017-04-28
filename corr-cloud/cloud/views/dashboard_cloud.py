@@ -469,22 +469,15 @@ def public_search():
                 diffs = []
                 for context_index in range(len(contexts)):
                     context = contexts[context_index]
+                    user_filter = []
                     for user in context["user"]:
-                        skip = False
-                        for cn_i in range(context_index):
-                            if user in contexts[cn_i]["user"]:
-                                skip = True
-                                break
-                        if not skip:
+                        if user.email not in user_filter:
+                            user_filter.append(user.email)
                             profile = ProfileModel.objects(user=user)[0]
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                     for profile in context["profile"]:
-                        skip = False
-                        for cn_i in range(context_index):
-                            if profile.user in contexts[cn_i]["user"]:
-                                skip = True
-                                break
-                        if not skip:
+                        if profile.user.email not in user_filter:
+                            user_filter.append(profile.user.email)
                             user = profile.user
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                     for appli in context["tool"]:
