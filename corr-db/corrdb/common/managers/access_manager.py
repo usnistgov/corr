@@ -121,16 +121,17 @@ class AccessManager:
         elif self.type == 'mongodb':
             hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
             account_1 = UserModel.objects(email=email).first()
-            if account_1 != None:
-                if account_1.password == None:
+            if account_1:
+                if account_1.password is None:
                     account_1.password = hash_pwd
                     account_1.save()
                     account = account_1
                 else:
-                    if account_1.password == hash_pwd:
-                        account = account_1
+                    account = UserModel.objects(email=email, password=hash_pwd).first()
             else:
-                account = UserModel.objects(email=email, password=hash_pwd).first()
+                (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                account.password = hash_pwd
+                account.save()
         if account and account.group == "unknown":
             account.group = "user"
             account.save()

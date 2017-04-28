@@ -157,7 +157,7 @@ def user_login():
                     account = access_manager.login(email, password)
 
                     if account == None:
-                        return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
+                        return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.{0}'.format(hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()), status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                     if access_manager.secur and account.group != "admin":
                         # access = account.extend.get('access', 'verified')
