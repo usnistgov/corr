@@ -633,8 +633,7 @@
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
-        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
-        <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
         <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>    
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
@@ -664,6 +663,9 @@
             var blocks = param.split("&");
             var view_selected = "";
             var options = [];
+            var head = document.getElementsByTagName('head')[0];
+            var js = document.createElement("script");
+            js.type = "text/javascript";
             // Extract the parameters session, view and others from the url.
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
@@ -680,6 +682,8 @@
                 if(Cookies.get('group') == "user"){
                   document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
                 }
+                js.src = "../js/plugins/chartist-js/chartist.min.js";
+                head.appendChild(js);
             }
             // Inject the applications dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "apps"){
