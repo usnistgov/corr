@@ -487,6 +487,8 @@
                 $('.tooltipped').tooltip({delay: 50});
                 $('.collapsible').collapsible({accordion : false});
                 $('.modal-trigger').leanModal();
+                document.getElementById("nav-home").href = window.location.origin;
+                document.getElementById("nav-search").href = window.location.origin+"/search";
             });
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange=function()
@@ -522,10 +524,10 @@
                 user.trusted();
                 user.account();
                 // If the session is trusted, inject user nav menu session tabs and account floating menu.
-                document.getElementById("nav-home-2").href = "./";
-                document.getElementById("nav-home").href = "./";
+                document.getElementById("nav-home-2").href = window.location.origin;
+                document.getElementById("nav-home").href = window.location.origin;
                 document.getElementById("nav-login").remove();
-                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='"+window.location.origin+"/dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
                 document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-communication-email'></i></a></li></ul>";
 
                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";

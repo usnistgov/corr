@@ -679,6 +679,10 @@
         <script type="text/javascript">
             $(document).ready(function() {
               $('.modal-trigger').leanModal();
+              document.getElementById("nav-home").href = window.location.origin;
+              document.getElementById("nav-search").href = window.location.origin+"/search";
+              document.getElementById("nav-home-2").href = window.location.origin;
+              document.getElementById("nav-dashboard").href = window.location.origin+"/dashboard";
             });
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
