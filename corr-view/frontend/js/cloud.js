@@ -101,7 +101,7 @@ var user = {
             if(about == "None"){
                 about = ""
             }
-            $('#account-update-modal').closeModal();
+            $('#account-modal').closeModal();
             $('#loading-modal').openModal();
             var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
             xmlhttp.onreadystatechange = function()
@@ -111,15 +111,12 @@ var user = {
                         var response = this.responseText;
                         var file = document.getElementById("picture-input");
                         if (file.files.length > 0) {
-                            $('#loading-modal').closeModal();
                             user.upload_file(file, 'picture', 'none');
-                        }else{
-                            $('#loading-modal').closeModal();
                         }
                     } else {
-                        $('#loading-modal').closeModal();
                         config.error_modal('Update failed', response);
                     }
+                    $('#loading-modal').closeModal();
                 }
             };
             xmlhttp.open("POST", this.url+"/private/user/update");
@@ -159,7 +156,8 @@ var user = {
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader ("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
                     },
-                    success    : function(text){
+                    success : function(text){
+                        console.log("success!");
                         if(text == ""){
                             console.log("Cloud returned empty response!");
                         }else{
@@ -177,7 +175,6 @@ var user = {
 
                             if(group=="picture"){
                                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
-                                document.getElementById('update-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                             }
                         }
@@ -186,6 +183,7 @@ var user = {
                         $('#loading-modal').closeModal();
                     },
                     complete: function(data){
+                        console.log("complete!");
                         console.log(data);
                         $('#loading-modal').closeModal();
                     }
