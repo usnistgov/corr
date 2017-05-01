@@ -337,19 +337,6 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <select id="env-system">
-                      <option value="container-based" disabled selected>Container</option>
-                      <option value="vm-based">Virtual Machine</option>
-                      <option value="tool-based">Tool</option>
-                      <option value="cloud-based">Cloud</option>
-                      <option value="device-based">Device</option>
-                      <option value="lab-based">Lab</option>
-                      <option value="custom-based">Custom</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
                     <select id="env-version">
                       <option value="unknown" disabled selected>Unknown</option>
                       <option value="git">Git</option>
@@ -371,7 +358,36 @@
                   </div>
                 </div>
                 <div class="row margin">
-                  <div class="file-field col s12">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-track-changes prefix"></i>
+                    <input id="env-vc-location" type="text" placeholder="local:master~hash|https://...:master~hash"></input>
+                    <label for="env-vc-location">Location</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-system">
+                      <option value="container-based" disabled selected>Container</option>
+                      <option value="vm-based">Virtual Machine</option>
+                      <option value="tool-based">Tool</option>
+                      <option value="cloud-based">Cloud</option>
+                      <option value="device-based">Device</option>
+                      <option value="lab-based">Lab</option>
+                      <option value="custom-based">Custom</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-location" onchange="reloadEnvLocation()">
+                      <option value="unknown" disabled selected>Unknown</option>
+                      <option value="local">Local</option>
+                      <option value="remote">Remote</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12" id="env-bundle-location">
                     <input id="bundle-path" class="file-path validate" type="text"></input>
                     <div class="btn">
                       <span>File</span>
@@ -902,6 +918,16 @@
               }else{
                 type_div.style.display = 'none';
                 guide_div.style.display = 'none';
+              }
+            }
+
+            function reloadEnvLocation(){
+              var location = document.getElementById("env-location").value;
+              var bundle_location_div = document.getElementById("env-bundle-location");
+              if(location == "remote"){
+                bundle_location_div.innerHTML = "<i class=\"mdi-file-cloud prefix\"></i><input id=\"bundle-file\" type=\"text\" placeholder=\"https://...|http://...|tcp:...\"></input><label for=\"bundle-path\">Location</label></div>";
+              }else{
+                bundle_location_div.innerHTML = "<input id=\"bundle-path\" class=\"file-path validate\" type=\"text\"></input><div class=\"btn\"><span>File</span><input id=\"bundle-file\" type=\"file\"></input></div>";
               }
             }
 

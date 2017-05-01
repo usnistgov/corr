@@ -593,7 +593,6 @@ var user = {
                         if(file_content == ""){
                             config.error_modal('Upload record failed', 'The file to upload cannot be empty.');
                         }else{
-                            $('#loading-modal').openModal();
                             var request = null;
                             if(uplpad_type == "json"){
                                 try {
@@ -601,7 +600,6 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
-                                    $('#loading-modal').closeModal();
                                 }
                             }else if(uplpad_type == "xml"){
                                 var x2js = new X2JS();
@@ -610,7 +608,6 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
-                                    $('#loading-modal').closeModal();
                                 }
                             }else if(uplpad_type == "yaml"){
                                 try {
@@ -618,11 +615,9 @@ var user = {
                                 }
                                 catch(err){
                                     config.error_modal('Upload record failed', err.message);
-                                    $('#loading-modal').closeModal();
                                 }
                             }else{
                                 config.error_modal('Upload record failed', 'Upload supports only json, yaml and xml.');
-                                $('#loading-modal').closeModal();
                             }
                             if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
@@ -722,10 +717,8 @@ var user = {
                                             content += "</div>";                
                                             content += "</div>";
                                             record_content.innerHTML = content;
-                                            $('#loading-modal').closeModal();
                                             config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                                         } else {
-                                            $('#loading-modal').closeModal();
                                             config.error_modal('Upload record failed', this.responseText);
                                         }
                                     }
@@ -792,12 +785,18 @@ var user = {
         var group = document.getElementById("env-group").value;
         var system = document.getElementById("env-system").value;
         var version = document.getElementById("env-version").value;
+        var vc_location = document.getElementById("env-vc-location").value;
+        var env_location = document.getElementById("env-location").value;
         var bundle = document.getElementById("bundle-file");
         if(project_id != ""){
             console.log(project_id);
             var xmlhttp = new XMLHttpRequest();
             var request = { 'app': application, 'group': group, 'system':system, 'version':version};
-            $('#loading-modal').openModal();
+            request["version-location"] = vc_location;
+            request["env-location"] = env_location;
+            if(env_location == "remote"){
+                request["bundle-location"] = bundle.value;
+            }
             xmlhttp.onreadystatechange = function()
             {
                 if(this.readyState == 4){
@@ -843,13 +842,12 @@ var user = {
                         content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
                     
                         project_content.innerHTML = content;
-                        $('#loading-modal').closeModal();
-
-                        if (bundle.files.length > 0) {
-                            user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
+                        if(env_location != "remote"){
+                            if (bundle.files.length > 0) {
+                                user.upload_file(bundle, 'bundle', project['env']['bundle-id']);
+                            }
                         }
                     } else {
-                        $('#loading-modal').closeModal();
                         config.error_modal('Add event failed', this.responseText);
                     }
                 }
