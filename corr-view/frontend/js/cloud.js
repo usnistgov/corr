@@ -102,7 +102,6 @@ var user = {
                 about = ""
             }
             $('#account-modal').closeModal();
-            $('#loading-modal').openModal();
             var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
             xmlhttp.onreadystatechange = function()
             {
@@ -116,7 +115,6 @@ var user = {
                     } else {
                         config.error_modal('Update failed', response);
                     }
-                    $('#loading-modal').closeModal();
                 }
             };
             xmlhttp.open("POST", this.url+"/private/user/update");
@@ -128,7 +126,6 @@ var user = {
         var formData = new FormData();
         formData.append("file", file.files[0], file.files[0].name);
         var url_temp = this.url;
-        $('#loading-modal').openModal();
         
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
             _file = file.files[0],
@@ -139,6 +136,7 @@ var user = {
             fileReader = new FileReader();
 
         fileReader.onload = function (e) {
+            $('#loading-modal').openModal();
             spark.append(e.target.result);
             currentChunk++;
 
@@ -180,6 +178,7 @@ var user = {
                         }
                     },
                     error: function(xhr){
+                        console.log("error!");
                         $('#loading-modal').closeModal();
                     },
                     complete: function(data){
