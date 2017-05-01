@@ -189,7 +189,7 @@ def env_next(project_id):
                         version = VersionModel(created_at=str(datetime.datetime.utcnow()))
                         system = data.get("version", "unknown")
                         vc_location = data.get("version-location")
-                        vc_baselines = vc_location.split(":")
+                        vc_baselines = vc_location.split("|")
                         if len(vc_baselines) > 0:
                             version.baseline = vc_baselines[0]
                         if len(vc_baselines) > 1:
