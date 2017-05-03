@@ -919,7 +919,7 @@ var Application = function (_id){
         };
         xmlhttp.open("GET", url+"/private/dashboard/developer/app/retoken/"+self._id);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send(JSON.stringify(request));
+        xmlhttp.send();
     },
     // Half way optimal. We could have just removed the app div instead of reloading the whole page. TODO
     this.trash = function () {
