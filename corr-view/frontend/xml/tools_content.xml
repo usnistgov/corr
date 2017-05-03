@@ -60,7 +60,7 @@
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
                             <div class="flight-state">
-                                <h4 class="margin">NewYork</h4>
+                                <h4 class="margin">NYC</h4>
                                 <p class="ultra-small">USA</p>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
                     <div class="row flight-state-wrapper">
                         <div class="col s5 m5 l5 center-align">
                             <div class="flight-state">
-                                <h4 class="margin">Cambridge</h4>
+                                <h4 class="margin">MA</h4>
                                 <p class="ultra-small">USA</p>
                             </div>
                         </div>

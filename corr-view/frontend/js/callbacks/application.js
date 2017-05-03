@@ -31,3 +31,9 @@ function appRemoveAgree(app_id){
     var app = new Application(app_id);
     app.trash();
 }
+
+// Application token renewal
+function appRetoken(app_id){
+    var app = new Application(app_id);
+    app.retoken();
+}

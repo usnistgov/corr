@@ -905,7 +905,7 @@ def user_renew():
             logAccess(CLOUD_URL, 'cloud', '/private/user/renew')
             print(fk.request.path)
             user_model.retoken()
-            return fk.Response(json.dumps({'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(user_model.api_token, status.HTTP_200_OK)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

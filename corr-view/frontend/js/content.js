@@ -178,6 +178,7 @@ var Space = function (){
                         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
                         if(Cookies.get('group') == "admin"){
                             content += "<a onclick='appRemove(\""+app["name"]+"\",\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='delete'><i class='mdi-action-delete'></i></a>";
+                            content += "<a onclick='appRetoken(\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='retoken'><i class='mdi-communication-vpn-key'></i></a>";
                         }
                         content += "<a onclick='config.error_modal(\"Application downoload failed\", \"Application download not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
                         if(Cookies.get('group') == "admin"){
@@ -897,6 +898,26 @@ var Application = function (_id){
             }
         };
         xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send(JSON.stringify(request));
+    },
+    this.retoken = function() {
+        var xmlhttp = new XMLHttpRequest();
+        $('#loading-modal').openModal();
+        xmlhttp.onreadystatechange = function()
+        {
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    document.getElementById("app-token-"+self._id).value = this.responseText;
+                    $('#loading-modal').closeModal();
+                    config.error_modal('Update succeeded', 'Your tool key renewal was done.');
+                } else {
+                    $('#loading-modal').closeModal();
+                    config.error_modal('Tool key renew failed', "An error occured while processing your request.");
+                }
+            }
+        };
+        xmlhttp.open("GET", url+"/private/dashboard/developer/app/retoken/"+self._id);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send(JSON.stringify(request));
     },

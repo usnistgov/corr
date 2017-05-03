@@ -734,6 +734,26 @@ def app_show(app_id):
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@app.route(CLOUD_URL + '/private/dashboard/developer/app/retoken/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def app_retoken(app_id):
+    logTraffic(CLOUD_URL, endpoint='/private/dashboard/developer/app/retoken/<app_id>')
+    hash_session = basicAuthSession(fk.request)
+    access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+    current_user = access_resp[1]
+    if current_user is None:
+        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+    else:
+        if fk.request.method == 'GET':
+            app = ApplicationModel.objects.with_id(app_id)
+            if app == None:
+                return fk.Response('Unable to find this tool.', status.HTTP_404_NOT_FOUND)
+            else:
+                app.retoken();
+                return fk.Response(app.api_token, status.HTTP_200_OK)
+        else:
+            return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
 @app.route(CLOUD_URL + '/private/dashboard/developer/app/remove/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def app_remove(app_id):

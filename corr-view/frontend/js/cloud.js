@@ -77,6 +77,25 @@ var user = {
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();   
     },
+    renew: function() {
+        var xmlhttp = new XMLHttpRequest();
+        $('#loading-modal').openModal();
+        xmlhttp.onreadystatechange = function()
+        {
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    document.getElementById('view-api').value = this.responseText;
+                    $('#loading-modal').closeModal();
+                }else {
+                    $('#loading-modal').closeModal();
+                    config.error_modal('Revew API token failed', this.responseText);
+                }
+            } 
+        };
+        xmlhttp.open("GET", this.url+"/private/user/renew");
+        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+        xmlhttp.send();   
+    },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
         var pwd = document.getElementById('edit-new-password').value;
@@ -269,28 +288,6 @@ var user = {
             }
         };
         xmlhttp.open("GET", this.url+"/private/user/profile");
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();
-    },
-    renew: function() {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function()
-        {
-            if(this.readyState == 4){
-                if (this.status == 200) {
-                    var response = JSON.parse(this.responseText);
-                    this.api = response['api'];
-                    if(this.api.length > 18){
-                        $('#view-api-value').text(this.api.substring(0,15)+"...");
-                    }else{
-                        $('#view-api-value').text(this.api);
-                    }
-                } else {
-                    config.error_modal('Revew API token failed', this.responseText);
-                }
-            }
-        };
-        xmlhttp.open("GET", this.url+"/private/user/renew");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
