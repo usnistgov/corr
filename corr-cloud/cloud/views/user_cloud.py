@@ -742,25 +742,37 @@ def user_picture(hash_session):
                 else:
                     return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
             else:
-                try:
-                    picture = profile.picture
-                    if picture == None:
+                picture = profile.picture
+                if picture == None:
+                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                    if picture_buffer == None:
+                        return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
+                    picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
+                    if picture_buffer == None:
+                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        if picture_buffer != None:
+                            return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                        else:
+                            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+                    else:
+                        return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                elif picture.location == 'remote':
+                    picture_buffer = storage_manager.web_get_file(picture.storage)
+                    if picture_buffer != None:
+                        return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                    else:
                         picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                    elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
-                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
-                        if picture_buffer == None:
-                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
-                            if picture_buffer != None:
-                                return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                            else:
-                                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
-                        else:
-                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
-                    elif picture.location == 'remote':
+                else:
+                    if 'http://' in picture.storage or 'https://' in picture.storage:
+                        picture.location = 'remote'
+                        picture.save()
                         picture_buffer = storage_manager.web_get_file(picture.storage)
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
@@ -771,36 +783,17 @@ def user_picture(hash_session):
                             else:
                                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
-                        if 'http://' in picture.storage or 'https://' in picture.storage:
-                            picture.location = 'remote'
-                            picture.save()
-                            picture_buffer = storage_manager.web_get_file(picture.storage)
+                        picture.location = 'local'
+                        picture.save()
+                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
+                        if picture_buffer == None:
+                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                             if picture_buffer != None:
-                                return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+                                return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                             else:
-                                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
-                                if picture_buffer == None:
-                                    return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
-                                else:
-                                    return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                                return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
-                            picture.location = 'local'
-                            picture.save()
-                            picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
-                            if picture_buffer == None:
-                                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
-                                if picture_buffer != None:
-                                    return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
-                                else:
-                                    return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
-                            else:
-                                return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
-                except:
-                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
-                    if picture_buffer == None:
-                        return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
-                    else:
-                        return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
+                            return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
