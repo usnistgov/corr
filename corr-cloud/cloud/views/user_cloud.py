@@ -538,13 +538,10 @@ def user_file_upload(group, item_id):
                                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                             description = '%s is the picture file of the profile %s'%(file_obj.filename, str(item.id))
                             if item.picture != None:
-                                try:
-                                    old_storage = item.picture.storage
-                                    print("Old storage %s"%old_storage)
-                                    _file.delete()
-                                    _file = item.picture
-                                except:
-                                    old_storage = None
+                                old_storage = item.picture.storage
+                                print("Old storage %s"%old_storage)
+                                _file.delete()
+                                _file = item.picture
                             print('%s is the picture file of the profile %s'%(file_obj.filename, str(item.id)))
                         elif 'logo' in group:
                             if 'app' in group:
