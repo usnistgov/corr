@@ -79,15 +79,12 @@ var user = {
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
-        $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
                     document.getElementById('view-api').value = this.responseText;
-                    $('#loading-modal').closeModal();
                 }else {
-                    $('#loading-modal').closeModal();
                     config.error_modal('Revew API token failed', this.responseText);
                 }
             } 
