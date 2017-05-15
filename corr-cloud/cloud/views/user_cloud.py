@@ -413,7 +413,7 @@ def account_update(account_id):
 
                         account_model.group = group
                         account_model.auth = auth
-                        account_model.max_quota = max_quota
+                        account_model.max_quota = float(max_quota)
 
                         profile_model.fname = fname
                         profile_model.lname = lname

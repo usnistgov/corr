@@ -128,6 +128,7 @@ var user = {
             {
                 if(this.readyState == 4){
                     if (this.status == 200) {
+                        Materialize.toast('Update succeeded', 3000, 'rounded');
                         var response = this.responseText;
                         var file = document.getElementById("picture-input");
                         if (file.files.length > 0) {
@@ -187,6 +188,8 @@ var user = {
                                 var content = response["content"];
                                 if(code != 200 && code != 201){
                                     config.error_modal(title, content);
+                                }else{
+                                    Materialize.toast('File upload succeeded', 3000, 'rounded');
                                 }
                             }catch(err){
 

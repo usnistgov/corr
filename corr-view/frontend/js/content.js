@@ -762,7 +762,7 @@ var Account = function (_id){
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     self.save = function(fname, lname, group, auth, org, about, quota) {
         var xmlhttp = new XMLHttpRequest();
-        var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org, 'max-quota': float(quota)};
+        var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org, 'max-quota': quota};
         $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
