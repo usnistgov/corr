@@ -117,7 +117,7 @@ var Space = function (){
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-perm-identity prefix cyan-text text-darken-2'></i><input readonly id='user-fname-"+account["id"]+"' type='text' value='"+account["fname"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-assignment-ind prefix cyan-text text-darken-2'></i><input readonly id='user-lname-"+account["id"]+"' type='text' value='"+account["lname"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-picture-in-picture prefix cyan-text text-darken-2'></i><input readonly placeholder='unregistered,blocked,approved,signup' id='user-auth-"+account["id"]+"' type='text' value='"+account["auth"]+"'></div></div>";
-                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-picture-in-picture prefix cyan-text text-darken-2'></i><input readonly placeholder='x G' id='user-quota-"+account["id"]+"' type='text' value='"+account["max-quota"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-content-save prefix cyan-text text-darken-2'></i><input readonly placeholder='x G' id='user-quota-"+account["id"]+"' type='text' value='"+account["max-quota"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-group-work prefix cyan-text text-darken-2'></i><input readonly placeholder='admin,user,developer,public' id='user-group-"+account["id"]+"' type='text' value='"+account["group"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-home prefix cyan-text text-darken-2'></i><input readonly id='user-org-"+account["id"]+"' type='text' value='"+account["org"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-email prefix cyan-text text-darken-2'></i><input readonly id='user-email-"+account["id"]+"' type='text' value='"+account["email"]+"'></div></div>";
@@ -759,7 +759,7 @@ var Account = function (_id){
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
     self.save = function(fname, lname, group, auth, org, about, quota) {
         var xmlhttp = new XMLHttpRequest();
-        var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org, 'max-quota': quota};
+        var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org, 'max-quota': float(quota)};
         $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
