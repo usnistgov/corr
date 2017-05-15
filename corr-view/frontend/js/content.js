@@ -688,7 +688,8 @@ var Record = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Update record failed', "An error occured while processing your request.");
@@ -710,7 +711,8 @@ var Record = function (_id){
                 var r_access = document.getElementById('record-access-'+self._id);
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Record access updated', 'Your record is now: '+access_value+".");
+                    Materialize.toast('Record access updated', 3000, 'rounded');
+                    // config.error_modal('Record access updated', 'Your record is now: '+access_value+".");
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Record access update failed', this.responseText);
@@ -738,7 +740,8 @@ var Record = function (_id){
                     var elem = document.getElementById("record-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
-                    config.error_modal('Deletion succeeded', 'The selected record was deleted.');
+                    Materialize.toast('Deletion succeeded', 3000, 'rounded');
+                    // config.error_modal('Deletion succeeded', 'The selected record was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Remove record failed', "An error occured while processing your request.");
@@ -766,7 +769,8 @@ var Account = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Account update failed', "An error occured while processing your request.");
@@ -815,7 +819,8 @@ var Project = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Project update failed', "An error occured while processing your request.");
@@ -837,7 +842,8 @@ var Project = function (_id){
                 if (this.status == 200) {
                     console.log("Project access updated.");
                     $('#loading-modal').closeModal();
-                    config.error_modal('Project access updated', 'Your project is now: '+access_value+".");
+                    Materialize.toast('Project access updated', 3000, 'rounded');
+                    // config.error_modal('Project access updated', 'Your project is now: '+access_value+".");
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Project access update failed', this.responseText);
@@ -864,7 +870,8 @@ var Project = function (_id){
                     var elem = document.getElementById("project-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
-                    config.error_modal('Deletion succeeded', 'The selected project was deleted.');
+                    Materialize.toast('Deletion succeeded', 3000, 'rounded');
+                    // config.error_modal('Deletion succeeded', 'The selected project was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Project remove failed', "An error occured while processing your request.");
@@ -891,7 +898,8 @@ var Application = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Tool update failed', "An error occured while processing your request.");
@@ -911,7 +919,8 @@ var Application = function (_id){
                 if (this.status == 200) {
                     document.getElementById("app-token-"+self._id).value = this.responseText;
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your tool key renewal was done.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your tool key renewal was done.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Tool key renew failed', "An error occured while processing your request.");
@@ -933,7 +942,8 @@ var Application = function (_id){
                     var elem = document.getElementById("app-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
-                    config.error_modal('Deletion succeeded', 'The selected tool was deleted.');
+                    Materialize.toast('Deletion succeeded', 3000, 'rounded');
+                    // config.error_modal('Deletion succeeded', 'The selected tool was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Tool remove failed', "An error occured while processing your request.");
@@ -959,7 +969,8 @@ var Diff = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Assessment update failed', "An error occured while processing your request.");
@@ -981,7 +992,8 @@ var Diff = function (_id){
                     var elem = document.getElementById("diff-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
-                    config.error_modal('Deletion succeeded', 'The selected assessment was deleted.');
+                    Materialize.toast('Deletion succeeded', 3000, 'rounded');
+                    // config.error_modal('Deletion succeeded', 'The selected assessment was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Assessment remove failed', "An error occured while processing your request.");
@@ -1007,7 +1019,8 @@ var Environment = function (_id){
             if(this.readyState == 4){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
+                    Materialize.toast('Update succeeded', 3000, 'rounded');
+                    // config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Environment update failed', "An error occured while processing your request.");
@@ -1029,7 +1042,8 @@ var Environment = function (_id){
                     var elem = document.getElementById("env-block-"+self._id);
                     elem.parentElement.removeChild(elem);
                     $('#loading-modal').closeModal();
-                    config.error_modal('Deletion succeeded', 'The selected environment was deleted.');
+                    Materialize.toast('Deletion succeeded', 3000, 'rounded');
+                    // config.error_modal('Deletion succeeded', 'The selected environment was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
                     config.error_modal('Environment remove failed', "An error occured while processing your request.");
