@@ -367,7 +367,7 @@ def user_update():
 
                 profile_model.save()
 
-                user_model.max_quota = max_quota
+                user_model.max_quota = float(max_quota)
                 user_model.save()
 
                 if password != "":

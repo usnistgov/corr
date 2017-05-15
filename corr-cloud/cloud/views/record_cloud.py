@@ -68,6 +68,8 @@ def record_comment(record_id):
         if current_user is not None:
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/record/comment/<record_id>')
+                if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                    return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -154,6 +156,8 @@ def record_create(project_id):
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/record/create/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
                 project = ProjectModel.objects.with_id(project_id)
             except:
@@ -210,7 +214,9 @@ def record_edit(record_id):
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
-            
+            logAccess(CLOUD_URL, 'cloud', '/private/record/edit/<record_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
@@ -397,6 +403,8 @@ def file_add(record_id):
             infos = {}
             try:
                 logAccess(CLOUD_URL, 'cloud', '/private/record/file/upload/<record_id>')
+                if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                    return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -415,8 +423,8 @@ def file_add(record_id):
                         if fk.request.files['file']:
                             file_obj = fk.request.files['file']
 
-                            if current_user.quota+file_obj.tell() > 5000000000:
-                                return fk.redirect('{0}:{1}/error/?code=403'.format(VIEW_HOST, VIEW_PORT))
+                            if current_user.quota+file_obj.tell() > current_user.max_quota*1024*1024*1024:
+                                return fk.Response('You will exceede your allowed maximum quota with this file.', status.HTTP_401_UNAUTHORIZED)
                             else:
                                 relative_path = "%s%s"%(relative_path, file_obj.filename)
                                 location = str(user_model.id)+"-"+str(record.id)+"_%s"%file_obj.filename

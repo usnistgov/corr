@@ -157,6 +157,8 @@ def env_next(project_id):
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/env/next/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
                 project = ProjectModel.objects.with_id(project_id)
             except:

@@ -140,11 +140,11 @@ class UserModel(db.Document):
             self.save()
             data["auth"] = self.auth
         try:
-            data["max-quota"] = size(self.max_quota*1024*1024*1024)
+            data["max-quota"] = self.max_quota
         except:
             self.max_quota = 1.0
             self.save()
-            data["max-quota"] = size(self.max_quota*1024*1024*1024)
+            data["max-quota"] = self.max_quota
         return data
 
     def extended(self):

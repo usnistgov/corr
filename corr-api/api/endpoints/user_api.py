@@ -1601,6 +1601,8 @@ def user_project_create(api_token, app_token):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/create')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -1850,6 +1852,8 @@ def user_project_update(api_token, app_token, project_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2074,6 +2078,8 @@ def user_project_env_push(api_token, app_token, project_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -2151,6 +2157,8 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -2326,6 +2334,8 @@ def user_record_create(api_token, app_token, project_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and project.owner != current_user:
@@ -2485,6 +2495,8 @@ def user_record_update(api_token, app_token, record_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2694,6 +2706,8 @@ def user_diff_create(api_token, app_token):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/create')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     data = json.loads(fk.request.data)
@@ -2812,6 +2826,8 @@ def user_diff_update(api_token, app_token, diff_id):
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
             logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
+        if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
         if fk.request.method == 'POST':
             diff = DiffModel.objects.with_id(diff_id)
             if diff == None:

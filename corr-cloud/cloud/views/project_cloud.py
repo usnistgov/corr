@@ -96,6 +96,9 @@ def project_comment(project_id):
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/project/comment/<project_id>')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
+
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -146,6 +149,8 @@ def project_create():
         current_user = access_resp[1]
         if current_user is not None:
             logAccess(CLOUD_URL, 'cloud', '/private/project/create')
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             if fk.request.data:
                 data = json.loads(fk.request.data)
                 try:

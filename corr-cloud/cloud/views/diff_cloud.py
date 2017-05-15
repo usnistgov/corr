@@ -36,6 +36,9 @@ def diff_create():
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
+            if current_user.quota >= current_user.max_quota*1024*1024*1024:
+                return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
+
             logAccess(CLOUD_URL, 'cloud', '/private/diff/create')
             if fk.request.data:
                 data = json.loads(fk.request.data)
