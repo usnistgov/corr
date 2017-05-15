@@ -431,6 +431,13 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <input id="view-quota" type="text" readonly>
+                    <label id="view-quota-value" for="view-quota">Quota</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
                     <i class="mdi-action-home prefix"></i>
                     <input id="view-org" type="text">
                     <label id="view-org-value" for="view-org">Organisation</label>
@@ -537,6 +544,11 @@
 
                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
+            }
+
+            if(Cookies.get('group') == "admin"){
+                var quota = document.getElementById('view-quota');
+                quota.removeAttribute("readonly");
             }
 
             // Enter key handlers for login/recover/register and email us.

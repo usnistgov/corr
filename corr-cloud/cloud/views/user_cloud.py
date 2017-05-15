@@ -263,7 +263,7 @@ def user_dashboard():
             else:
                 projects = ProjectModel.objects(owner=user_model)
             if profile_model is not None:
-                dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
+                dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'max-quota':user_model.max_quota}
             dashboard["version"] = version
             print("Version {0}".format( dashboard["version"]))
             dashboard["records_total"] = 0
@@ -346,6 +346,8 @@ def user_update():
                 profile_model = ProfileModel.objects(user=user_model).first_or_404()
                 fname = data.get("fname", profile_model.fname)
                 lname = data.get("lname", profile_model.lname)
+                user_model.save()
+                max_quota = data.get("max-quota", user_model.max_quota)
                 password = data.get("pwd", "")
                 organisation = data.get("org", profile_model.organisation)
                 about = data.get("about", profile_model.about)
@@ -364,6 +366,9 @@ def user_update():
                 profile_model.picture = picture
 
                 profile_model.save()
+
+                user_model.max_quota = max_quota
+                user_model.save()
 
                 if password != "":
                     response = access_manager.change_password(user_model, password)
@@ -404,9 +409,11 @@ def account_update(account_id):
                         lname = data.get("lname", profile_model.lname)
                         organisation = data.get("org", profile_model.organisation)
                         about = data.get("about", profile_model.about)
+                        max_quota = data.get("max-quota", account_model.max_quota)
 
                         account_model.group = group
                         account_model.auth = auth
+                        account_model.max_quota = max_quota
 
                         profile_model.fname = fname
                         profile_model.lname = lname
@@ -876,6 +883,7 @@ def user_profile():
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
+        user_model.save()
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -887,7 +895,7 @@ def user_profile():
                     profile_model.created_at=str(datetime.datetime.utcnow())
                     profile_model.save()
             print(fk.request.path)
-            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token, 'max-quota':user_model.max_quota}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

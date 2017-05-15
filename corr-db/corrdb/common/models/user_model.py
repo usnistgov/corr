@@ -3,6 +3,7 @@ from ..core import db
 import json
 import hashlib
 import time
+from hurry.filesize import size
 
 # TODO: Issue with connected_at and datetime in general that makes it not stable in mongodb.
 # TODO: Add the filemodel to the quota check.
@@ -31,6 +32,7 @@ class UserModel(db.Document):
     group = db.StringField(default="unknown", choices=possible_group)
     possible_auth = ["unregistered", "blocked", "approved", "signup"]
     auth = db.StringField(default="signup", choices=possible_auth)
+    max_quota = db.FloatField(default=1.0) # Terms of Gigabits
     extend = db.DictField()
 
     def is_authenticated(self):
@@ -69,6 +71,8 @@ class UserModel(db.Document):
         Returns:
             The call to the mongoengine Document save function.
         """
+        if not self.max_quota:
+            self.max_quota = 1.0
         if not self.created_at:
             self.created_at = str(datetime.datetime.utcnow())
 
@@ -135,6 +139,12 @@ class UserModel(db.Document):
             self.auth = "signup"
             self.save()
             data["auth"] = self.auth
+        try:
+            data["max-quota"] = size(self.max_quota*1024*1024*1024)
+        except:
+            self.max_quota = 1.0
+            self.save()
+            data["max-quota"] = size(self.max_quota*1024*1024*1024)
         return data
 
     def extended(self):

@@ -204,6 +204,7 @@ def users_dashboard():
                     user_info["auth"] = u.auth
                     user_info["group"] = u.group
                     user_info["email"] = u.email
+                    user_info["max-quota"] = u.max_quota
                     user_info["fname"] = profile.fname
                     user_info["lname"] = profile.lname
                     user_info["org"] = profile.organisation

@@ -103,6 +103,7 @@ var user = {
         }else{
             var fname = document.getElementById('view-fname').value;
             var lname = document.getElementById('view-lname').value;
+            
             var org = document.getElementById('view-org').value;
             var about = document.getElementById('view-about').value;
             if(fname == "None"){
@@ -118,7 +119,11 @@ var user = {
                 about = ""
             }
             $('#account-modal').closeModal();
-            var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about }
+            var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about}
+            if(Cookies.get('group') == "admin"){
+                var quota = document.getElementById('view-quota').value;
+                request['max-quota'] = quota;
+            }
             xmlhttp.onreadystatechange = function()
             {
                 if(this.readyState == 4){
@@ -269,6 +274,7 @@ var user = {
                     this.email = response['email'];
                     this.fname = response['fname']
                     this.lname = response['lname'];
+                    this.quota = response['max-quota'];
                     this.organisation = response['organisation']
                     this.about = response['about']
                     this.api = response['api'];
@@ -279,6 +285,7 @@ var user = {
                     document.getElementById('view-lname').value = this.lname;
                     document.getElementById('view-org').value = this.organisation;
                     document.getElementById('view-about').value = this.about;
+                    document.getElementById('view-quota').value = this.quota;
                 } else {
                     config.error_modal('Account access failed', this.responseText);
                 }
