@@ -445,7 +445,7 @@ def file_add(record_id):
                                             return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
                                     else:
                                         file_model.delete()
-                                        return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
+                                        return fk.Response(uploaded[1], status.HTTP_406_NOT_ACCEPTABLE)
                                 except Exception as e:
                                     traceback.print_exc()
                                     return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
