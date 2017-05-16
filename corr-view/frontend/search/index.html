@@ -97,6 +97,181 @@
             </div>
         </div>
 
+        <div id="user-view-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img id="user-picture" src="../images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-perm-identity prefix"></i>
+                    <input id="user-fname" type="text">
+                    <label id="user-fname-value" for="user-fname">First Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment-ind prefix"></i>
+                    <input id="user-lname" type="text">
+                    <label id="user-lname-value" for="user-lname">Last Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-home prefix"></i>
+                    <input id="user-org" type="text">
+                    <label id="user-org-value" for="user-org">Organisation</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="user-about" class="materialize-textarea"></textarea>
+                    <label id="user-about-value" for="user-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-view-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="app-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
+                    <label for="picture-input">
+                        <img src="../images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="app-name" type="text"></input>
+                    <label for="app-name">App Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="app-access">
+                      <option value="activated" disabled selected>Activated</option>
+                      <option value="blocked">Blocked</option>
+                      <option value="deactivated">Deactivated</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="app-about" class="materialize-textarea"></textarea>
+                    <label id="app-about-value" for="app-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#app-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="project logo">
+                    <label for="picture-input">
+                        <img src="../images/project.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="project-name" type="text"></input>
+                    <label for="project-name">Project Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="project-tags" type="text"></input>
+                    <label id="project-tags-value" for="project-tags">Project Tags</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-description prefix"></i>
+                    <textarea id="project-description" class="materialize-textarea"></textarea>
+                    <label id="project-description-value" for="project-description">Description</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="project-goals" class="materialize-textarea"></textarea>
+                    <label id="project-goals-value" for="project-goals">Goals</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#project-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="record-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="project-id" type="text"></input>
+                    <label id="project-id-value" for="project-id">Project</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="record-tags" type="text"></input>
+                    <label id="record-tags-value" for="record-tags">Tags</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <textarea id="record-rationels" class="materialize-textarea"></textarea>
+                    <label id="record-rationels-value" for="record-rationels">Rationels</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="record-status">
+                      <option value="finished" disabled selected>Finished</option>
+                      <option value="crashed">Crashed</option>
+                      <option value="starting">Starting</option>
+                      <option value="started">Started</option>
+                      <option value="paused">Paused</option>
+                      <option value="sleeping">Sleeping</option>
+                      <option value="resumed">Resumed</option>
+                      <option value="running">Running</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
         <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
         </div>
 
@@ -250,8 +425,6 @@
               record_rationels.readOnly = true;
               record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' type='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
               record_status.readOnly = true;
-              var add_callback = document.getElementById("record-add-callback");
-              add_callback.innerHTML = "";
 
             }
 
@@ -269,8 +442,6 @@
               project_description.readOnly = true;
               project_goals.value = goals;
               project_goals.readOnly = true;
-              var add_callback = document.getElementById("project-add-callback");
-              add_callback.innerHTML = "";
 
             }
 
@@ -285,8 +456,6 @@
               app_access.readOnly = true;
               app_about.value = about;
               app_about.readOnly = true;
-              var add_callback = document.getElementById("app-add-callback");
-              add_callback.innerHTML = "";
 
             }
             
