@@ -19,7 +19,8 @@ var user = {
                     Cookies.set('session', response['session'], { path: '' });
                     Cookies.set('group', response['group'], { path: '' });
                     
-                    window.location.reload();
+                    // window.location.reload();
+                    window.location.replace(window.location.origin);
                 }else {
                     config.error_modal('An error occured during login.', this.responseText);
                 }
