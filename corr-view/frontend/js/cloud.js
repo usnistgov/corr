@@ -289,7 +289,7 @@ var user = {
                     document.getElementById('view-lname').value = this.lname;
                     document.getElementById('view-org').value = this.organisation;
                     document.getElementById('view-about').value = this.about;
-                    document.getElementById('view-quota').value = this.quota;
+                    document.getElementById('view-quota').value = this.quota+"GB";
                     document.getElementById('view-usage').value = this.usage+"%";
                 } else {
                     config.error_modal('Account access failed', this.responseText);
