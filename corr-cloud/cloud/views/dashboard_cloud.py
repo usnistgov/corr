@@ -205,7 +205,7 @@ def users_dashboard():
                     user_info["group"] = u.group
                     user_info["email"] = u.email
                     user_info["max-quota"] = u.max_quota
-                    user_info["usage"] = 100*u.quota/(u.max_quota*1024*1024*1024)
+                    user_info["usage"] = round(100*u.quota/(u.max_quota*1024*1024*1024), 2)
                     user_info["fname"] = profile.fname
                     user_info["lname"] = profile.lname
                     user_info["org"] = profile.organisation

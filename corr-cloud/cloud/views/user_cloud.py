@@ -895,7 +895,7 @@ def user_profile():
                     profile_model.created_at=str(datetime.datetime.utcnow())
                     profile_model.save()
             print(fk.request.path)
-            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token, 'max-quota':user_model.max_quota, 'usage':100*(user_model.quota/(user_model.max_quota*1024*1024*1024))}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token, 'max-quota':user_model.max_quota, 'usage':round(100*(user_model.quota/(user_model.max_quota*1024*1024*1024)), 2)}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
