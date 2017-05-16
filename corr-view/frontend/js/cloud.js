@@ -278,6 +278,7 @@ var user = {
                     this.fname = response['fname']
                     this.lname = response['lname'];
                     this.quota = response['max-quota'];
+                    this.usage = response['usage'];
                     this.organisation = response['organisation']
                     this.about = response['about']
                     this.api = response['api'];
@@ -289,6 +290,7 @@ var user = {
                     document.getElementById('view-org').value = this.organisation;
                     document.getElementById('view-about').value = this.about;
                     document.getElementById('view-quota').value = this.quota;
+                    document.getElementById('view-usage').value = this.usage+"%";
                 } else {
                     config.error_modal('Account access failed', this.responseText);
                 }
