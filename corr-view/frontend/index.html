@@ -507,7 +507,10 @@
                 $('.collapsible').collapsible({accordion : false});
                 $('.modal-trigger').leanModal();
                 document.getElementById("nav-home").href = window.location.origin;
-                document.getElementById("nav-search").href = window.location.origin+"/search";
+                var search_menu = document.getElementById("nav-search");
+                if(search_menu != null){
+                    search_menu.href = window.location.origin+"/search";
+                }
             });
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange=function()
