@@ -59,6 +59,7 @@ class AccessManager:
         """
         from corrdb.common.models import UserModel
         account = None
+        _account = None
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
         if self.type == 'api-token':
             pass
@@ -67,23 +68,21 @@ class AccessManager:
                 account = UserModel.objects(email=email).first()
             elif self.type == 'stormpath':
                 try:
-                    _account = application.authenticate_account(
-                        email,
-                        password,
-                    ).account
+                    _account = self.manager.application.search(email).first()
                 except:
                     _account = None
                 if _account != None:
                     account = UserModel.objects(email=email).first()
             if account is None:
                 if self.type == 'stormpath':
-                    failure = self.create_account(email, password, fname, lname, mname)[0] is None
                     account = UserModel.objects(email=email).first()
                     if account is None:
                         (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
-                    if failure:
-                        account.password = hash_pwd
-                        account.save()
+                    if _account is None:
+                        failure = self.create_account(email, password, fname, lname, mname)[0] is None
+                        if failure:
+                            account.password = hash_pwd
+                            account.save()
                 if self.type == 'mongodb':
                     account = UserModel.objects(email=email).first()
                     if account is None:
@@ -107,8 +106,19 @@ class AccessManager:
         if self.type == 'stormpath':
             try:
                 _account = self.manager.application.authenticate_account(email, password).account
-                if _account is not None:
+                if _account:
                     account = UserModel.objects(email=email).first()
+                else:
+                    _account = self.manager.application.search(email).first()
+                    if _account is None:
+                        failure = self.create_account(email, password, "FirstName", "LastName", "")[0] is None
+                        if failure:
+                            hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
+                            account = UserModel.objects(email=email, password=hash_pwd).first()
+                        else:
+                            account = UserModel.objects(email=email).first()
+                    else:
+                        account = None
             except Error as re:
                 print('Message: %s' %re.message)
                 print('HTTP Status: %s' %str(re.status))
