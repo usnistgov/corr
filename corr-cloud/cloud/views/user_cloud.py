@@ -72,6 +72,8 @@ def user_register():
                                 user_info["created"] = str(user_model.created_at)
                                 user_info["id"] = str(user_model.id)
                                 user_info["auth"] = user_model.auth
+                                user_info["max-quota"] = user_model.max_quota
+                                user_info["usage"] = round(100*user_model.quota/(user_model.max_quota*1024*1024*1024), 2)
                                 user_info["group"] = user_model.group
                                 user_info["email"] = user_model.email
                                 user_info["fname"] = profile_model.fname
