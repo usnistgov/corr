@@ -503,7 +503,7 @@ var user = {
                             content += "</div>";
                             document.getElementById("users-list").innerHTML += content;
                             var user_block_check = document.getElementById("user-block-"+account["id"]);
-                            config.error_modal('user add successfull', this.responseText);
+                            config.error_modal('user add successfull', "Account successfull added.");
                         }
                     }else{
                         config.error_modal('Add user failed', this.responseText);
