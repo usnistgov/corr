@@ -369,6 +369,7 @@ def user_update():
 
                 profile_model.save()
 
+                max_quota = str(max_quota)
                 if "GB" in max_quota:
                     max_quota = max_quota.split("GB")[0]
                 user_model.max_quota = float(max_quota)
@@ -417,6 +418,7 @@ def account_update(account_id):
 
                         account_model.group = group
                         account_model.auth = auth
+                        max_quota = str(max_quota)
                         if "GB" in max_quota:
                             max_quota = max_quota.split("GB")[0]
                         account_model.max_quota = float(max_quota)
