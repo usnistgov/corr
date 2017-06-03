@@ -230,31 +230,29 @@ def download_env(hash_session, env_id):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
-        if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        try:
+            env = EnvironmentModel.objects.with_id(env_id)
+            # project = None
+            # for pro in ProjectModel.objects(owner=current_user):
+            #     if str(env.id) in pro.history:
+            #         project = pro
+            #         break
+        except:
+            env = None
+            # project = None
+            print(str(traceback.print_exc()))
+            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if env is None:
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
+            # Envs are free for download.
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/download/<env_id>')
-            try:
-                env = EnvironmentModel.objects.with_id(env_id)
-                project = None
-                for pro in ProjectModel.objects(owner=current_user):
-                    if str(env.id) in pro.history:
-                        project = pro
-                        break
-            except:
-                env = None
-                project = None
-                print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
-            if env is None or project is None:
+            prepared = storage_manager.prepare_env(project, env)
+            if prepared[0] == None:
+                print("Unable to retrieve a env to download.")
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
-                prepared = storage_manager.prepare_env(project, env)
-                if prepared[0] == None:
-                    print("Unable to retrieve a env to download.")
-                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
-                else:
-                    return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
+                return fk.send_file(prepared[0], as_attachment=True, attachment_filename=prepared[1], mimetype='application/zip')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 

@@ -240,19 +240,19 @@ def download_diff(hash_session, diff_id):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
-        if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        try:
+            diff = DiffModel.objects.with_id(diff_id)
+        except:
+            diff = None
+            print(str(traceback.print_exc()))
+            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if diff is None:
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/download/<diff_id>')
-            try:
-                diff = DiffModel.objects.with_id(diff_id)
-            except:
-                diff = None
-                print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
-            if diff is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+            if current_user is None and diff.record_from.access != 'public' and diff.record_to.access != 'public':
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/download/<diff_id>')
                 prepared = storage_manager.prepare_diff(diff)
                 if prepared[0] == None:
                     print("Unable to retrieve a diff to download.")

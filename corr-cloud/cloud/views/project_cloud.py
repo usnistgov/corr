@@ -203,13 +203,14 @@ def project_edit(project_id):
                         description = data.get("description", project.description)
                         goals = data.get("goals", project.goals)
                         group = data.get("group", project.group)
-                        access = data.get("access", project.access)
+                        access = data.get("access", 'unchanged')
                         tags = data.get("tags", ','.join(project.tags))
                         environment = data.get("environment", {})
                         project.description = description
                         project.goals = goals
                         project.group = group
-                        project.access = access
+                        if access != "unchanged":
+                            project.access = access
                         project.tags = tags.split(',')
                         if len(environment) != 0:
                             environment_model = EnvironmentModel.objects.with_id(environment['id'])
@@ -227,10 +228,11 @@ def project_edit(project_id):
                                     environment_model.bundle['location'] = remote_bundle
                                 environment_model.save()
                         project.save()
-                        if access == "private":
+                        if access != "unchanged":
                             for record in RecordModel.objects(project=project):
-                                record.access = "private"
+                                record.access = access
                                 record.save()
+
                         return fk.Response('Project updated', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))

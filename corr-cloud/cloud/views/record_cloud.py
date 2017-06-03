@@ -306,19 +306,19 @@ def pull_record(hash_session, record_id):
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
-        if current_user is None:
-            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+        try:
+            record = RecordModel.objects.with_id(record_id)
+        except:
+            record = None
+            print(str(traceback.print_exc()))
+            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if record is None:
+            return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
-            try:
-                record = RecordModel.objects.with_id(record_id)
-            except:
-                record = None
-                print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
-            if record is None:
-                return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+            if current_user is None and record.access != 'public':
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
+                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
                 prepared = storage_manager.prepare_record(record)
                 if prepared[0] == None:
                     print("Unable to retrieve a record to download.")
