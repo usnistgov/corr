@@ -573,7 +573,7 @@ var Space = function (){
                         }
                         if(!exRecord == true){
                             for(var i = 0; i < this.query_result["records"]["count"]; i++){
-                                var record_content = renderer.record(this.query_result["records"]["result"][i], false);
+                                var record_content = renderer.record(this.query_result["records"]["result"][i], false, public);
                                 query_result.innerHTML += record_content;
                             }
                             hits += this.query_result["records"]["count"];
