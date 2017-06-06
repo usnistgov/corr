@@ -163,7 +163,7 @@ class ProjectModel(db.Document):
                 records = []
             else:
                 if len(records) - begin >= 100:
-                    end = page*100 + 100
+                    end = int(page)*100 + 100
                 else:
                     end = len(records)
                 records = records[begin:end]
@@ -172,13 +172,13 @@ class ProjectModel(db.Document):
         else:
             if project.access == 'public':
                 records_summary = []
-                begin = page*100
+                begin = int(page)*100
                 if begin >= len(records):
                     end = -1
                     records = []
                 else:
                     if len(records) - begin >= 100:
-                        end = page*100 + 100
+                        end = int(page)*100 + 100
                     else:
                         end = len(records)
                     records = records[begin:end]
