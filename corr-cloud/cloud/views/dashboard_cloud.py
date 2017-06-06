@@ -293,8 +293,11 @@ def dashboard_records(project_id):
                 if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 else:
-                    print(str(project.activity_json()))
-                    return fk.Response(project.activity_json(), mimetype='application/json')
+                    # print(str(project.activity_json()))
+                    if fk.request.args:
+                        return fk.Response(project.activity_json(page=fk.request.args.get("page")), mimetype='application/json')
+                    else:
+                        return fk.Response(project.activity_json(), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
 
@@ -452,9 +455,12 @@ def public_search():
         logAccess(CLOUD_URL, 'cloud', '/public/dashboard/search')
         if fk.request.args:
             _request = ""
+            page = 0
             for key, value in fk.request.args.items():
                 if key == "req":
                     _request = "{0}".format(value)
+                elif key == "page":
+                    page = int(value)
                 else:
                     _request = "{0}&{1}{2}".format(_request, key, value)
             if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
@@ -573,6 +579,18 @@ def public_dashboard_records(project_id):
             project = {"project":json.loads(p.summary_json())}
             records = RecordModel.objects(project=p)
             records_object = []
+            if fk.request.args:
+                page = fk.request.args.get("page")
+                begin = page * 100
+                if begin > len(records):
+                    end = -1
+                    records = []
+                else:
+                    if len(records) >= begin + 100:
+                        end = begin + 100
+                    else:
+                        end = len(records)
+                    records = records[begin, end]
             for record in records:
                 if record.access == 'public':
                     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}

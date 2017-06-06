@@ -12,6 +12,7 @@ var Space = function (){
                     this.dash_content = response;
                     document.getElementById("projects-list").innerHTML = "";
                     var version = response["version"];
+                    var end = response["end"];
                     for(var i = 0; i < response["projects"].length; i++){
                         project = response["projects"][i];
                         var disable_view = "";
@@ -70,7 +71,7 @@ var Space = function (){
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+project["project"]["id"]+"' type='text' value='"+project["project"]["description"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='goals'><div class='input-field col s12'><i class='mdi-action-subject prefix cyan-text text-darken-2'></i><input readonly id='project-goals-"+project["project"]["id"]+"' type='text' value='"+project["project"]["goals"]+"'></div></div>";
                         content += "<div class='card-action center-align'>";
-                        content += "<a href='./?view=records&project="+project["project"]["id"]+"' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
+                        content += "<a href='./?view=records&project="+project["project"]["id"]+"&diff=0' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='records'><i class='mdi-file-cloud-upload cyan-text text-darken-2'></i> <span class='records badge'>"+project["project"]["records"]+"</span></a>";
                         content += "<a href='./?view=diffs&project="+project["project"]["id"]+"' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='diffs'><i class='mdi-image-compare cyan-text text-darken-2'></i> <span class='diffs badge'>"+project["project"]["diffs"]+"</span></a>";
                         content += "<a href='./?view=envs&project="+project["project"]["id"]+"' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environments'><i class='mdi-maps-layers cyan-text text-darken-2'></i> <span class='containers badge'>"+project["project"]["environments"]+"</span></a>";
                         content += "</div>";
@@ -79,6 +80,10 @@ var Space = function (){
                         content += "<div id='project-"+project["project"]["id"]+"-confirm' class='modal'></div>";
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
+                    }
+                    // Add load more to the end.
+                    if(end != -1){
+                        // Add a button to load more.
                     }
                     document.getElementById("footer-version").innerHTML = version;
                 }else{
@@ -227,7 +232,7 @@ var Space = function (){
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.records = function(project_id) {
+    this.records = function(project_id, page) {
         document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         document.getElementById("temporal-slider").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();
@@ -340,9 +345,9 @@ var Space = function (){
             }
         };
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/records/all");
+            xmlhttp.open("GET", url+"/private/dashboard/records/all?page="+page);
         }else{
-            xmlhttp.open("GET", url+"/private/dashboard/records/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/records/"+project_id+"?page="+page);
         }
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();

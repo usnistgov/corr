@@ -71,14 +71,17 @@ var dashboard = {
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
             var space = new Space();
-            space.records(project);
+            space.records(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");

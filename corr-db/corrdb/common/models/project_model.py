@@ -150,21 +150,41 @@ class ProjectModel(db.Document):
             data['description'] = None
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
-    def activity_json(self, public=False):
+    def activity_json(self, public=False, page=0):
         """Gather all the activity done on the project.
         Returns:
             The pretty json of the project activity.
         """
         if not public or self.owner.group == "admin":
+            begin = page*100
+            if begin >= len(self.records):
+                end = -1
+                self.records = []
+            else:
+                if len(self.records) - begin >= 100:
+                    end = page*100 + 100
+                else:
+                    end = len(self.records)
+                self.records = self.records[begin:end]
             records_summary = [json.loads(r.summary_json()) for r in self.records]
-            return json.dumps({'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
+            return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
         else:
             if project.access == 'public':
                 records_summary = []
+                begin = page*100
+                if begin >= len(self.records):
+                    end = -1
+                    self.records = []
+                else:
+                    if len(self.records) - begin >= 100:
+                        end = page*100 + 100
+                    else:
+                        end = len(self.records)
+                    self.records = self.records[begin:end]
                 for record in self.records:
                     if record.access == 'public':
                         records_summary.append(json.loads(r.summary_json()))
-                return json.dumps({'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
+                return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
             else:
                 return json.dumps({}, sort_keys=True, indent=4, separators=(',', ': '))
 
