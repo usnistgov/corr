@@ -12,7 +12,6 @@ var Space = function (){
                     this.dash_content = response;
                     document.getElementById("projects-list").innerHTML = "";
                     var version = response["version"];
-                    var end = response["end"];
                     for(var i = 0; i < response["projects"].length; i++){
                         project = response["projects"][i];
                         var disable_view = "";
@@ -246,6 +245,7 @@ var Space = function (){
                     this.dash_content = response;
                     var records = response["records"];
                     var selected_records = [];
+                    var end = response["end"];
                     
                     for(var i = 0; i < response["records"].length; i++){
                         record = response["records"][i];
@@ -339,6 +339,11 @@ var Space = function (){
                         content += "</div>";
                         content += "</div>";
                         document.getElementById("records-list").innerHTML += content;
+                    }
+                    // Add load more to the end.
+                    if(end != -1){
+                        document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a class='btn-floating waves-effect waves-light ''><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        // Add a button to load more.
                     }
                 }else{
                     config.error_modal('Dashboard records failed', this.responseText);
