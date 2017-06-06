@@ -157,7 +157,7 @@ class ProjectModel(db.Document):
         """
         records = self.records
         if not public or self.owner.group == "admin":
-            begin = page*100
+            begin = int(page)*100
             if begin >= len(records):
                 end = -1
                 records = []

@@ -581,7 +581,7 @@ def public_dashboard_records(project_id):
             records_object = []
             if fk.request.args:
                 page = fk.request.args.get("page")
-                begin = page * 100
+                begin = int(page) * 100
                 if begin > len(records):
                     end = -1
                     records = []
