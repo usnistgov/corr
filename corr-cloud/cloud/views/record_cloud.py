@@ -174,7 +174,7 @@ def record_create(project_id):
                                 rationels = data.get("rationels", "")
                                 status = data.get("status", "unknown")
                                 content = data.get("content", "no content")
-                                access = data.get("access", "public")
+                                access = data.get("access", project.access)
                                 record.tags = [tags]
                                 record.rationels = [rationels]
                                 record.status = status

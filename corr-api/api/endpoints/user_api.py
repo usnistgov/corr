@@ -2364,7 +2364,7 @@ def user_record_create(api_token, app_token, project_id):
                         data_pop(data, 'environment')
                         cloned_from_id = data.get('cloned_from', '')
                         data_pop(data, 'cloned_from')
-                        access = data.get('access', 'private')
+                        access = data.get('access', project.access)
                         data_pop(data, 'access')
                         # resources_ids = data.get('resources', [])
                         # data_pop(data, 'resources')

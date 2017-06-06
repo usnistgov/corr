@@ -146,7 +146,10 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
 
 def basicAuthSession(request):
     result = parse_authorization_header(request.headers.get('authorization'))
-    return result.password
+    if result:
+        return result.password
+    else:
+        return None
 
 from .managers import *
 from .core import *
