@@ -83,6 +83,7 @@ var Space = function (){
                     }
                     // Add load more to the end.
                     if(end != -1){
+                        document.getElementById("projects-list").innerHTML += "<div id='load-more-records-block' class='row center'><a class='btn-floating waves-effect waves-light ''><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         // Add a button to load more.
                     }
                     document.getElementById("footer-version").innerHTML = version;
