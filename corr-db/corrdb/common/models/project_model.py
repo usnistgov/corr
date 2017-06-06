@@ -155,33 +155,34 @@ class ProjectModel(db.Document):
         Returns:
             The pretty json of the project activity.
         """
+        records = self.records
         if not public or self.owner.group == "admin":
             begin = page*100
-            if begin >= len(self.records):
+            if begin >= len(records):
                 end = -1
-                self.records = []
+                records = []
             else:
-                if len(self.records) - begin >= 100:
+                if len(records) - begin >= 100:
                     end = page*100 + 100
                 else:
-                    end = len(self.records)
-                self.records = self.records[begin:end]
-            records_summary = [json.loads(r.summary_json()) for r in self.records]
+                    end = len(records)
+                records = records[begin:end]
+            records_summary = [json.loads(r.summary_json()) for r in records]
             return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
         else:
             if project.access == 'public':
                 records_summary = []
                 begin = page*100
-                if begin >= len(self.records):
+                if begin >= len(records):
                     end = -1
-                    self.records = []
+                    .records = []
                 else:
-                    if len(self.records) - begin >= 100:
+                    if len(records) - begin >= 100:
                         end = page*100 + 100
                     else:
-                        end = len(self.records)
-                    self.records = self.records[begin:end]
-                for record in self.records:
+                        end = len(records)
+                    records = records[begin:end]
+                for record in records:
                     if record.access == 'public':
                         records_summary.append(json.loads(r.summary_json()))
                 return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
