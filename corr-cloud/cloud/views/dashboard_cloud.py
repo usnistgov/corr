@@ -581,13 +581,13 @@ def public_dashboard_records(project_id):
             records_object = []
             if fk.request.args:
                 page = fk.request.args.get("page")
-                begin = int(page) * 100
+                begin = int(page) * 99
                 if begin > len(records):
                     end = -1
                     records = []
                 else:
-                    if len(records) >= begin + 100:
-                        end = begin + 100
+                    if len(records) >= begin + 99:
+                        end = begin + 99
                     else:
                         end = len(records)
                     records = records[begin, end]

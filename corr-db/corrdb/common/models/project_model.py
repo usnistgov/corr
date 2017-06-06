@@ -157,13 +157,13 @@ class ProjectModel(db.Document):
         """
         records = self.records
         if not public or self.owner.group == "admin":
-            begin = int(page)*100
+            begin = int(page)*99
             if begin >= len(records):
                 end = -1
                 records = []
             else:
-                if len(records) - begin >= 100:
-                    end = int(page)*100 + 100
+                if len(records) - begin >= 99:
+                    end = int(page)*99 + 99
                 else:
                     end = len(records)
                 records = records[begin:end]
@@ -172,13 +172,13 @@ class ProjectModel(db.Document):
         else:
             if project.access == 'public':
                 records_summary = []
-                begin = int(page)*100
+                begin = int(page)*99
                 if begin >= len(records):
                     end = -1
                     records = []
                 else:
-                    if len(records) - begin >= 100:
-                        end = int(page)*100 + 100
+                    if len(records) - begin >= 99:
+                        end = int(page)*99 + 99
                     else:
                         end = len(records)
                     records = records[begin:end]
