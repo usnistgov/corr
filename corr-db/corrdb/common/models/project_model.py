@@ -175,7 +175,7 @@ class ProjectModel(db.Document):
                 begin = page*100
                 if begin >= len(records):
                     end = -1
-                    .records = []
+                    records = []
                 else:
                     if len(records) - begin >= 100:
                         end = page*100 + 100
