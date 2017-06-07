@@ -439,7 +439,7 @@ var Space = function (){
             document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-records-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("load-more-diffs-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         }else{
             document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
         }
@@ -614,9 +614,9 @@ var Space = function (){
                     }
 
                     var response = JSON.parse(this.responseText);
-                    document.getElementById("envs-list").innerHTML = "";
                     this.dash_content = response;
                     var envs = response["envs"];
+                    var end = response["end"];
                     
                     for(var i = 0; i < response["envs"].length; i++){
                         env = response["envs"][i];
