@@ -2,8 +2,16 @@ var Space = function (){
     var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
     this.dash_content = "";
     this.query_result = "";
-    this.dashboard = function() {
+    this.dashboard = function(page) {
         var xmlhttp = new XMLHttpRequest();
+        if(parseInt(page) == 0){
+            document.getElementById("projects-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("temporal-slider").innerHTML = "";
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-projects-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }else{
+            document.getElementById("projects-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -12,6 +20,14 @@ var Space = function (){
                     this.dash_content = response;
                     document.getElementById("projects-list").innerHTML = "";
                     var version = response["version"];
+                    if(parseInt(page) == 0){
+                        document.getElementById("projects-list").innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-projects-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        document.getElementById("projects-list").innerHTML = "";
+                    }
                     for(var i = 0; i < response["projects"].length; i++){
                         project = response["projects"][i];
                         var disable_view = "";
@@ -80,31 +96,52 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("projects-list").innerHTML += content;
                     }
+                    document.getElementById("footer-version").innerHTML = version;
                     // Add load more to the end.
                     if(end != -1){
-                        document.getElementById("projects-list").innerHTML += "<div id='load-more-records-block' class='row center'><a class='btn-floating waves-effect waves-light ''><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
-                        // Add a button to load more.
+                        var next_Page = parseInt(page)+1;
+                         if(parseInt(page) == 0){
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
                     }
-                    document.getElementById("footer-version").innerHTML = version;
                 }else{
                     config.error_modal('Dashboard home failed', this.responseText);
                 }
             }
         };
-        xmlhttp.open("GET", url+"/private/dashboard/projects");
+        xmlhttp.open("GET", url+"/private/dashboard/projects?page="+page);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.users = function() {
+    this.users = function(page) {
         var xmlhttp = new XMLHttpRequest();
+        if(parseInt(page) == 0){
+            document.getElementById("users-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("temporal-slider").innerHTML = "";
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-users-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }else{
+            document.getElementById("users-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
                     var response = JSON.parse(this.responseText);
                     this.dash_content = response;
-                    document.getElementById("users-list").innerHTML = "";
                     var version = response["version"];
+                    if(parseInt(page) == 0){
+                        document.getElementById("users-list").innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-users-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        document.getElementById("users-list").innerHTML = "";
+                    }
                     for(var i = 0; i < response["users"].length; i++){
                         account = response["users"][i];
 
@@ -140,12 +177,23 @@ var Space = function (){
                         document.getElementById("users-list").innerHTML += content;
                     }
                     document.getElementById("footer-version").innerHTML = version;
+                    // Add load more to the end.
+                    if(end != -1){
+                        var next_Page = parseInt(page)+1;
+                         if(parseInt(page) == 0){
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
+                    }
                 }else{
                     config.error_modal('Dashboard users failed', this.responseText);
                 }
             }
         };
-        xmlhttp.open("GET", url+"/private/dashboard/users");
+        xmlhttp.open("GET", url+"/private/dashboard/users?page="+page);
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
@@ -359,11 +407,11 @@ var Space = function (){
                     if(end != -1){
                         var next_Page = parseInt(page)+1;
                          if(parseInt(page) == 0){
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else{
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }
                         
                         // Add a button to load more.
@@ -381,17 +429,31 @@ var Space = function (){
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.diffs = function(project_id) {
-        document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
-        document.getElementById("temporal-slider").innerHTML = "";
+    this.diffs = function(project_id, page) {
+        if(parseInt(page) == 0){
+            document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("temporal-slider").innerHTML = "";
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-records-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }else{
+            document.getElementById("diffs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
                     var response = JSON.parse(this.responseText);
-                    document.getElementById("diffs-list").innerHTML = "";
                     this.dash_content = response;
+
+                    if(parseInt(page) == 0){
+                        document.getElementById("diffs-list").innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-diffs-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        document.getElementById("diffs-list").innerHTML = "";
+                    }
                     
                     for(var i = 0; i < response["number"]; i++){
                         diff = response["diffs"][i];
@@ -495,22 +557,41 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("diffs-list").innerHTML += content;
                     }
+                    // Add load more to the end.
+                    if(end != -1){
+                        var next_Page = parseInt(page)+1;
+                         if(parseInt(page) == 0){
+                            document.getElementById("diffs-list").innerHTML += "<div id='load-more-diffs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            document.getElementById("diffs-list").innerHTML += "<div id='load-more-diffs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            document.getElementById("diffs-list").innerHTML += "<div id='load-more-diffs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
+                        
+                        // Add a button to load more.
+                    }
                 }else{
-                config.error_modal('Dashboard diffs failed', this.responseText);
+                    config.error_modal('Dashboard diffs failed', this.responseText);
                 }
             }
         };
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/diffs/all");
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/all?page="+page);
         }else{
-            xmlhttp.open("GET", url+"/private/dashboard/diffs/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/diffs/"+project_id+"?page="+page);
         }
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.envs = function(project_id) {
-        document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
-        document.getElementById("temporal-slider").innerHTML = "";
+    this.envs = function(project_id, page) {
+        if(parseInt(page) == 0){
+            document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("temporal-slider").innerHTML = "";
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-envs-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }else{
+            document.getElementById("envs-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
         {
@@ -520,6 +601,15 @@ var Space = function (){
                     document.getElementById("envs-list").innerHTML = "";
                     this.dash_content = response;
                     var envs = response["envs"];
+
+                    if(parseInt(page) == 0){
+                        document.getElementById("envs-list").innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-envs-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        document.getElementById("envs-list").innerHTML = "";
+                    }
                     
                     for(var i = 0; i < response["envs"].length; i++){
                         env = response["envs"][i];
@@ -555,15 +645,28 @@ var Space = function (){
                         content += "</div>";
                         document.getElementById("envs-list").innerHTML += content;
                     }
+                    // Add load more to the end.
+                    if(end != -1){
+                        var next_Page = parseInt(page)+1;
+                         if(parseInt(page) == 0){
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
+                        
+                        // Add a button to load more.
+                    }
                 } else{
                     config.error_modal('Dashboard envs failed', this.responseText);
                 }
             }
         };
         if(project_id == "all"){
-            xmlhttp.open("GET", url+"/private/dashboard/envs/all");
+            xmlhttp.open("GET", url+"/private/dashboard/envs/all?page="+page);
         }else{
-            xmlhttp.open("GET", url+"/private/dashboard/envs/"+project_id);
+            xmlhttp.open("GET", url+"/private/dashboard/envs/"+project_id+"?page="+page);
         }
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
