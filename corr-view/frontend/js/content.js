@@ -233,15 +233,30 @@ var Space = function (){
         xmlhttp.send();
     },
     this.records = function(project_id, page) {
-        document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
-        document.getElementById("temporal-slider").innerHTML = "";
+        if(parseInt(page) == 0){
+            document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+            document.getElementById("temporal-slider").innerHTML = "";
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-records-block").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }else{
+            document.getElementById("records-list").innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
+        }
+        
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
                     var response = JSON.parse(this.responseText);
-                    document.getElementById("records-list").innerHTML = "";
+                    if(parseInt(page) == 0){
+                        document.getElementById("records-list").innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-records-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        document.getElementById("records-list").innerHTML = "";
+                    }
+                    
                     this.dash_content = response;
                     var records = response["records"];
                     var selected_records = [];
@@ -342,7 +357,14 @@ var Space = function (){
                     }
                     // Add load more to the end.
                     if(end != -1){
-                        document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a class='btn-floating waves-effect waves-light ''><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                         if(parseInt(page) == 0){
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 0);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", "+(parseInt(page)+1)+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 0);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
+                        
                         // Add a button to load more.
                     }
                 }else{
