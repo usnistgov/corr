@@ -16,10 +16,6 @@ var Space = function (){
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
-                    var response = JSON.parse(this.responseText);
-                    this.dash_content = response;
-                    document.getElementById("projects-list").innerHTML = "";
-                    var version = response["version"];
                     if(parseInt(page) == 0){
                         document.getElementById("projects-list").innerHTML = "";
                     }else if(parseInt(page) > 0){
@@ -28,6 +24,12 @@ var Space = function (){
                     }else{
                         document.getElementById("projects-list").innerHTML = "";
                     }
+
+                    var response = JSON.parse(this.responseText);
+                    this.dash_content = response;
+                    var version = response["version"];
+                    var end = response["end"];
+
                     for(var i = 0; i < response["projects"].length; i++){
                         project = response["projects"][i];
                         var disable_view = "";
@@ -131,9 +133,6 @@ var Space = function (){
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
-                    var response = JSON.parse(this.responseText);
-                    this.dash_content = response;
-                    var version = response["version"];
                     if(parseInt(page) == 0){
                         document.getElementById("users-list").innerHTML = "";
                     }else if(parseInt(page) > 0){
@@ -142,6 +141,12 @@ var Space = function (){
                     }else{
                         document.getElementById("users-list").innerHTML = "";
                     }
+
+                    var response = JSON.parse(this.responseText);
+                    this.dash_content = response;
+                    var version = response["version"];
+                    var end = response["end"];
+                    
                     for(var i = 0; i < response["users"].length; i++){
                         account = response["users"][i];
 
@@ -443,8 +448,6 @@ var Space = function (){
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
-                    var response = JSON.parse(this.responseText);
-                    this.dash_content = response;
 
                     if(parseInt(page) == 0){
                         document.getElementById("diffs-list").innerHTML = "";
@@ -454,6 +457,10 @@ var Space = function (){
                     }else{
                         document.getElementById("diffs-list").innerHTML = "";
                     }
+
+                    var response = JSON.parse(this.responseText);
+                    this.dash_content = response;
+                    var end = response["end"];
                     
                     for(var i = 0; i < response["number"]; i++){
                         diff = response["diffs"][i];
@@ -597,11 +604,6 @@ var Space = function (){
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
-                    var response = JSON.parse(this.responseText);
-                    document.getElementById("envs-list").innerHTML = "";
-                    this.dash_content = response;
-                    var envs = response["envs"];
-
                     if(parseInt(page) == 0){
                         document.getElementById("envs-list").innerHTML = "";
                     }else if(parseInt(page) > 0){
@@ -610,6 +612,11 @@ var Space = function (){
                     }else{
                         document.getElementById("envs-list").innerHTML = "";
                     }
+
+                    var response = JSON.parse(this.responseText);
+                    document.getElementById("envs-list").innerHTML = "";
+                    this.dash_content = response;
+                    var envs = response["envs"];
                     
                     for(var i = 0; i < response["envs"].length; i++){
                         env = response["envs"][i];
