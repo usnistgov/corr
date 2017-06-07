@@ -357,12 +357,13 @@ var Space = function (){
                     }
                     // Add load more to the end.
                     if(end != -1){
+                        var next_Page = parseInt(page)+1;
                          if(parseInt(page) == 0){
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 0);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", "+(parseInt(page)+1)+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else{
-                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 0);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("records-list").innerHTML += "<div id='load-more-records-block' class='row center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='bottom' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }
                         
                         // Add a button to load more.
