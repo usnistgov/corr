@@ -167,7 +167,24 @@ def project_dashboard():
             summaries = []
             for p in projects:
                 summaries.append(json.loads(p.activity_json()))
-            return fk.Response(json.dumps({'version':version, 'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            end = 99
+            if fk.request.args:
+                page = int(fk.request.args.get("page"))
+                begin = int(page)*99
+                if int(page) == 0 and len(summaries) <= 99:
+                    # end = -1
+                    pass
+                else:
+                    if begin >= len(summaries):
+                        end = -1
+                        summaries = []
+                    else:
+                        if len(summaries) - begin >= 99:
+                            end = int(page)*99 + 99
+                        else:
+                            end = len(summaries)
+                        summaries = summaries[begin:end]
+            return fk.Response(json.dumps({'end':end, 'version':version, 'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -214,7 +231,24 @@ def users_dashboard():
                     user_info["projects"] = u.info()['total_projects']
                     user_info["records"] = u.info()['total_records']
                     summaries.append(user_info)
-            return fk.Response(json.dumps({'version':version, 'number':len(summaries), 'users':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            end = 99
+            if fk.request.args:
+                page = int(fk.request.args.get("page"))
+                begin = int(page)*99
+                if int(page) == 0 and len(summaries) <= 99:
+                    # end = -1
+                    pass
+                else:
+                    if begin >= len(summaries):
+                        end = -1
+                        summaries = []
+                    else:
+                        if len(summaries) - begin >= 99:
+                            end = int(page)*99 + 99
+                        else:
+                            end = len(summaries)
+                        summaries = summaries[begin:end]
+            return fk.Response(json.dumps({'end':end, 'version':version, 'number':len(summaries), 'users':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -260,8 +294,24 @@ def diffs_dashboard(project_id):
                             summaries.append(d.info())
                         elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                             summaries.append(d.info())
-
-            return fk.Response(json.dumps({'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            end = 99
+            if fk.request.args:
+                page = int(fk.request.args.get("page"))
+                begin = int(page)*99
+                if int(page) == 0 and len(summaries) <= 99:
+                    # end = -1
+                    pass
+                else:
+                    if begin >= len(summaries):
+                        end = -1
+                        summaries = []
+                    else:
+                        if len(summaries) - begin >= 99:
+                            end = int(page)*99 + 99
+                        else:
+                            end = len(summaries)
+                        summaries = summaries[begin:end]
+            return fk.Response(json.dumps({'end':end, 'number':len(summaries), 'diffs':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -319,12 +369,31 @@ def dashboard_envs(project_id):
                 else:
                     projects = ProjectModel.objects(owner=current_user)
                 envs = {'size':0, 'envs':[]}
+
                 for project in projects:
                     for env_id in project.history:
                         env = EnvironmentModel.objects.with_id(env_id)
                         env_info = env.info()
                         env["project"] = project.info()
                         envs['envs'].append(env_info)
+                end = 99
+                if fk.request.args:
+                    page = int(fk.request.args.get("page"))
+                    begin = int(page)*99
+                    if int(page) == 0 and len(envs['envs']) <= 99:
+                        # end = -1
+                        pass
+                    else:
+                        if begin >= len(envs['envs']):
+                            end = -1
+                            envs['envs'] = []
+                        else:
+                            if len(envs['envs']) - begin >= 99:
+                                end = int(page)*99 + 99
+                            else:
+                                end = len(envs['envs'])
+                            envs['envs'] = envs['envs'][begin:end]
+                envs['end'] = end
                 envs['size'] = len(envs['envs'])
                 return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
@@ -338,6 +407,24 @@ def dashboard_envs(project_id):
                         env_info = env.info()
                         env_info['project'] = project.info()
                         envs['envs'].append(env_info)
+                    end = 99
+                    if fk.request.args:
+                        page = int(fk.request.args.get("page"))
+                        begin = int(page)*99
+                        if int(page) == 0 and len(envs['envs']) <= 99:
+                            # end = -1
+                            pass
+                        else:
+                            if begin >= len(envs['envs']):
+                                end = -1
+                                envs['envs'] = []
+                            else:
+                                if len(envs['envs']) - begin >= 99:
+                                    end = int(page)*99 + 99
+                                else:
+                                    end = len(envs['envs'])
+                                envs['envs'] = envs['envs'][begin:end]
+                    envs['end'] = end
                     envs['size'] = len(envs['envs'])
                     return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
@@ -371,7 +458,25 @@ def record_diff(record_id):
                         for diff in founds:
                             diffs.append(diff.info())  
                     record_info = record.info()
-                    record_info['diffs'] = diffs          
+                    record_info['diffs'] = diffs 
+                    end = 99
+                    if fk.request.args:
+                        page = int(fk.request.args.get("page"))
+                        begin = int(page)*99
+                        if int(page) == 0 and len(record_info['diffs']) <= 99:
+                            # end = -1
+                            pass
+                        else:
+                            if begin >= len(record_info['diffs']):
+                                end = -1
+                                record_info['diffs'] = []
+                            else:
+                                if len(record_info['diffs']) - begin >= 99:
+                                    end = int(page)*99 + 99
+                                else:
+                                    end = len(record_info['diffs'])
+                                record_info['diffs'] = record_info['diffs'][begin:end]
+                    record_info['end'] = end         
                     return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 else:
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -565,7 +670,24 @@ def public_project_dashboard():
                         records.append(r)
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 summaries.append(project)
-        return fk.Response(json.dumps({'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+        end = 99
+        if fk.request.args:
+            page = int(fk.request.args.get("page"))
+            begin = int(page)*99
+            if int(page) == 0 and len(summaries) <= 99:
+                # end = -1
+                pass
+            else:
+                if begin >= len(summaries):
+                    end = -1
+                    summaries = []
+                else:
+                    if len(summaries) - begin >= 99:
+                        end = int(page)*99 + 99
+                    else:
+                        end = len(summaries)
+                    summaries = summaries[begin:end]
+        return fk.Response(json.dumps({'end':end, 'number':len(summaries), 'projects':summaries}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
@@ -582,15 +704,18 @@ def public_dashboard_records(project_id):
             if fk.request.args:
                 page = fk.request.args.get("page")
                 begin = int(page) * 99
-                if begin > len(records):
+                if int(page) == 0 and len(records) <= 99:
                     end = -1
-                    records = []
                 else:
-                    if len(records) >= begin + 99:
-                        end = begin + 99
+                    if begin > len(records):
+                        end = -1
+                        records = []
                     else:
-                        end = len(records)
-                    records = records[begin, end]
+                        if len(records) >= begin + 99:
+                            end = begin + 99
+                        else:
+                            end = len(records)
+                        records = records[begin, end]
             for record in records:
                 if record.access == 'public':
                     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
@@ -638,7 +763,25 @@ def public_record_diff(record_id):
                     for diff in founds:
                         diffs.append(diff.info())  
                 record_info = record.info()
-                record_info['diffs'] = diffs          
+                record_info['diffs'] = diffs
+                end = 99
+                if fk.request.args:
+                    page = int(fk.request.args.get("page"))
+                    begin = int(page)*99
+                    if int(page) == 0 and len(record_info['diffs']) <= 99:
+                        # end = -1
+                        pass
+                    else:
+                        if begin >= len(record_info['diffs']):
+                            end = -1
+                            record_info['diffs'] = []
+                        else:
+                            if len(record_info['diffs']) - begin >= 99:
+                                end = int(page)*99 + 99
+                            else:
+                                end = len(record_info['diffs'])
+                            record_info['diffs'] = record_info['diffs'][begin:end]  
+                record_info['end'] = end        
                 return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

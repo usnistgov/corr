@@ -158,21 +158,9 @@ class ProjectModel(db.Document):
         records = self.records
         if not public or self.owner.group == "admin":
             begin = int(page)*99
-            if begin >= len(records):
+            if int(page) == 0 and len(records) <= 99:
                 end = -1
-                records = []
             else:
-                if len(records) - begin >= 99:
-                    end = int(page)*99 + 99
-                else:
-                    end = len(records)
-                records = records[begin:end]
-            records_summary = [json.loads(r.summary_json()) for r in records]
-            return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
-        else:
-            if project.access == 'public':
-                records_summary = []
-                begin = int(page)*99
                 if begin >= len(records):
                     end = -1
                     records = []
@@ -182,6 +170,24 @@ class ProjectModel(db.Document):
                     else:
                         end = len(records)
                     records = records[begin:end]
+            records_summary = [json.loads(r.summary_json()) for r in records]
+            return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
+        else:
+            if project.access == 'public':
+                records_summary = []
+                begin = int(page)*99
+                if int(page) == 0 and len(records) <= 99:
+                    end = -1
+                else:
+                    if begin >= len(records):
+                        end = -1
+                        records = []
+                    else:
+                        if len(records) - begin >= 99:
+                            end = int(page)*99 + 99
+                        else:
+                            end = len(records)
+                        records = records[begin:end]
                 for record in records:
                     if record.access == 'public':
                         records_summary.append(json.loads(r.summary_json()))
