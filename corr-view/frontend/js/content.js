@@ -103,11 +103,11 @@ var Space = function (){
                     if(end != -1){
                         var next_Page = parseInt(page)+1;
                          if(parseInt(page) == 0){
-                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.dashboard(1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
-                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.dashboard("+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else{
-                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("projects-list").innerHTML += "<div id='load-more-projects-block' class='col s12 m12 l12 center'><a onclick='space.dashboard(1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }
                     }
                 }else{
@@ -186,11 +186,11 @@ var Space = function (){
                     if(end != -1){
                         var next_Page = parseInt(page)+1;
                          if(parseInt(page) == 0){
-                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.users(1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
-                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.users("+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else{
-                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.records(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("users-list").innerHTML += "<div id='load-more-users-block' class='col s12 m12 l12 center'><a onclick='space.users(1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }
                     }
                 }else{
@@ -656,11 +656,11 @@ var Space = function (){
                     if(end != -1){
                         var next_Page = parseInt(page)+1;
                          if(parseInt(page) == 0){
-                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.envs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
-                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.envs(\""+project_id+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else{
-                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.diffs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                            document.getElementById("envs-list").innerHTML += "<div id='load-more-envs-block' class='col s12 m12 l12 center'><a onclick='space.envs(\""+project_id+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }
                         
                         // Add a button to load more.

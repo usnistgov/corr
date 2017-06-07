@@ -10,7 +10,7 @@ var dashboard = {
         };
         config.load_xml('coming_soon.xml', [], succeed, failed);
     },
-	activity:function(){
+	activity:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();
@@ -22,9 +22,9 @@ var dashboard = {
                     page = parts[1];
                 }
             }
-            var space = new Space(page);
+            var space = new Space();
 
-            space.dashboard();
+            space.dashboard(page);
 
         };
         function failed(){
@@ -46,7 +46,7 @@ var dashboard = {
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
     },
-    users:function(){
+    users:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();
@@ -66,7 +66,7 @@ var dashboard = {
         };
         config.load_xml('dashboard_users.xml', [], succeed, failed);
     },
-	projects:function(){
+	projects:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();

@@ -696,7 +696,7 @@
             }
             // Inject the default dashboard view
             if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
-                dashboard.activity();
+                dashboard.activity(options);
                 var space = new Space();
                 if(Cookies.get('group') == "user"){
                   document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
@@ -713,7 +713,7 @@
             }
             // Inject the projects dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "projects"){
-                dashboard.projects();
+                dashboard.projects(options);
                 var space = new Space();
                 if(Cookies.get('group') == "user"){
                   document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
