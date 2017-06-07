@@ -336,6 +336,23 @@ def dashboard_records(project_id):
                 for project in projects:
                     for r in project.records:
                         records['records'].append(json.loads(r.summary_json()))
+                end = -1
+                if fk.request.args:
+                    page = fk.request.args.get("page")
+                    begin = int(page) * 99
+                    if int(page) == 0 and len(records['records']) <= 99:
+                        end = -1
+                    else:
+                        if begin > len(records['records']):
+                            end = -1
+                            records = []
+                        else:
+                            if len(records['records']) >= begin + 99:
+                                end = begin + 99
+                            else:
+                                end = len(records['records'])
+                            records = records['records'][begin, end]
+                records['end'] = end 
                 records['size'] = len(records['records'])
                 return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
