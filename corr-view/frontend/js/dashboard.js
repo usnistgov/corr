@@ -15,7 +15,15 @@ var dashboard = {
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();
 
-            var space = new Space();
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
+            var space = new Space(page);
+
             space.dashboard();
 
         };
@@ -42,9 +50,15 @@ var dashboard = {
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();
-
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
             var space = new Space();
-            space.users();
+            space.users(page);
 
         };
         function failed(){
@@ -56,9 +70,15 @@ var dashboard = {
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
             user.trusted();
-
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
             var space = new Space();
-            space.dashboard();
+            space.dashboard(page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -94,15 +114,18 @@ var dashboard = {
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
 
             var space = new Space();
-            space.diffs(project);
+            space.diffs(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -115,15 +138,18 @@ var dashboard = {
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
 
             var space = new Space();
-            space.envs(project);
+            space.envs(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
