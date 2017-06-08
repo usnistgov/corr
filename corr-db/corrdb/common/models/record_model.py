@@ -123,11 +123,15 @@ class RecordModel(db.Document):
         """
         data = {}
         data['head'] = {'updated':str(self.updated_at),
-         'id': str(self.id), 'project':self.project.info(), 'duration': str(self.duration),
+         'id': str(self.id), 'duration': str(self.duration),
          'label': self.label, 'created':str(self.created_at), 'status' : self.status, 'access':self.access}
 
         if '0:00' in str(self.duration):
             data['head']['duration'] = 'few secondes'
+        if self.project:
+            data['head']['project'] = self.project.info()
+        else:
+            print("Orphan record.")
         data['head']['tags'] = ' '.join(self.tags)
         data['head']['comments'] = len(self.comments)
         data['head']['resources'] = len(self.resources)

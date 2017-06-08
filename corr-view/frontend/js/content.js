@@ -691,15 +691,32 @@ var Space = function (){
         xmlhttp.send();
     },
     this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public, page) {
+        var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
+        var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+         var query_result = document.getElementById('query-result');
+        if(parseInt(page) == 0){
+            hits = 0;
+            query_result.innerHTML = linear_loader;
+        }else if(parseInt(page) > 0){
+            document.getElementById("load-more-search-block").innerHTML = linear_loader;
+            loadMoreEl.parentNode.removeChild(loadMoreEl);
+        }else{
+            hits = 0;
+            query_result.innerHTML = linear_loader;
+        }
         var xmlhttp = new XMLHttpRequest();
-        var query_result = document.getElementById('query-result');
-        query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
-        hits = 0;
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
-                    query_result.innerHTML = "";
+                    if(parseInt(page) == 0){
+                        query_result.innerHTML = "";
+                    }else if(parseInt(page) > 0){
+                        var loadMoreEl = document.getElementById("load-more-search-block");
+                        loadMoreEl.parentNode.removeChild(loadMoreEl);
+                    }else{
+                        query_result.innerHTML = "";
+                    }
                     var response = JSON.parse(this.responseText);
                     if(response["code"] == 500){
                         config.error_modal('Query failed', response["content"]);
@@ -751,15 +768,28 @@ var Space = function (){
                         var display = document.getElementById('results-display');
                         display.innerHTML = hits;
                     }
+                    // Add load more to the end.
+                    if(end != -1){
+                        var next_Page = parseInt(page)+1;
+                         if(parseInt(page) == 0){
+                            query_result.innerHTML += "<div id='load-more-search-block' class='col s12 m12 l12 center'><a onclick='space.query(\""+search+"\", \""+exUser+"\", \""+exApp+"\", \""+exProject+"\", \""+exRecord+"\", \""+exDiff+"\", \""+exEnv+"\", \""+public+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped cyan' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else if(parseInt(page) > 0){
+                            query_result.innerHTML += "<div id='load-more-search-block' class='col s12 m12 l12 center'><a onclick='space.query(\""+search+"\", \""+exUser+"\", \""+exApp+"\", \""+exProject+"\", \""+exRecord+"\", \""+exDiff+"\", \""+exEnv+"\", \""+public+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped cyan' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }else{
+                            query_result.innerHTML += "<div id='load-more-search-block' class='col s12 m12 l12 center'><a onclick='space.query(\""+search+"\", \""+exUser+"\", \""+exApp+"\", \""+exProject+"\", \""+exRecord+"\", \""+exDiff+"\", \""+exEnv+"\", \""+public+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped cyan' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
+                        }
+                        
+                        // Add a button to load more.
+                    }
                 }else {
                     config.error_modal('Query failed', this.responseText);
                 }
             }
         };
         if(public == true){
-            xmlhttp.open("GET", url+"/public/dashboard/search?req="+search);
+            xmlhttp.open("GET", url+"/public/dashboard/search?page="+page+"req="+search);
         }else{
-            xmlhttp.open("GET", url+"/private/dashboard/search?req="+search);
+            xmlhttp.open("GET", url+"/private/dashboard/search?page="+page+"req="+search);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         }
         xmlhttp.send();
