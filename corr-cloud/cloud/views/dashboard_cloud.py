@@ -168,7 +168,7 @@ def project_dashboard():
             for p in projects:
                 summaries.append(json.loads(p.activity_json()))
             block_size = 45
-            end = block_size
+            end = -1
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
                 begin = int(page)*block_size
@@ -233,7 +233,7 @@ def users_dashboard():
                     user_info["records"] = u.info()['total_records']
                     summaries.append(user_info)
             block_size = 45
-            end = block_size
+            end = -1
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
                 begin = int(page)*block_size
@@ -297,7 +297,7 @@ def diffs_dashboard(project_id):
                         elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                             summaries.append(d.info())
             block_size = 45
-            end = block_size
+            end = -1
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
                 begin = int(page)*block_size
@@ -398,7 +398,7 @@ def dashboard_envs(project_id):
                         env["project"] = project.info()
                         envs['envs'].append(env_info)
                 block_size = 45
-                end = block_size
+                end = -1
                 if fk.request.args:
                     page = int(fk.request.args.get("page"))
                     begin = int(page)*block_size
@@ -430,7 +430,7 @@ def dashboard_envs(project_id):
                         env_info['project'] = project.info()
                         envs['envs'].append(env_info)
                     block_size = 45
-                    end = block_size
+                    end = -1
                     if fk.request.args:
                         page = int(fk.request.args.get("page"))
                         begin = int(page)*block_size
@@ -483,7 +483,7 @@ def record_diff(record_id):
                     record_info = record.info()
                     record_info['diffs'] = diffs 
                     block_size = 45
-                    end = block_size
+                    end = -1
                     if fk.request.args:
                         page = int(fk.request.args.get("page"))
                         begin = int(page)*block_size
@@ -695,7 +695,7 @@ def public_project_dashboard():
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 summaries.append(project)
         block_size = 45
-        end = block_size
+        end = -1
         if fk.request.args:
             page = int(fk.request.args.get("page"))
             begin = int(page)*block_size
@@ -792,7 +792,7 @@ def public_record_diff(record_id):
                 record_info = record.info()
                 record_info['diffs'] = diffs
                 block_size = 45
-                end = block_size
+                end = -1
                 if fk.request.args:
                     page = int(fk.request.args.get("page"))
                     begin = int(page)*block_size
