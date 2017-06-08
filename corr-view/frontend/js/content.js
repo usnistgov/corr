@@ -6,12 +6,12 @@ var Space = function (){
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
         if(parseInt(page) == 0){
-            document.getElementById("projects-list").innerHTML = circular_loader;
+            document.getElementById("projects-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-projects-block").innerHTML = circular_loader;
         }else{
-            document.getElementById("projects-list").innerHTML = circular_loader;
+            document.getElementById("projects-list").innerHTML = linear_loader;
         }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
@@ -125,7 +125,7 @@ var Space = function (){
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
         if(parseInt(page) == 0){
-            document.getElementById("users-list").innerHTML = circular_loader;
+            document.getElementById("users-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-users-block").innerHTML = circular_loader;
@@ -293,7 +293,7 @@ var Space = function (){
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
         if(parseInt(page) == 0){
-            document.getElementById("records-list").innerHTML = circular_loader;
+            document.getElementById("records-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-records-block").innerHTML = circular_loader;
@@ -444,7 +444,7 @@ var Space = function (){
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
         if(parseInt(page) == 0){
-            document.getElementById("diffs-list").innerHTML = circular_loader;
+            document.getElementById("diffs-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-diffs-block").innerHTML = circular_loader;
@@ -603,7 +603,7 @@ var Space = function (){
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
 
         if(parseInt(page) == 0){
-            document.getElementById("envs-list").innerHTML = circular_loader;
+            document.getElementById("envs-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-envs-block").innerHTML = circular_loader;
