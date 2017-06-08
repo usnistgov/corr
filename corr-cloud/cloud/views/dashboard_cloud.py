@@ -349,13 +349,13 @@ def dashboard_records(project_id):
                     else:
                         if begin > len(records['records']):
                             end = -1
-                            records = []
+                            records['records'] = []
                         else:
                             if len(records['records']) >= begin + block_size:
                                 end = begin + block_size
                             else:
                                 end = len(records['records'])
-                            records = records['records'][begin, end]
+                            records['records'] = records['records'][begin:end]
                 records['end'] = end 
                 records['size'] = len(records['records'])
                 return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
@@ -742,7 +742,7 @@ def public_dashboard_records(project_id):
                             end = begin + block_size
                         else:
                             end = len(records)
-                        records = records[begin, end]
+                        records = records[begin:end]
             for record in records:
                 if record.access == 'public':
                     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
