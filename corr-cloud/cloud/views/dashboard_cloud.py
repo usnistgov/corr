@@ -49,11 +49,14 @@ def private_search():
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/dashboard/search')
+            page = 0
             if fk.request.args:
                 _request = ""
                 for key, value in fk.request.args.items():
                     if key == "req":
                         _request = "{0}".format(value)
+                    elif key == "page":
+                        page = int(value)
                     else:
                         _request = "{0}&{1}{2}".format(_request, key, value)
                 if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
@@ -138,7 +141,6 @@ def private_search():
                     block_size = 45
                     end = -1
                     if fk.request.args:
-                        page = int(fk.request.args.get("page"))
                         begin = int(page)*block_size
                         history_hit = 0
                         counter = 0
