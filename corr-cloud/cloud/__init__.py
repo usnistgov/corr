@@ -139,31 +139,32 @@ def query_parse(request=None):
     if request:
         query_parts = request.split("&")
         for query_index in range(len(query_parts)):
-            query_pipes = []
-            pipe_parts = query_parts[query_index].split("|")
-            next_piped = False
-            for pipe_index in range(len(pipe_parts)):
-                query = {"values":None, "models":None, "tree":False, "piped":False}
-                if next_piped:
-                    query["piped"] = True
-                    next_piped = False
-                if len(pipe_parts) - pipe_index - 1 > 0:
-                    next_piped = True
-                blocks = pipe_parts[pipe_index].split("]")
-                if len(blocks) == 3 and "~" in blocks[2]:
-                    query["tree"] = True
-                if "![" in blocks[0]:
-                    index_val = 0
-                    index_mod = 1
-                else:
-                    index_val = 1
-                    index_mod = 0
-                if blocks[index_val] != "![":
-                    query["values"] = blocks[index_val].split("![")[1].split(",")
-                if blocks[index_mod] != "?[":
-                    query["models"] = blocks[index_mod].split("?[")[1].split(",")
-                query_pipes.append(query)
-            queries.append(query_pipes)
+            if 'page' not in query_parts[query_index]:
+                query_pipes = []
+                pipe_parts = query_parts[query_index].split("|")
+                next_piped = False
+                for pipe_index in range(len(pipe_parts)):
+                    query = {"values":None, "models":None, "tree":False, "piped":False}
+                    if next_piped:
+                        query["piped"] = True
+                        next_piped = False
+                    if len(pipe_parts) - pipe_index - 1 > 0:
+                        next_piped = True
+                    blocks = pipe_parts[pipe_index].split("]")
+                    if len(blocks) == 3 and "~" in blocks[2]:
+                        query["tree"] = True
+                    if "![" in blocks[0]:
+                        index_val = 0
+                        index_mod = 1
+                    else:
+                        index_val = 1
+                        index_mod = 0
+                    if blocks[index_val] != "![":
+                        query["values"] = blocks[index_val].split("![")[1].split(",")
+                    if blocks[index_mod] != "?[":
+                        query["models"] = blocks[index_mod].split("?[")[1].split(",")
+                    query_pipes.append(query)
+                queries.append(query_pipes)
     return queries
 
 # processRequest("![yannick,sumatra]?[0.user.email,1.file]~|![]?[profile]|![]?[profile]~")
