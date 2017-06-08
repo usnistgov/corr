@@ -156,17 +156,18 @@ class ProjectModel(db.Document):
             The pretty json of the project activity.
         """
         records = self.records
+        block_size = 45
         if not public or self.owner.group == "admin":
-            begin = int(page)*99
-            if int(page) == 0 and len(records) <= 99:
+            begin = int(page)*block_size
+            if int(page) == 0 and len(records) <= block_size:
                 end = -1
             else:
                 if begin >= len(records):
                     end = -1
                     records = []
                 else:
-                    if len(records) - begin >= 99:
-                        end = int(page)*99 + 99
+                    if len(records) - begin >= block_size:
+                        end = int(page)*block_size + block_size
                     else:
                         end = len(records)
                     records = records[begin:end]
@@ -175,16 +176,16 @@ class ProjectModel(db.Document):
         else:
             if project.access == 'public':
                 records_summary = []
-                begin = int(page)*99
-                if int(page) == 0 and len(records) <= 99:
+                begin = int(page)*block_size
+                if int(page) == 0 and len(records) <= block_size:
                     end = -1
                 else:
                     if begin >= len(records):
                         end = -1
                         records = []
                     else:
-                        if len(records) - begin >= 99:
-                            end = int(page)*99 + 99
+                        if len(records) - begin >= block_size:
+                            end = int(page)*block_size + block_size
                         else:
                             end = len(records)
                         records = records[begin:end]

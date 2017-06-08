@@ -167,11 +167,12 @@ def project_dashboard():
             summaries = []
             for p in projects:
                 summaries.append(json.loads(p.activity_json()))
-            end = 99
+            block_size = 45
+            end = block_size
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
-                begin = int(page)*99
-                if int(page) == 0 and len(summaries) <= 99:
+                begin = int(page)*block_size
+                if int(page) == 0 and len(summaries) <= block_size:
                     # end = -1
                     pass
                 else:
@@ -179,8 +180,8 @@ def project_dashboard():
                         end = -1
                         summaries = []
                     else:
-                        if len(summaries) - begin >= 99:
-                            end = int(page)*99 + 99
+                        if len(summaries) - begin >= block_size:
+                            end = int(page)*block_size + block_size
                         else:
                             end = len(summaries)
                         summaries = summaries[begin:end]
@@ -231,11 +232,12 @@ def users_dashboard():
                     user_info["projects"] = u.info()['total_projects']
                     user_info["records"] = u.info()['total_records']
                     summaries.append(user_info)
-            end = 99
+            block_size = 45
+            end = block_size
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
-                begin = int(page)*99
-                if int(page) == 0 and len(summaries) <= 99:
+                begin = int(page)*block_size
+                if int(page) == 0 and len(summaries) <= block_size:
                     # end = -1
                     pass
                 else:
@@ -243,8 +245,8 @@ def users_dashboard():
                         end = -1
                         summaries = []
                     else:
-                        if len(summaries) - begin >= 99:
-                            end = int(page)*99 + 99
+                        if len(summaries) - begin >= block_size:
+                            end = int(page)*block_size + block_size
                         else:
                             end = len(summaries)
                         summaries = summaries[begin:end]
@@ -294,11 +296,12 @@ def diffs_dashboard(project_id):
                             summaries.append(d.info())
                         elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                             summaries.append(d.info())
-            end = 99
+            block_size = 45
+            end = block_size
             if fk.request.args:
                 page = int(fk.request.args.get("page"))
-                begin = int(page)*99
-                if int(page) == 0 and len(summaries) <= 99:
+                begin = int(page)*block_size
+                if int(page) == 0 and len(summaries) <= block_size:
                     # end = -1
                     pass
                 else:
@@ -306,8 +309,8 @@ def diffs_dashboard(project_id):
                         end = -1
                         summaries = []
                     else:
-                        if len(summaries) - begin >= 99:
-                            end = int(page)*99 + 99
+                        if len(summaries) - begin >= block_size:
+                            end = int(page)*block_size + block_size
                         else:
                             end = len(summaries)
                         summaries = summaries[begin:end]
@@ -336,19 +339,20 @@ def dashboard_records(project_id):
                 for project in projects:
                     for r in project.records:
                         records['records'].append(json.loads(r.summary_json()))
+                block_size = 45
                 end = -1
                 if fk.request.args:
                     page = fk.request.args.get("page")
-                    begin = int(page) * 99
-                    if int(page) == 0 and len(records['records']) <= 99:
+                    begin = int(page) * block_size
+                    if int(page) == 0 and len(records['records']) <= block_size:
                         end = -1
                     else:
                         if begin > len(records['records']):
                             end = -1
                             records = []
                         else:
-                            if len(records['records']) >= begin + 99:
-                                end = begin + 99
+                            if len(records['records']) >= begin + block_size:
+                                end = begin + block_size
                             else:
                                 end = len(records['records'])
                             records = records['records'][begin, end]
@@ -393,11 +397,12 @@ def dashboard_envs(project_id):
                         env_info = env.info()
                         env["project"] = project.info()
                         envs['envs'].append(env_info)
-                end = 99
+                block_size = 45
+                end = block_size
                 if fk.request.args:
                     page = int(fk.request.args.get("page"))
-                    begin = int(page)*99
-                    if int(page) == 0 and len(envs['envs']) <= 99:
+                    begin = int(page)*block_size
+                    if int(page) == 0 and len(envs['envs']) <= block_size:
                         # end = -1
                         pass
                     else:
@@ -405,8 +410,8 @@ def dashboard_envs(project_id):
                             end = -1
                             envs['envs'] = []
                         else:
-                            if len(envs['envs']) - begin >= 99:
-                                end = int(page)*99 + 99
+                            if len(envs['envs']) - begin >= block_size:
+                                end = int(page)*block_size + block_size
                             else:
                                 end = len(envs['envs'])
                             envs['envs'] = envs['envs'][begin:end]
@@ -424,11 +429,12 @@ def dashboard_envs(project_id):
                         env_info = env.info()
                         env_info['project'] = project.info()
                         envs['envs'].append(env_info)
-                    end = 99
+                    block_size = 45
+                    end = block_size
                     if fk.request.args:
                         page = int(fk.request.args.get("page"))
-                        begin = int(page)*99
-                        if int(page) == 0 and len(envs['envs']) <= 99:
+                        begin = int(page)*block_size
+                        if int(page) == 0 and len(envs['envs']) <= block_size:
                             # end = -1
                             pass
                         else:
@@ -436,8 +442,8 @@ def dashboard_envs(project_id):
                                 end = -1
                                 envs['envs'] = []
                             else:
-                                if len(envs['envs']) - begin >= 99:
-                                    end = int(page)*99 + 99
+                                if len(envs['envs']) - begin >= block_size:
+                                    end = int(page)*block_size + block_size
                                 else:
                                     end = len(envs['envs'])
                                 envs['envs'] = envs['envs'][begin:end]
@@ -476,11 +482,12 @@ def record_diff(record_id):
                             diffs.append(diff.info())  
                     record_info = record.info()
                     record_info['diffs'] = diffs 
-                    end = 99
+                    block_size = 45
+                    end = block_size
                     if fk.request.args:
                         page = int(fk.request.args.get("page"))
-                        begin = int(page)*99
-                        if int(page) == 0 and len(record_info['diffs']) <= 99:
+                        begin = int(page)*block_size
+                        if int(page) == 0 and len(record_info['diffs']) <= block_size:
                             # end = -1
                             pass
                         else:
@@ -488,8 +495,8 @@ def record_diff(record_id):
                                 end = -1
                                 record_info['diffs'] = []
                             else:
-                                if len(record_info['diffs']) - begin >= 99:
-                                    end = int(page)*99 + 99
+                                if len(record_info['diffs']) - begin >= block_size:
+                                    end = int(page)*block_size + block_size
                                 else:
                                     end = len(record_info['diffs'])
                                 record_info['diffs'] = record_info['diffs'][begin:end]
@@ -687,11 +694,12 @@ def public_project_dashboard():
                         records.append(r)
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 summaries.append(project)
-        end = 99
+        block_size = 45
+        end = block_size
         if fk.request.args:
             page = int(fk.request.args.get("page"))
-            begin = int(page)*99
-            if int(page) == 0 and len(summaries) <= 99:
+            begin = int(page)*block_size
+            if int(page) == 0 and len(summaries) <= block_size:
                 # end = -1
                 pass
             else:
@@ -699,8 +707,8 @@ def public_project_dashboard():
                     end = -1
                     summaries = []
                 else:
-                    if len(summaries) - begin >= 99:
-                        end = int(page)*99 + 99
+                    if len(summaries) - begin >= block_size:
+                        end = int(page)*block_size + block_size
                     else:
                         end = len(summaries)
                     summaries = summaries[begin:end]
@@ -718,18 +726,20 @@ def public_dashboard_records(project_id):
             project = {"project":json.loads(p.summary_json())}
             records = RecordModel.objects(project=p)
             records_object = []
+            end = -1
+            block_size = 45
             if fk.request.args:
                 page = fk.request.args.get("page")
-                begin = int(page) * 99
-                if int(page) == 0 and len(records) <= 99:
+                begin = int(page) * block_size
+                if int(page) == 0 and len(records) <= block_size:
                     end = -1
                 else:
                     if begin > len(records):
                         end = -1
                         records = []
                     else:
-                        if len(records) >= begin + 99:
-                            end = begin + 99
+                        if len(records) >= begin + block_size:
+                            end = begin + block_size
                         else:
                             end = len(records)
                         records = records[begin, end]
@@ -781,11 +791,12 @@ def public_record_diff(record_id):
                         diffs.append(diff.info())  
                 record_info = record.info()
                 record_info['diffs'] = diffs
-                end = 99
+                block_size = 45
+                end = block_size
                 if fk.request.args:
                     page = int(fk.request.args.get("page"))
-                    begin = int(page)*99
-                    if int(page) == 0 and len(record_info['diffs']) <= 99:
+                    begin = int(page)*block_size
+                    if int(page) == 0 and len(record_info['diffs']) <= block_size:
                         # end = -1
                         pass
                     else:
@@ -793,8 +804,8 @@ def public_record_diff(record_id):
                             end = -1
                             record_info['diffs'] = []
                         else:
-                            if len(record_info['diffs']) - begin >= 99:
-                                end = int(page)*99 + 99
+                            if len(record_info['diffs']) - begin >= block_size:
+                                end = int(page)*block_size + block_size
                             else:
                                 end = len(record_info['diffs'])
                             record_info['diffs'] = record_info['diffs'][begin:end]  

@@ -9,7 +9,7 @@ var Space = function (){
             document.getElementById("projects-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-projects-block").innerHTML = circular_loader;
+            document.getElementById("load-more-projects-block").innerHTML = linear_loader;
         }else{
             document.getElementById("projects-list").innerHTML = linear_loader;
         }
@@ -128,9 +128,9 @@ var Space = function (){
             document.getElementById("users-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-users-block").innerHTML = circular_loader;
+            document.getElementById("load-more-users-block").innerHTML = linear_loader;
         }else{
-            document.getElementById("users-list").innerHTML = circular_loader;
+            document.getElementById("users-list").innerHTML = linear_loader;
         }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
@@ -296,9 +296,9 @@ var Space = function (){
             document.getElementById("records-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-records-block").innerHTML = circular_loader;
+            document.getElementById("load-more-records-block").innerHTML = linear_loader;
         }else{
-            document.getElementById("records-list").innerHTML = circular_loader;
+            document.getElementById("records-list").innerHTML = linear_loader;
         }
         
         var xmlhttp = new XMLHttpRequest();
@@ -447,9 +447,9 @@ var Space = function (){
             document.getElementById("diffs-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-diffs-block").innerHTML = circular_loader;
+            document.getElementById("load-more-diffs-block").innerHTML = linear_loader;
         }else{
-            document.getElementById("diffs-list").innerHTML = circular_loader;
+            document.getElementById("diffs-list").innerHTML = linear_loader;
         }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
@@ -606,9 +606,9 @@ var Space = function (){
             document.getElementById("envs-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
         }else if(parseInt(page) > 0){
-            document.getElementById("load-more-envs-block").innerHTML = circular_loader;
+            document.getElementById("load-more-envs-block").innerHTML = linear_loader;
         }else{
-            document.getElementById("envs-list").innerHTML = circular_loader;
+            document.getElementById("envs-list").innerHTML = linear_loader;
         }
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
