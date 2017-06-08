@@ -135,6 +135,34 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
+                    block_size = 45
+                    end = -1
+                    if fk.request.args:
+                        page = int(fk.request.args.get("page"))
+                        begin = int(page)*block_size
+                        history_hit = 0
+                        counter = 0
+                        for key, value in response.items():
+                            if counter == block_size:
+                                value['result'] = []
+                            else:
+                                if history_hit + len(value['result']) >= begin:
+                                    if len(value['result']) <= (block_size - counter):
+                                        counter = counter + len(value['result'])
+                                        history_hit = history_hit + len(value['result'])
+                                    else:
+                                        begin_local = begin - history_hit
+                                        end_local = begin_local + block_size - counter
+                                        value['result'] = value['result'][begin:end]
+                                        counter = block_size
+                                else:
+                                    history_hit = history_hit + len(value['result'])
+                                    value['result'] = []
+                        if begin + block_size >= history_hit:
+                            end = -1
+                        else:
+                            end = begin + block_size - history_hit
+                        response['end'] = end
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -1102,7 +1130,7 @@ def app_logo(app_id):
 @app.route(CLOUD_URL + '/public/dashboard/query', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_query_dashboard():
-    logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/query')
     if fk.request.method == 'GET':
         _request = ""
         for key, value in fk.request.args.items():

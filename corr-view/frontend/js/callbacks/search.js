@@ -8,7 +8,7 @@ function processSearch(public)
     var recordsQ = document.getElementById("exclude-records").checked;
     var diffsQ = document.getElementById("exclude-diffs").checked;
     var envsQ = document.getElementById("exclude-envs").checked;
-    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ, envsQ, public);
+    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ, envsQ, public, 0);
 }
 
 // Search link sub research injection

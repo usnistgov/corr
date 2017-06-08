@@ -690,7 +690,7 @@ var Space = function (){
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public) {
+    this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public, page) {
         var xmlhttp = new XMLHttpRequest();
         var query_result = document.getElementById('query-result');
         query_result.innerHTML = "<div class='progress'><div class='indeterminate'></div></div>";
