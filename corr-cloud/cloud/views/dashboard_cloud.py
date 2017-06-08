@@ -107,6 +107,8 @@ def private_search():
                                 if record in contexts[cn_i]["record"]:
                                     skip = True
                                     break
+                            if record.project is None:
+                                skip = True
                             if not skip:
                                 if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                                     records.append(json.loads(record.summary_json()))
