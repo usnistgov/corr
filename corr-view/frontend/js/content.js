@@ -787,9 +787,9 @@ var Space = function (){
             }
         };
         if(public == true){
-            xmlhttp.open("GET", url+"/public/dashboard/search?page="+page+"req="+search);
+            xmlhttp.open("GET", url+"/public/dashboard/search?page="+page+"&req="+search);
         }else{
-            xmlhttp.open("GET", url+"/private/dashboard/search?page="+page+"req="+search);
+            xmlhttp.open("GET", url+"/private/dashboard/search?page="+page+"&req="+search);
             xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         }
         xmlhttp.send();
