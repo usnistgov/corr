@@ -13,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
+from cloud import app, paginate, cloud_response, storage_manager, access_manager, processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -61,7 +61,7 @@ def private_search():
                         _request = "{0}&{1}{2}".format(_request, key, value)
                 if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
                     _request = "![{0}]?[]".format(_request)
-                message, contexts = processRequest(_request)
+                message, contexts, leftover = processRequest(_request, page)
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:
@@ -140,32 +140,34 @@ def private_search():
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
                     block_size = 45
-                    end = -1
-                    if fk.request.args:
-                        begin = int(page)*block_size
-                        history_hit = 0
-                        counter = 0
-                        for key, value in response.items():
-                            if counter == block_size:
-                                value['result'] = []
-                            else:
-                                if history_hit + len(value['result']) >= begin:
-                                    if len(value['result']) <= (block_size - counter):
-                                        counter = counter + len(value['result'])
-                                        history_hit = history_hit + len(value['result'])
-                                    else:
-                                        begin_local = begin - history_hit
-                                        end_local = begin_local + block_size - counter
-                                        value['result'] = value['result'][begin:end]
-                                        counter = block_size
-                                else:
-                                    history_hit = history_hit + len(value['result'])
-                                    value['result'] = []
-                        if begin + block_size >= history_hit:
-                            end = -1
-                        else:
-                            end = begin + block_size - history_hit
-                        response['end'] = end
+                    if leftover == block_size:
+                        end = -1
+                    else:
+                        end = 0
+                    # begin = int(page)*block_size
+                    # history_hit = 0
+                    # counter = 0
+                    # for key, value in response.items():
+                    #     if counter == block_size:
+                    #         value['result'] = []
+                    #     else:
+                    #         if history_hit + len(value['result']) >= begin:
+                    #             if len(value['result']) <= (block_size - counter):
+                    #                 counter = counter + len(value['result'])
+                    #                 history_hit = history_hit + len(value['result'])
+                    #             else:
+                    #                 begin_local = begin - history_hit
+                    #                 end_local = begin_local + block_size - counter
+                    #                 value['result'] = value['result'][begin:end]
+                    #                 counter = block_size
+                    #         else:
+                    #             history_hit = history_hit + len(value['result'])
+                    #             value['result'] = []
+                    # if begin + block_size >= history_hit:
+                    #     end = -1
+                    # else:
+                    #     end = begin + block_size - history_hit
+                    response['end'] = end
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

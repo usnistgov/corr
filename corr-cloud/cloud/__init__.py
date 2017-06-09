@@ -228,64 +228,77 @@ def query_analyse(queries=None):
             included.append(included_here)
     return (True, "Query syntax is correct.", included)
 
-def queryModelGeneric(objectModel, field, value):
+def queryModelGeneric(objectModel, field, value, offset, leftover):
     # try:
     if field != "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                return [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
+                els = [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
             else:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value)]
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value)]
         else:
             if objectModel == RecordModel:
-                return [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
+                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
             else:
-                return [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
+                els = [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
     elif field == "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value)]
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value)]
             else:
-                return [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value)]
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value)]
         else:
             if objectModel == RecordModel:
-                return [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
+                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
             else:
-                return [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
+                els = [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
     elif field != "*" and value == "*":
         if objectModel == RecordModel:
-            return [o for o in objectModel.objects() if o.extended()[field] != ""]
+            els = [o for o in objectModel.objects() if o.extended()[field] != ""]
         else:
-            return [o for o in objectModel.objects() if o.info()[field] != ""]
+            els = [o for o in objectModel.objects() if o.info()[field] != ""]
     else:
-        return [el for el in objectModel.objects()]
+        els = [el for el in objectModel.objects()]
+
+    size = len(els)
+    if size > leftover:
+        return els[:leftover], size
+    else:
+        return els, size
+
     # except:
     #     return []
 
-def queryContextGeneric(context, name, field, value):
+def queryContextGeneric(context, name, field, value, offset, leftover):
     # try:
     if field != "*" and value != "*":
         if len(value) > 0:
             if name == "record":
-                return [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value)]
+                els = [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value)]
             else:
-                return [el for el in context if any(val in str(el.extended()[field]).lower() for val in value)]
+                els = [el for el in context if any(val in str(el.extended()[field]).lower() for val in value)]
         else:
             if name == "record":
-                return [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
+                els = [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
             else:
-                return [o for o in context if value.lower() in str(o.extended()[field]).lower()]
+                els = [o for o in context if value.lower() in str(o.extended()[field]).lower()]
     elif field == "*" and value != "*":
         if len(value) > 0:
-            return [el for el in context if any(val in str(el.extended()).lower() for val in value)]
+            els = [el for el in context if any(val in str(el.extended()).lower() for val in value)]
         else:
-            return [o for o in context if value.lower() in str(o.extended()).lower()]
+            els = [o for o in context if value.lower() in str(o.extended()).lower()]
     elif field != "*" and value == "*":
-        return [o for o in context if o.info()[field] != ""]
+        els = [o for o in context if o.info()[field] != ""]
     else:
-        return context
-    # except:
-    #     return []
+        els = []
+    size = len(els)
+    if size == 0:
+        return context, size
+    else:
+        if size > leftover:
+            return els[:leftover], size
+        else:
+            return els, size
 
 relationships["user"] = ["project", "file", "profile", "tool"]
 relationships["version"] = ["env"]
@@ -298,29 +311,49 @@ relationships["diff"] = []
 relationships["tool"] = []
 relationships["bundle"] = ["env"]
 
-def fetchDependencies(name, obj):
+def paginate(query, offset, leftover, size):
+    if leftover = 0:
+        return [], size + 0, offset, leftover
+    else:
+        if len(query) > offset:
+            end = offset + leftover
+            if len(query) >= end:
+                filtered = query[offset:end]
+                return filtered, size + leftover, end, 0
+            else:
+                filtered = query[offset:]
+                return filtered, size + len(filtered), end, leftover-len(filtered)
+        else:
+            return [], size + len(query), offset, leftover
+
+
+def fetchDependencies(name, obj, offset, leftover):
     deps = {}
+    size = 0
     if name == "user":
-        profiles = [el for el in ProfileModel.objects(user=obj)]
+        profiles, size, offset, leftover = paginate(ProfileModel.objects(user=obj), offset, leftover, size)
         deps["profile"] = profiles
-        files = [el for el in FileModel.objects(owner=obj)]
+        files, size, offset, leftover = paginate(FileModel.objects(owner=obj), offset, leftover, size)
         deps["file"] = files
-        projects = [el for el in ProjectModel.objects(owner=obj)]
+        projects, size, offset, leftover = paginate(ProjectModel.objects(owner=obj), offset, leftover, size)
         deps["project"] = projects
-        tools = [el for el in ApplicationModel.objects(developer=obj)]
+        tools, size, offset, leftover = paginate(ApplicationModel.objects(developer=obj), offset, leftover, size)
         deps["tool"] = tools
     elif name == "version":
-        envs = [el for el in EnvironmentModel.objects(version=obj)]
+        envs, size, offset, leftover = paginate(EnvironmentModel.objects(version=obj), offset, leftover, size)
         deps["env"] = envs
     elif name == "record":
-        diffs_from = [el for el in DiffModel.objects(record_from=obj)]
+        diffs_from, size, offset, leftover = paginate(DiffModel.objects(record_from=obj), offset, leftover, size)
         deps["diff"] = diffs_from
         diffs_to = [el for el in DiffModel.objects(record_to=obj)]
+        diffs_more = []
         for rec in diffs_to:
             if rec not in deps["diff"]:
-                deps["diff"].append(rec)
+                diffs_more.append(rec)
+        diffs_more, size, offset, leftover = paginate(diffs_more, offset, leftover, size)
+        deps["diff"].extend(diffs_more)
     elif name == "project":
-        records = [el for el in RecordModel.objects(project=obj)]
+        records, size, offset, leftover = paginate(RecordModel.objects(project=obj), offset, leftover, size)
         deps["record"] = records
     elif name == "file":
         projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
@@ -328,87 +361,99 @@ def fetchDependencies(name, obj):
         for pr in logo_projects:
             if pr not in projects:
                 projects.append(pr)
+        projects, size, offset, leftover = paginate(projects, offset, leftover, size)
         deps["project"] = projects
+
         records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
+        records, size, offset, leftover = paginate(records, offset, leftover, size)
         deps["record"] = records
-        tools = [el for el in ApplicationModel.objects(logo=obj)]
+
+        tools, size, offset, leftover = paginate(ApplicationModel.objects(logo=obj), offset, leftover, size)
         deps["tool"] = tools
+
         envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
+        envs, size, offset, leftover = paginate(envs, offset, leftover, size)
         deps["env"] = envs
+
         diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
+        diffs, size, offset, leftover = paginate(diffs, offset, leftover, size)
         deps["diff"] = diffs
-        profiles = [el for el in ProfileModel.objects(picture=obj)]
+
+        profiles, size, offset, leftover = paginate(ProfileModel.objects(picture=obj), offset, leftover, size)
         deps["profile"] = profiles
     elif name == "env":
-        records = [el for el in RecordModel.objects(environment=obj)]
+        records, size, offset, leftover = paginate(RecordModel.objects(environment=obj), offset, leftover, size)
         deps["record"] = records
+
         projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
+        projects, size, offset, leftover = paginate(projects, offset, leftover, size)
         deps["project"] = projects
     elif name == "bundle":
-        envs = [el for el in EnvironmentModel.objects(bundle=obj)]
+        envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
         deps["env"] = envs
+    return deps, size, offset, leftover
 
-    return deps
-
-def queryModel(context, name, field, value):
+def queryModel(context, name, field, value, offset, leftover):
     if name == "user":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(UserModel, field, value)
+            return queryModelGeneric(UserModel, field, value, offset, leftover)
     elif name == "version":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(VersionModel, field, value)
+            return queryModelGeneric(VersionModel, field, value, offset, leftover)
     elif name == "record":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(RecordModel, field, value)
+            return queryModelGeneric(RecordModel, field, value, offset, leftover)
     elif name == "project":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(ProjectModel, field, value)
+            return queryModelGeneric(ProjectModel, field, value, offset, leftover)
     elif name == "file":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(FileModel, field, value)
+            return queryModelGeneric(FileModel, field, value, offset, leftover)
     elif name == "profile":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(ProfileModel, field, value)
+            return queryModelGeneric(ProfileModel, field, value, offset, leftover)
     elif name == "env":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(EnvironmentModel, field, value)
+            return queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
     elif name == "diff":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(DiffModel, field, value)
+            return queryModelGeneric(DiffModel, field, value, offset, leftover)
     elif name == "tool":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(ApplicationModel, field, value)
+            return queryModelGeneric(ApplicationModel, field, value, offset, leftover)
     elif name == "bundle":
         if context:
-            return queryContextGeneric(context[name], name, field, value)
+            return queryContextGeneric(context[name], name, field, value, offset, leftover)
         else:
-            return queryModelGeneric(BundleModel, field, value)
+            return queryModelGeneric(BundleModel, field, value, offset, leftover)
     else:
         if context:
-            return context
+            return context, 0
         else:
-            return []
+            return [], 0
 
-def executeQuery(context, query):
+def executeQuery(context, query, page, history, leftover):
     context_current = context
+    block_size = 45
+    offset = page * block_size
     if query["models"]:
         for model in query["models"]:
             target_value = None
@@ -445,23 +490,38 @@ def executeQuery(context, query):
                     target_value = query["values"]
                 else:
                     target_value = "*"
-            if not query["piped"]:
-                objs = queryModel(None, target_model, target_field, target_value)
-                for obj in objs:
-                    if obj not in context_current[target_model]:
-                        context_current[target_model].append(obj)
-                if query["tree"]:
-                    for obj in context_current[target_model]:
-                        deps = fetchDependencies(target_model, obj)
-                        for key, value in deps.items():
-                            context_current[key].extend(deps[key])
-            else:
-                context_current[target_model] = queryModel(context_current, target_model, target_field, target_value)
-                if query["tree"]:
-                    for obj in context_current[target_model]:
-                        deps = fetchDependencies(target_model, obj)
-                        for key, value in deps.items():
-                            context_current[key].extend(deps[key])
+            if leftover > 0:
+                if not query["piped"]:
+                    objs, size = queryModel(None, target_model, target_field, target_value, offset, leftover)
+                    counter = 0
+                    for obj in objs:
+                        if obj not in context_current[target_model]:
+                            context_current[target_model].append(obj)
+                            counter = counter + 1
+                    history = history + size
+                    leftover = leftover - counter
+                    offset = page * block_size - history
+                    if query["tree"]:
+                        for obj in context_current[target_model]:
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
+                            for key, value in deps.items():
+                                context_current[key].extend(deps[key])
+                                counter = counter + 1
+                            history = history + size
+                            leftover = leftover - counter
+                            offset = page * block_size - history
+                else:
+                    context_current[target_model], size = queryModel(context_current, target_model, target_field, target_value, offset, leftover)
+                    if query["tree"]:
+                        counter = 0
+                        for obj in context_current[target_model]:
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
+                            for key, value in deps.items():
+                                context_current[key].extend(deps[key])
+                                counter = counter + 1
+                            history = history + size
+                            leftover = leftover - counter
+                            offset = page * block_size - history
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
         target_model = "*"
@@ -472,30 +532,46 @@ def executeQuery(context, query):
             target_value = "*"
         if not query["piped"]:
             for model in allowed_models:
-                objs = queryModel(None, model, target_field, target_value)
+                counter = 0
+                objs, size = queryModel(None, model, target_field, target_value, offset, leftover)
                 for obj in objs:
                     if obj not in context_current[model]:
                         context_current[model].append(obj)
+                        counter = counter + 1
+                history = history + size
+                leftover = leftover - counter
+                offset = page * block_size - history
                 if query["tree"]:
                     for obj in context_current[model]:
-                        deps = fetchDependencies(model, obj)
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
                             context_current[key].extend(deps[key])
+                            counter = counter + 1
+                        history = history + size
+                        leftover = leftover - counter
+                        offset = page * block_size - history
         else:
             for model in allowed_models:
-                context_current[model] = queryModel(context_current, model, target_field, target_value)
+                counter = 0
+                context_current[model], size = queryModel(context_current, model, target_field, target_value, offset, leftover)
                 if query["tree"]:
                     for obj in context_current[model]:
-                        deps = fetchDependencies(model, obj)
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
                             context_current[key].extend(deps[key])
-    return context_current
+                            counter = counter + 1
+                        history = history + size
+                        leftover = leftover - counter
+                        offset = page * block_size - history
+    return context_current, history, leftover
 
 
-def processRequest(request):
+def processRequest(request, page):
     queries = query_parse(request)
     valid, message, included = query_analyse(queries)
     contexts = []
+    history = 0
+    leftover = 45
     if valid:
         for query_index in range(len(queries)):
             context = {}
@@ -512,14 +588,14 @@ def processRequest(request):
             query = queries[query_index]
             for pipe_index in range(len(query)):
                 pipe = query[pipe_index]
-                context = executeQuery(context, pipe)
+                context, history, leftover = executeQuery(context, pipe, page, history, leftover)
             contexts.append(context)
         for context in contexts:
             for key, value in context.items():
                     context[key] = list(set(value))
-        return ("{0} {1}".format(message,queries), contexts)
+        return ("{0} {1}".format(message,queries), contexts, leftover)
     else:
-        return ("{0} {1}".format(message,queries), None)
+        return ("{0} {1}".format(message,queries), None, leftover)
 
 def queryResponseDict(contexts):
     contexts_json = []
