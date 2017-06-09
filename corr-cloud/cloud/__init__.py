@@ -312,7 +312,7 @@ relationships["tool"] = []
 relationships["bundle"] = ["env"]
 
 def paginate(query, offset, leftover, size):
-    if leftover = 0:
+    if leftover == 0:
         return [], size + 0, offset, leftover
     else:
         if len(query) > offset:
