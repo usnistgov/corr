@@ -173,7 +173,7 @@ def query_parse(request=None):
 allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
 relationships = {}
 relationships["user"] = ["project", "file", "profile", "tool"]
-# relationships["version"] = ["env"]
+relationships["version"] = ["env"]
 relationships["record"] = ["diff"]
 relationships["project"] = ["record"]
 # relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
@@ -506,7 +506,7 @@ def queryModel(context, name, field, value, offset, leftover):
 
 def executeQuery(context, query, page, history, leftover):
     context_current = context
-    block_size = 46
+    block_size = 45
     offset = page * block_size
     if query["models"]:
         for model in query["models"]:
@@ -646,7 +646,7 @@ def processRequest(request, page):
     valid, message, included = query_analyse(queries)
     contexts = []
     history = 0
-    leftover = 46
+    leftover = 45
     if valid:
         for query_index in range(len(queries)):
             context = {}

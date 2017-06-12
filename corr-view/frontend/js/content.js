@@ -723,7 +723,7 @@ var Space = function (){
                     }else{
                         this.query_result = response["content"];
                         console.log(this.query_result);
-                        if(!exUser == true){
+                        if(exUser == "false"){
                             for(var i = 0; i < this.query_result["users"]["count"]; i++){
                                 var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];
                                 var user_content = renderer.user(this.query_result["users"]["result"][i], false, picture_uri);
@@ -731,35 +731,35 @@ var Space = function (){
                             }
                             hits += this.query_result["users"]["count"];
                         }
-                        if(!exApp == true){
+                        if(exApp == "false"){
                             for(var i = 0; i < this.query_result["applications"]["count"]; i++){
                                 var app_content = renderer.application(this.query_result["applications"]["result"][i], false);
                                 query_result.innerHTML += app_content;
                             }
                             hits += this.query_result["applications"]["count"];
                         }
-                        if(!exProject == true){
+                        if(exProject == "false"){
                             for(var i = 0; i < this.query_result["projects"]["count"]; i++){
                                 var project_content = renderer.project(this.query_result["projects"]["result"][i], false);
                                 query_result.innerHTML += project_content;
                             }
                             hits += this.query_result["projects"]["count"];
                         }
-                        if(!exRecord == true){
+                        if(exRecord == "false"){
                             for(var i = 0; i < this.query_result["records"]["count"]; i++){
                                 var record_content = renderer.record(this.query_result["records"]["result"][i], false, public);
                                 query_result.innerHTML += record_content;
                             }
                             hits += this.query_result["records"]["count"];
                         }
-                        if(!exDiff == true){
+                        if(exDiff == "false"){
                             for(var i = 0; i < this.query_result["diffs"]["count"]; i++){
                                 var diff_content = renderer.diff(this.query_result["diffs"]["result"][i], false);
                                 query_result.innerHTML += diff_content;
                             }
                             hits += this.query_result["diffs"]["count"];
                         }
-                        if(!exEnv == true){
+                        if(exEnv == "false"){
                             for(var i = 0; i < this.query_result["envs"]["count"]; i++){
                                 var env_content = renderer.env(this.query_result["envs"]["result"][i], false);
                                 query_result.innerHTML += env_content;
