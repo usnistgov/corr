@@ -693,13 +693,12 @@ var Space = function (){
     this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public, page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
-         var query_result = document.getElementById('query-result');
+        var query_result = document.getElementById('query-result');
         if(parseInt(page) == 0){
             hits = 0;
             query_result.innerHTML = linear_loader;
         }else if(parseInt(page) > 0){
             document.getElementById("load-more-search-block").innerHTML = linear_loader;
-            loadMoreEl.parentNode.removeChild(loadMoreEl);
         }else{
             hits = 0;
             query_result.innerHTML = linear_loader;
