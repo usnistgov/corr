@@ -173,15 +173,15 @@ def query_parse(request=None):
 allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
 relationships = {}
 relationships["user"] = ["project", "file", "profile", "tool"]
-relationships["version"] = ["env"]
+# relationships["version"] = ["env"]
 relationships["record"] = ["diff"]
 relationships["project"] = ["record"]
-relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+# relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
 relationships["profile"] = []
 relationships["env"] = ["project", "record"]
 relationships["diff"] = []
 relationships["tool"] = []
-relationships["bundle"] = ["env"]
+# relationships["bundle"] = ["env"]
 
 def query_analyse(queries=None):
     if len(queries) > 0 and len(queries[0]) > 0:
@@ -331,15 +331,15 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
             return [], size
 
 relationships["user"] = ["project", "file", "profile", "tool"]
-relationships["version"] = ["env"]
+# relationships["version"] = ["env"]
 relationships["record"] = ["diff"]
 relationships["project"] = ["record"]
-relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+# relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
 relationships["profile"] = []
 relationships["env"] = ["project", "record"]
 relationships["diff"] = []
 relationships["tool"] = []
-relationships["bundle"] = ["env"]
+# relationships["bundle"] = ["env"]
 
 def paginate(query, offset, leftover, size):
     if leftover == 0:
@@ -385,32 +385,32 @@ def fetchDependencies(name, obj, offset, leftover):
     elif name == "project":
         records, size, offset, leftover = paginate(RecordModel.objects(project=obj), offset, leftover, size)
         deps["record"] = records
-    elif name == "file":
-        projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
-        logo_projects = [el for el in ProjectModel.objects(logo=obj)]
-        for pr in logo_projects:
-            if pr not in projects:
-                projects.append(pr)
-        projects, size, offset, leftover = paginate(projects, offset, leftover, size)
-        deps["project"] = projects
+    # elif name == "file":
+    #     projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
+    #     logo_projects = [el for el in ProjectModel.objects(logo=obj)]
+    #     for pr in logo_projects:
+    #         if pr not in projects:
+    #             projects.append(pr)
+    #     projects, size, offset, leftover = paginate(projects, offset, leftover, size)
+    #     deps["project"] = projects
 
-        records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
-        records, size, offset, leftover = paginate(records, offset, leftover, size)
-        deps["record"] = records
+    #     records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
+    #     records, size, offset, leftover = paginate(records, offset, leftover, size)
+    #     deps["record"] = records
 
-        tools, size, offset, leftover = paginate(ApplicationModel.objects(logo=obj), offset, leftover, size)
-        deps["tool"] = tools
+    #     tools, size, offset, leftover = paginate(ApplicationModel.objects(logo=obj), offset, leftover, size)
+    #     deps["tool"] = tools
 
-        envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
-        envs, size, offset, leftover = paginate(envs, offset, leftover, size)
-        deps["env"] = envs
+    #     envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
+    #     envs, size, offset, leftover = paginate(envs, offset, leftover, size)
+    #     deps["env"] = envs
 
-        diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
-        diffs, size, offset, leftover = paginate(diffs, offset, leftover, size)
-        deps["diff"] = diffs
+    #     diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
+    #     diffs, size, offset, leftover = paginate(diffs, offset, leftover, size)
+    #     deps["diff"] = diffs
 
-        profiles, size, offset, leftover = paginate(ProfileModel.objects(picture=obj), offset, leftover, size)
-        deps["profile"] = profiles
+    #     profiles, size, offset, leftover = paginate(ProfileModel.objects(picture=obj), offset, leftover, size)
+    #     deps["profile"] = profiles
     elif name == "env":
         records, size, offset, leftover = paginate(RecordModel.objects(environment=obj), offset, leftover, size)
         deps["record"] = records
@@ -418,9 +418,9 @@ def fetchDependencies(name, obj, offset, leftover):
         projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
         projects, size, offset, leftover = paginate(projects, offset, leftover, size)
         deps["project"] = projects
-    elif name == "bundle":
-        envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
-        deps["env"] = envs
+    # elif name == "bundle":
+    #     envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
+    #     deps["env"] = envs
     pagination_logs.append("{0} -- fetchDependencies: {1}, {2}, {3}, {4}".format(datetime.datetime.utcnow(), size, offset, leftover))
     return deps, size, offset, leftover
 
@@ -432,13 +432,13 @@ def queryModel(context, name, field, value, offset, leftover):
         else:
             els, size = queryModelGeneric(UserModel, field, value, offset, leftover)
             pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "version":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    # elif name == "version":
+    #     if context:
+    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    #     else:
+    #         els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "record":
         if context:
             els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
@@ -453,13 +453,13 @@ def queryModel(context, name, field, value, offset, leftover):
         else:
             els, size = queryModelGeneric(ProjectModel, field, value, offset, leftover)
             pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "file":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    # elif name == "file":
+    #     if context:
+    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    #     else:
+    #         els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "profile":
         if context:
             els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
@@ -488,13 +488,13 @@ def queryModel(context, name, field, value, offset, leftover):
         else:
             els, size = queryModelGeneric(ApplicationModel, field, value, offset, leftover)
             pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "bundle":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    # elif name == "bundle":
+    #     if context:
+    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    #     else:
+    #         els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     else:
         if context:
             els = context
@@ -651,15 +651,15 @@ def processRequest(request, page):
         for query_index in range(len(queries)):
             context = {}
             context["user"] = []
-            context["version"] = []
+            # context["version"] = []
             context["record"] = []
             context["project"] = []
-            context["file"] = []
+            # context["file"] = []
             context["profile"] = []
             context["env"] = []
             context["diff"] = []
             context["tool"] = []
-            context["bundle"] = []
+            # context["bundle"] = []
             query = queries[query_index]
             for pipe_index in range(len(query)):
                 pipe = query[pipe_index]
