@@ -718,6 +718,7 @@ var Space = function (){
                         query_result.innerHTML = "";
                     }
                     var response = JSON.parse(this.responseText);
+                    var end = response["content"]["end"];
                     if(response["code"] == 500){
                         config.error_modal('Query failed', response["content"]);
                     }else{

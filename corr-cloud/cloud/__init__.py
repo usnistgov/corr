@@ -264,10 +264,17 @@ def queryModelGeneric(objectModel, field, value, offset, leftover):
         els = [el.user for el in els]
 
     size = len(els)
-    if size > leftover:
-        return els[:leftover], size
+    if size == 0:
+        return [], size
     else:
-        return els, size
+        if size > offset:
+            left = size-offset
+            if left > leftover:
+                return els[offset:offset+leftover], offset
+            else:
+                return els[offset:offset+left], offset
+        else:
+            return [], size
 
     # except:
     #     return []
@@ -298,12 +305,16 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
         els = [el.user for el in els]
     size = len(els)
     if size == 0:
-        return context, size
+        return [], size
     else:
-        if size > leftover:
-            return els[:leftover], size
+        if size > offset:
+            left = size-offset
+            if left > leftover:
+                return els[offset:offset+leftover], offset
+            else:
+                return els[offset:offset+left], offset
         else:
-            return els, size
+            return [], size
 
 relationships["user"] = ["project", "file", "profile", "tool"]
 relationships["version"] = ["env"]
@@ -506,8 +517,8 @@ def executeQuery(context, query, page, history, leftover):
                             else:
                                 context_current[target_model].append(obj)
                             counter = counter + 1
-                    history = history + size
                     leftover = leftover - counter
+                    history = history + size + counter
                     offset = page * block_size - history
                     if query["tree"]:
                         for obj in context_current[target_model]:
@@ -518,8 +529,8 @@ def executeQuery(context, query, page, history, leftover):
                                 else:
                                     context_current[key].extend(deps[key])
                                 counter = counter + 1
-                            history = history + size
                             leftover = leftover - counter
+                            history = history + size + counter
                             offset = page * block_size - history
                 else:
                     context_current[target_model], size = queryModel(context_current, target_model, target_field, target_value, offset, leftover)
@@ -533,8 +544,8 @@ def executeQuery(context, query, page, history, leftover):
                                 else:
                                     context_current[key].extend(deps[key])
                                 counter = counter + 1
-                            history = history + size
                             leftover = leftover - counter
+                            history = history + size + counter
                             offset = page * block_size - history
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
@@ -555,8 +566,8 @@ def executeQuery(context, query, page, history, leftover):
                         else:
                             context_current[model].append(obj)
                         counter = counter + 1
-                history = history + size
                 leftover = leftover - counter
+                history = history + size + counter
                 offset = page * block_size - history
                 if query["tree"]:
                     for obj in context_current[model]:
@@ -567,8 +578,8 @@ def executeQuery(context, query, page, history, leftover):
                             else:
                                 context_current[key].extend(deps[key])
                             counter = counter + 1
-                        history = history + size
                         leftover = leftover - counter
+                        history = history + size + counter
                         offset = page * block_size - history
         else:
             for model in allowed_models:
@@ -583,8 +594,8 @@ def executeQuery(context, query, page, history, leftover):
                             else:
                                 context_current[key].extend(deps[key])
                             counter = counter + 1
-                        history = history + size
                         leftover = leftover - counter
+                        history = history + size + counter
                         offset = page * block_size - history
     return context_current, history, leftover
 
@@ -612,6 +623,8 @@ def processRequest(request, page):
             for pipe_index in range(len(query)):
                 pipe = query[pipe_index]
                 context, history, leftover = executeQuery(context, pipe, page, history, leftover)
+                if leftover == 0:
+                    break
             contexts.append(context)
         for context in contexts:
             for key, value in context.items():
