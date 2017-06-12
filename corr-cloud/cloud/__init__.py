@@ -268,11 +268,17 @@ def queryModelGeneric(objectModel, field, value, offset, leftover):
         return [], size
     else:
         if size > offset:
-            left = size-offset
-            if left > leftover:
-                return els[offset:offset+leftover], offset
+            if offset > 0:
+                left = size-offset
+                if left > leftover:
+                    return els[offset:offset+leftover], offset
+                else:
+                    return els[offset:offset+left], offset
             else:
-                return els[offset:offset+left], offset
+                if size > leftover:
+                    return els[:leftover], leftover
+                else:
+                    return els, size
         else:
             return [], size
 
@@ -308,11 +314,17 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
         return [], size
     else:
         if size > offset:
-            left = size-offset
-            if left > leftover:
-                return els[offset:offset+leftover], offset
+            if offset > 0:
+                left = size-offset
+                if left > leftover:
+                    return els[offset:offset+leftover], offset
+                else:
+                    return els[offset:offset+left], offset
             else:
-                return els[offset:offset+left], offset
+                if size > leftover:
+                    return els[:leftover], leftover
+                else:
+                    return els, size
         else:
             return [], size
 
@@ -555,6 +567,7 @@ def executeQuery(context, query, page, history, leftover):
             target_value = query["values"]
         else:
             target_value = "*"
+
         if not query["piped"]:
             for model in allowed_models:
                 counter = 0

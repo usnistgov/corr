@@ -772,7 +772,7 @@ var Space = function (){
                     // Add load more to the end.
                     if(end != -1){
                         var next_Page = parseInt(page)+1;
-                         if(parseInt(page) == 0){
+                        if(parseInt(page) == 0){
                             query_result.innerHTML += "<div id='load-more-search-block' class='col s12 m12 l12 center'><a onclick='space.query(\""+search+"\", \""+exUser+"\", \""+exApp+"\", \""+exProject+"\", \""+exRecord+"\", \""+exDiff+"\", \""+exEnv+"\", \""+public+"\", 1);' class='btn-floating btn-large waves-effect waves-light tooltipped cyan' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
                         }else if(parseInt(page) > 0){
                             query_result.innerHTML += "<div id='load-more-search-block' class='col s12 m12 l12 center'><a onclick='space.query(\""+search+"\", \""+exUser+"\", \""+exApp+"\", \""+exProject+"\", \""+exRecord+"\", \""+exDiff+"\", \""+exEnv+"\", \""+public+"\", "+next_Page+");' class='btn-floating btn-large waves-effect waves-light tooltipped cyan' data-position='top' data-delay='50' data-tooltip='Load More'><i class='mdi-hardware-keyboard-arrow-down'></i></a></div>";
