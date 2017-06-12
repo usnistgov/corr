@@ -722,6 +722,7 @@ var Space = function (){
                         config.error_modal('Query failed', response["content"]);
                     }else{
                         this.query_result = response["content"];
+                        console.log(this.query_result);
                         if(!exUser == true){
                             for(var i = 0; i < this.query_result["users"]["count"]; i++){
                                 var picture_uri = url+"/public/user/picture/"+this.query_result["users"]["result"][i]["id"];

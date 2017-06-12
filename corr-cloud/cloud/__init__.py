@@ -506,7 +506,7 @@ def queryModel(context, name, field, value, offset, leftover):
 
 def executeQuery(context, query, page, history, leftover):
     context_current = context
-    block_size = 45
+    block_size = 46
     offset = page * block_size
     if query["models"]:
         for model in query["models"]:
@@ -646,7 +646,7 @@ def processRequest(request, page):
     valid, message, included = query_analyse(queries)
     contexts = []
     history = 0
-    leftover = 45
+    leftover = 46
     if valid:
         for query_index in range(len(queries)):
             context = {}
