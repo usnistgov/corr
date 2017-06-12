@@ -47,6 +47,8 @@ from datetime import date, timedelta
 from functools import update_wrapper
 
 
+pagination_logs = []
+
 def get_week_days(year, week):
     d = date(year,1,1)
     if(d.weekday()>3):
@@ -419,64 +421,88 @@ def fetchDependencies(name, obj, offset, leftover):
     elif name == "bundle":
         envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
         deps["env"] = envs
+    pagination_logs.append("{0} -- fetchDependencies: {1}, {2}, {3}, {4}".format(datetime.datetime.utcnow(), size, offset, leftover))
     return deps, size, offset, leftover
 
 def queryModel(context, name, field, value, offset, leftover):
     if name == "user":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(UserModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(UserModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "version":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(VersionModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "record":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(RecordModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(RecordModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "project":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(ProjectModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(ProjectModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "file":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(FileModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "profile":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(ProfileModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "env":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "diff":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(DiffModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(DiffModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "tool":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(ApplicationModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(ApplicationModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "bundle":
         if context:
-            return queryContextGeneric(context[name], name, field, value, offset, leftover)
+            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
         else:
-            return queryModelGeneric(BundleModel, field, value, offset, leftover)
+            els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
+            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     else:
         if context:
-            return context, 0
+            els = context
+            size = 0
         else:
-            return [], 0
+            els = []
+            size = 0
+    return els, size
 
 def executeQuery(context, query, page, history, leftover):
     context_current = context
@@ -559,6 +585,7 @@ def executeQuery(context, query, page, history, leftover):
                             leftover = leftover - counter
                             history = history + size + counter
                             offset = page * block_size - history
+            pagination_logs.append("{0} -- executeQuery: {1}, {2}, {3}".format(datetime.datetime.utcnow(), leftover, history, offset))
             print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
     else:
         target_model = "*"
@@ -610,6 +637,7 @@ def executeQuery(context, query, page, history, leftover):
                         leftover = leftover - counter
                         history = history + size + counter
                         offset = page * block_size - history
+        pagination_logs.append("{0} -- executeQuery: {1}, {2}, {3}".format(datetime.datetime.utcnow(), leftover, history, offset))
     return context_current, history, leftover
 
 
