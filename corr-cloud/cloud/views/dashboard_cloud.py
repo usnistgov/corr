@@ -57,11 +57,13 @@ def private_search():
                         _request = "{0}".format(value)
                     elif key == "page":
                         page = int(value)
+                    elif key == "filter":
+                        filtr = value.split("-")
                     else:
                         _request = "{0}&{1}{2}".format(_request, key, value)
                 if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
                     _request = "![{0}]?[]".format(_request)
-                message, contexts, leftover = processRequest(_request, page)
+                message, contexts, leftover = processRequest(_request, page, filtr)
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:

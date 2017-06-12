@@ -360,34 +360,40 @@ def paginate(query, offset, leftover, size):
             return [], size + len(query), offset, leftover
 
 
-def fetchDependencies(name, obj, offset, leftover):
+def fetchDependencies(name, obj, offset, leftover, filtrs):
     deps = {}
     size = 0
     if name == "user":
         # profiles, size, offset, leftover = paginate(ProfileModel.objects(user=obj), offset, leftover, size)
         # deps["profile"] = profiles
-        files, size, offset, leftover = paginate(FileModel.objects(owner=obj), offset, leftover, size)
-        deps["file"] = files
-        projects, size, offset, leftover = paginate(ProjectModel.objects(owner=obj), offset, leftover, size)
-        deps["project"] = projects
-        tools, size, offset, leftover = paginate(ApplicationModel.objects(developer=obj), offset, leftover, size)
-        deps["tool"] = tools
-    elif name == "version":
-        envs, size, offset, leftover = paginate(EnvironmentModel.objects(version=obj), offset, leftover, size)
-        deps["env"] = envs
+        if "file" not in filtrs:
+            files, size, offset, leftover = paginate(FileModel.objects(owner=obj), offset, leftover, size)
+            deps["file"] = files
+        if "project" not in filtrs:
+            projects, size, offset, leftover = paginate(ProjectModel.objects(owner=obj), offset, leftover, size)
+            deps["project"] = projects
+        if "tool" not in filtrs:
+            tools, size, offset, leftover = paginate(ApplicationModel.objects(developer=obj), offset, leftover, size)
+            deps["tool"] = tools
+    # elif name == "version":
+    #     if "env" not in filtrs:
+    #         envs, size, offset, leftover = paginate(EnvironmentModel.objects(version=obj), offset, leftover, size)
+    #         deps["env"] = envs
     elif name == "record":
-        diffs_from, size, offset, leftover = paginate(DiffModel.objects(record_from=obj), offset, leftover, size)
-        deps["diff"] = diffs_from
-        diffs_to = [el for el in DiffModel.objects(record_to=obj)]
-        diffs_more = []
-        for rec in diffs_to:
-            if rec not in deps["diff"]:
-                diffs_more.append(rec)
-        diffs_more, size, offset, leftover = paginate(diffs_more, offset, leftover, size)
-        deps["diff"].extend(diffs_more)
+        if "diff" not in filtrs:
+            diffs_from, size, offset, leftover = paginate(DiffModel.objects(record_from=obj), offset, leftover, size)
+            deps["diff"] = diffs_from
+            diffs_to = [el for el in DiffModel.objects(record_to=obj)]
+            diffs_more = []
+            for rec in diffs_to:
+                if rec not in deps["diff"]:
+                    diffs_more.append(rec)
+            diffs_more, size, offset, leftover = paginate(diffs_more, offset, leftover, size)
+            deps["diff"].extend(diffs_more)
     elif name == "project":
-        records, size, offset, leftover = paginate(RecordModel.objects(project=obj), offset, leftover, size)
-        deps["record"] = records
+        if "record" not in filtrs:
+            records, size, offset, leftover = paginate(RecordModel.objects(project=obj), offset, leftover, size)
+            deps["record"] = records
     # elif name == "file":
     #     projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
     #     logo_projects = [el for el in ProjectModel.objects(logo=obj)]
@@ -415,99 +421,110 @@ def fetchDependencies(name, obj, offset, leftover):
     #     profiles, size, offset, leftover = paginate(ProfileModel.objects(picture=obj), offset, leftover, size)
     #     deps["profile"] = profiles
     elif name == "env":
-        records, size, offset, leftover = paginate(RecordModel.objects(environment=obj), offset, leftover, size)
-        deps["record"] = records
+        if "record" not in filtrs:
+            records, size, offset, leftover = paginate(RecordModel.objects(environment=obj), offset, leftover, size)
+            deps["record"] = records
 
-        projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
-        projects, size, offset, leftover = paginate(projects, offset, leftover, size)
-        deps["project"] = projects
+        if "project" not in filtrs:
+            projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
+            projects, size, offset, leftover = paginate(projects, offset, leftover, size)
+            deps["project"] = projects
     # elif name == "bundle":
     #     envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
     #     deps["env"] = envs
     pagination_logs.append("{0} -- fetchDependencies: {1}, {2}, {3}, {4}".format(datetime.datetime.utcnow(), size, offset, leftover))
     return deps, size, offset, leftover
 
-def queryModel(context, name, field, value, offset, leftover):
-    if name == "user":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(UserModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    # elif name == "version":
-    #     if context:
-    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    #     else:
-    #         els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "record":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(RecordModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "project":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(ProjectModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    # elif name == "file":
-    #     if context:
-    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    #     else:
-    #         els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    # elif name == "profile":
-    #     if context:
-    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    #     else:
-    #         els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "env":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "diff":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(DiffModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "tool":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(ApplicationModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    # elif name == "bundle":
-    #     if context:
-    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    #     else:
-    #         els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
-    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    else:
+def queryModel(context, name, field, value, offset, leftover, filtrs):
+    if name in filtrs:
         if context:
             els = context
             size = 0
         else:
             els = []
             size = 0
-    return els, size
+        return els, size
+    else:
+        if name == "user":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(UserModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "version":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "record":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(RecordModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "project":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(ProjectModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "file":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "profile":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "env":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "diff":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(DiffModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "tool":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(ApplicationModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "bundle":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        else:
+            if context:
+                els = context
+                size = 0
+            else:
+                els = []
+                size = 0
+        return els, size
 
-def executeQuery(context, query, page, history, leftover):
+def executeQuery(context, query, page, history, leftover, filtrs):
     context_current = context
     block_size = 45
     offset = page * block_size
@@ -549,7 +566,7 @@ def executeQuery(context, query, page, history, leftover):
                     target_value = "*"
             if leftover > 0:
                 if not query["piped"]:
-                    objs, size = queryModel(None, target_model, target_field, target_value, offset, leftover)
+                    objs, size = queryModel(None, target_model, target_field, target_value, offset, leftover, filtrs)
                     counter = 0
                     for obj in objs:
                         if obj not in context_current[target_model]:
@@ -563,7 +580,7 @@ def executeQuery(context, query, page, history, leftover):
                     offset = page * block_size - history
                     if query["tree"]:
                         for obj in context_current[target_model]:
-                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover, filtrs)
                             for key, value in deps.items():
                                 # if key == "profile":
                                 #     context_current["user"].append(deps[key])
@@ -574,11 +591,11 @@ def executeQuery(context, query, page, history, leftover):
                             history = history + size + counter
                             offset = page * block_size - history
                 else:
-                    context_current[target_model], size = queryModel(context_current, target_model, target_field, target_value, offset, leftover)
+                    context_current[target_model], size = queryModel(context_current, target_model, target_field, target_value, offset, leftover, filtrs)
                     if query["tree"]:
                         counter = 0
                         for obj in context_current[target_model]:
-                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover, filtrs)
                             for key, value in deps.items():
                                 # if key == "profile":
                                 #     context_current["user"].append(deps[key])
@@ -601,7 +618,7 @@ def executeQuery(context, query, page, history, leftover):
         if not query["piped"]:
             for model in allowed_models:
                 counter = 0
-                objs, size = queryModel(None, model, target_field, target_value, offset, leftover)
+                objs, size = queryModel(None, model, target_field, target_value, offset, leftover, filtrs)
                 for obj in objs:
                     if obj not in context_current[model]:
                         # if target_model == "profile":
@@ -614,7 +631,7 @@ def executeQuery(context, query, page, history, leftover):
                 offset = page * block_size - history
                 if query["tree"]:
                     for obj in context_current[model]:
-                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover, filtrs)
                         for key, value in deps.items():
                             # if key == "profile":
                             #     context_current["user"].append(deps[key])
@@ -627,10 +644,10 @@ def executeQuery(context, query, page, history, leftover):
         else:
             for model in allowed_models:
                 counter = 0
-                context_current[model], size = queryModel(context_current, model, target_field, target_value, offset, leftover)
+                context_current[model], size = queryModel(context_current, model, target_field, target_value, offset, leftover, filtrs)
                 if query["tree"]:
                     for obj in context_current[model]:
-                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover, filtrs)
                         for key, value in deps.items():
                             # if key == "profile":
                             #     context_current["user"].append(deps[key])
@@ -644,7 +661,7 @@ def executeQuery(context, query, page, history, leftover):
     return context_current, history, leftover
 
 
-def processRequest(request, page):
+def processRequest(request, page, filtr):
     queries = query_parse(request)
     valid, message, included = query_analyse(queries)
     contexts = []
@@ -665,10 +682,25 @@ def processRequest(request, page):
             context["diff"] = []
             
             # context["bundle"] = []
+            filtrs = []
+
+            if filtr[0] == "true":
+                filtrs.append("user")
+            if filtr[1] == "true":
+                filtrs.append("tool")
+            if filtr[2] == "true":
+                filtrs.append("project")
+            if filtr[3] == "true":
+                filtrs.append("record")
+            if filtr[4] == "true":
+                filtrs.append("diff")
+            if filtr[5] == "true":
+                filtrs.append("env")
+
             query = queries[query_index]
             for pipe_index in range(len(query)):
                 pipe = query[pipe_index]
-                context, history, leftover = executeQuery(context, pipe, page, history, leftover)
+                context, history, leftover = executeQuery(context, pipe, page, history, leftover, filtrs)
                 if leftover == 0:
                     break
             contexts.append(context)
