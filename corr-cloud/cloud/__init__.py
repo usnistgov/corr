@@ -614,7 +614,7 @@ def processRequest(request, page):
             context["record"] = []
             context["project"] = []
             context["file"] = []
-            # context["profile"] = []
+            context["profile"] = []
             context["env"] = []
             context["diff"] = []
             context["tool"] = []
