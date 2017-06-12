@@ -260,6 +260,9 @@ def queryModelGeneric(objectModel, field, value, offset, leftover):
     else:
         els = [el for el in objectModel.objects()]
 
+    if objectModel == ProfileModel:
+        els = [el.user for el in els]
+
     size = len(els)
     if size > leftover:
         return els[:leftover], size
@@ -291,6 +294,8 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
         els = [o for o in context if o.info()[field] != ""]
     else:
         els = []
+    if name == "profile":
+        els = [el.user for el in els]
     size = len(els)
     if size == 0:
         return context, size
@@ -331,8 +336,8 @@ def fetchDependencies(name, obj, offset, leftover):
     deps = {}
     size = 0
     if name == "user":
-        profiles, size, offset, leftover = paginate(ProfileModel.objects(user=obj), offset, leftover, size)
-        deps["profile"] = profiles
+        # profiles, size, offset, leftover = paginate(ProfileModel.objects(user=obj), offset, leftover, size)
+        # deps["profile"] = profiles
         files, size, offset, leftover = paginate(FileModel.objects(owner=obj), offset, leftover, size)
         deps["file"] = files
         projects, size, offset, leftover = paginate(ProjectModel.objects(owner=obj), offset, leftover, size)
@@ -496,7 +501,10 @@ def executeQuery(context, query, page, history, leftover):
                     counter = 0
                     for obj in objs:
                         if obj not in context_current[target_model]:
-                            context_current[target_model].append(obj)
+                            if target_model == "profile":
+                                context_current["user"].append(obj)
+                            else:
+                                context_current[target_model].append(obj)
                             counter = counter + 1
                     history = history + size
                     leftover = leftover - counter
@@ -505,7 +513,10 @@ def executeQuery(context, query, page, history, leftover):
                         for obj in context_current[target_model]:
                             deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
                             for key, value in deps.items():
-                                context_current[key].extend(deps[key])
+                                if key == "profile":
+                                    context_current["user"].append(deps[key])
+                                else:
+                                    context_current[key].extend(deps[key])
                                 counter = counter + 1
                             history = history + size
                             leftover = leftover - counter
@@ -517,7 +528,10 @@ def executeQuery(context, query, page, history, leftover):
                         for obj in context_current[target_model]:
                             deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
                             for key, value in deps.items():
-                                context_current[key].extend(deps[key])
+                                if key == "profile":
+                                    context_current["user"].append(deps[key])
+                                else:
+                                    context_current[key].extend(deps[key])
                                 counter = counter + 1
                             history = history + size
                             leftover = leftover - counter
@@ -536,7 +550,10 @@ def executeQuery(context, query, page, history, leftover):
                 objs, size = queryModel(None, model, target_field, target_value, offset, leftover)
                 for obj in objs:
                     if obj not in context_current[model]:
-                        context_current[model].append(obj)
+                        if target_model == "profile":
+                            context_current["user"].append(obj)
+                        else:
+                            context_current[model].append(obj)
                         counter = counter + 1
                 history = history + size
                 leftover = leftover - counter
@@ -545,7 +562,10 @@ def executeQuery(context, query, page, history, leftover):
                     for obj in context_current[model]:
                         deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
-                            context_current[key].extend(deps[key])
+                            if key == "profile":
+                                context_current["user"].append(deps[key])
+                            else:
+                                context_current[key].extend(deps[key])
                             counter = counter + 1
                         history = history + size
                         leftover = leftover - counter
@@ -558,7 +578,10 @@ def executeQuery(context, query, page, history, leftover):
                     for obj in context_current[model]:
                         deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
-                            context_current[key].extend(deps[key])
+                            if key == "profile":
+                                context_current["user"].append(deps[key])
+                            else:
+                                context_current[key].extend(deps[key])
                             counter = counter + 1
                         history = history + size
                         leftover = leftover - counter
@@ -580,7 +603,7 @@ def processRequest(request, page):
             context["record"] = []
             context["project"] = []
             context["file"] = []
-            context["profile"] = []
+            # context["profile"] = []
             context["env"] = []
             context["diff"] = []
             context["tool"] = []
