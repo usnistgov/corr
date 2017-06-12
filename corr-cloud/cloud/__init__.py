@@ -170,14 +170,17 @@ def query_parse(request=None):
 
 # processRequest("![yannick,sumatra]?[0.user.email,1.file]~|![]?[profile]|![]?[profile]~")
 
-allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
+# allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
+allowed_models = ["user", "tool", "project", "record", "env", "diff"]
+
 relationships = {}
-relationships["user"] = ["project", "file", "profile", "tool"]
+# relationships["user"] = ["project", "file", "profile", "tool"]
+relationships["user"] = ["tool", "project"]
 relationships["version"] = ["env"]
 relationships["record"] = ["diff"]
 relationships["project"] = ["record"]
 # relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
-relationships["profile"] = []
+# relationships["profile"] = []
 relationships["env"] = ["project", "record"]
 relationships["diff"] = []
 relationships["tool"] = []
@@ -309,8 +312,8 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
         els = [o for o in context if o.info()[field] != ""]
     else:
         els = []
-    if name == "profile":
-        els = [el.user for el in els]
+    # if name == "profile":
+    #     els = [el.user for el in els]
     size = len(els)
     if size == 0:
         return [], size
@@ -330,15 +333,15 @@ def queryContextGeneric(context, name, field, value, offset, leftover):
         else:
             return [], size
 
-relationships["user"] = ["project", "file", "profile", "tool"]
-# relationships["version"] = ["env"]
-relationships["record"] = ["diff"]
-relationships["project"] = ["record"]
-# relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
-relationships["profile"] = []
-relationships["env"] = ["project", "record"]
-relationships["diff"] = []
-relationships["tool"] = []
+# relationships["user"] = ["project", "file", "profile", "tool"]
+# # relationships["version"] = ["env"]
+# relationships["record"] = ["diff"]
+# relationships["project"] = ["record"]
+# # relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+# relationships["profile"] = []
+# relationships["env"] = ["project", "record"]
+# relationships["diff"] = []
+# relationships["tool"] = []
 # relationships["bundle"] = ["env"]
 
 def paginate(query, offset, leftover, size):
@@ -460,13 +463,13 @@ def queryModel(context, name, field, value, offset, leftover):
     #     else:
     #         els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
     #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-    elif name == "profile":
-        if context:
-            els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
-        else:
-            els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
-            pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    # elif name == "profile":
+    #     if context:
+    #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+    #     else:
+    #         els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
+    #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
     elif name == "env":
         if context:
             els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
@@ -550,10 +553,10 @@ def executeQuery(context, query, page, history, leftover):
                     counter = 0
                     for obj in objs:
                         if obj not in context_current[target_model]:
-                            if target_model == "profile":
-                                context_current["user"].append(obj)
-                            else:
-                                context_current[target_model].append(obj)
+                            # if target_model == "profile":
+                            #     context_current["user"].append(obj)
+                            # else:
+                            context_current[target_model].append(obj)
                             counter = counter + 1
                     leftover = leftover - counter
                     history = history + size + counter
@@ -562,10 +565,10 @@ def executeQuery(context, query, page, history, leftover):
                         for obj in context_current[target_model]:
                             deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
                             for key, value in deps.items():
-                                if key == "profile":
-                                    context_current["user"].append(deps[key])
-                                else:
-                                    context_current[key].extend(deps[key])
+                                # if key == "profile":
+                                #     context_current["user"].append(deps[key])
+                                # else:
+                                context_current[key].extend(deps[key])
                                 counter = counter + 1
                             leftover = leftover - counter
                             history = history + size + counter
@@ -577,10 +580,10 @@ def executeQuery(context, query, page, history, leftover):
                         for obj in context_current[target_model]:
                             deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover)
                             for key, value in deps.items():
-                                if key == "profile":
-                                    context_current["user"].append(deps[key])
-                                else:
-                                    context_current[key].extend(deps[key])
+                                # if key == "profile":
+                                #     context_current["user"].append(deps[key])
+                                # else:
+                                context_current[key].extend(deps[key])
                                 counter = counter + 1
                             leftover = leftover - counter
                             history = history + size + counter
@@ -601,10 +604,10 @@ def executeQuery(context, query, page, history, leftover):
                 objs, size = queryModel(None, model, target_field, target_value, offset, leftover)
                 for obj in objs:
                     if obj not in context_current[model]:
-                        if target_model == "profile":
-                            context_current["user"].append(obj)
-                        else:
-                            context_current[model].append(obj)
+                        # if target_model == "profile":
+                        #     context_current["user"].append(obj)
+                        # else:
+                        context_current[model].append(obj)
                         counter = counter + 1
                 leftover = leftover - counter
                 history = history + size + counter
@@ -613,10 +616,10 @@ def executeQuery(context, query, page, history, leftover):
                     for obj in context_current[model]:
                         deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
-                            if key == "profile":
-                                context_current["user"].append(deps[key])
-                            else:
-                                context_current[key].extend(deps[key])
+                            # if key == "profile":
+                            #     context_current["user"].append(deps[key])
+                            # else:
+                            context_current[key].extend(deps[key])
                             counter = counter + 1
                         leftover = leftover - counter
                         history = history + size + counter
@@ -629,10 +632,10 @@ def executeQuery(context, query, page, history, leftover):
                     for obj in context_current[model]:
                         deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover)
                         for key, value in deps.items():
-                            if key == "profile":
-                                context_current["user"].append(deps[key])
-                            else:
-                                context_current[key].extend(deps[key])
+                            # if key == "profile":
+                            #     context_current["user"].append(deps[key])
+                            # else:
+                            context_current[key].extend(deps[key])
                             counter = counter + 1
                         leftover = leftover - counter
                         history = history + size + counter
@@ -652,13 +655,15 @@ def processRequest(request, page):
             context = {}
             context["user"] = []
             # context["version"] = []
-            context["record"] = []
+            context["tool"] = []
             context["project"] = []
+            context["record"] = []
+            
             # context["file"] = []
-            context["profile"] = []
+            # context["profile"] = []
             context["env"] = []
             context["diff"] = []
-            context["tool"] = []
+            
             # context["bundle"] = []
             query = queries[query_index]
             for pipe_index in range(len(query)):
