@@ -13,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, paginate, pagination_logs, cloud_response, storage_manager, access_manager, processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
+from cloud import app, query_basic, paginate, pagination_logs, cloud_response, storage_manager, access_manager, processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -51,7 +51,8 @@ def private_search():
             logAccess(CLOUD_URL, 'cloud', '/private/dashboard/search')
             page = 0
             if fk.request.args:
-                _request = ""
+                # _request = ""
+                words = []
                 for key, value in fk.request.args.items():
                     if key == "req":
                         _request = "{0}".format(value)
@@ -60,10 +61,12 @@ def private_search():
                     elif key == "filter":
                         filtr = value.split("-")
                     else:
-                        _request = "{0}&{1}{2}".format(_request, key, value)
-                if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
-                    _request = "![{0}]?[]".format(_request)
-                message, contexts, leftover = processRequest(_request, page, filtr)
+                        # _request = "{0}&{1}{2}".format(_request, key, value)
+                        words = value.split(" ")
+                # if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
+                #     _request = "![{0}]?[]".format(_request)
+                # message, contexts, leftover = processRequest(_request, page, filtr)
+                size, contexts = query_basic(words, page, filtr)
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:
@@ -142,10 +145,10 @@ def private_search():
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
                     block_size = 45
-                    if leftover == block_size:
+                    if size == 0:
                         end = -1
                     else:
-                        end = leftover
+                        end = block_size-size
                     # begin = int(page)*block_size
                     # history_hit = 0
                     # counter = 0
@@ -170,7 +173,7 @@ def private_search():
                     # else:
                     #     end = begin + block_size - history_hit
                     response['end'] = end
-                    response['logs'] = pagination_logs
+                    # response['logs'] = pagination_logs
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

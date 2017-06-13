@@ -31,6 +31,7 @@ from datetime import date, timedelta
 from functools import update_wrapper
 from calendar import monthrange
 import time
+from mongoengine.queryset.visitor import Q
 
 app, storage_manager, access_manager = setup_app(__name__)
 
@@ -135,6 +136,62 @@ API_PORT = app.config['API_SETTINGS']['port']
 
 ACC_SEC = app.config['SECURITY_MANAGEMENT']['account']
 CNT_SEC = app.config['SECURITY_MANAGEMENT']['content']
+
+def filter2filters(filtr):
+    filtrs = []
+    if filtr[0] == "true":
+        filtrs.append("user")
+    if filtr[1] == "true":
+        filtrs.append("tool")
+    if filtr[2] == "true":
+        filtrs.append("project")
+    if filtr[3] == "true":
+        filtrs.append("record")
+    if filtr[4] == "true":
+        filtrs.append("diff")
+    if filtr[5] == "true":
+        filtrs.append("env")
+    return filtrs
+
+def raw2dict(raw, page):
+    block_size = 45
+    begin = page*block_size
+    end = begin + block_size
+    results = {'user':[], 'tool':[], 'project':[], 'record':[], 'diff':[], 'env':[]}
+    for r in raw[begin:end]:
+        if type(r) == UserModel:
+            results['user'].append(r)
+        elif type(r) == ApplicationModel:
+            results['tool'].append(r)
+        elif type(r) == ProjectModel:
+            results['project'].append(r)
+        elif type(r) == RecordModel:
+            results['record'].append(r)
+        elif type(r) == DiffModel:
+            results['diff'].append(r)
+        elif type(r) == EnvironmentModel:
+            results['env'].append(r)
+    return results
+
+
+def query_basic(words, filtr, page):
+    filtrs = filter2filters(filtr)
+    raw = []
+    if "user" not in filtrs:
+        raw.extend([u for u in UserModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    if "tool" not in filtrs:
+        raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    if "project" not in filtrs:
+        raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    if "record" not in filtrs:
+        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    if "diff" not in filtrs:
+        raw.extend([u for u in DiffModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    if "env" not in filtrs:
+        raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+    results = raw2dict(raw, page)
+    return len(results), results
+
 
 def query_parse(request=None):
     queries = []
