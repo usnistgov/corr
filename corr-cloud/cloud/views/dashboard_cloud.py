@@ -53,6 +53,7 @@ def private_search():
             if fk.request.args:
                 # _request = ""
                 words = []
+                filtr = []
                 for key, value in fk.request.args.items():
                     if key == "req":
                          # words = value.split(" ")
