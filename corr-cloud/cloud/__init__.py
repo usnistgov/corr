@@ -174,7 +174,7 @@ def raw2dict(raw, page):
     return results
 
 
-def query_basic(words, filtr, page):
+def query_basic(words, page, filtr):
     filtrs = filter2filters(filtr)
     raw = []
     if "user" not in filtrs:
