@@ -55,14 +55,15 @@ def private_search():
                 words = []
                 for key, value in fk.request.args.items():
                     if key == "req":
-                        _request = "{0}".format(value)
+                         # words = value.split(" ")
+                         words = value.split(" ")
                     elif key == "page":
                         page = int(value)
                     elif key == "filter":
                         filtr = value.split("-")
                     else:
                         # _request = "{0}&{1}{2}".format(_request, key, value)
-                        words = value.split(" ")
+                        pass
                 # if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
                 #     _request = "![{0}]?[]".format(_request)
                 # message, contexts, leftover = processRequest(_request, page, filtr)
