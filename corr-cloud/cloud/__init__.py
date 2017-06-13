@@ -158,20 +158,27 @@ def raw2dict(raw, page):
     begin = page*block_size
     end = begin + block_size
     results = {'user':[], 'tool':[], 'project':[], 'record':[], 'diff':[], 'env':[]}
-    for r in raw[begin:end]:
-        if type(r) == UserModel:
-            results['user'].append(r)
-        elif type(r) == ApplicationModel:
-            results['tool'].append(r)
-        elif type(r) == ProjectModel:
-            results['project'].append(r)
-        elif type(r) == RecordModel:
-            results['record'].append(r)
-        elif type(r) == DiffModel:
-            results['diff'].append(r)
-        elif type(r) == EnvironmentModel:
-            results['env'].append(r)
-    return results
+    if begin > len(raw):
+        return 0, results
+    else:
+        if end > len(raw):
+            page_block = raw[begin:]
+        else:
+            page_block = raw[begin:end]
+        for r in page_block:
+            if type(r) == UserModel:
+                results['user'].append(r)
+            elif type(r) == ApplicationModel:
+                results['tool'].append(r)
+            elif type(r) == ProjectModel:
+                results['project'].append(r)
+            elif type(r) == RecordModel:
+                results['record'].append(r)
+            elif type(r) == DiffModel:
+                results['diff'].append(r)
+            elif type(r) == EnvironmentModel:
+                results['env'].append(r)
+        return len(page_block), results
 
 
 def query_basic(words, page, filtr):
@@ -189,8 +196,7 @@ def query_basic(words, page, filtr):
         raw.extend([u for u in DiffModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "env" not in filtrs:
         raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
-    results = raw2dict(raw, page)
-    return len(results), results
+    return raw2dict(raw, page)
 
 
 def query_parse(request=None):
