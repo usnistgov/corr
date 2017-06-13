@@ -76,6 +76,7 @@ def private_search():
                     records = []
                     envs = []
                     diffs = []
+                    contexts = [contexts]
                     for context_index in range(len(contexts)):
                         context = contexts[context_index]
                         user_filter = []
