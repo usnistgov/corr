@@ -175,6 +175,7 @@ def private_search():
                     #     end = begin + block_size - history_hit
                     response['end'] = end
                     # response['logs'] = pagination_logs
+                    message = "Basic query."
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
