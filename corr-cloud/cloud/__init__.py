@@ -187,40 +187,22 @@ def query_basic(words, page, filtr):
     filtrs = filter2filters(filtr)
     raw = []
     if "user" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in UserModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in UserModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in UserModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "tool" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in ApplicationModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "project" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in ProjectModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "record" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in RecordModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in RecordModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "diff" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in DiffModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in DiffModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in DiffModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "env" not in filtrs:
-        if len(words) == 0:
-            raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at')])
-        else:
-            raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
+        raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     return raw2dict(raw, page)
 
