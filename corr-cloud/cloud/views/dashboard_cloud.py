@@ -174,7 +174,7 @@ def private_search():
                     # else:
                     #     end = begin + block_size - history_hit
                     response['end'] = end
-                    # response['logs'] = pagination_logs
+                    response['logs'] = pagination_logs
                     message = "Basic query."
                     return cloud_response(200, message, response)
             else:
