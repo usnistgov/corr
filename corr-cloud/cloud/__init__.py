@@ -178,17 +178,17 @@ def query_basic(words, page, filtr):
     filtrs = filter2filters(filtr)
     raw = []
     if "user" not in filtrs:
-        raw.extend([u for u in UserModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in UserModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "tool" not in filtrs:
-        raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "project" not in filtrs:
-        raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "record" not in filtrs:
-        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "diff" not in filtrs:
-        raw.extend([u for u in DiffModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in DiffModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     if "env" not in filtrs:
-        raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if any(words) in str(u.extended())])
+        raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if any(w in str(u.extended()) for w in words)])
     results = raw2dict(raw, page)
     return len(results), results
 
