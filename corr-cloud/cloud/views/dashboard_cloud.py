@@ -665,7 +665,7 @@ def public_search():
                 diffs = []
                 contexts = [contexts]
                 for context_index in range(len(contexts)):
-                    # context = contexts[context_index]
+                    context = contexts[context_index]
                     # user_filter = []
                     for user in context["user"]:
                     #     if user.email not in user_filter:
