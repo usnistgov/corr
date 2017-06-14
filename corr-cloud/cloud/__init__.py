@@ -199,7 +199,7 @@ def query_basic(words, page, filtr, current_user):
 
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "record" not in filtrs:
-        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words) and (u.access == 'public' or current_user and (current_user == u.project.owner or current_user.group == "admin"))])
+        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words) and (u.access == 'public' or (current_user and u.project) and (current_user == u.project.owner or current_user.group == "admin"))])
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "diff" not in filtrs:
         raw.extend([u for u in DiffModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words) and ((u.record_from.access == 'public' and u.record_to.access == 'public') or (current_user and (current_user.group == "admin" or current_user == u.record_from.project.owner or current_user == u.record_to.project.owner)))])

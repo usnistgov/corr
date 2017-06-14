@@ -119,7 +119,7 @@ def private_search():
                                 #         break
                                 # if not skip:
                                 # if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                records.append(json.loads(record.summary_json()))
+                            records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
                             # skip = False
                             # for cn_i in range(context_index):
