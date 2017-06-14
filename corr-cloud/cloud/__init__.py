@@ -188,6 +188,8 @@ def query_basic(words, page, filtr):
     raw = []
     if "user" not in filtrs:
         raw.extend([u for u in UserModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
+        # _users = UserModel.objects(Q(email__in=words)|Q(email__in=words)|)
+        # _users_P = ProfileModel.objects()
         pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
     if "tool" not in filtrs:
         raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if all(w in str(u.extended()) for w in words)])
