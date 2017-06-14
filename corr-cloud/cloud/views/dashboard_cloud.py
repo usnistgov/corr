@@ -652,7 +652,7 @@ def public_search():
                     filtr = value.split("-")
                 else:
                     pass
-            size, contexts = query_basic(words, page, filtr)
+            size, contexts = query_basic(words, page, filtr, None)
             message = "Basic query."
             if contexts is None:
                 return cloud_response(500, 'Error processing the query', message)
