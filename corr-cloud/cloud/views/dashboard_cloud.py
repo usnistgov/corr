@@ -665,12 +665,12 @@ def public_search():
                 diffs = []
                 contexts = [contexts]
                 for context_index in range(len(contexts)):
-                    context = contexts[context_index]
-                    user_filter = []
+                    # context = contexts[context_index]
+                    # user_filter = []
                     for user in context["user"]:
-                        if user.email not in user_filter:
-                            user_filter.append(user.email)
-                            profile = ProfileModel.objects(user=user)[0]
+                    #     if user.email not in user_filter:
+                    #         user_filter.append(user.email)
+                        profile = ProfileModel.objects(user=user)[0]
                         users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                     # for profile in context["profile"]:
                     #     if profile.user.email not in user_filter:
@@ -692,8 +692,8 @@ def public_search():
                         #         skip = True
                         #         break
                         # if not skip:
-                        if project.access == 'public':
-                            projects.append(project.extended())
+                        # if project.access == 'public':
+                        projects.append(project.extended())
                     for record in context["record"]:
                         # skip = False
                         # for cn_i in range(context_index):
@@ -702,8 +702,8 @@ def public_search():
                         #         break
                         # if not skip:
                         if record.project:
-                            if record.access == 'public':
-                                records.append(json.loads(record.summary_json()))
+                            # if record.access == 'public':
+                            records.append(json.loads(record.summary_json()))
                     for env in context["env"]:
                         # skip = False
                         # for cn_i in range(context_index):
@@ -712,10 +712,11 @@ def public_search():
                         #         break
                         # if not skip:
                         for project in ProjectModel.objects():
-                            if str(env.id) in project.history:
-                                if project.access == 'public':
-                                    envs.append(env.info())
-                                break
+                            # if str(env.id) in project.history:
+                            #     if project.access == 'public':
+                            #         envs.append(env.info())
+                            #     break
+                            envs.append(env.info())
                     for diff in context["diff"]:
                         # skip = False
                         # for cn_i in range(context_index):
@@ -723,8 +724,8 @@ def public_search():
                         #         skip = True
                         #         break
                         # if not skip:
-                        if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
-                            diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                        # if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
+                        diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                 
                 block_size = 45
                 if size == 0:
