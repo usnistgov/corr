@@ -68,7 +68,7 @@ def private_search():
                 # if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
                 #     _request = "![{0}]?[]".format(_request)
                 # message, contexts, leftover = processRequest(_request, page, filtr)
-                size, contexts = query_basic(words, page, filtr)
+                size, contexts = query_basic(words, page, filtr, current_user)
                 message = "Basic query."
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
@@ -82,12 +82,12 @@ def private_search():
                     contexts = [contexts]
                     for context_index in range(len(contexts)):
                         context = contexts[context_index]
-                        user_filter = []
+                        # user_filter = []
                         for user in context["user"]:
-                            if user.email not in user_filter:
-                                user_filter.append(user.email)
-                                profile = ProfileModel.objects(user=user)[0]
-                                users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
+                            # if user.email not in user_filter:
+                            #     user_filter.append(user.email)
+                            profile = ProfileModel.objects(user=user)[0]
+                            users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                         # for profile in context["profile"]:
                         #     if profile.user.email not in user_filter:
                         #         user_filter.append(profile.user.email)
@@ -108,8 +108,8 @@ def private_search():
                             #         skip = True
                             #         break
                             # if not skip:
-                            if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                                projects.append(project.extended())
+                            # if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                            projects.append(project.extended())
                         for record in context["record"]:
                             if record.project:
                                 # skip = False
@@ -118,8 +118,8 @@ def private_search():
                                 #         skip = True
                                 #         break
                                 # if not skip:
-                                if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
-                                    records.append(json.loads(record.summary_json()))
+                                # if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
+                                records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
                             # skip = False
                             # for cn_i in range(context_index):
@@ -127,11 +127,12 @@ def private_search():
                             #         skip = True
                             #         break
                             # if not skip:
-                            for project in ProjectModel.objects():
-                                if str(env.id) in project.history:
-                                    if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                                        envs.append(env.info())
-                                    break
+                            # for project in ProjectModel.objects():
+                            #     if str(env.id) in project.history:
+                            #         if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
+                            #             envs.append(env.info())
+                            #         break
+                            envs.append(env.info())
                         for diff in context["diff"]:
                             # skip = False
                             # for cn_i in range(context_index):
@@ -139,8 +140,8 @@ def private_search():
                             #         skip = True
                             #         break
                             # if not skip:
-                            if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
-                                diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                            # if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
+                            diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     block_size = 45
                     if size == 0:
                         end = -1
