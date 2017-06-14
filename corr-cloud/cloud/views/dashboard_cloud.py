@@ -111,7 +111,7 @@ def private_search():
                             # if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
                             projects.append(project.extended())
                         for record in context["record"]:
-                            if record.project:
+                            # if record.project:
                                 # skip = False
                                 # for cn_i in range(context_index):
                                 #     if record in contexts[cn_i]["record"]:
