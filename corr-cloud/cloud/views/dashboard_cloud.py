@@ -69,6 +69,7 @@ def private_search():
                 #     _request = "![{0}]?[]".format(_request)
                 # message, contexts, leftover = processRequest(_request, page, filtr)
                 size, contexts = query_basic(words, page, filtr)
+                message = "Basic query."
                 if contexts is None:
                     return cloud_response(500, 'Error processing the query', message)
                 else:
@@ -178,7 +179,7 @@ def private_search():
                     #     end = begin + block_size - history_hit
                     response['end'] = end
                     # response['logs'] = pagination_logs
-                    message = "Basic query."
+                    # message = "Basic query."
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -651,6 +652,7 @@ def public_search():
                 else:
                     pass
             size, contexts = query_basic(words, page, filtr)
+            message = "Basic query."
             if contexts is None:
                 return cloud_response(500, 'Error processing the query', message)
             else:
@@ -737,7 +739,6 @@ def public_search():
                 response['diffs'] = {'count':len(diffs), 'result':diffs}
                 response['end'] = end
                 # response['logs'] = pagination_logs
-                message = "Basic query."
                 return cloud_response(200, message, response)
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))

@@ -788,7 +788,7 @@ var Space = function (){
             }
         };
         var filter = exUser+"-"+exApp+"-"+exProject+"-"+exRecord+"-"+exDiff+"-"+exEnv;
-        if(public == true){
+        if(public == "true"){
             xmlhttp.open("GET", url+"/public/dashboard/search?page="+page+"&filter="+filter+"&req="+search);
         }else{
             xmlhttp.open("GET", url+"/private/dashboard/search?page="+page+"&filter="+filter+"&req="+search);
