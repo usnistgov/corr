@@ -662,11 +662,11 @@ def public_search():
                 contexts = [contexts]
                 for context_index in range(len(contexts)):
                     context = contexts[context_index]
-                    # user_filter = []
+                    user_filter = []
                     for user in context["user"]:
-                        # if user.email not in user_filter:
-                        #     user_filter.append(user.email)
-                        #     profile = ProfileModel.objects(user=user)[0]
+                        if user.email not in user_filter:
+                            user_filter.append(user.email)
+                            profile = ProfileModel.objects(user=user)[0]
                         users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                     # for profile in context["profile"]:
                     #     if profile.user.email not in user_filter:
@@ -697,7 +697,8 @@ def public_search():
                         #         skip = True
                         #         break
                         # if not skip:
-                        if record.access == 'public':
+
+                        if record.project and record.access == 'public':
                             records.append(json.loads(record.summary_json()))
                     for env in context["env"]:
                         # skip = False
