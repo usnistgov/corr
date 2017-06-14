@@ -140,6 +140,11 @@ def private_search():
                             # if not skip:
                             if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                                 diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
+                    block_size = 45
+                    if size == 0:
+                        end = -1
+                    else:
+                        end = block_size-size
                     response = {}
                     response['users'] = {'count':len(users), 'result':users}
                     response['applications'] = {'count':len(applications), 'result':applications}
@@ -147,11 +152,7 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    block_size = 45
-                    if size == 0:
-                        end = -1
-                    else:
-                        end = block_size-size
+                    
                     # begin = int(page)*block_size
                     # history_hit = 0
                     # counter = 0
@@ -626,7 +627,7 @@ def public_search():
     if fk.request.method == 'GET':
         logAccess(CLOUD_URL, 'cloud', '/public/dashboard/search')
         if fk.request.args:
-            _request = ""
+            # _request = ""
             page = 0
             # for key, value in fk.request.args.items():
             #     if key == "req":
@@ -697,9 +698,9 @@ def public_search():
                         #         skip = True
                         #         break
                         # if not skip:
-
-                        if record.project and record.access == 'public':
-                            records.append(json.loads(record.summary_json()))
+                        if record.project:
+                            if record.access == 'public':
+                                records.append(json.loads(record.summary_json()))
                     for env in context["env"]:
                         # skip = False
                         # for cn_i in range(context_index):
