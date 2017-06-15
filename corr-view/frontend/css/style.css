@@ -864,7 +864,7 @@ h5.breadcrumbs-header {
   background: rgba(0, 0, 0, 0.25);
 }
 #flight-card .flight-state-wrapper {
-  margin: 0 0 100px 0 !important;
+  margin: 0 0 0 0 !important;
 }
 /*task-card*/
 
