@@ -79,7 +79,7 @@ var Space = function (){
                             content += "<a onclick='userViewModal(\""+project["project"]["owner"]["id"]+"\",\""+project["project"]["owner"]["profile"]["fname"]+"\""+",\""+project["project"]["owner"]["profile"]["lname"]+"\",\""+project["project"]["owner"]["profile"]["organisation"]+"\",\""+project["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+project["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                         }
 
-                        content += "<span class='card-title activator black-text text-darken-4'> "+project["project"]["name"]+"</span>";
+                        content += "<span class='card-title black-text text-darken-4'> "+project["project"]["name"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+project["project"]["created"]+"</p>";
                         if(accessible){
                             content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='project-access-"+project["project"]["id"]+"' onclick='projectAccess(\""+project["project"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
@@ -352,7 +352,7 @@ var Space = function (){
 
                         content += "<div id='select-record-"+record["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
 
-                        content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
+                        content += "<span class='card-title grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
                         content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
                         
@@ -491,7 +491,7 @@ var Space = function (){
                             content += "<a onclick='userViewModal(\""+record_to["head"]["project"]["owner"]["id"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record_to["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record_to["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                         }
 
-                        content += "<span class='card-title activator grey-text text-darken-4'>"+diff["id"]+"</span>";
+                        content += "<span class='card-title grey-text text-darken-4'>"+diff["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+diff["created"]+"</p>";
 
                         var method_select = [];
@@ -646,7 +646,7 @@ var Space = function (){
                             content += "<a onclick='projectViewModal(\""+env["project"]["name"]+"\",\""+env["project"]["tags"]+"\",\""+env["project"]["description"]+"\",\""+env["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+env["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
                         }
 
-                        content += "<span class='card-title activator grey-text text-darken-4'>"+env["id"]+"</span>";
+                        content += "<span class='card-title grey-text text-darken-4'>"+env["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+env["created"]+"</p>";
                         content += "<div class='row margin'><div class='input-field col s12 m6 l10'><i class='mdi-navigation-apps prefix cyan-text text-darken-2'></i><input readonly id='env-app-"+env["id"]+"' type='text' value='"+env["application"]["name"]+"'></div><div class='input-field col s12 m6 l2'><a onclick='appViewModal(\""+env["application"]["name"]+"\",\""+env["application"]["access"]+"\",\""+env["application"]["about"]+"\");' class='btn waves-effect cyan waves-light col s12 tooltipped' data-position='bottom' data-delay='50' data-tooltip='application'>Show</a></div></div>";
                         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input placeholder='computational,experimental,hybrid' readonly id='env-group-"+env["id"]+"' type='text' value='"+env["group"]+"'></div></div>";

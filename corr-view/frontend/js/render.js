@@ -7,7 +7,7 @@ var renderer = {
         content += "<img src='"+picture+"' alt='' class='circle responsive-img activator card-profile-image'>";
         content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
-        content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
+        content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='user-organisation-"+object["id"]+"' type='text' value='"+object["organisation"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='user-email-"+object["id"]+"' type='text' value='"+object["email"]+"'></div></div>";
@@ -33,7 +33,7 @@ var renderer = {
         content += "<a onclick='userViewModal(\""+object["developer"]["id"]+"\",\""+object["developer"]["profile"]["fname"]+"\""+",\""+object["developer"]["profile"]["lname"]+"\",\""+object["developer"]["profile"]["organisation"]+"\",\""+object["developer"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-delay='50' data-tooltip='"+object["developer-name"]+"'><i class='mdi-social-person' data-position='bottom'></i></a>";
         content += "<a onclick='config.error_modal(\"Application details failed.\", \"Application details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
-        content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
+        content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+object["id"]+"' type='text' value='"+object["access"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='app-token-"+object["id"]+"' type='text' value='"+object["token"]+"'></div></div>";
@@ -58,7 +58,7 @@ var renderer = {
         content += "<a onclick='userViewModal(\""+object["owner"]["id"]+"\",\""+object["owner"]["profile"]["fname"]+"\""+",\""+object["owner"]["profile"]["lname"]+"\",\""+object["owner"]["profile"]["organisation"]+"\",\""+object["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+object["owner-name"]+"'><i class='mdi-social-person'></i></a>";
         content += "<a onclick='config.error_modal(\"Project details failed\", \"<span>Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
-        content += "<span class='card-title activator black-text text-darken-4'> "+object["name"]+"</span>";
+        content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='project-tags-"+object["id"]+"' type='text' value='"+object["tags"]+"'></div></div>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='description'><div class='input-field col s12'><i class='mdi-action-description prefix cyan-text text-darken-2'></i><input readonly id='project-desc-"+object["id"]+"' type='text' value='"+object["description"]+"'></div></div>";
@@ -87,7 +87,7 @@ var renderer = {
             content += "<div id='select-record-"+object["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+object["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
         }
 
-        content += "<span class='card-title activator grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
+        content += "<span class='card-title grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["head"]["created"]+"</p>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+object["head"]["id"]+"' type='text' value='"+object["head"]["tags"]+"'></div></div>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+object["head"]["id"]+"' type='text' value='"+object["head"]["rationels"]+"'></div></div>";
@@ -111,7 +111,7 @@ var renderer = {
         content += "<a onclick=\"space.pull_diff('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
         content += "<a onclick='config.error_modal(\"Diff details failed.\", \"Diff details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
-        content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
+        content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-book prefix cyan-text text-darken-2'></i><input readonly placeholder='default,visual,custom' id='diff-method-"+object["id"]+"' type='text' value='"+object["method"]+"'></div></div>";
         content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-assignment prefix cyan-text text-darken-2'></i><input readonly placeholder='repeated,reproduced,replicated,non-replicated,non-repeated,non-reproduced' id='diff-proposition-"+object["id"]+"' type='text' value='"+object["proposition"]+"'></div></div>";
@@ -141,7 +141,7 @@ var renderer = {
         content += "<a onclick=\"space.pull_env('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";        
         content += "<a onclick='config.error_modal(\"Environment details failed.\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
-        content += "<span class='card-title activator grey-text text-darken-4'>"+object["id"]+"</span>";
+        content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
 
         content += "<div class='row margin'><div class='input-field col s12 m6 l10'><i class='mdi-navigation-apps prefix cyan-text text-darken-2'></i><input readonly id='env-app-"+object["id"]+"' type='text' value='"+object["application"]["name"]+"'></div><div class='input-field col s12 m6 l2'><a onclick='appViewModal(\""+object["application"]["name"]+"\",\""+object["application"]["access"]+"\",\""+object["application"]["about"]+"\");' class='btn waves-effect cyan waves-light col s12'>Show</a></div></div>";

@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col s12 m6 l4">
+    <div class="col s12 m6 l3">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
                 <div class="card-title">
@@ -26,7 +26,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4">Managing, Tracking</span></p>
@@ -41,13 +41,13 @@
                                 <p class="small"><span class="grey-text text-lighten-4">Annotation, Data</span></p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col s12 m6 l4">
+    <div class="col s12 m6 l3">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
                 <div class="card-title">
@@ -74,7 +74,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4"> Rsearch Packaging</span></p>
@@ -89,13 +89,13 @@
                                 <p class="small"><span class="grey-text text-lighten-4">Requires Linux</span></p>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col s12 m6 l4">
+    <div class="col s12 m6 l3">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
                 <div class="card-title">
@@ -122,7 +122,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col s6 m6 l6 center-align">
                             <div class="flight-info">
                                 <p class="small"><span class="grey-text text-lighten-4">Dynamic Analysis</span></p>
@@ -137,7 +137,54 @@
                                 <p class="small"><span class="grey-text text-lighten-4">x86, ARM</span></p>
                             </div>
                         </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m6 l3">
+        <div id="flight-card" class="card">
+            <div class="card-header blue-grey">
+                <div class="card-title">
+                    <h4 class="flight-card-title">CDE</h4>
+                    <p class="flight-card-date"><a href="https://github.com/pgbovine/CDE" target="_blank">Version 0.1</a></p>
+                </div>
+            </div>
+            <div class="card-content-bg white-text">
+                <div class="card-content">
+                    <div class="row flight-state-wrapper">
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">MA</h4>
+                                <p class="ultra-small">USA</p>
+                            </div>
+                        </div>
+                        <div class="col s2 m2 l2 center-align">
+                            <i class="mdi-social-location-city"></i>
+                        </div>
+                        <div class="col s5 m5 l5 center-align">
+                            <div class="flight-state">
+                                <h4 class="margin">UCSD</h4>
+                                <p class="ultra-small">Cognitive Science</p>
+                            </div>
+                        </div>
                     </div>
+                    <!-- <div class="row">
+                        <div class="col s6 m6 l6 center-align">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">Dynamic Analysis</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">From QEMU</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">Record Replay</span></p>
+                            </div>
+                        </div>
+                        <div class="col s6 m6 l6 center-align flight-state-two">
+                            <div class="flight-info">
+                                <p class="small"><span class="grey-text text-lighten-4">13 Architectures</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">System Emulator</span></p>
+                                <p class="small"><span class="grey-text text-lighten-4">x86, ARM</span></p>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </div>
