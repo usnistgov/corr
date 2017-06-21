@@ -491,7 +491,7 @@
                 </div>
                 <div class="modal-footer">
                     <a href="https://www.nist.gov/privacy-policy" class="waves-effect waves-red btn-flat modal-action modal-close">Disagree</a>
-                    <a class="waves-effect waves-green btn-flat modal-action modal-close">Agree</a>
+                    <a onlick="Cookies.set('disclaimer', true, {expires: 365, path: '' });" class="waves-effect waves-green btn-flat modal-action modal-close">Agree</a>
                 </div>
             </div>
         </div>
@@ -539,7 +539,6 @@
                 }
                 if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
                     $('#disclaimer-modal').openModal();
-                    Cookies.set('disclaimer', true, {expires: 365, path: '' });
                 }
                 
             });
