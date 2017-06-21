@@ -537,7 +537,11 @@
                 if(search_menu != null){
                     search_menu.href = window.location.origin+"/search";
                 }
-                $('#disclaimer-modal').openModal();
+                if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
+                    $('#disclaimer-modal').openModal();
+                    Cookies.set('disclaimer', true, {expires: 365, path: '' });
+                }
+                
             });
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange=function()
