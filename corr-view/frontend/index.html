@@ -490,8 +490,8 @@
                     <p><strong><a href="https://www.nist.gov/privacy-policy">See the NIST Privacy, Security Notice, and Accessibility Statement</a></strong></p>
                 </div>
                 <div class="modal-footer">
-                    <a href="https://www.nist.gov/privacy-policy" class="waves-effect waves-red btn-flat modal-action modal-close">Disagree</a>
-                    <a class="waves-effect waves-green btn-flat modal-action modal-close">Agree</a>
+                    <a href="https://www.nist.gov/privacy-policy" class="waves-effect waves-red btn-flat">Disagree</a>
+                    <a onclick="return agree_disclaim();" class="waves-effect waves-green btn-flat modal-action modal-close">Agree</a>
                 </div>
             </div>
         </div>
@@ -539,7 +539,6 @@
                 }
                 if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
                     $('#disclaimer-modal').openModal();
-                    Cookies.set('disclaimer', true, {expires: 365, path: '' });
                 }
                 
             });
@@ -632,9 +631,15 @@
                 var container = document.getElementById("card-widgets");
                 container.innerHTML = content;
             };
+
             function tools_failed(){
                 console.log("Error loading tools content.");
             };
+
+            function agree_disclaim(){
+                Cookies.set('disclaimer', true, {expires: 365, path: '' });
+            };
+
 
             config.load_xml('tools_content.xml', null, tools_succeed, tools_failed);
         </script>
