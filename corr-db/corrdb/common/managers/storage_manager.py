@@ -90,7 +90,7 @@ class StorageManager:
                 if cd.ping() == 'PONG':
                     cd.reload()
                     file_buffer = BytesIO()
-                    file_buffer.write(content)
+                    file_buffer.write(content.encode())
                     file_buffer.seek(0)
                     result = cd.instream(file_buffer)
                     if result['stream'] == ('OK', None):
