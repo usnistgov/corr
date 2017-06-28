@@ -1,4 +1,5 @@
 import flask as fk
+from flask.ext.api import status
 from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
