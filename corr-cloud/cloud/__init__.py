@@ -54,9 +54,9 @@ pagination_logs = []
 def secure_content(content):
     security = storage_manager.is_safe(content)
     if not security[0]:
-        return fk.Response(security[1], status.HTTP_406_NOT_ACCEPTABLE)
+        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
     else:
-        return fk.Response(content, status.HTTP_406_NOT_ACCEPTABLE)
+        return fk.Response(content, status.HTTP_401_UNAUTHORIZED)
 
 def get_week_days(year, week):
     d = date(year,1,1)
