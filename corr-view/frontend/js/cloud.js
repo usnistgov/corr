@@ -177,23 +177,23 @@ var user = {
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader ("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
                     },
-                    success : function(text){
+                    success : function(response){
                         console.log("success!");
-                        if(text == ""){
+                        if(response == "" || response == null || response == undefined){
                             console.log("Cloud returned empty response!");
                         }else{
                             try{
-                                console.log(text);
-                                var response  = JSON.parse(text);
+                                // console.log(text);
+                                // var response  = JSON.parse(text);
                                 console.log(response);
-                                var code = response["code"];
-                                var title = response["title"];
-                                var content = response["content"];
-                                console.log(code);
-                                console.log(title);
-                                console.log(content);
-                                if(code != 200 && code != 201){
-                                    config.error_modal(title, content);
+                                // var code = response.code;
+                                // var title = response.title;
+                                // var content = response.content;
+                                console.log(response.code);
+                                console.log(response.title);
+                                console.log(response.content);
+                                if(response.code != 200 && response.code != 201){
+                                    config.error_modal(response.title, response.content);
                                 }else{
                                     Materialize.toast('File upload succeeded', 3000, 'rounded');
                                 }
