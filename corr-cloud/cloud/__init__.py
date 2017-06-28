@@ -52,7 +52,7 @@ pagination_logs = []
 
 def secure_content(content):
     values = [value for key, value in json.loads(content).items()]
-    stream =  StringIO()
+    stream =  BytesIO()
     stream.write("\n".join(values))
     stream.seek(0)
     security = storage_manager.is_safe(stream.read())
