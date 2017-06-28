@@ -881,7 +881,7 @@ var Record = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Update record failed', "An error occured while processing your request.");
+                    config.error_modal('Update record failed', this.responseText);
                 }
             }
         };
