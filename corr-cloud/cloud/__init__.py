@@ -51,7 +51,7 @@ from functools import update_wrapper
 pagination_logs = []
 
 def secure_content(content):
-    security = storage_manager.is_safe(content)
+    security = storage_manager.is_safe(json.dumps(content))
     if not security[0]:
         return fk.Response(security[1], status.HTTP_406_NOT_ACCEPTABLE)
 
