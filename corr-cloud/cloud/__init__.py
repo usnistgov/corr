@@ -50,6 +50,11 @@ from functools import update_wrapper
 
 pagination_logs = []
 
+def secure_content(content):
+    security = storage_manager.is_safe(str(content))
+    if not security[0]:
+        return fk.Response(security[1], status.HTTP_406_NOT_ACCEPTABLE)
+
 def get_week_days(year, week):
     d = date(year,1,1)
     if(d.weekday()>3):

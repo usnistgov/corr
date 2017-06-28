@@ -35,6 +35,11 @@ API_VERSION = 0.1
 API_URL = '/corr/api/v{0}'.format(API_VERSION)
 
 
+def secure_content(content):
+    security = storage_manager.is_safe(str(content))
+    if not security[0]:
+        return fk.Response(security[1], status.HTTP_406_NOT_ACCEPTABLE)
+
 def api_response(code, title, content):
     """Provides a common structure to represent the response
     from any api's endpoints.

@@ -4,7 +4,7 @@ from flask.ext.api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
-from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
+from api import app, storage_manager, access_manager, secure_content ,API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -506,6 +506,7 @@ def admin_comment_send(group, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 item_id = data.get('item', None)
                 sender_id = data.get('sender', None)
@@ -585,6 +586,7 @@ def admin_comment_update(comment_id, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 comment = CommentModel.objects.with_id(comment_id)
                 if comment == None:
@@ -663,6 +665,7 @@ def admin_app_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 developer_id = data.get('developer', '')
                 name = data.get('name', '')
@@ -802,6 +805,7 @@ def admin_app_update(app_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this application.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
 
                     developer_id = data.get('developer', None)
@@ -989,6 +993,7 @@ def admin_user_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 pswd1 = data.get('password', None)
@@ -1023,6 +1028,7 @@ def admin_user_login(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 pswd1 = data.get('password', None)
@@ -1097,6 +1103,7 @@ def admin_user_password_lost(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 if email == '':
@@ -1152,6 +1159,7 @@ def admin_user_profile_create(user_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this user account.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     fname = data.get('fname', '')
                     lname = data.get('lname', '')
@@ -1290,6 +1298,7 @@ def admin_user_update(user_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     email = data.get('email', user.email)
                     pswd1 = data.get('password', None)
@@ -1325,6 +1334,7 @@ def admin_user_profile_update(user_id, api_token):
                     return api_response(404, 'User %s profile is empty'%user.email, 'You have to create a profile for this user.')
                 else:
                     if fk.request.data:
+                        secure_content(fk.request.data)
                         data = json.loads(fk.request.data)
                         user_id_new = data.get('user', None)
                         fname = data.get('fname', profile.fname)
@@ -1574,6 +1584,7 @@ def admin_project_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 # application_id = data.get('app_token', None)
                 owner_id = data.get('api_token', None)
@@ -1770,6 +1781,7 @@ def admin_project_update(project_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     
                     # application_id = data.get('application', None)
@@ -1925,6 +1937,7 @@ def admin_project_env_push(project_id, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 application_id = data.get('app_token', None)
                 group = data.get('group', 'undefined')
@@ -1992,6 +2005,7 @@ def admin_project_env_update(project_id, env_id, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2053,6 +2067,7 @@ def admin_env_update(env_id, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 env = EnvironmentModel.objects.with_id(env_id)
                 if env == None:
@@ -2167,6 +2182,7 @@ def admin_env_push(project_id, api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
 
                 group = data.get('group', 'undefined')
@@ -2291,6 +2307,7 @@ def admin_record_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 project_id = data.get('project', None)
                 data_pop(data, 'project')
@@ -2427,6 +2444,7 @@ def admin_record_update(record_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
 
                     project_id = data.get('project', None)
@@ -2598,6 +2616,7 @@ def admin_diff_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 sender_id =  data.get('session', None)
                 record_from_id = data.get('from', None)
@@ -2682,6 +2701,7 @@ def admin_diff_update(diff_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this diff.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
 
                     sender_id =  data.get('sender', None)
@@ -2958,6 +2978,7 @@ def admin_file_download(file_id, api_token):
                                 )
 
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 encoding = data.get('developer', '')
                 size = data.get('developer', 0)
@@ -2991,6 +3012,7 @@ def admin_file_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 encoding = data.get('encoding', '')
                 size = data.get('size', 0)
@@ -3240,6 +3262,7 @@ def admin_file_update(file_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
 
                     encoding = data.get('encoding', _file.encoding)
@@ -3299,6 +3322,7 @@ def admin_message_create(api_token):
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 sender_id = data.get('sender', None)
                 receiver_id = data.get('receiver', None)
@@ -3378,6 +3402,7 @@ def admin_message_update(message_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this message.')
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     sender_id = data.get('sender', None)
                     receiver_id = data.get('receiver', None)

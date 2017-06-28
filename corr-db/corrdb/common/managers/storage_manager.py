@@ -94,9 +94,9 @@ class StorageManager:
                     file_buffer.seek(0)
                     result = cd.instream(file_buffer)
                     if result['stream'] == ('OK', None):
-                        return [True, "File is very safe."]
+                        return [True, "The uploaded contents are safe."]
                     else:
-                        return [False, "The file looks malicious."]
+                        return [False, "At least one of the uploaded contents looks malicious. They have been discarded by the anti-malware module."]
                 else:
                     return [False, "Clamd Cannot be reached."]
             else:

@@ -12,7 +12,7 @@ from corrdb.common.models import StatModel
 from corrdb.common.models import BundleModel
 from flask.ext.api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, storage_manager, access_manager, secure_content, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -30,6 +30,7 @@ def user_register():
     logTraffic(CLOUD_URL, endpoint='/public/user/register')        
     if fk.request.method == 'POST':
         if fk.request.data:
+            secure_content(fk.request.data)
             data = json.loads(fk.request.data)
             email = data.get('email', '').lower()
             password = data.get('password', '')
@@ -44,6 +45,7 @@ def user_register():
                 picture = {'scope':'remote', 'location':picture_link}
             organisation = data.get('organisation', 'No organisation provided')
             about = data.get('about', 'Nothing about me yet.')
+
             if email == '' or '@' not in email or password == '':
                 return fk.Response('Invalid email or password.', status.HTTP_400_BAD_REQUEST)
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -130,6 +132,8 @@ def user_password_change():
                 logAccess(CLOUD_URL, 'cloud', '/private/user/password/change')
                 user_model = access_resp[1]
                 if fk.request.data:
+                    secure_content(fk.request.data)
+                    data = json.loads(fk.request.data)
                     password = data.get('password', '')
                     response = access_manager.change_password(user_model, password)
                     if response is None:
@@ -148,6 +152,7 @@ def user_login():
     if fk.request.method == 'POST':
         print("Request: %s"%str(fk.request.data))
         if fk.request.data:
+            secure_content(fk.request.data)
             data = json.loads(fk.request.data)
             email = data.get('email', '').lower()
             password = data.get('password', '')
@@ -344,6 +349,7 @@ def user_update():
             logAccess(CLOUD_URL, 'cloud', '/private/user/update')
             user_model = access_resp[1]
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 profile_model = ProfileModel.objects(user=user_model).first_or_404()
                 fname = data.get("fname", profile_model.fname)
@@ -354,6 +360,7 @@ def user_update():
                 organisation = data.get("org", profile_model.organisation)
                 about = data.get("about", profile_model.about)
                 picture_link = data.get("picture", "")
+
                 picture = profile_model.picture
                 if picture_link != "":
                     picture['location'] = picture_link
@@ -402,6 +409,7 @@ def account_update(account_id):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     account_model = UserModel.objects.with_id(account_id)
                     if account_model is None:
                         return fk.Response('Unable to find the user account.', status.HTTP_401_UNAUTHORIZED)
@@ -817,7 +825,7 @@ def user_truested():
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
-        if user_model is None:
+        if user_model is None or user_model.auth != "approved":
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/user/trusted')

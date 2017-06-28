@@ -183,15 +183,6 @@ var user = {
                             console.log("Cloud returned empty response!");
                         }else{
                             try{
-                                // console.log(text);
-                                // var response  = JSON.parse(text);
-                                console.log(response);
-                                // var code = response.code;
-                                // var title = response.title;
-                                // var content = response.content;
-                                console.log(response.code);
-                                console.log(response.title);
-                                console.log(response.content);
                                 if(response.code != 200 && response.code != 201){
                                     config.error_modal(response.title, response.content);
                                 }else{

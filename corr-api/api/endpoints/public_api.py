@@ -4,7 +4,7 @@ from flask.ext.api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
-from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
+from api import app, storage_manager, access_manager, secure_content ,API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -588,6 +588,7 @@ def public_file_download(file_id):
                             )
 
         if fk.request.data:
+            secure_content(fk.request.data)
             data = json.loads(fk.request.data)
             encoding = data.get('developer', '')
             size = data.get('developer', 0)

@@ -10,7 +10,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, cloud_response, storage_manager, access_manager, secure_content ,CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -41,6 +41,7 @@ def diff_create():
 
             logAccess(CLOUD_URL, 'cloud', '/private/diff/create')
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 record_from_id = data.get("record_from", "")
                 record_to_id = data.get("record_to", "")
@@ -130,6 +131,7 @@ def diff_comment(diff_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     comment = data.get("comment", {})
                     if len(comment) != 0:
@@ -190,6 +192,7 @@ def diff_edit(diff_id):
             else:
                 if diff.sender == current_user or diff.targeted == current_user or current_user.group == "admin":
                     if fk.request.data:
+                        secure_content(fk.request.data)
                         data = json.loads(fk.request.data)
                         try:
                             d_method = data.get("method", diff.method)

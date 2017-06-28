@@ -9,7 +9,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, cloud_response, storage_manager, access_manager, secure_content ,CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -104,6 +104,7 @@ def project_comment(project_id):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     comment = data.get("comment", {})
                     if len(comment) != 0:
@@ -152,6 +153,7 @@ def project_create():
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             if fk.request.data:
+                secure_content(fk.request.data)
                 data = json.loads(fk.request.data)
                 try:
                     name = data.get("name", "")
@@ -198,6 +200,7 @@ def project_edit(project_id):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     try:
                         description = data.get("description", project.description)

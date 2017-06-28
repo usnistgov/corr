@@ -13,7 +13,7 @@ from flask.ext.stormpath import user
 from flask.ext.stormpath import login_required
 from flask.ext.api import status
 import flask as fk
-from cloud import app, query_basic, paginate, pagination_logs, cloud_response, storage_manager, access_manager, processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
+from cloud import app, query_basic, paginate, pagination_logs, cloud_response, storage_manager, access_manager, secure_content ,processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -943,6 +943,7 @@ def app_create():
         else:
             if fk.request.method == 'POST':
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     name = data.get('name', '')
                     about = data.get('about', '')
@@ -1060,6 +1061,7 @@ def app_update(app_id):
                 return fk.Response('Unauthorized action on this tool.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
+                    secure_content(fk.request.data)
                     data = json.loads(fk.request.data)
                     name = data.get('name', app.name)
                     about = data.get('about', app.about)
