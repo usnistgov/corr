@@ -709,7 +709,7 @@ def user_message_update(api_token, app_token, message_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/update')
             if fk.request.method == 'POST':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -745,7 +745,7 @@ def user_message_update(api_token, app_token, message_id):
                             message.save()
                             return api_response(201, 'Message updated', message.info())
                         else:
-                            return api_response(204, 'Nothing created', 'You must provide the message information.')
+                            return api_response(204, 'Nothing updated', 'You must provide the message information.')
                     else:
                         return api_response(401, 'Unauthorized action', 'You must be part of the conversation to read it.')
             else:

@@ -183,17 +183,22 @@ var user = {
                             console.log("Cloud returned empty response!");
                         }else{
                             try{
+                                console.log(text);
                                 var response  = JSON.parse(text);
+                                console.log(response);
                                 var code = response["code"];
                                 var title = response["title"];
                                 var content = response["content"];
+                                console.log(code);
+                                console.log(title);
+                                console.log(content);
                                 if(code != 200 && code != 201){
                                     config.error_modal(title, content);
                                 }else{
                                     Materialize.toast('File upload succeeded', 3000, 'rounded');
                                 }
                             }catch(err){
-
+                                console.log(err);
                             }
 
                             if(group=="picture"){
