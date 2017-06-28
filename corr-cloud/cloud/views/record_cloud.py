@@ -228,7 +228,7 @@ def record_edit(record_id):
             else:
                 if record.project.owner == current_user  or current_user.group == "admin":
                     if fk.request.data:
-                            secure_content(fk.request.data)
+                            return secure_content(fk.request.data)
                             data = json.loads(fk.request.data)
                             try:
                                 tags = data.get("tags", ','.join(record.tags))
