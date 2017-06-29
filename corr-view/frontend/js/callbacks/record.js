@@ -17,16 +17,28 @@ function recordEdit(record_id){
 
 // Record save callback
 function recordSave(record_id){
+    // var record_update = document.getElementById('update-record-'+record_id);
+    // record_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+    var tags = document.getElementById('record-tags-'+record_id);
+    var rationels = document.getElementById('record-rationels-'+record_id);
+    var status = document.getElementById('record-status-'+record_id);
+    var record = new Record(record_id);
+    // tags.setAttribute("readonly", "");
+    // rationels.setAttribute("readonly", "");
+    // status.setAttribute("readonly", "");
+    record.save(tags.value, rationels.value, status.value);
+}
+
+// Record protect callback
+function recordProtect(record_id){
     var record_update = document.getElementById('update-record-'+record_id);
     record_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var tags = document.getElementById('record-tags-'+record_id);
     var rationels = document.getElementById('record-rationels-'+record_id);
     var status = document.getElementById('record-status-'+record_id);
-    var record = new Record(record_id);
     tags.setAttribute("readonly", "");
     rationels.setAttribute("readonly", "");
     status.setAttribute("readonly", "");
-    record.save(tags.value, rationels.value, status.value);
 }
 
 // Record remove callback

@@ -12,16 +12,28 @@ function diffEdit(diff_id){
 
 // Diff save callback
 function diffSave(diff_id){
+    // var diff_update = document.getElementById('update-diff-'+diff_id);
+    // diff_update.innerHTML = "<a id='update-action' onclick='diffEdit(\""+diff_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+    var method = document.getElementById('diff-method-'+diff_id);
+    var proposition = document.getElementById('diff-proposition-'+diff_id);
+    var status = document.getElementById('diff-status-'+diff_id);
+    var diff = new Diff(diff_id);
+    // method.setAttribute("readonly", "");
+    // proposition.setAttribute("readonly", "");
+    // status.setAttribute("readonly", "");
+    diff.save(method.value, proposition.value, status.value);
+}
+
+// Diff protect callback
+function diffProtect(diff_id){
     var diff_update = document.getElementById('update-diff-'+diff_id);
     diff_update.innerHTML = "<a id='update-action' onclick='diffEdit(\""+diff_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var method = document.getElementById('diff-method-'+diff_id);
     var proposition = document.getElementById('diff-proposition-'+diff_id);
     var status = document.getElementById('diff-status-'+diff_id);
-    var diff = new Diff(diff_id);
     method.setAttribute("readonly", "");
     proposition.setAttribute("readonly", "");
     status.setAttribute("readonly", "");
-    diff.save(method.value, proposition.value, status.value);
 }
 
 // Diff remove callback

@@ -10,14 +10,24 @@ function envEdit(env_id){
 
 // Env save callback
 function envSave(env_id){
+    // var env_update = document.getElementById('update-env-'+env_id);
+    // env_update.innerHTML = "<a id='update-action' onclick='envEdit(\""+env_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+    var group = document.getElementById('env-group-'+env_id);
+    var system = document.getElementById('env-system-'+env_id);
+    var env = new Environment(env_id);
+    // group.setAttribute("readonly", "");
+    // system.setAttribute("readonly", "");
+    env.save(group.value, system.value);
+}
+
+// Env protect callback
+function envProtect(env_id){
     var env_update = document.getElementById('update-env-'+env_id);
     env_update.innerHTML = "<a id='update-action' onclick='envEdit(\""+env_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var group = document.getElementById('env-group-'+env_id);
     var system = document.getElementById('env-system-'+env_id);
-    var env = new Environment(env_id);
     group.setAttribute("readonly", "");
     system.setAttribute("readonly", "");
-    env.save(group.value, system.value);
 }
 
 // Env remove callback

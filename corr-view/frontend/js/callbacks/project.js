@@ -12,16 +12,28 @@ function projectEdit(project_id){
 
 // Project save callback
 function projectSave(project_id){
+    // var project_update = document.getElementById('update-project-'+project_id);
+    // project_update.innerHTML = "<a id='update-action' onclick='projectEdit(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
+    var tags = document.getElementById('project-tags-'+project_id);
+    var description = document.getElementById('project-desc-'+project_id);
+    var goals = document.getElementById('project-goals-'+project_id);
+    var project = new Project(project_id);
+    // tags.setAttribute("readonly", "");
+    // description.setAttribute("readonly", "");
+    // goals.setAttribute("readonly", "");
+    project.save(tags.value, description.value, goals.value);
+}
+
+// Project protect callback
+function projectProtect(project_id){
     var project_update = document.getElementById('update-project-'+project_id);
     project_update.innerHTML = "<a id='update-action' onclick='projectEdit(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
     var tags = document.getElementById('project-tags-'+project_id);
     var description = document.getElementById('project-desc-'+project_id);
     var goals = document.getElementById('project-goals-'+project_id);
-    var project = new Project(project_id);
     tags.setAttribute("readonly", "");
     description.setAttribute("readonly", "");
     goals.setAttribute("readonly", "");
-    project.save(tags.value, description.value, goals.value);
 }
 
 function projectAccess(project_id){

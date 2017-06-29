@@ -878,6 +878,7 @@ var Record = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    recordProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
@@ -959,6 +960,7 @@ var Account = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    userProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
@@ -1009,6 +1011,7 @@ var Project = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    projectProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
@@ -1088,6 +1091,7 @@ var Application = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    appProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
@@ -1159,6 +1163,7 @@ var Diff = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    diffProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
@@ -1209,6 +1214,7 @@ var Environment = function (_id){
                 if (this.status == 200) {
                     $('#loading-modal').closeModal();
                     Materialize.toast('Update succeeded', 3000, 'rounded');
+                    envProtect(self._id);
                     // config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
