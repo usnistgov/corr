@@ -588,7 +588,9 @@ def public_file_download(file_id):
                             )
 
         if fk.request.data:
-            secure_content(fk.request.data)
+            security = secure_content(fk.request.data)
+            if not security[0]:
+                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
             data = json.loads(fk.request.data)
             encoding = data.get('developer', '')
             size = data.get('developer', 0)
