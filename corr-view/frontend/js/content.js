@@ -964,7 +964,7 @@ var Account = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this acount were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Account update failed', "An error occured while processing your request.");
+                    config.error_modal('Account update failed', this.responseText);
                 }
             }
         };
@@ -1015,7 +1015,7 @@ var Project = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this project were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Project update failed', "An error occured while processing your request.");
+                    config.error_modal('Project update failed', this.responseText);
                 }
             }
         };
@@ -1095,7 +1095,7 @@ var Application = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this tool credentials were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Tool update failed', "An error occured while processing your request.");
+                    config.error_modal('Tool update failed', this.responseText);
                 }
             }
         };
@@ -1167,7 +1167,7 @@ var Diff = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this assessment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Assessment update failed', "An error occured while processing your request.");
+                    config.error_modal('Assessment update failed', this.responseText);
                 }
             }
         };
@@ -1190,7 +1190,7 @@ var Diff = function (_id){
                     // config.error_modal('Deletion succeeded', 'The selected assessment was deleted.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Assessment remove failed', "An error occured while processing your request.");
+                    config.error_modal('Assessment remove failed', this.responseText);
                 }
             }
         };
@@ -1218,7 +1218,7 @@ var Environment = function (_id){
                     // config.error_modal('Update succeeded', 'Your changes to this environment were pushed.');
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Environment update failed', "An error occured while processing your request.");
+                    config.error_modal('Environment update failed', this.responseText);
                 }
             }
         };
