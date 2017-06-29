@@ -943,7 +943,9 @@ def app_create():
         else:
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    secure_content(fk.request.data)
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     name = data.get('name', '')
                     about = data.get('about', '')
@@ -1061,7 +1063,9 @@ def app_update(app_id):
                 return fk.Response('Unauthorized action on this tool.', status.HTTP_401_UNAUTHORIZED)
             else:
                 if fk.request.data:
-                    secure_content(fk.request.data)
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     name = data.get('name', app.name)
                     about = data.get('about', app.about)

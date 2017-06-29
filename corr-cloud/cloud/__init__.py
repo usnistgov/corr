@@ -52,12 +52,7 @@ pagination_logs = []
 
 def secure_content(content):
     values = [value for key, value in json.loads(content).items()]
-
-    security = storage_manager.is_safe("\n".join(values).encode('utf-8'))
-    if not security[0]:
-        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
-    else:
-        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
+    return storage_manager.is_safe("\n".join(values).encode('utf-8'))
 
 def get_week_days(year, week):
     d = date(year,1,1)

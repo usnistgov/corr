@@ -41,7 +41,9 @@ def diff_create():
 
             logAccess(CLOUD_URL, 'cloud', '/private/diff/create')
             if fk.request.data:
-                secure_content(fk.request.data)
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 record_from_id = data.get("record_from", "")
                 record_to_id = data.get("record_to", "")
@@ -131,7 +133,9 @@ def diff_comment(diff_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
-                    secure_content(fk.request.data)
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     comment = data.get("comment", {})
                     if len(comment) != 0:
@@ -192,7 +196,9 @@ def diff_edit(diff_id):
             else:
                 if diff.sender == current_user or diff.targeted == current_user or current_user.group == "admin":
                     if fk.request.data:
-                        secure_content(fk.request.data)
+                        security = secure_content(fk.request.data)
+                        if not security[0]:
+                            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                         data = json.loads(fk.request.data)
                         try:
                             d_method = data.get("method", diff.method)
