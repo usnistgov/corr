@@ -51,7 +51,9 @@ from functools import update_wrapper
 pagination_logs = []
 
 def secure_content(content):
-    security = storage_manager.is_safe(json.dumps(content, sort_keys=True, indent=4).encode('utf-8'))
+    values = [value for key, value in content.items()]
+
+    security = storage_manager.is_safe("\n".join(values).encode('utf-8'))
     if not security[0]:
         return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
     else:
