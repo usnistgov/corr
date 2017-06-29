@@ -51,10 +51,9 @@ from functools import update_wrapper
 pagination_logs = []
 
 def secure_content(content):
-    values = [value for key, value in json.loads(content).items()]
     security = None
-    for value in values:
-        security = storage_manager.is_safe("\n".join(value).encode('utf-8'))
+    for key, value in json.loads(content).items():
+        security = storage_manager.is_safe(value.encode('utf-8'))
         if not security[0]:
             return security
     return security
