@@ -94,7 +94,8 @@ class StorageManager:
                     file_buffer.seek(0)
                     result = cd.instream(file_buffer)
                     if result['stream'] == ('OK', None):
-                        return [True, "The uploaded contents are safe."]
+                        file_buffer.seek(0)
+                        return [True, file_buffer.read()]
                     else:
                         return [False, "At least one of the uploaded contents looks malicious. They have been discarded by the anti-malware module."]
                 else:
