@@ -829,13 +829,13 @@ def user_picture(hash_session):
 
 @app.route(CLOUD_URL + '/private/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_truested():
+def user_trusted():
     logTraffic(CLOUD_URL, endpoint='/private/user/trusted')
     hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
-        if user_model is None or user_model.auth != "approved":
+        if user_model is None or (user_model is not None and user_model.group != "admin" and user_model.auth != "approved"):
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/user/trusted')
