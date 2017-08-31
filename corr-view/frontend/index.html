@@ -43,8 +43,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
-                        <h2 class="platform-name" id="patform-name"></h2>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home patform-name" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
@@ -158,7 +157,7 @@
                         <li>
                             <div class="collapsible-header red white-text"><i class="mdi-action-assignment"></i>Terms of Service</div>
                             <div class="collapsible-body recent-activity">
-                                <div class="row margin red-text text-lighten-4" id="platform-terms">
+                                <div class="row red-text text-lighten-2" id="platform-terms">
                                 </div>
                             </div>
                         </li>
@@ -505,7 +504,7 @@
         </div>
 
         <footer class="page-footer">
-            <div class="container red-text text-lighten-4" id="platform-warning">
+            <div class="container red-text text-lighten-2" id="platform-warning">
             </div>
             <div class="footer-copyright">
               <div class="container">
@@ -664,7 +663,7 @@
                 }
 
                 if (content['terms'] != ""){
-                    platform_terms.innerHTML = "<span>"+content["terms"]+"</span>";
+                    platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
                 }
 
                 if (content['name'] != ""){
