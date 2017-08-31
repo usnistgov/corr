@@ -43,7 +43,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home patform-name" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/> Demo Instance</a> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
@@ -153,6 +153,14 @@
                         </li>
                         <li>
                             <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:yannick.congo@gmail.com">Email</a></div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header teal white-text active"><i class="mdi-action-home"></i>Terms of Service</div>
+                            <div class="collapsible-body recent-activity">
+                                <div class="row" id="platform-terms">
+                                    <span>This is a dummy terms of service.</span>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </li>
@@ -497,6 +505,9 @@
         </div>
 
         <footer class="page-footer">
+            <div class="container" id="platform-warning">
+                <span>This is a dummy warning.</span>
+            </div>
             <div class="footer-copyright">
               <div class="container">
                 <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
@@ -537,9 +548,9 @@
                 if(search_menu != null){
                     search_menu.href = window.location.origin+"/search";
                 }
-                if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
-                    $('#disclaimer-modal').openModal();
-                }
+                // if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
+                //     $('#disclaimer-modal').openModal();
+                // }
                 
             });
             var xmlhttp = new XMLHttpRequest();
@@ -579,7 +590,7 @@
                 document.getElementById("nav-home-2").href = window.location.origin;
                 document.getElementById("nav-home").href = window.location.origin;
                 document.getElementById("nav-login").remove();
-                document.getElementById("item-search").remove();
+                document.getElementById("item-saerch").remove();
                 document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='"+window.location.origin+"/dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
                 document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-communication-email'></i></a></li></ul>";
 
@@ -642,6 +653,29 @@
 
 
             config.load_xml('tools_content.xml', null, tools_succeed, tools_failed);
+
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+                var platform_terms = document.getElementById("platform-terms");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span>"+content["warning"]+"</span>";
+                }
+
+                if (content['terms'] != ""){
+                    platform_terms.innerHTML = "<span>"+content["terms"]+"</span>";
+                }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
         </script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
