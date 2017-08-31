@@ -11,6 +11,7 @@ var user = {
         var password = document.getElementById("login-password").value;
         var xmlhttp = new XMLHttpRequest();
         var request = { 'email': email, 'password': password };
+        $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -22,6 +23,7 @@ var user = {
                     // window.location.reload();
                     window.location.replace(window.location.origin);
                 }else {
+                    $('#loading-modal').closeModal();
                     config.error_modal('An error occured during login.', this.responseText);
                 }
             } 
@@ -34,6 +36,7 @@ var user = {
         var email = document.getElementById("register-email").value;
         var password = document.getElementById("register-password").value;
         var password_again = document.getElementById("register-password-again").value;
+        $('#loading-modal').openModal();
         if(password == password_again){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'email': email, 'password': password, 'username':username };
@@ -41,9 +44,11 @@ var user = {
             {
                 if(this.readyState == 4){
                     if (this.status == 200) {
+                        $('#loading-modal').closeModal();
                         config.error_modal('Register successfull', this.responseText);
                         console.log("Cloud returned empty response!");
                     }else{
+                        $('#loading-modal').closeModal();
                         config.error_modal('Register failed', this.responseText);
                     }
                 }
@@ -56,6 +61,7 @@ var user = {
     },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
+        $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -70,6 +76,7 @@ var user = {
                         window.location.replace("../");
                     }
                 }else {
+                    $('#loading-modal').closeModal();
                     config.error_modal('Logout failed', this.responseText);
                 }
             } 
@@ -80,12 +87,15 @@ var user = {
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
+        $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
+                    $('#loading-modal').closeModal();
                     document.getElementById('view-api').value = this.responseText;
                 }else {
+                    $('#loading-modal').closeModal();
                     config.error_modal('Revew API token failed', this.responseText);
                 }
             } 
@@ -125,10 +135,12 @@ var user = {
                 var quota = document.getElementById('view-quota').value;
                 request['max-quota'] = quota;
             }
+            $('#loading-modal').openModal();
             xmlhttp.onreadystatechange = function()
             {
                 if(this.readyState == 4){
                     if (this.status == 200) {
+                        $('#loading-modal').closeModal();
                         Materialize.toast('Update succeeded', 3000, 'rounded');
                         var response = this.responseText;
                         var file = document.getElementById("picture-input");
@@ -136,6 +148,7 @@ var user = {
                             user.upload_file(file, 'picture', 'none');
                         }
                     } else {
+                        $('#loading-modal').closeModal();
                         config.error_modal('Update failed', response);
                     }
                 }
@@ -230,13 +243,16 @@ var user = {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", this.url+"/public/user/recover");
         var request = { 'email': email}
+        $('#loading-modal').openModal();
         xmlhttp.send(JSON.stringify(request));
         xmlhttp.onreadystatechange=function()
         {
             if(this.readyState == 4){
                 if (this.status == 200) {
+                    $('#loading-modal').closeModal();
                     console.log("Recover successfull!");
                 } else {
+                    $('#loading-modal').closeModal();
                     config.error_modal('Recover failed', this.responseText);           
                 }
             }
