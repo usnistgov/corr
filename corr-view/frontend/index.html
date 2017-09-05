@@ -43,7 +43,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/> <span id="platform-name"></span></a> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
@@ -669,7 +669,7 @@
 
             function custom_succeed(xhttp){
                 var content = JSON.parse(xhttp.responseText);
-                var platform_name = document.getElementById("nav-home");
+                var platform_name = document.getElementById("platform-name");
                 var platform_warning = document.getElementById("platform-warning");
                 var platform_terms = document.getElementById("platform-terms");
                 var platform_terms_pop = document.getElementById("platform-terms-pop");
@@ -684,7 +684,7 @@
                 }
 
                 if (content['name'] != ""){
-                    platform_name.innerHTML = "<img src='images/corr-logo.png' alt='corr logo'/>"+content["name"];
+                    platform_name.innerHTML = content["name"];
                 }
             };
             function custom_failed(){
