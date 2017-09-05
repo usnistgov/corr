@@ -5232,6 +5232,7 @@ nav {
     color: red;
     display: inline-block;
     font-size: 1.1rem;
+    vertical-align: middle;
     padding: 0;
     white-space: nowrap; }
     nav .brand-logo.center {

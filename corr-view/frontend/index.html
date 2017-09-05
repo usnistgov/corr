@@ -512,7 +512,7 @@
                     <span class="card-title black-text text-darken-4">Terms of Service</span>
                 </div>
                 <div class="divider"></div>
-                <div class="row" id="platform-terms">
+                <div class="row" id="platform-terms-pop">
                     <span>No Specific mention. The platform has open terms.</span>
                 </div>
             </div>
@@ -672,6 +672,7 @@
                 var platform_name = document.getElementById("nav-home");
                 var platform_warning = document.getElementById("platform-warning");
                 var platform_terms = document.getElementById("platform-terms");
+                var platform_terms_pop = document.getElementById("platform-terms-pop");
 
                 if (content['warning'] != ""){
                     platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
@@ -679,10 +680,11 @@
 
                 if (content['terms'] != ""){
                     platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
                 }
 
                 if (content['name'] != ""){
-                    platform_name.innerHTML += "<img src='images/corr-logo.png' alt='corr logo'/>"+content["name"];
+                    platform_name.innerHTML = "<img src='images/corr-logo.png' alt='corr logo'/>"+content["name"];
                 }
             };
             function custom_failed(){
