@@ -5229,9 +5229,9 @@ nav {
       line-height: 56px; }
   nav .brand-logo {
     position: absolute;
-    color: #fff;
+    color: red;
     display: inline-block;
-    font-size: 2.1rem;
+    font-size: 1.1rem;
     padding: 0;
     white-space: nowrap; }
     nav .brand-logo.center {
