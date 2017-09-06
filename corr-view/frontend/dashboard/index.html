@@ -47,7 +47,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span id="platform-name"></span> <span class="logo-text">CoRR</span></h1>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/> <span id="platform-name"></span> </a> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
@@ -634,6 +634,21 @@
             </div>
         </div>
 
+        <div id="terms-modal" class="modal">
+            <div class="modal-content">
+                <div class="row center">
+                    <img src="images/disclaimer.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                </div>
+                <div class="row center">
+                    <span class="card-title black-text text-darken-4">Terms of Service</span>
+                </div>
+                <div class="divider"></div>
+                <div class="row" id="platform-terms-pop">
+                    <span>No Specific mention. The platform has open terms.</span>
+                </div>
+            </div>
+        </div>
+
         <footer class="page-footer">
             <div class="container red-text text-lighten-2" id="platform-warning">
             </div>
@@ -770,7 +785,7 @@
                 document.getElementById("nav-home").href = "../";
                 document.getElementById("nav-dashboard").href = "./";
 
-                var menu_dash = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li>";
+                var menu_dash = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li>";
                 if(Cookies.get('group') == "admin"){
                   menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='users'><a class='modal-trigger btn-floating btn-large grey darken-1' onclick=\"return view('users');\"><i class='large mdi-social-person'></i></a></li>";
                 }
@@ -1118,10 +1133,10 @@
                     platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
                 }
 
-                // if (content['terms'] != ""){
-                //     platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
-                //     platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
-                // }
+                if (content['terms'] != ""){
+                    platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                }
 
                 if (content['name'] != ""){
                     platform_name.innerHTML = content["name"];
