@@ -47,7 +47,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span id="platform-name"></span> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
@@ -635,6 +635,8 @@
         </div>
 
         <footer class="page-footer">
+            <div class="container red-text text-lighten-2" id="platform-warning">
+            </div>
             <div class="footer-copyright">
               <div class="container">
                 <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
@@ -1104,6 +1106,31 @@
               add_callback.innerHTML = "";
 
             }
+
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+                var platform_terms = document.getElementById("platform-terms");
+                var platform_terms_pop = document.getElementById("platform-terms-pop");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
+                }
+
+                // if (content['terms'] != ""){
+                //     platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                //     platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                // }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
             
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
