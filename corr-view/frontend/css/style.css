@@ -28,6 +28,11 @@ body {
   flex: 1 0 auto;
 }
 
+span #platform-name {
+    vertical-align: middle;
+    position: absolute;
+}
+
 #main,
 footer {
   padding-left: 0%;
