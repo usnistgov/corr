@@ -679,8 +679,11 @@
                 }
 
                 if (content['terms'] != ""){
-                    platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
-                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
+                        platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    }else{
+                        platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    }
                 }
 
                 if (content['name'] != ""){

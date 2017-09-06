@@ -1126,7 +1126,6 @@
                 var content = JSON.parse(xhttp.responseText);
                 var platform_name = document.getElementById("platform-name");
                 var platform_warning = document.getElementById("platform-warning");
-                var platform_terms = document.getElementById("platform-terms");
                 var platform_terms_pop = document.getElementById("platform-terms-pop");
 
                 if (content['warning'] != ""){
@@ -1134,7 +1133,6 @@
                 }
 
                 if (content['terms'] != ""){
-                    platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
                     platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
                 }
 
