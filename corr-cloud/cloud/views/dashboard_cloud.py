@@ -261,7 +261,9 @@ def users_dashboard():
             summaries = []
             for u in users:
                 if u != current_user:
+                    print(u)
                     profile = ProfileModel.objects(user=u).first()
+                    print(ProfileModel.objects(user=u))
                     user_info = {}
                     user_info["created"] = str(u.created_at)
                     user_info["id"] = str(u.id)
