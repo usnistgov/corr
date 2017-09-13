@@ -747,9 +747,11 @@ def user_config(hash_session, tool_id):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
             config_content = {'default':{'app':'', 'api':{'host':'http://10.0.1.119', 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
-            tool = ApplicationModel.objects.with_id(tool_id)
-            if tool:
-                config_content['app'] = tool.app_token
+            
+            if tool_id != 'none':
+                if tool:
+                    tool = ApplicationModel.objects.with_id(tool_id)
+                    config_content['app'] = tool.app_token
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
             return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
