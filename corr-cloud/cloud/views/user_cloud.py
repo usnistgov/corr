@@ -749,8 +749,8 @@ def user_config(hash_session, tool_id):
             config_content = {'default':{'app':'', 'api':{'host':'http://10.0.1.119', 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             
             if tool_id != 'none':
+                tool = ApplicationModel.objects.with_id(tool_id)
                 if tool:
-                    tool = ApplicationModel.objects.with_id(tool_id)
                     config_content['app'] = tool.app_token
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
