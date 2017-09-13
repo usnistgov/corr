@@ -751,7 +751,7 @@ def user_config(hash_session, tool_id):
             if tool_id != 'none':
                 tool = ApplicationModel.objects.with_id(tool_id)
                 if tool:
-                    config_content['app'] = tool.app_token
+                    config_content['default']['app'] = tool.app_token
                     tool_name = tool.name
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
