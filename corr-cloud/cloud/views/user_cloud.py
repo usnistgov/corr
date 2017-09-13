@@ -747,14 +747,15 @@ def user_config(hash_session, tool_id):
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
             config_content = {'default':{'app':'', 'api':{'host':'http://10.0.1.119', 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
-            
+            tool_name = "generic"
             if tool_id != 'none':
                 tool = ApplicationModel.objects.with_id(tool_id)
                 if tool:
                     config_content['app'] = tool.app_token
+                    tool_name = tool.name
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
-            return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
+            return fk.send_file(config_buffer, as_attachment=True, attachment_filename='{0}-config.json'.format(tool_name), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
