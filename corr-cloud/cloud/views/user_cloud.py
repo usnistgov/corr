@@ -736,7 +736,7 @@ def public_version():
 
 @app.route(CLOUD_URL + '/private/<hash_session>/user/config/<tool_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_config(hash_session):
+def user_config(hash_session, tool_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
