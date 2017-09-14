@@ -168,6 +168,8 @@ var Space = function (){
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-perm-identity prefix cyan-text text-darken-2'></i><input readonly id='user-fname-"+account["id"]+"' type='text' value='"+account["fname"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-assignment-ind prefix cyan-text text-darken-2'></i><input readonly id='user-lname-"+account["id"]+"' type='text' value='"+account["lname"]+"'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-picture-in-picture prefix cyan-text text-darken-2'></i><input readonly placeholder='unregistered,blocked,approved,signup' id='user-auth-"+account["id"]+"' type='text' value='"+account["auth"]+"'></div></div>";
+                        content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-communication-vpn-key prefix cyan-text text-darken-2'></i><input readonly id='user-password-"+account["id"]+"' type='text' value=''></div></div>";
+
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-assessment prefix cyan-text text-darken-2'></i><input readonly placeholder='%' id='user-usage-"+account["id"]+"' type='text' value='"+account["usage"]+"%'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-notification-disc-full prefix cyan-text text-darken-2'></i><input readonly placeholder='in GB' id='user-quota-"+account["id"]+"' type='text' value='"+account["max-quota"]+"GB'></div></div>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-group-work prefix cyan-text text-darken-2'></i><input readonly placeholder='admin,user,developer,public' id='user-group-"+account["id"]+"' type='text' value='"+account["group"]+"'></div></div>";
@@ -952,9 +954,12 @@ var Account = function (_id){
     var self = this;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
-    self.save = function(fname, lname, group, auth, org, about, quota) {
+    self.save = function(fname, lname, password, group, auth, org, about, quota) {
         var xmlhttp = new XMLHttpRequest();
         var request = { 'fname':fname, 'lname': lname, 'group': group, 'auth': auth, 'about': about, 'org': org, 'max-quota': quota};
+        if(password != ''){
+            request['password'] = password;
+        }
         $('#loading-modal').openModal();
         xmlhttp.onreadystatechange = function()
         {
