@@ -272,11 +272,10 @@ def users_dashboard():
                     user_info["email"] = u.email
                     user_info["max-quota"] = u.max_quota
                     user_info["usage"] = round(100*u.quota/(u.max_quota*1024*1024*1024), 2)
-                    if profile:
-                        user_info["fname"] = profile.fname
-                        user_info["lname"] = profile.lname
-                        user_info["org"] = profile.organisation
-                        user_info["about"] = profile.about
+                    user_info["fname"] = profile.fname
+                    user_info["lname"] = profile.lname
+                    user_info["org"] = profile.organisation
+                    user_info["about"] = profile.about
                     user_info["apps"] = u.info()['total_apps']
                     user_info["projects"] = u.info()['total_projects']
                     user_info["records"] = u.info()['total_records']
