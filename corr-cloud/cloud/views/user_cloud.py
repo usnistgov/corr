@@ -430,6 +430,7 @@ def account_update(account_id):
                         auth = data.get("auth", account_model.auth)
                         fname = data.get("fname", profile_model.fname)
                         lname = data.get("lname", profile_model.lname)
+                        password = data.get("password", None)
                         organisation = data.get("org", profile_model.organisation)
                         about = data.get("about", profile_model.about)
                         max_quota = data.get("max-quota", account_model.max_quota)
@@ -448,6 +449,9 @@ def account_update(account_id):
 
                         profile_model.save()
                         account_model.save()
+
+                        if password:
+                            access_manager.change_password(account_model, password)
 
                         return fk.Response('Account update succeed', status.HTTP_200_OK)
                 else:
