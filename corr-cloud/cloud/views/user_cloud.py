@@ -750,7 +750,7 @@ def user_config(hash_session, tool_id):
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
-            config_content = {'default':{'app':'', 'api':{'host':'{)}'.format(VIEW_HOST), 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
+            config_content = {'default':{'app':'', 'api':{'host':'{0}'.format(VIEW_HOST), 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             tool_name = "generic"
             if tool_id != 'none':
                 tool = ApplicationModel.objects.with_id(tool_id)
