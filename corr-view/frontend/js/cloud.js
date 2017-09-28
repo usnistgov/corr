@@ -313,8 +313,8 @@ var user = {
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
         xmlhttp.send();
     },
-    config: function() {
-        window.location.replace(this.url+"/private/"+Cookies.get('session')+"/user/config");
+    config: function(tool_id) {
+        window.location.replace(this.url+"/private/"+Cookies.get('session')+"/user/config/"+tool_id);
     },
     copy_api: function() {
         console.log('Cookie session value: '+ Cookies.get('session'));

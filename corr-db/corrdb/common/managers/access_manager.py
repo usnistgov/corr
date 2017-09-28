@@ -139,9 +139,10 @@ class AccessManager:
                 else:
                     account = UserModel.objects(email=email, password=hash_pwd).first()
             else:
-                (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
-                account.password = hash_pwd
-                account.save()
+                # (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                # account.password = hash_pwd
+                # account.save()
+                account = None
         if account and account.group == "unknown":
             account.group = "user"
             account.save()
