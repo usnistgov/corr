@@ -113,7 +113,7 @@ class UserModel(db.Document):
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
         self.session = str(hashlib.sha256(('CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).encode("ascii")).hexdigest())
-        self.session = "logout"+self.session[6:]
+        self.session = "logout%s"%self.session[6:]
         self.save()
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
