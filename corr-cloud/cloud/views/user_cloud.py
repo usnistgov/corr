@@ -185,7 +185,8 @@ def user_login():
                     print("Token %s"%account.api_token)
                     print(fk.request.headers.get('User-Agent'))
                     print(fk.request.remote_addr)
-                    account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+                    if account.session == "logout":
+                        account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                     return fk.Response(json.dumps({'session':account.session, 'group':account.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 except:
                     print(str(traceback.print_exc()))
@@ -228,7 +229,9 @@ def user_logout():
         else:
             logAccess(CLOUD_URL, 'cloud', '/private/user/logout')
             user_model = access_resp[1]
-            user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
+            user_model.session = "logout"
+            user_model.save()
+            # user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
             return fk.Response('Logout succeed', status.HTTP_200_OK)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

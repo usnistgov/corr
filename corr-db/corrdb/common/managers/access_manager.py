@@ -237,7 +237,10 @@ class AccessManager:
                 Tuple of Validation Boolean and the account instance.
         """
         from corrdb.common.models import UserModel
-        account = UserModel.objects(session=hash_session).first()
+        if hash_session == "logout":
+            account = None
+        else:
+            account = UserModel.objects(session=hash_session).first()
         print(fk.request.path)
         if account is None:
             return False, None
