@@ -48,7 +48,7 @@ def private_search():
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/search')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/search')
             page = 0
             if fk.request.args:
                 # _request = ""
@@ -198,7 +198,7 @@ def project_dashboard():
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/projects')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/projects')
             
             if current_user.group == "admin":
                 projects = ProjectModel.objects().order_by('+created_at')
@@ -246,7 +246,7 @@ def users_dashboard():
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/users')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/users')
             
             if current_user.group == "admin":
                 users = UserModel.objects().order_by('+created_at')
@@ -313,7 +313,7 @@ def diffs_dashboard(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/diffs')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/diffs')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -377,7 +377,7 @@ def dashboard_records(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/records/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/records/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
                     projects = ProjectModel.objects()
@@ -431,7 +431,7 @@ def dashboard_envs(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/envs/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/envs/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
                     projects = ProjectModel.objects()
@@ -510,7 +510,7 @@ def record_diff(record_id):
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/dashboard/record/diff/<record_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/record/diff/<record_id>')
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
@@ -567,7 +567,7 @@ def reproducibility_assess(record_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/dashboard/reproducibility/assess/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/reproducibility/assess/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -916,6 +916,7 @@ def app_all():
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/apps')
         if fk.request.method == 'GET':
             # Show all the apps for now. Only admin can create them anyways.
             apps = ApplicationModel.objects()
@@ -940,6 +941,7 @@ def app_create():
     if current_user is None:
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/create')
         if current_user.group != "admin":
             return fk.Response('Only admins can now create tools.', status.HTTP_401_UNAUTHORIZED)
         else:
@@ -991,6 +993,7 @@ def app_show(app_id):
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/show/<app_id>')
         if fk.request.method == 'GET':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
@@ -1010,6 +1013,7 @@ def app_retoken(app_id):
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/retoken/<app_id>')
         if fk.request.method == 'GET':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
@@ -1030,6 +1034,7 @@ def app_remove(app_id):
     if current_user is None:
         return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/remove/<app_id>')
         if fk.request.method in ['GET', 'DELETE']:
             appli = ApplicationModel.objects.with_id(app_id)
             if appli == None:
@@ -1056,6 +1061,7 @@ def app_update(app_id):
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/update/<app_id>')
         if fk.request.method == 'POST':
             app = ApplicationModel.objects.with_id(app_id)
             if app == None:
@@ -1128,6 +1134,7 @@ def app_logo(app_id):
     if current_user is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
+        logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/app/logo/<app_id>')
         if fk.request.method == 'GET':
             app = ApplicationModel.objects.with_id(app_id)
             if app != None:

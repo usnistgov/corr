@@ -60,6 +60,20 @@ class AccessManager:
         from corrdb.common.models import UserModel
         account = None
         _account = None
+        check_password = self.password_check(password)
+        if not check_password['password_ok']:
+            message = ["Password rules vialation:"]
+            if not check_password['length_error']:
+                message.append("Must be at least 8 characters.")
+            if not check_password['digit_error']:
+                message.append("Must contain at least one digit.")
+            if not check_password['uppercase_error']:
+                message.append("Must contain at least one upper case character.")
+            if not check_password['lowercase_error']:
+                message.append("Must contain at least one lower case character.")
+            if not check_password['symbol_error']:
+                message.append("Must contain at least one special character.")
+            return False, message
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
         if self.type == 'api-token':
             pass
@@ -146,6 +160,9 @@ class AccessManager:
         if account and account.group == "unknown":
             account.group = "user"
             account.save()
+        if account:
+            account.connected_at = str(datetime.datetime.utcnow())
+            account.save()
         return account
 
     def logout(self, session_token):
@@ -218,6 +235,45 @@ class AccessManager:
         if account:
             account.save()
         return account
+
+    def password_check(self, password):
+        """
+        Verify the strength of 'password'
+        Returns a dict indicating the wrong criteria
+        A password is considered strong if:
+            8 characters length or more
+            1 digit or more
+            1 symbol or more
+            1 uppercase letter or more
+            1 lowercase letter or more
+        """
+
+        # calculating the length
+        length_error = len(password) < 8
+
+        # searching for digits
+        digit_error = re.search(r"\d", password) is None
+
+        # searching for uppercase
+        uppercase_error = re.search(r"[A-Z]", password) is None
+
+        # searching for lowercase
+        lowercase_error = re.search(r"[a-z]", password) is None
+
+        # searching for symbols
+        symbol_error = re.search(r"\W"+r'"]', password) is None
+
+        # overall result
+        password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
+
+        return {
+            'password_ok' : password_ok,
+            'length_error' : length_error,
+            'digit_error' : digit_error,
+            'uppercase_error' : uppercase_error,
+            'lowercase_error' : lowercase_error,
+            'symbol_error' : symbol_error,
+        }
 
     def accounts(self):
         """Retrieve the registered accounts.

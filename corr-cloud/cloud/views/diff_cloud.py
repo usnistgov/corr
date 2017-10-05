@@ -39,7 +39,7 @@ def diff_create():
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
 
-            logAccess(CLOUD_URL, 'cloud', '/private/diff/create')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/diff/create')
             if fk.request.data:
                 security = secure_content(fk.request.data)
                 if not security[0]:
@@ -95,7 +95,7 @@ def diff_remove(diff_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/diff/remove/<diff_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/diff/remove/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -124,7 +124,7 @@ def diff_comment(diff_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/diff/comment/<diff_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/diff/comment/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -161,7 +161,7 @@ def diff_view(diff_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/diff/view/<diff_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/diff/view/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -187,7 +187,7 @@ def diff_edit(diff_id):
             return fk.Response('Unauthorized action on this diff.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/diff/edit/<diff_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/diff/edit/<diff_id>')
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
@@ -231,7 +231,7 @@ def public_diff_view(diff_id):
     logTraffic(CLOUD_URL, endpoint='/public/diff/view/<diff_id>')
     if fk.request.method == 'GET':
         try:
-            logAccess(CLOUD_URL, 'cloud', '/public/diff/view/<diff_id>')
+            logAccess(None, None, CLOUD_URL, 'cloud', '/public/diff/view/<diff_id>')
             diff = DiffModel.objects.with_id(diff_id)
         except:
             print(str(traceback.print_exc()))
@@ -261,7 +261,7 @@ def download_diff(hash_session, diff_id):
             if current_user is None and diff.record_from.access != 'public' and diff.record_to.access != 'public':
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/diff/download/<diff_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/diff/download/<diff_id>')
                 prepared = storage_manager.prepare_diff(diff)
                 if prepared[0] == None:
                     print("Unable to retrieve a diff to download.")

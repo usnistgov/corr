@@ -30,7 +30,7 @@ class UserModel(db.Document):
     session = db.StringField(max_length=256, unique=True)
     possible_group = ["admin", "user", "developer", "public", "unknown"]
     group = db.StringField(default="unknown", choices=possible_group)
-    possible_auth = ["unregistered", "blocked", "approved", "signup"]
+    possible_auth = ["unregistered", "blocked", "approved", "signup", "wrong1", "wrong2", "wrong3"]
     auth = db.StringField(default="signup", choices=possible_auth)
     max_quota = db.FloatField(default=1.0) # Terms of Gigabits
     extend = db.DictField()
@@ -302,6 +302,13 @@ class UserModel(db.Document):
             The user total records.
         """
         return sum([p.record_count for p in self.projects])
+
+    @property
+    def since(self):
+        updated_strp = datetime.datetime.strptime(str(self.connected_at), '%Y-%m-%d %H:%M:%S.%f')
+        today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
+        value = today_strp-updated_strp
+        return value.total_seconds()
 
     @property
     def duration(self):

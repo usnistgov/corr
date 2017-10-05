@@ -30,7 +30,7 @@ def record_remove(record_id):
             return fk.Response('Unauthorized action on this record.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/remove/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/remove/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -67,7 +67,7 @@ def record_comment(record_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/comment/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/comment/<record_id>')
                 if current_user.quota >= current_user.max_quota*1024*1024*1024:
                     return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
                 record = RecordModel.objects.with_id(record_id)
@@ -108,7 +108,7 @@ def record_comments(record_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/comments/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/comments/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -131,7 +131,7 @@ def record_view(record_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/view/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/view/<record_id>')
                 record = RecordModel.objects.with_id(record_id)
             except:
                 print(str(traceback.print_exc()))
@@ -158,7 +158,7 @@ def record_create(project_id):
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/record/create/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/create/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
@@ -220,7 +220,7 @@ def record_edit(record_id):
         if current_user is None:
             return fk.Response('Unauthorized action on this endpoint.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/record/edit/<record_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/edit/<record_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
@@ -327,7 +327,7 @@ def pull_record(hash_session, record_id):
             if current_user is None and record.access != 'public':
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/record/pull/<record_id>')
                 prepared = storage_manager.prepare_record(record)
                 if prepared[0] == None:
                     print("Unable to retrieve a record to download.")
@@ -411,7 +411,7 @@ def file_add(record_id):
         if fk.request.method == 'POST':
             infos = {}
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/file/upload/<record_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/file/upload/<record_id>')
                 if current_user.quota >= current_user.max_quota*1024*1024*1024:
                     return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
                 record = RecordModel.objects.with_id(record_id)
@@ -478,7 +478,7 @@ def file_download(file_id):
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/file/download/<file_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/file/download/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print(str(traceback.print_exc()))
@@ -508,7 +508,7 @@ def file_remove(file_id):
         user_model = access_resp[1]
         if user_model is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/record/file/remove/<file_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/record/file/remove/<file_id>')
                 record_file = FileModel.objects.with_id(file_id)
             except:
                 print(str(traceback.print_exc()))

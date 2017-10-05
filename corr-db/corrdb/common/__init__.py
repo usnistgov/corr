@@ -11,10 +11,19 @@ from calendar import monthrange
 from functools import update_wrapper
 import base64
 from werkzeug.http import parse_authorization_header
+from flask.ext.api import status
 
-def logAccess(component='none', scope='root', endpoint='', app=None):
+def logAccess(fk=None, account=None, component='none', scope='root', endpoint='', app=None):
     """Log the access to the backend.
     """
+    # Session timeout check after 15 minutes.
+    if account:
+        if account.since / 60.0 > 15.0:
+            account.logout("%sLogout"%(fk.request.headers.get('User-Agent')))
+            return fk.Response('Your session has expired. Please log back in again.', status.HTTP_401_UNAUTHORIZED)
+        else:
+            account.connected_at = str(datetime.datetime.utcnow())
+            account.save()
     (traffic, created) = AccessModel.objects.get_or_create(application=app, scope=scope, endpoint="%s%s"%(component, endpoint))
 
 def logTraffic(component='none', endpoint=''):

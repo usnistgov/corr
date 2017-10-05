@@ -54,7 +54,10 @@ def user_register():
             else:
                 created, user_model = access_manager.register(email, password, fname, lname, '')
                 if not created:
-                    return fk.Response('This email is already used.', status.HTTP_401_UNAUTHORIZED)
+                    if type(user_model) is list:
+                        return fk.Response(' '.join(user_model), status.HTTP_401_UNAUTHORIZED)
+                    else:
+                        return fk.Response('This email is already used.', status.HTTP_401_UNAUTHORIZED)
                 else:
                     if user_model is None:
                         # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
@@ -131,7 +134,7 @@ def user_password_change():
             if not access_resp[0]:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                logAccess(CLOUD_URL, 'cloud', '/private/user/password/change')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/password/change')
                 user_model = access_resp[1]
                 if fk.request.data:
                     security = secure_content(fk.request.data)
@@ -167,11 +170,28 @@ def user_login():
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 try:
+
                     account = access_manager.login(email, password)
 
                     if account == None:
-                        return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
+                        account_only = UserModel.objects(email=email).first()
+                        if account_only:
+                            if account_only.auth == "blocked":
+                                return fk.Response('This account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+
+                            if account_only.auth == "approved":
+                                account_only.auth = "wrong1"
+                            elif account_only.auth == "wrong1":
+                                account_only.auth = "wrong2"
+                            elif account_only.auth == "wrong2":
+                                account_only.auth = "wrong3"
+                            elif account_only.auth == "wrong3":
+                                account_only.auth = "blocked"
+                            account_only.save()
+                        
+                            return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+
                     if access_manager.secur and account.group != "admin":
                         # access = account.extend.get('access', 'verified')
                         # account.extend['access'] = access
@@ -187,6 +207,8 @@ def user_login():
                     print(fk.request.remote_addr)
                     if  "logout" in account.session:
                         account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+
+                    logAccess(fk, account, CLOUD_URL, 'cloud', '/public/user/login')
                     return fk.Response(json.dumps({'session':account.session, 'group':account.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 except:
                     print(str(traceback.print_exc()))
@@ -208,7 +230,7 @@ def user_sync():
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/sync')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/sync')
             user_model = access_resp[1]
             print(fk.request.path)
             user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
@@ -227,7 +249,7 @@ def user_logout():
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/logout')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/logout')
             user_model = access_resp[1]
             user_model.logout("%sLogout"%(fk.request.headers.get('User-Agent')))
             return fk.Response('Logout succeed', status.HTTP_200_OK)
@@ -245,7 +267,7 @@ def user_unregister():
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/unregister')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/unregister')
             user_model = access_resp[1]
             return fk.redirect('{0}:{1}/error/?code=501'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -262,7 +284,7 @@ def user_dashboard():
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/dashboard')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/dashboard')
             user_model = access_resp[1]
             profile_model = ProfileModel.objects(user=user_model).first()
             dashboard = {}
@@ -353,7 +375,7 @@ def user_update():
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/update')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/update')
             user_model = access_resp[1]
             if fk.request.data:
                 security = secure_content(fk.request.data)
@@ -412,7 +434,7 @@ def account_update(account_id):
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/account/update/<account_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/account/update/<account_id>')
             user_model = access_resp[1]
             if user_model.group != "admin":
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -472,7 +494,7 @@ def user_file_upload(group, item_id):
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/file/upload/<group>/<item_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/file/upload/<group>/<item_id>')
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
             else:
@@ -749,7 +771,7 @@ def user_config(hash_session, tool_id):
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
             config_content = {'default':{'app':'', 'api':{'host':'{0}'.format(VIEW_HOST), 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
             tool_name = "generic"
@@ -774,7 +796,7 @@ def user_picture(hash_session):
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
                 picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
@@ -849,7 +871,7 @@ def user_trusted():
         if user_model is None or (user_model is not None and user_model.group != "admin" and user_model.auth != "approved"):
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/trusted')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/trusted')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -924,7 +946,7 @@ def user_profile():
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/profile')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
             if profile_model == None:
                 profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
@@ -947,7 +969,7 @@ def user_renew():
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/user/renew')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/renew')
             print(fk.request.path)
             user_model.retoken()
             return fk.Response(user_model.api_token, status.HTTP_200_OK)

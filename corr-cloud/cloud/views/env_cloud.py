@@ -32,7 +32,7 @@ def env_remove(env_id):
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/env/remove/<env_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/env/remove/<env_id>')
                 env = EnvironmentModel.objects.with_id(env_id)
             except:
                 print(str(traceback.print_exc()))
@@ -68,7 +68,7 @@ def env_view(env_id):
         current_user = access_resp[1]
         if current_user is not None:
             try:
-                logAccess(CLOUD_URL, 'cloud', '/private/env/view/<env_id>')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/env/view/<env_id>')
                 env = EnvironmentModel.objects.with_id(env_id)
                 # Make sure user own or used this environment.
                 owned = False
@@ -101,7 +101,7 @@ def env_create(record_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/env/create/<record_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/env/create/<record_id>')
             try:
                 record = RecordModel.objects.with_id(record_id)
             except:
@@ -159,7 +159,7 @@ def env_next(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/env/next/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/env/next/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             try:
@@ -252,7 +252,7 @@ def download_env(hash_session, env_id):
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             # Envs are free for download.
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/env/download/<env_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/env/download/<env_id>')
             prepared = storage_manager.prepare_env(project, env)
             if prepared[0] == None:
                 print("Unable to retrieve a env to download.")
@@ -273,6 +273,7 @@ def env_edit(env_id):
         if current_user is None:
             return fk.Response('Unauthorized action on this environment.', status.HTTP_401_UNAUTHORIZED)
         else:
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/env/edit/<env_id>')
             try:
                 env = EnvironmentModel.objects.with_id(env_id)
                 owned = False

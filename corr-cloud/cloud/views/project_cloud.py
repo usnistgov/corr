@@ -28,7 +28,7 @@ def project_sync(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/sync/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/sync/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
             if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -51,7 +51,7 @@ def project_view(project_id):
         if current_user is None:
             return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/view/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/view/<project_id>')
             p = ProjectModel.objects.with_id(project_id)
             if p ==  None or (p != None and p.owner != current_user and p.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -72,7 +72,7 @@ def project_remove(project_id):
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/remove/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/remove/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
@@ -95,7 +95,7 @@ def project_comment(project_id):
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/comment/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/comment/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
 
@@ -133,7 +133,7 @@ def project_comments(project_id):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/comments/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/comments/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -151,7 +151,7 @@ def project_create():
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/create')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/create')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return fk.Response('You have exceeded your allowed maximum quota.', status.HTTP_401_UNAUTHORIZED)
             if fk.request.data:
@@ -198,7 +198,7 @@ def project_edit(project_id):
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
         if current_user is not None:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/edit/<project_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/edit/<project_id>')
             project = ProjectModel.objects.with_id(project_id)
             if project ==  None or (project != None and project.owner != current_user and current_user.group != "admin"):
                 return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
@@ -264,7 +264,7 @@ def project_records(project_name):
         if current_user is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/project/record/<project_name>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/project/record/<project_name>')
             project = ProjectModel.objects(name=project_name).first()
             if project ==  None or (project != None and project.owner != current_user and project.access != 'public' and current_user.group != "admin"):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
