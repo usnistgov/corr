@@ -145,7 +145,8 @@ class UserModel(db.Document):
          'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count, 'total_apps':len(self.apps)}
         from ..models import ProfileModel
         profile = ProfileModel.objects(user=self).first()
-        data['profile'] = profile.extended()
+        if profile:
+            data['profile'] = profile.extended()
         try:
             data["auth"] = self.auth
         except:
