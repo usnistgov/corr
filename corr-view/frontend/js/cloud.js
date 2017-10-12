@@ -7,8 +7,8 @@ var user = {
     group:"unknown",
     query_result: {},
     login: function() {
-        var email = document.getElementById("login-email").value;
-        var password = document.getElementById("login-password").value;
+        var email = DOMPurify.sanitize(document.getElementById("login-email").value);
+        var password = DOMPurify.sanitize(document.getElementById("login-password").value);
         var xmlhttp = new XMLHttpRequest();
         var request = { 'email': email, 'password': password };
         $('#loading-modal').openModal();
@@ -32,10 +32,10 @@ var user = {
         xmlhttp.send(JSON.stringify(request));
     },
     register: function() {
-        var username = document.getElementById("register-email").value;
-        var email = document.getElementById("register-email").value;
-        var password = document.getElementById("register-password").value;
-        var password_again = document.getElementById("register-password-again").value;
+        var username = DOMPurify.sanitize(document.getElementById("register-email").value);
+        var email = DOMPurify.sanitize(document.getElementById("register-email").value);
+        var password = DOMPurify.sanitize(document.getElementById("register-password").value);
+        var password_again = DOMPurify.sanitize(document.getElementById("register-password-again").value);
         $('#loading-modal').openModal();
         if(password == password_again){
             var xmlhttp = new XMLHttpRequest();
@@ -106,17 +106,17 @@ var user = {
     },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
-        var pwd = document.getElementById('edit-new-password').value;
-        var pwd_2 = document.getElementById('edit-new-password-again').value;
+        var pwd = DOMPurify.sanitize(document.getElementById('edit-new-password').value);
+        var pwd_2 = DOMPurify.sanitize(document.getElementById('edit-new-password-again').value);
         if(pwd != pwd_2){
             console.log("Passwords mismatch");
             config.error_modal('Passwords mismatch','Must provide identical passwords.');
         }else{
-            var fname = document.getElementById('view-fname').value;
-            var lname = document.getElementById('view-lname').value;
+            var fname = DOMPurify.sanitize(document.getElementById('view-fname').value);
+            var lname = DOMPurify.sanitize(document.getElementById('view-lname').value);
             
-            var org = document.getElementById('view-org').value;
-            var about = document.getElementById('view-about').value;
+            var org = DOMPurify.sanitize(document.getElementById('view-org').value);
+            var about = DOMPurify.sanitize(document.getElementById('view-about').value);
             if(fname == "None"){
                 fname = ""
             }
@@ -132,7 +132,7 @@ var user = {
             $('#account-modal').closeModal();
             var request = { 'pwd': pwd, 'fname': fname, 'lname': lname, 'org': org, 'about': about}
             if(Cookies.get('group') == "admin"){
-                var quota = document.getElementById('view-quota').value;
+                var quota = DOMPurify.sanitize(document.getElementById('view-quota').value);
                 request['max-quota'] = quota;
             }
             $('#loading-modal').openModal();
@@ -239,7 +239,7 @@ var user = {
         loadNext();
     },
     recover: function() {
-        var email = document.getElementById("recover-email").value;
+        var email = DOMPurify.sanitize(document.getElementById("recover-email").value);
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", this.url+"/public/user/recover");
         var request = { 'email': email}
@@ -296,14 +296,14 @@ var user = {
                     this.about = response['about']
                     this.api = response['api'];
                     $('#view-username-value').text(this.username);
-                    document.getElementById('view-email').value = this.email;
-                    document.getElementById('view-api').value = this.api;
-                    document.getElementById('view-fname').value = this.fname;
-                    document.getElementById('view-lname').value = this.lname;
-                    document.getElementById('view-org').value = this.organisation;
-                    document.getElementById('view-about').value = this.about;
-                    document.getElementById('view-quota').value = this.quota+"GB";
-                    document.getElementById('view-usage').value = this.usage+"%";
+                    document.getElementById('view-email').value = DOMPurify.sanitize(this.email);
+                    document.getElementById('view-api').value = DOMPurify.sanitize(this.api);
+                    document.getElementById('view-fname').value = DOMPurify.sanitize(this.fname);
+                    document.getElementById('view-lname').value = DOMPurify.sanitize(this.lname);
+                    document.getElementById('view-org').value = DOMPurify.sanitize(this.organisation);
+                    document.getElementById('view-about').value = DOMPurify.sanitize(this.about);
+                    document.getElementById('view-quota').value = DOMPurify.sanitize(this.quota+"GB");
+                    document.getElementById('view-usage').value = DOMPurify.sanitize(this.usage+"%");
                 } else {
                     config.error_modal('Account access failed', this.responseText);
                 }
@@ -324,9 +324,9 @@ var user = {
         console.log("Session: "+Cookies.get('session'));
     },
     add_app: function() {
-        var name = document.getElementById("app-name").value;
-        var about = document.getElementById("app-about").value;
-        var access = document.getElementById("app-access").value;
+        var name = DOMPurify.sanitize(document.getElementById("app-name").value);
+        var about = DOMPurify.sanitize(document.getElementById("app-about").value);
+        var access = DOMPurify.sanitize(document.getElementById("app-access").value);
         if(name != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'name': name, 'about': about, 'access': access};
@@ -395,10 +395,10 @@ var user = {
         }
     },
     add_project: function() {
-        var name = document.getElementById("project-name").value;
-        var tags = document.getElementById("project-tags").value;
-        var description = document.getElementById("project-description").value;
-        var goals = document.getElementById("project-goals").value;
+        var name = DOMPurify.sanitize(document.getElementById("project-name").value);
+        var tags = DOMPurify.sanitize(document.getElementById("project-tags").value);
+        var description = DOMPurify.sanitize(document.getElementById("project-description").value);
+        var goals = DOMPurify.sanitize(document.getElementById("project-goals").value);
         if(name != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'name': name, 'tags': tags, 'description':description, 'goals':goals};
@@ -468,9 +468,9 @@ var user = {
         }  
     },
     add_user: function() {
-        var email = document.getElementById("user-email").value;
-        var password = document.getElementById("user-password").value;
-        var group = document.getElementById("user-group").value;
+        var email = DOMPurify.sanitize(document.getElementById("user-email").value);
+        var password = DOMPurify.sanitize(document.getElementById("user-password").value);
+        var group = DOMPurify.sanitize(document.getElementById("user-group").value);
         if(email != "" && password != "" && group != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'email': email, 'password': password, 'group':group, 'admin':Cookies.get("session")};
@@ -529,10 +529,10 @@ var user = {
         }
     },
     add_record: function() {
-        var project_id = document.getElementById("project-id").value;
-        var tags = document.getElementById("record-tags").value;
-        var rationels = document.getElementById("record-rationels").value;
-        var status = document.getElementById("record-status").value;
+        var project_id = DOMPurify.sanitize(document.getElementById("project-id").value);
+        var tags = DOMPurify.sanitize(document.getElementById("record-tags").value);
+        var rationels = DOMPurify.sanitize(document.getElementById("record-rationels").value);
+        var status = DOMPurify.sanitize(document.getElementById("record-status").value);
         if(project_id != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = {'tags': tags, 'rationels':rationels, 'status':status};
@@ -600,9 +600,9 @@ var user = {
         }
     },
     upload_record: function() {
-        var record_id = document.getElementById("record-id").value;
-        var upload_group = document.getElementById("upload-group").value;
-        var uplpad_type = document.getElementById("upload-type").value;
+        var record_id = DOMPurify.sanitize(document.getElementById("record-id").value);
+        var upload_group = DOMPurify.sanitize(document.getElementById("upload-group").value);
+        var uplpad_type = DOMPurify.sanitize(document.getElementById("upload-type").value);
         var file2upload = document.getElementById("upload-file");
 
         if(record_id != ""){
@@ -774,11 +774,11 @@ var user = {
     add_diff: function() {
         var record_1 = "";
         var record_2 = "";
-        var from = document.getElementById("diff-from").value;
-        var to = document.getElementById("diff-to").value;
-        var method = document.getElementById("diff-method").value;
-        var proposition = document.getElementById("diff-proposition").value;
-        var status = document.getElementById("diff-status").value;
+        var from = DOMPurify.sanitize(DOMPurify.sanitize(document.getElementById("diff-from").value);
+        var to = DOMPurify.sanitize(document.getElementById("diff-to").value);
+        var method = DOMPurify.sanitize(document.getElementById("diff-method").value);
+        var proposition = DOMPurify.sanitize(document.getElementById("diff-proposition").value);
+        var status = DOMPurify.sanitize(document.getElementById("diff-status").value);
         if(from != "" && to != ""){
             var xmlhttp = new XMLHttpRequest();
             var request = { 'record_from': from, 'record_to': to, 'method':method, 'proposition':proposition, 'status':status};
@@ -801,13 +801,13 @@ var user = {
         }
     },
     add_env: function() {
-        var project_id = document.getElementById("env-project").value;
-        var application = document.getElementById("env-app").value;
-        var group = document.getElementById("env-group").value;
-        var system = document.getElementById("env-system").value;
-        var version = document.getElementById("env-version").value;
-        var vc_location = document.getElementById("env-vc-location").value;
-        var env_location = document.getElementById("env-location").value;
+        var project_id = DOMPurify.sanitize(document.getElementById("env-project").value);
+        var application = DOMPurify.sanitize(document.getElementById("env-app").value);
+        var group = DOMPurify.sanitize(document.getElementById("env-group").value);
+        var system = DOMPurify.sanitize(document.getElementById("env-system").value);
+        var version = DOMPurify.sanitize(document.getElementById("env-version").value);
+        var vc_location = DOMPurify.sanitize(document.getElementById("env-vc-location").value);
+        var env_location = DOMPurify.sanitize(document.getElementById("env-location").value);
         var bundle = document.getElementById("bundle-file");
         if(project_id != ""){
             console.log(project_id);
@@ -816,7 +816,7 @@ var user = {
             request["version-location"] = vc_location;
             request["env-location"] = env_location;
             if(env_location == "remote"){
-                request["bundle-location"] = bundle.value;
+                request["bundle-location"] = DOMPurify.sanitize(bundle.value);
             }
             xmlhttp.onreadystatechange = function()
             {
