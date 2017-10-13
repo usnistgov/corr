@@ -2416,6 +2416,8 @@ def user_record_create(api_token, app_token, project_id):
                             history = project.history
                             if len(history) > 0:
                                 environment = history[-1] # Create with the latest environment.
+                            else:
+                                environment, create = EnvironmentModel.ojects.get_or_create(created_at=str(datetime.datetime.utcnow()), application=current_app, group="unknown", system="undefined")
                         # if len(resources) > 0:
                         #     for res_id in resources_ids:
                         #         res = FileModel.objects.with_id(res_id)

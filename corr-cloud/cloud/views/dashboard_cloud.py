@@ -57,17 +57,13 @@ def private_search():
                 for key, value in fk.request.args.items():
                     if key == "req":
                          # words = value.split(" ")
-                         words = value.split(" ")
+                         words = [v.lower() for v in value.split(" ")]
                     elif key == "page":
                         page = int(value)
                     elif key == "filter":
                         filtr = value.split("-")
                     else:
-                        # _request = "{0}&{1}{2}".format(_request, key, value)
                         pass
-                # if not any(el in _request for el in ["[", "]", "!", "?", "|", "&"]):
-                #     _request = "![{0}]?[]".format(_request)
-                # message, contexts, leftover = processRequest(_request, page, filtr)
                 size, contexts = query_basic(words, page, filtr, current_user)
                 message = "Basic query."
                 if contexts is None:
@@ -82,65 +78,18 @@ def private_search():
                     contexts = [contexts]
                     for context_index in range(len(contexts)):
                         context = contexts[context_index]
-                        # user_filter = []
                         for user in context["user"]:
-                            # if user.email not in user_filter:
-                            #     user_filter.append(user.email)
                             profile = ProfileModel.objects(user=user)[0]
                             users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
-                        # for profile in context["profile"]:
-                        #     if profile.user.email not in user_filter:
-                        #         user_filter.append(profile.user.email)
-                        #         user = profile.user
-                        #         users.append({"created":str(user.created_at),"id":str(user.id), "email":user.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user.info()['total_apps'], "projects":user.info()['total_projects'], "records":user.info()['total_records']})
                         for appli in context["tool"]:
-                            # skip = False
-                            # for cn_i in range(context_index):
-                            #     if appli in contexts[cn_i]["tool"]:
-                            #         skip = True
-                            #         break
-                            # if not skip:
                             applications.append(appli.extended())
                         for project in context["project"]:
-                            # skip = False
-                            # for cn_i in range(context_index):
-                            #     if project in contexts[cn_i]["project"]:
-                            #         skip = True
-                            #         break
-                            # if not skip:
-                            # if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
                             projects.append(project.extended())
                         for record in context["record"]:
-                            # if record.project:
-                                # skip = False
-                                # for cn_i in range(context_index):
-                                #     if record in contexts[cn_i]["record"]:
-                                #         skip = True
-                                #         break
-                                # if not skip:
-                                # if record.access == 'public' or current_user == record.project.owner or current_user.group == "admin":
                             records.append(json.loads(record.summary_json()))
                         for env in context["env"]:
-                            # skip = False
-                            # for cn_i in range(context_index):
-                            #     if env in contexts[cn_i]["env"]:
-                            #         skip = True
-                            #         break
-                            # if not skip:
-                            # for project in ProjectModel.objects():
-                            #     if str(env.id) in project.history:
-                            #         if project.access == 'public' or current_user == project.owner or current_user.group == "admin":
-                            #             envs.append(env.info())
-                            #         break
                             envs.append(env.info())
                         for diff in context["diff"]:
-                            # skip = False
-                            # for cn_i in range(context_index):
-                            #     if diff in contexts[cn_i]["diff"]:
-                            #         skip = True
-                            #         break
-                            # if not skip:
-                            # if current_user.group == "admin" or (diff.record_from.access == 'public' and diff.record_to.access == 'public') or current_user == diff.record_from.project.owner or current_user == diff.record_to.project.owner:
                             diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
                     block_size = 45
                     if size == 0:
@@ -154,33 +103,7 @@ def private_search():
                     response['envs'] = {'count':len(envs), 'result':envs}
                     response['records'] = {'count':len(records), 'result':records}
                     response['diffs'] = {'count':len(diffs), 'result':diffs}
-                    
-                    # begin = int(page)*block_size
-                    # history_hit = 0
-                    # counter = 0
-                    # for key, value in response.items():
-                    #     if counter == block_size:
-                    #         value['result'] = []
-                    #     else:
-                    #         if history_hit + len(value['result']) >= begin:
-                    #             if len(value['result']) <= (block_size - counter):
-                    #                 counter = counter + len(value['result'])
-                    #                 history_hit = history_hit + len(value['result'])
-                    #             else:
-                    #                 begin_local = begin - history_hit
-                    #                 end_local = begin_local + block_size - counter
-                    #                 value['result'] = value['result'][begin:end]
-                    #                 counter = block_size
-                    #         else:
-                    #             history_hit = history_hit + len(value['result'])
-                    #             value['result'] = []
-                    # if begin + block_size >= history_hit:
-                    #     end = -1
-                    # else:
-                    #     end = begin + block_size - history_hit
                     response['end'] = end
-                    # response['logs'] = pagination_logs
-                    # message = "Basic query."
                     return cloud_response(200, message, response)
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
