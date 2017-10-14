@@ -120,6 +120,7 @@ def env_create(record_id):
                         if application_name and application_name != '':
                             application = ApplicationModel.objects(name=application_name).first()
                             if application:
+                                # Maybe not put record increment here.
                                 application.records = application.records + 1
                                 application.save()
                                 if str(current_user.id) not in application.users:
