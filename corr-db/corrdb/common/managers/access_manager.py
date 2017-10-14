@@ -65,15 +65,15 @@ class AccessManager:
         check_password = self.password_check(password)
         if not check_password['password_ok']:
             message = ["Password rules vialation:"]
-            if not check_password['length_error']:
+            if check_password['length_error']:
                 message.append("Must be at least 8 characters.")
-            if not check_password['digit_error']:
+            if check_password['digit_error']:
                 message.append("Must contain at least one digit.")
-            if not check_password['uppercase_error']:
+            if check_password['uppercase_error']:
                 message.append("Must contain at least one upper case character.")
-            if not check_password['lowercase_error']:
+            if check_password['lowercase_error']:
                 message.append("Must contain at least one lower case character.")
-            if not check_password['symbol_error']:
+            if check_password['symbol_error']:
                 message.append("Must contain at least one special character.")
             return False, message
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
