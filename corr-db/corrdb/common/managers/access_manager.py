@@ -263,7 +263,8 @@ class AccessManager:
         lowercase_error = re.search(r"[a-z]", password) is None
 
         # searching for symbols
-        symbol_error = re.search(r"\W"+r'"]', password) is None
+        # ]\;',./!@#$%^&*()_+-=
+        symbol_error = not any(i in "]\;',./!@#$%^&*()_+-=]" for i in password)
 
         # overall result
         password_ok = not ( length_error or digit_error or uppercase_error or lowercase_error or symbol_error )
