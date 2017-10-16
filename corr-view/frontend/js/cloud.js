@@ -162,6 +162,7 @@ var user = {
                             }
                         } else {
                             $('#loading-modal').closeModal();
+                            var response = this.responseText;
                             config.error_modal('Update failed', response);
                         }
                     }
