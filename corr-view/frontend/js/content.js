@@ -891,6 +891,7 @@ var Record = function (_id){
             }
         };
         if(!user.sanitize([tags, rationels, status])){
+            $('#loading-modal').closeModal();
             Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
         }else{
             xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
@@ -980,6 +981,7 @@ var Account = function (_id){
             }
         };
         if(!user.sanitize([fname, lname, org, about, auth, quota])){
+            $('#loading-modal').closeModal();
             Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
         }else{
             xmlhttp.open("POST", url+"/private/account/update/"+self._id);
@@ -1035,6 +1037,7 @@ var Project = function (_id){
             }
         };
         if(!user.sanitize([tags, description, goals])){
+            $('#loading-modal').closeModal();
             Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
         }else{
             xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
@@ -1119,6 +1122,7 @@ var Application = function (_id){
             }
         };
         if(!user.sanitize([name, about, access])){
+            $('#loading-modal').closeModal();
             Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
         }else{
             xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);

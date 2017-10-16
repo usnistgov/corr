@@ -7,10 +7,9 @@ var user = {
     group:"unknown",
     query_result: {},
     sanitize: function(data){
-        var iChars = "~`!#$%^&*+=-[]\\\';,/{}|\":<>?";
-        for (inp in data) {
-            var check = ((iChars.match(inp)) == "");
-            if(!check){
+        for (var i = 0; i < data.length; i++) {
+            var check = /[~`!#$%\^&*+=\[\]\\';,/{}|\\":<>\?]/g.test(data[i]);
+            if(check){
                 return false;
             }
         }
@@ -147,6 +146,7 @@ var user = {
             }
             $('#loading-modal').openModal();
             if(!user.sanitize([fname, lname, org, about])){
+                $('#loading-modal').closeModal();
                 Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
             }else{
                 xmlhttp.onreadystatechange = function()
@@ -479,6 +479,7 @@ var user = {
                 }
             };
             if(!user.sanitize([name, tags, description, goals])){
+                $('#loading-modal').closeModal();
                 Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
             }else{
                 xmlhttp.open("POST", this.url+"/private/project/create");
@@ -614,6 +615,7 @@ var user = {
                 }
             };
             if(!user.sanitize([tags, rationels, status])){
+                $('#loading-modal').closeModal();
                 Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
             }else{
                 xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
