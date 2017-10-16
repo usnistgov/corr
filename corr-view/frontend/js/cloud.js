@@ -6,6 +6,14 @@ var user = {
     api: "",
     group:"unknown",
     query_result: {},
+    sanitize: function(data){
+        for (inp in data) {
+            if(!inp.match(/^[0-9a-zA-Z]{1,16}$/)){
+                return false;
+            }
+        }
+        return true;
+    },
     login: function() {
         var email = document.getElementById("login-email").value;
         var password = document.getElementById("login-password").value;
@@ -136,26 +144,30 @@ var user = {
                 request['max-quota'] = quota;
             }
             $('#loading-modal').openModal();
-            xmlhttp.onreadystatechange = function()
-            {
-                if(this.readyState == 4){
-                    if (this.status == 200) {
-                        $('#loading-modal').closeModal();
-                        Materialize.toast('Update succeeded', 3000, 'rounded');
-                        var response = this.responseText;
-                        var file = document.getElementById("picture-input");
-                        if (file.files.length > 0) {
-                            user.upload_file(file, 'picture', 'none');
+            if(!user.sanitize([fname, lname, org, about])){
+                Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+            }else{
+                xmlhttp.onreadystatechange = function()
+                {
+                    if(this.readyState == 4){
+                        if (this.status == 200) {
+                            $('#loading-modal').closeModal();
+                            Materialize.toast('Update succeeded', 3000, 'rounded');
+                            var response = this.responseText;
+                            var file = document.getElementById("picture-input");
+                            if (file.files.length > 0) {
+                                user.upload_file(file, 'picture', 'none');
+                            }
+                        } else {
+                            $('#loading-modal').closeModal();
+                            config.error_modal('Update failed', response);
                         }
-                    } else {
-                        $('#loading-modal').closeModal();
-                        config.error_modal('Update failed', response);
                     }
-                }
-            };
-            xmlhttp.open("POST", this.url+"/private/user/update");
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            xmlhttp.send(JSON.stringify(request));
+                };
+                xmlhttp.open("POST", this.url+"/private/user/update");
+                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                xmlhttp.send(JSON.stringify(request));
+            }
         }
     },
     upload_file: function(file, group, item_id) {
@@ -387,9 +399,13 @@ var user = {
                     }
                 } 
             };
-            xmlhttp.open("POST", this.url+"/private/dashboard/developer/app/create");
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            xmlhttp.send(JSON.stringify(request));
+            if(!user.sanitize([name, about, access])){
+                Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+            }else{
+                xmlhttp.open("POST", this.url+"/private/dashboard/developer/app/create");
+                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                xmlhttp.send(JSON.stringify(request));
+            }
         }else{
             config.error_modal('Add app failed', 'Name should not be empty.');
         }
@@ -460,9 +476,13 @@ var user = {
                     }
                 }
             };
-            xmlhttp.open("POST", this.url+"/private/project/create");
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            xmlhttp.send(JSON.stringify(request));
+            if(!user.sanitize([name, tags, description, goals])){
+                Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+            }else{
+                xmlhttp.open("POST", this.url+"/private/project/create");
+                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                xmlhttp.send(JSON.stringify(request));
+            }
         }else{
             config.error_modal('Add project failed', 'Project name should not be empty.');
         }  
@@ -591,9 +611,13 @@ var user = {
                     }
                 }
             };
-            xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            xmlhttp.send(JSON.stringify(request));
+            if(!user.sanitize([tags, rationels, status])){
+                Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+            }else{
+                xmlhttp.open("POST", this.url+"/private/record/create/"+project_id);
+                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                xmlhttp.send(JSON.stringify(request));
+            }
         }else{
             $('#loading-modal').closeModal();
             config.error_modal('Add project failed', 'Project name should not be empty.');
@@ -873,9 +897,13 @@ var user = {
                     }
                 }
             };
-            xmlhttp.open("POST", this.url+"/private/env/next/"+project_id);
-            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-            xmlhttp.send(JSON.stringify(request));
+            if(!user.sanitize([application])){
+                Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+            }else{
+                xmlhttp.open("POST", this.url+"/private/env/next/"+project_id);
+                xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+                xmlhttp.send(JSON.stringify(request));
+            }
         }else{
             config.error_modal('Add event failed', 'Project should be provided.');
         }

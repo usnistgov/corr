@@ -890,9 +890,13 @@ var Record = function (_id){
                 }
             }
         };
-        xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send(JSON.stringify(request));
+        if(!user.sanitize([tags, rationels, status])){
+            Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+        }else{
+            xmlhttp.open("POST", url+"/private/record/edit/"+self._id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+            xmlhttp.send(JSON.stringify(request));
+        }
     }
 
     self.access = function(access_value) {
@@ -975,9 +979,13 @@ var Account = function (_id){
                 }
             }
         };
-        xmlhttp.open("POST", url+"/private/account/update/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send(JSON.stringify(request));
+        if(!user.sanitize([fname, lname, org, about, auth, quota])){
+            Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+        }else{
+            xmlhttp.open("POST", url+"/private/account/update/"+self._id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+            xmlhttp.send(JSON.stringify(request));
+        }
     }
     return self;
 };
@@ -1026,9 +1034,13 @@ var Project = function (_id){
                 }
             }
         };
-        xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send(JSON.stringify(request));
+        if(!user.sanitize([tags, description, goals])){
+            Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+        }else{
+            xmlhttp.open("POST", url+"/private/project/edit/"+self._id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+            xmlhttp.send(JSON.stringify(request));
+        }
     }
     self.access = function(access_value) {
         var xmlhttp = new XMLHttpRequest();
@@ -1106,9 +1118,13 @@ var Application = function (_id){
                 }
             }
         };
-        xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
-        xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send(JSON.stringify(request));
+        if(!user.sanitize([name, about, access])){
+            Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
+        }else{
+            xmlhttp.open("POST", url+"/private/dashboard/developer/app/update/"+self._id);
+            xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
+            xmlhttp.send(JSON.stringify(request));
+        }
     },
     this.retoken = function() {
         var xmlhttp = new XMLHttpRequest();

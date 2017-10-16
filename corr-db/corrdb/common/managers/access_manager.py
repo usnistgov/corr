@@ -164,9 +164,8 @@ class AccessManager:
             account.save()
         if account:
             account.connected_at = str(datetime.datetime.utcnow())
-            account.save()
-        if account.auth in ["wrong1", "wrong2", "wrong3"]:
-            account.auth = "approved"
+            if account.auth in ["wrong1", "wrong2", "wrong3"]:
+                account.auth = "approved"
             account.save()
         return account
 
