@@ -7,8 +7,10 @@ var user = {
     group:"unknown",
     query_result: {},
     sanitize: function(data){
+        var iChars = "~`!#$%^&*+=-[]\\\';,/{}|\":<>?";
         for (inp in data) {
-            if(!inp.match(/^[0-9a-zA-Z]{1,16}$/)){
+            var check = ((iChars.match(inp)) == "");
+            if(!check){
                 return false;
             }
         }

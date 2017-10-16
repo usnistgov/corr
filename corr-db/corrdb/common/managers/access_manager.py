@@ -222,6 +222,20 @@ class AccessManager:
                 User Account in case of a success, otherwise None.
         """
         account = None
+        check_password = self.password_check(password)
+        if not check_password['password_ok']:
+            message = ["Password rules vialation:"]
+            if check_password['length_error']:
+                message.append("Must be at least 8 characters.")
+            if check_password['digit_error']:
+                message.append("Must contain at least one digit.")
+            if check_password['uppercase_error']:
+                message.append("Must contain at least one upper case character.")
+            if check_password['lowercase_error']:
+                message.append("Must contain at least one lower case character.")
+            if check_password['symbol_error']:
+                message.append("Must contain at least one special character.")
+            return None, message
         hash_pwd = hashlib.sha256(('CoRRPassword_%s'%password).encode("ascii")).hexdigest()
         if self.type == 'stormpath':
             accounts = self.manager.application.accounts
@@ -238,7 +252,7 @@ class AccessManager:
             account.password = hash_pwd
         if account:
             account.save()
-        return account
+        return account, []
 
     def password_check(self, password):
         """

@@ -414,9 +414,12 @@ def user_update():
                 user_model.save()
 
                 if password != "":
-                    response = access_manager.change_password(user_model, password)
+                    response, messsage = access_manager.change_password(user_model, password)
                     if response is None:
-                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                        if len(messsage) >0:
+                            return fk.Response(' '.join(messsage), status.HTTP_401_UNAUTHORIZED)
+                        else:
+                            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 return fk.Response('Account update succeed', status.HTTP_200_OK)
             else:
                 return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -474,8 +477,9 @@ def account_update(account_id):
                         account_model.save()
 
                         if password:
-                            access_manager.change_password(account_model, password)
-
+                            account, message = access_manager.change_password(account_model, password)
+                            if len(messsage) >0:
+                                return fk.Response(' '.join(messsage), status.HTTP_401_UNAUTHORIZED)
                         return fk.Response('Account update succeed', status.HTTP_200_OK)
                 else:
                     return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
