@@ -131,7 +131,7 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                            <div class="collapsible-header blue-grey white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
                             <div class="collapsible-body recent-activity">
                                 <div class="row margin">
                                   <div class="input-field col s12">
@@ -149,7 +149,6 @@
                         </li>
                         <li>
                             <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
-
                         </li>
                         <li>
                             <div class="collapsible-header purple white-text"><i class="mdi-communication-email"></i><a href="mailto:yannick.congo@gmail.com">Email</a></div>
@@ -160,6 +159,9 @@
                                 <div class="row red-text text-lighten-2" id="platform-terms">
                                 </div>
                             </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header green white-text"><i class="mdi-action-favorite"></i><a href="https://donorbox.org/corr-root-instance-donation" target="_blank">Donate to Support</a></div>
                         </li>
                     </ul>
                 </li>
@@ -523,7 +525,7 @@
             </div>
             <div class="footer-copyright">
               <div class="container">
-                <a class="dbox-donation-button" href="https://donorbox.org/corr-root-instance-donation?amount=10" style="background:#008b8b url(https://d1iczxrky3cnb2.cloudfront.net/white_logo.png) no-repeat 37px center; color: #fff;text-decoration: none;font-family: Verdana,sans-serif;display: inline-block;font-size: 16px;padding: 15px 38px 15px 75px; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; box-shadow: 0 1px 0 0 #006161; text-shadow: 0 1px rgba(0, 0, 0, 0.3);" >Donate</a> Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
                 <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
                 </div>
             </div>
@@ -606,7 +608,7 @@
                 document.getElementById("nav-login").remove();
                 document.getElementById("item-search").remove();
                 document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='"+window.location.origin+"/dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
-                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large purple darken-1'><i class='large mdi-communication-email'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li></ul>";
+                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large purple darken-1'><i class='large mdi-communication-email'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='donate to Support'><a href='https://donorbox.org/corr-root-instance-donation' class='modal-trigger btn-floating btn-large green darken-1' target='_blank'><i class='large mdi-action-favorite'></i></a></li></ul>";
 
                 document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
                 document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
