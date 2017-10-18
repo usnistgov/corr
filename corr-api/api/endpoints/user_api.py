@@ -45,7 +45,7 @@ def user_search(api_token, app_token, key_words):
     if current_user ==None:
         return api_response(401, 'Unauthorized access', 'The user credential is not authorized.')
     else:
-        logAccess(API_URL,'api', '/private/<api_token>/<app_token>/search/<key_words>')
+        logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -403,7 +403,7 @@ def user_status(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token><app_token>/user/status')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token><app_token>/user/status')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s credentials are authorized'%str(current_user.id), current_user.info())
             else:
@@ -425,7 +425,7 @@ def user_app_connectivity(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL, 'api', '/private/<app_token>/connectivity')
+            logAccess(fk, current_user, API_URL,  'api', '/private/<app_token>/connectivity')
             if fk.request.method == 'GET':
                 name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
                 return api_response(200, 'Application %s is accessible'%name, current_app.info())
@@ -448,7 +448,7 @@ def user_picture(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/user/picture')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/user/picture')
             if fk.request.method == 'GET':
                 profile = ProfileModel.objects(user=current_user).first()
                 if profile == None:
@@ -522,7 +522,7 @@ def user_home(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token><app_token>/user/home')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token><app_token>/user/home')
             if fk.request.method == 'GET':
                 return api_response(200, 'User %s Home'%str(current_user.id), current_user.home())
             else:
@@ -545,7 +545,7 @@ def user_user_profile_show(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token><app_token>/profile/show')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token><app_token>/profile/show')
             if fk.request.method == 'GET':
                 profile = ProfileModel.objects(user=current_user).first()
                 if profile == None:
@@ -575,7 +575,7 @@ def user_messages(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/messages')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/messages')
             if fk.request.method == 'GET':
                 messages = []
                 messages.extend(MessageModel.objects(sender=current_user))
@@ -603,7 +603,7 @@ def user_message_create(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     security = secure_content(fk.request.data)
@@ -651,7 +651,7 @@ def user_message_show(api_token, app_token, message_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'GET':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -680,7 +680,7 @@ def user_message_delete(api_token, app_token, message_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'GET':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -712,7 +712,7 @@ def user_message_update(api_token, app_token, message_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/message/update')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/message/update')
             if fk.request.method == 'POST':
                 message = MessageModel.objects.with_id(message_id)
                 if message == None:
@@ -774,7 +774,7 @@ def user_files(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/files')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/files')
             if fk.request.method == 'GET':
                 files = []
                 for _file in FileModel.objects():
@@ -805,7 +805,7 @@ def user_file_upload(api_token, app_token, group, item_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/upload/<group>/<item_id>')
             if fk.request.method == 'POST':
                 if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "resource-project", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                     return api_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
@@ -1020,7 +1020,7 @@ def user_file_download(api_token, app_token, file_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
             if fk.request.method == 'GET':
                 # print [f.extended() for f in FileModel.objects()]
                 file_meta = FileModel.objects.with_id(file_id)
@@ -1090,7 +1090,7 @@ def user_file_create(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
                     security = secure_content(fk.request.data)
@@ -1154,7 +1154,7 @@ def user_file_show(api_token, app_token, file_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
             if fk.request.method == 'GET':
                 # print [f.extended() for f in FileModel.objects()]
                 _file = FileModel.objects.with_id(file_id)
@@ -1185,7 +1185,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/delete/<item_id>/<file_id>')
             if fk.request.method == 'GET':
                 _file = FileModel.objects.with_id(file_id)
                 if _file == None:
@@ -1430,7 +1430,7 @@ def user_file_update(api_token, app_token, file_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/file/update/<file_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/update/<file_id>')
             if fk.request.method == 'POST':
                 _file = FileModel.objects.with_id(file_id)
                 if _file == None:
@@ -1494,7 +1494,7 @@ def user_projects(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/projects')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/projects')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects_dict = {'total_projects':len(projects), 'projects':[]}
@@ -1520,7 +1520,7 @@ def user_projects_clear(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/projects/clear')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/projects/clear')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 projects.delete()
@@ -1545,7 +1545,7 @@ def user_envs_clear(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/envs/clear')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/envs/clear')
             if fk.request.method == 'GET':
                 projects = ProjectModel.objects(owner=current_user)#, application=current_app)
                 for project in projects:
@@ -1575,7 +1575,7 @@ def user_project_comments(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/comments/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/comments/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1612,7 +1612,7 @@ def user_project_create(api_token, app_token):
         if current_app == None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/create')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -1700,7 +1700,7 @@ def user_project_records(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/records/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1735,7 +1735,7 @@ def user_project_show(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/show/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/show/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1765,7 +1765,7 @@ def user_project_logo(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/logo/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/logo/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None:
@@ -1833,7 +1833,7 @@ def user_project_delete(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/delete/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/delete/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1866,7 +1866,7 @@ def user_project_update(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/update/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -1954,7 +1954,7 @@ def user_project_download(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/download/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/download/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -1989,7 +1989,7 @@ def user_project_envs(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/envs/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/envs/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2025,7 +2025,7 @@ def user_project_envs_head(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/envs/head/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/envs/head/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2058,7 +2058,7 @@ def user_project_env_show(api_token, app_token, project_id, env_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/env/show/<project_id>/<env_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2095,7 +2095,7 @@ def user_project_env_push(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/env/next/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -2177,7 +2177,7 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/env/update/<project_id>/<env_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -2256,7 +2256,7 @@ def user_project_env_download(api_token, app_token, project_id, env_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/env/download/<project_id>/<env_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2297,7 +2297,7 @@ def user_records_list(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/list/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/records/list/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and (project.access == 'private' and project.owner != current_user):
@@ -2328,7 +2328,7 @@ def user_records_clear(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/records/clear/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/records/clear/<project_id>')
             if fk.request.method == 'GET':
                 project = ProjectModel.objects.with_id(project_id)
                 if project != None and project.owner != current_user:
@@ -2357,7 +2357,7 @@ def user_record_create(api_token, app_token, project_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/project/record/create/<project_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -2460,7 +2460,7 @@ def user_record_show(api_token, app_token, record_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/show/<record_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/record/show/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2490,7 +2490,7 @@ def user_record_delete(api_token, app_token, record_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/delete/<record_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/record/delete/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2523,7 +2523,7 @@ def user_record_update(api_token, app_token, record_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/record/update/<record_id>')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -2671,7 +2671,7 @@ def user_record_download(api_token, app_token, record_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/record/download/<record_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/record/download/<record_id>')
             if fk.request.method == 'GET':
                 record = RecordModel.objects.with_id(record_id)
                 if record == None:
@@ -2705,7 +2705,7 @@ def user_diffs(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diffs')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diffs')
             if fk.request.method == 'GET':
                 diffs = DiffModel.objects()
                 diffs_dict = {'total_diffs':0, 'diffs':[]}
@@ -2737,7 +2737,7 @@ def user_diff_create(api_token, app_token):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/create')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diff/create')
             if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
@@ -2795,7 +2795,7 @@ def user_diff_show(api_token, app_token, diff_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/show/<diff_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diff/show/<diff_id>')
             if fk.request.method == 'GET':
                 diff = DiffModel.objects.with_id(diff_id)
                 if diff == None:
@@ -2825,7 +2825,7 @@ def user_diff_delete(api_token, app_token, diff_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/delete/<diff_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diff/delete/<diff_id>')
             if fk.request.method == 'GET':
                 diff = DiffModel.objects.with_id(diff_id)
                 if diff == None:
@@ -2860,7 +2860,7 @@ def user_diff_update(api_token, app_token, diff_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diff/update/<diff_id>')
         if current_user.quota >= current_user.max_quota*1024*1024*1024:
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
         if fk.request.method == 'POST':
@@ -2942,7 +2942,7 @@ def user_resolve_item(api_token, app_token, item_id):
         if current_app ==None and app_token != "no-app":
             return api_response(401, 'Unauthorized access', 'This app credential is not authorized.')
         else:
-            logAccess(API_URL,'api', '/private/<api_token>/<app_token>/resolve/<item_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/resolve/<item_id>')
             if fk.request.method == 'GET':
                 resolution = {'type':'', 'endpoints':[]}
                 if item_id == 'root':

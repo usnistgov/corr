@@ -39,7 +39,7 @@ def admin_search(api_token, key_words):
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
-        logAccess(API_URL,'api', '/admin/<api_token>/search/<key_words>')
+        logAccess(fk, admin_user, API_URL,'api', '/admin/<api_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
