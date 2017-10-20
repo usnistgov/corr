@@ -79,6 +79,7 @@ class ApplicationModel(db.Document):
         if not self.app_token:
             self.app_token = hashlib.sha256(('CoRRApp_%s'%(str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
 
+        self.created_at = str(datetime.datetime.utcnow())
         return super(ApplicationModel, self).save(*args, **kwargs)
 
     def retoken(self):

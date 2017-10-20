@@ -842,7 +842,7 @@ def app_all():
         logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/apps')
         if fk.request.method == 'GET':
             # Show all the apps for now. Only admin can create them anyways.
-            apps = ApplicationModel.objects().order_by('-updated_at')
+            apps = ApplicationModel.objects().order_by('-created_at')
             # if current_user.group == "admin":
             #     apps = ApplicationModel.objects()
             # else:
