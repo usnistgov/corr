@@ -124,9 +124,9 @@ def project_dashboard():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/projects')
             
             if current_user.group == "admin":
-                projects = ProjectModel.objects().order_by('-created_at')
+                projects = ProjectModel.objects().order_by('-updated_at')
             else:
-                projects = ProjectModel.objects(owner=current_user).order_by('-created_at')
+                projects = ProjectModel.objects(owner=current_user).order_by('-updated_at')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -172,7 +172,7 @@ def users_dashboard():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/users')
             
             if current_user.group == "admin":
-                users = UserModel.objects().order_by('-created_at')
+                users = UserModel.objects().order_by('-updated_at')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             version = 'N/A'
@@ -246,15 +246,15 @@ def diffs_dashboard(project_id):
             summaries = []
 
             if current_user.group == "admin":
-                diffs = DiffModel.objects().order_by('-created_at')
+                diffs = DiffModel.objects().order_by('-updated_at')
                 for d in diffs:
                     if project_id == "all":
                         summaries.append(d.info())
                     elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                         summaries.append(d.info())
             else:
-                diffs_send = DiffModel.objects(sender=current_user).order_by('-created_at')
-                diffs_targ = DiffModel.objects(targeted=current_user).order_by('-created_at')
+                diffs_send = DiffModel.objects(sender=current_user).order_by('-updated_at')
+                diffs_targ = DiffModel.objects(targeted=current_user).order_by('-updated_at')
                 
                 for d in diffs_send:
                     if project_id == "all":
@@ -303,9 +303,9 @@ def dashboard_records(project_id):
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/records/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
-                    projects = ProjectModel.objects()
+                    projects = ProjectModel.objects().order_by('-updated_at')
                 else:
-                    projects = ProjectModel.objects(owner=current_user)
+                    projects = ProjectModel.objects(owner=current_user).order_by('-updated_at')
                 records = {'size':0, 'records':[]}
                 for project in projects:
                     for r in project.records:
@@ -357,9 +357,9 @@ def dashboard_envs(project_id):
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/envs/<project_id>')
             if project_id == "all":
                 if current_user.group == "admin":
-                    projects = ProjectModel.objects()
+                    projects = ProjectModel.objects().order_by('-updated_at')
                 else:
-                    projects = ProjectModel.objects(owner=current_user)
+                    projects = ProjectModel.objects(owner=current_user).order_by('-updated_at')
                 envs = {'size':0, 'envs':[]}
 
                 for project in projects:
@@ -443,11 +443,11 @@ def record_diff(record_id):
             else:
                 if (record.project.owner == current_user) or record.access == 'public' or current_user.group == "admin":
                     diffs = []
-                    founds = DiffModel.objects(record_from=record)
+                    founds = DiffModel.objects(record_from=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
                             diffs.append(diff.info())
-                    founds = DiffModel.objects(record_to=record)
+                    founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
                             diffs.append(diff.info())  
@@ -512,8 +512,8 @@ def reproducibility_assess(record_id):
                         undefs = []
 
                         diffs = []
-                        diffs.extend(DiffModel.objects(record_from=record))
-                        diffs.extend(DiffModel.objects(record_to=record))
+                        diffs.extend(DiffModel.objects(record_from=record).order_by('-updated_at'))
+                        diffs.extend(DiffModel.objects(record_to=record).order_by('-updated_at'))
 
                         for diff in diffs:
                             if diff.status == "agreed": #Only agreed for now.
@@ -636,7 +636,7 @@ def public_search():
                         #         skip = True
                         #         break
                         # if not skip:
-                        for project in ProjectModel.objects():
+                        for project in ProjectModel.objects().order_by('-updated_at'):
                             # if str(env.id) in project.history:
                             #     if project.access == 'public':
                             #         envs.append(env.info())
@@ -678,13 +678,13 @@ def public_search():
 def public_project_dashboard():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
     if fk.request.method == 'GET':
-        projects = ProjectModel.objects.order_by('-created_at')
+        projects = ProjectModel.objects().order_by('-updated_at')
         summaries = []
         for p in projects:
             if project.access == 'public':
                 project = {"project":json.loads(p.summary_json())}
                 records = []
-                for r in RecordModel.objects(project=p):
+                for r in RecordModel.objects(project=p).order_by('-updated_at'):
                     if r.access == 'public':
                         records.append(r)
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
@@ -719,7 +719,7 @@ def public_dashboard_records(project_id):
         p = ProjectModel.objects.with_id(project_id)
         if p.access == 'public':
             project = {"project":json.loads(p.summary_json())}
-            records = RecordModel.objects(project=p)
+            records = RecordModel.objects(project=p).order_by('-updated_at')
             records_object = []
             end = -1
             block_size = 45
@@ -742,11 +742,11 @@ def public_dashboard_records(project_id):
                 if record.access == 'public':
                     record_object = {"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)}
                     diffs = []
-                    founds = DiffModel.objects(record_from=record)
+                    founds = DiffModel.objects(record_from=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
                             diffs.append(diff.info())
-                    founds = DiffModel.objects(record_to=record)
+                    founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
                             diffs.append(diff.info()) 
@@ -776,11 +776,11 @@ def public_record_diff(record_id):
         else:
             if record.access == 'public':
                 diffs = []
-                founds = DiffModel.objects(record_from=record)
+                founds = DiffModel.objects(record_from=record).order_by('-updated_at')
                 if founds != None:
                     for diff in founds:
                         diffs.append(diff.info())
-                founds = DiffModel.objects(record_to=record)
+                founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                 if founds != None:
                     for diff in founds:
                         diffs.append(diff.info())  
@@ -842,7 +842,7 @@ def app_all():
         logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/developer/apps')
         if fk.request.method == 'GET':
             # Show all the apps for now. Only admin can create them anyways.
-            apps = ApplicationModel.objects()
+            apps = ApplicationModel.objects().order_by('-updated_at')
             # if current_user.group == "admin":
             #     apps = ApplicationModel.objects()
             # else:

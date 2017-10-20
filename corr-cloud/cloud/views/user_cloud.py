@@ -295,9 +295,9 @@ def user_dashboard():
             except:
                 pass
             if user_model.group == "admin":
-                projects = ProjectModel.objects()
+                projects = ProjectModel.objects().order_by('-updated_at')
             else:
-                projects = ProjectModel.objects(owner=user_model)
+                projects = ProjectModel.objects(owner=user_model).order_by('-updated_at')
             if profile_model is not None:
                 dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'max-quota':user_model.max_quota}
             dashboard["version"] = version
@@ -309,7 +309,7 @@ def user_dashboard():
             dashboard["projects"] = []
             for project in projects:
                 project_dash = {"name":"{0}~{1}".format(project.owner.email, project.name), "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
-                records = RecordModel.objects(project=project)
+                records = RecordModel.objects(project=project).order_by('-updated_at')
                 dashboard["records_total"] += len(records)
                 dashboard["environments_total"] += len(project.history)
                 size = 0

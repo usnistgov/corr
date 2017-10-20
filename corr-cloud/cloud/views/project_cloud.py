@@ -34,7 +34,7 @@ def project_sync(project_id):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 project = {"project":json.loads(p.summary_json())}
-                records = RecordModel.objects(project=p)
+                records = RecordModel.objects(project=p).order_by('-updated_at')
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
@@ -57,7 +57,7 @@ def project_view(project_id):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 project = {"project":json.loads(p.to_json())}
-                records = RecordModel.objects(project=p)
+                records = RecordModel.objects(project=p).order_by('-updated_at')
                 project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
                 return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:

@@ -251,7 +251,7 @@ class ProjectModel(db.Document):
             The project's records.
         """
         from ..models import RecordModel
-        return RecordModel.objects(project=self).order_by('-created_at')
+        return RecordModel.objects(project=self).order_by('-updated_at')
 
     @property
     def envs(self):
