@@ -552,7 +552,7 @@ def reproducibility_assess(record_id):
 def public_search():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/search')
     if fk.request.method == 'GET':
-        logAccess(CLOUD_URL, 'cloud', '/public/dashboard/search')
+        logAccess(fk=None, account=None, component=CLOUD_URL, 'cloud', '/public/dashboard/search')
         if fk.request.args:
             # _request = ""
             page = 0
@@ -1110,7 +1110,7 @@ def app_logo(app_id):
 @app.route(CLOUD_URL + '/public/dashboard/query', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_query_dashboard():
-    logTraffic(CLOUD_URL, endpoint='/public/dashboard/query')
+    logTraffic(fk=None, account=None, component=CLOUD_URL, endpoint='/public/dashboard/query')
     if fk.request.method == 'GET':
         _request = ""
         for key, value in fk.request.args.items():
