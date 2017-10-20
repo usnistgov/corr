@@ -552,7 +552,7 @@ def reproducibility_assess(record_id):
 def public_search():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/search')
     if fk.request.method == 'GET':
-        logAccess(fk=None, account=None, component=CLOUD_URL, 'cloud', '/public/dashboard/search')
+        logAccess(fk=None, account=None, component=CLOUD_URL, scope='cloud', endpoint='/public/dashboard/search')
         if fk.request.args:
             # _request = ""
             page = 0
