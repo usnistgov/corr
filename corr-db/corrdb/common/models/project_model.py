@@ -172,7 +172,7 @@ class ProjectModel(db.Document):
                         end = len(records)
                     records = records[begin:end]
             records_summary = [json.loads(r.summary_json()) for r in records]
-            return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
+            return json.dumps({'end':end, 'project':self.extended(), "records":list(reversed(records_summary))}, sort_keys=True, indent=4, separators=(',', ': '))
         else:
             if project.access == 'public':
                 records_summary = []
@@ -192,7 +192,7 @@ class ProjectModel(db.Document):
                 for record in records:
                     if record.access == 'public':
                         records_summary.append(json.loads(r.summary_json()))
-                return json.dumps({'end':end, 'project':self.extended(), "records":records_summary}, sort_keys=True, indent=4, separators=(',', ': '))
+                return json.dumps({'end':end, 'project':self.extended(), "records":list(reversed(records_summary))}, sort_keys=True, indent=4, separators=(',', ': '))
             else:
                 return json.dumps({}, sort_keys=True, indent=4, separators=(',', ': '))
 
@@ -251,7 +251,7 @@ class ProjectModel(db.Document):
             The project's records.
         """
         from ..models import RecordModel
-        return RecordModel.objects(project=self).order_by('+created_at')
+        return list(reversed(RecordModel.objects(project=self).order_by('+created_at')))
 
     @property
     def envs(self):
@@ -263,7 +263,7 @@ class ProjectModel(db.Document):
         for record in self.records:
             if record.environment:
                 envs.append(record.environment)
-        return envs
+        return list(reversed(envs))
     
     @property
     def last_updated(self):
