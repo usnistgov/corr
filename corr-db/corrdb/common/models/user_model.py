@@ -322,7 +322,8 @@ class UserModel(db.Document):
             try:
                 d += p.duration.total_seconds()
             except:
-                d = d + p.duration
+                total_seconds = (p.duration.microseconds + (p.duration.seconds + p.duration.days * 24 * 3600) * 1e6) / 1e6
+                d += total_seconds
         return str(datetime.timedelta(seconds=d))
 
 
