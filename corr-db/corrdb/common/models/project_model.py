@@ -251,7 +251,7 @@ class ProjectModel(db.Document):
             The project's records.
         """
         from ..models import RecordModel
-        return list(reversed(RecordModel.objects(project=self).order_by('+created_at')))
+        return RecordModel.objects(project=self).order_by('-created_at')
 
     @property
     def envs(self):
@@ -263,7 +263,7 @@ class ProjectModel(db.Document):
         for record in self.records:
             if record.environment:
                 envs.append(record.environment)
-        return list(reversed(envs))
+        return envs
     
     @property
     def last_updated(self):

@@ -211,7 +211,7 @@ class UserModel(db.Document):
             The projects list.
         """
         from ..models import ProjectModel
-        return list(reversed(ProjectModel.objects(owner=self)))
+        return ProjectModel.objects(owner=self)
 
     @property
     def apps(self):
@@ -220,7 +220,7 @@ class UserModel(db.Document):
             The user applications list.
         """
         from ..models import ApplicationModel
-        return list(reversed([appli for appli in ApplicationModel.objects(developer=self)]))
+        return [appli for appli in ApplicationModel.objects(developer=self)]
 
     @property
     def records(self):
@@ -231,7 +231,7 @@ class UserModel(db.Document):
         records = []
         for project in self.projects:
             records.extend(project.records)
-        return list(reversed(records))
+        return records
 
     @property
     def quota(self):

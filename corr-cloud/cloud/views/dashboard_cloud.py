@@ -124,9 +124,9 @@ def project_dashboard():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/projects')
             
             if current_user.group == "admin":
-                projects = ProjectModel.objects().order_by('+created_at')
+                projects = ProjectModel.objects().order_by('-created_at')
             else:
-                projects = ProjectModel.objects(owner=current_user).order_by('+created_at')
+                projects = ProjectModel.objects(owner=current_user).order_by('-created_at')
             version = 'N/A'
             try:
                 from corrdb import __version__
@@ -172,7 +172,7 @@ def users_dashboard():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/users')
             
             if current_user.group == "admin":
-                users = UserModel.objects().order_by('+created_at')
+                users = UserModel.objects().order_by('-created_at')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             version = 'N/A'
@@ -246,15 +246,15 @@ def diffs_dashboard(project_id):
             summaries = []
 
             if current_user.group == "admin":
-                diffs = DiffModel.objects().order_by('+created_at')
+                diffs = DiffModel.objects().order_by('-created_at')
                 for d in diffs:
                     if project_id == "all":
                         summaries.append(d.info())
                     elif str(d.record_from.project.id) == project_id or str(d.record_to.project.id) == project_id:
                         summaries.append(d.info())
             else:
-                diffs_send = DiffModel.objects(sender=current_user).order_by('+created_at')
-                diffs_targ = DiffModel.objects(targeted=current_user).order_by('+created_at')
+                diffs_send = DiffModel.objects(sender=current_user).order_by('-created_at')
+                diffs_targ = DiffModel.objects(targeted=current_user).order_by('-created_at')
                 
                 for d in diffs_send:
                     if project_id == "all":
@@ -678,7 +678,7 @@ def public_search():
 def public_project_dashboard():
     logTraffic(CLOUD_URL, endpoint='/public/dashboard/projects')
     if fk.request.method == 'GET':
-        projects = ProjectModel.objects.order_by('+created_at')
+        projects = ProjectModel.objects.order_by('-created_at')
         summaries = []
         for p in projects:
             if project.access == 'public':
