@@ -240,10 +240,16 @@ def download_env(hash_session, env_id):
         try:
             env = EnvironmentModel.objects.with_id(env_id)
             project = None
-            for pro in ProjectModel.objects(owner=current_user):
-                if str(env.id) in pro.history:
-                    project = pro
-                    break
+            if current_user:
+                for pro in ProjectModel.objects(owner=current_user):
+                    if str(env.id) in pro.history:
+                        project = pro
+                        break
+            else:
+                for pro in ProjectModel.objects():
+                    if str(env.id) in pro.history:
+                        project = pro
+                        break
         except:
             env = None
             project = None
@@ -253,7 +259,8 @@ def download_env(hash_session, env_id):
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             # Envs are free for download.
-            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/env/download/<env_id>')
+            if current_user:
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/env/download/<env_id>')
             prepared = storage_manager.prepare_env(project, env)
             if prepared[0] == None:
                 print("Unable to retrieve a env to download.")
