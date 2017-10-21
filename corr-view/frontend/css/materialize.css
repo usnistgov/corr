@@ -5561,7 +5561,7 @@ small {
     bottom: 0;
     width: 100%;
     padding: 20px; }
-  .card .card-move-up .card-title {
+  .card .card-move-up .card-title .tool-title{
     position: absolute;
     bottom: 0;
     left: 0;
@@ -5573,17 +5573,15 @@ small {
     white-space: nowrap; 
     margin: 20px 0 12px 0;
     display: inherit;}
-    .card .card-title.activator {
+    .card .card-title.activator .tool-title.activator{
       cursor: pointer; }
 
-  .card .tool-title {
+  .tool-title {
     color: #fff;
     font-size: 24px;
     font-weight: 300;
     white-space: nowrap;
     display: inherit;}
-    .card .tool-title.activator {
-      cursor: pointer; }
 
   .card.small, .card.medium, .card.large {
     position: relative; }
@@ -5632,7 +5630,7 @@ small {
       top: 0;
       bottom: 0;
       width: 100%; }
-    .card .card-image .card-title {
+    .card .card-image .card-title .tool-title{
       position: absolute;
       bottom: 0;
       left: 0;

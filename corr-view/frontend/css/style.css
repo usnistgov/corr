@@ -805,6 +805,9 @@ h5.breadcrumbs-header {
 #flight-card .card-header .card-title {
   padding: 20px;
 }
+#flight-card .card-header .tool-title {
+  padding: 20px;
+}
 #flight-card .flight-card-title {
   margin: 0;
   font-weight: 300;
