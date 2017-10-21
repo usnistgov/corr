@@ -5570,8 +5570,9 @@ small {
     color: #fff;
     font-size: 24px;
     font-weight: 300;
-    overflow: hidden;
-    white-space: nowrap; }
+    white-space: nowrap; 
+    margin: 20px 0 12px 0;
+    display: inherit;}
     .card .card-title.activator {
       cursor: pointer; }
   .card.small, .card.medium, .card.large {
@@ -5632,8 +5633,6 @@ small {
     .card .card-content p {
       margin: 0;
       color: inherit; }
-    .card .card-content .card-title {
-      line-height: 0px; }
   .card .card-action {
     border-top: 1px solid rgba(160, 160, 160, 0.2);
     padding: 20px; }
