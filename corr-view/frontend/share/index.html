@@ -130,6 +130,8 @@
                 user.share(type, id, sharer.env);
               }else if(type === "application"){
                 user.share(type, id, sharer.application);
+              }else if(type === "diff"){
+                user.share(type, id, sharer.diff);
               }
             }
             
