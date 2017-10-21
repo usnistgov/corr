@@ -1704,6 +1704,6 @@ footer.page-footer {
     resize: none;
 }
 
-.card-tile span:after {
+.card-tile span:after  span:before{
   display: inline-block;
 }
