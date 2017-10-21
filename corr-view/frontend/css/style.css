@@ -1704,10 +1704,7 @@ footer.page-footer {
     resize: none;
 }
 
-.card-tile span:after  span:before{
+.card .card-title span:after  span:before{
   display: inline-block;
 }
 
-.card-title {
-  line-height: 0px;
-}
