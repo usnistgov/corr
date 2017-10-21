@@ -8,7 +8,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='"+picture+"' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=user&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=user&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -34,7 +34,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=app&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=app&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -60,7 +60,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=project&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=project&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -85,7 +85,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=record&id="+object["head"]["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=record&id="+object["head"]["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull('"+object["head"]["project"]["id"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
@@ -110,7 +110,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=diff&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=diff&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull_diff('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";
@@ -141,7 +141,7 @@ var sharer = {
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a href='"+corr_base+"share/?type=env&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+        // content += "<a href='"+corr_base+"share/?type=env&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull_env('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";        
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";

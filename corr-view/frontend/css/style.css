@@ -1707,3 +1707,7 @@ footer.page-footer {
 .card-tile span:after  span:before{
   display: inline-block;
 }
+
+.card-tile {
+  line-height: 0px;
+}
