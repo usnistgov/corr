@@ -239,17 +239,17 @@ def download_env(hash_session, env_id):
         current_user = access_resp[1]
         try:
             env = EnvironmentModel.objects.with_id(env_id)
-            # project = None
-            # for pro in ProjectModel.objects(owner=current_user):
-            #     if str(env.id) in pro.history:
-            #         project = pro
-            #         break
+            project = None
+            for pro in ProjectModel.objects(owner=current_user):
+                if str(env.id) in pro.history:
+                    project = pro
+                    break
         except:
             env = None
-            # project = None
+            project = None
             print(str(traceback.print_exc()))
             return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
-        if env is None:
+        if env is None or project is None:
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
             # Envs are free for download.
