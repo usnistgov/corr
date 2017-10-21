@@ -16,6 +16,7 @@ var user = {
         return true;
     },
     share: function(type, id, render) {
+        var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
