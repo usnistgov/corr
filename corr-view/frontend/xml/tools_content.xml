@@ -2,7 +2,7 @@
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">Sumatra</h4>
                     <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-sumatra" target="_blank">Version 0.7.0</a></p>
                 </div>
@@ -50,7 +50,7 @@
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">ReproZip</h4>
                     <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-reprozip" target="_blank">Version 1.0.x</a></p>
                 </div>
@@ -98,7 +98,7 @@
     <div class="col s12 m2 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">NoWorkflow</h4>
                     <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-noworkflow" target="_blank">Version 2.0</a></p>
                 </div>
@@ -145,7 +145,7 @@
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">CDE</h4>
                     <p class="flight-card-date"><a href="https://github.com/pgbovine/CDE" target="_blank">Version 0.1</a></p>
                 </div>
@@ -192,7 +192,7 @@
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">Maestrowf</h4>
                     <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-maestrowf" target="_blank">Version 1.0.1</a></p>
                 </div>
@@ -239,7 +239,7 @@
     <div class="col s12 m6 l4">
         <div id="flight-card" class="card">
             <div class="card-header blue-grey">
-                <div class="card-title">
+                <div class="tool-title">
                     <h4 class="flight-card-title">Panda</h4>
                     <p class="flight-card-date"><a href="https://github.com/usnistgov/corr-panda" target="_blank">Version 2.0</a></p>
                 </div>

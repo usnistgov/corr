@@ -5575,6 +5575,16 @@ small {
     display: inherit;}
     .card .card-title.activator {
       cursor: pointer; }
+
+  .card .tool-title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300;
+    white-space: nowrap;
+    display: inherit;}
+    .card .tool-title.activator {
+      cursor: pointer; }
+
   .card.small, .card.medium, .card.large {
     position: relative; }
     .card.small .card-image, .card.medium .card-image, .card.large .card-image {
