@@ -5,6 +5,7 @@ var Space = function (){
     this.dashboard = function(page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
         if(parseInt(page) == 0){
             document.getElementById("projects-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
@@ -74,6 +75,7 @@ var Space = function (){
                         content += "<a onclick='launchEnvModal(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='environment'><i class='mdi-maps-layers'></i></a>";
                         content += "<div id='update-project-"+project["project"]["id"]+"'><a id='update-action' onclick='projectEdit(\""+project["project"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit and save'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<a onclick='config.error_modal(\"Project details failed\", \"Project details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+                        content += "<a href='"+corr_base+"share/?type=project&id="+project["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
                         if(Cookies.get("group") == "admin"){
                             content += "<a onclick='userViewModal(\""+project["project"]["owner"]["id"]+"\",\""+project["project"]["owner"]["profile"]["fname"]+"\""+",\""+project["project"]["owner"]["profile"]["lname"]+"\",\""+project["project"]["owner"]["profile"]["organisation"]+"\",\""+project["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+project["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
@@ -124,6 +126,7 @@ var Space = function (){
     this.users = function(page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
         if(parseInt(page) == 0){
             document.getElementById("users-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
@@ -163,6 +166,7 @@ var Space = function (){
                         content += "<img src='"+picture_uri+"' alt='' class='circle responsive-img activator card-profile-image'>";
                         content += "<div id='update-user-"+account["id"]+"'><a id='update-action' onclick='userEdit(\""+account["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+                        content += "<a href='"+corr_base+"share/?type=user&id="+account["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+account["created"]+"</p>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-perm-identity prefix cyan-text text-darken-2'></i><input readonly id='user-fname-"+account["id"]+"' type='text' value='"+account["fname"]+"'></div></div>";
@@ -210,6 +214,7 @@ var Space = function (){
     },
     this.apps = function() {
         var xmlhttp = new XMLHttpRequest();
+        var corr_base = location.protocol + '//' + location.host + '/';
         xmlhttp.onreadystatechange = function()
         {
             if(this.readyState == 4){
@@ -253,6 +258,7 @@ var Space = function (){
                             content += "<div id='update-app-"+app["id"]+"'><a id='update-action' onclick='appEdit(\""+app["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
                         }
                         content += "<a onclick='config.error_modal(\"Application details failed\", \"Application details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+                        content += "<a href='"+corr_base+"share/?type=app&id="+app["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+app["created"]+"</p>";
                         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-name-"+app["id"]+"' type='text' value='"+app["name"]+"'></div></div>";
@@ -296,6 +302,7 @@ var Space = function (){
     this.records = function(project_id, page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
         if(parseInt(page) == 0){
             document.getElementById("records-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
@@ -353,6 +360,8 @@ var Space = function (){
                         if(Cookies.get("group") == "admin"){
                             content += "<a onclick='userViewModal(\""+record["head"]["project"]["owner"]["id"]+"\",\""+record["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                         }
+
+                        content += "<a href='"+corr_base+"share/?type=record&id="+record["head"]["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
                         content += "<div id='select-record-"+record["head"]["id"]+"'><a id='select-action' onclick='recordSelect(\""+record["head"]["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='select'><i class='mdi-toggle-check-box-outline-blank'></i></a></div>";
 
@@ -448,6 +457,7 @@ var Space = function (){
     this.diffs = function(project_id, page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
         if(parseInt(page) == 0){
             document.getElementById("diffs-list").innerHTML = linear_loader;
             document.getElementById("temporal-slider").innerHTML = "";
@@ -494,7 +504,7 @@ var Space = function (){
                             content += "<a onclick='userViewModal(\""+record_from["head"]["project"]["owner"]["id"]+"\",\""+record_from["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record_from["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record_from["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record_from["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record_from["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                             content += "<a onclick='userViewModal(\""+record_to["head"]["project"]["owner"]["id"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record_to["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record_to["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record_to["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                         }
-
+                        content += "<a href='"+corr_base+"share/?type=diff&id="+diff["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
                         content += "<span class='card-title grey-text text-darken-4'>"+diff["id"]+"</span>";
                         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+diff["created"]+"</p>";
 
@@ -606,6 +616,7 @@ var Space = function (){
     this.envs = function(project_id, page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
 
         if(parseInt(page) == 0){
             document.getElementById("envs-list").innerHTML = linear_loader;
@@ -645,6 +656,7 @@ var Space = function (){
                         content += "<a onclick=\"space.pull_env('"+env["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
                         content += "<div id='update-env-"+env["id"]+"'><a id='update-action' onclick='envEdit(\""+env["id"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='edit'><i class='mdi-editor-mode-edit'></i></a></div>";
                         content += "<a onclick='config.error_modal(\"Environment details failed\", \"Environment details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+                        content += "<a href='"+corr_base+"share/?type=env&id="+env["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
                         if(Cookies.get("group") == "admin"){
                             content += "<a onclick='projectViewModal(\""+env["project"]["name"]+"\",\""+env["project"]["tags"]+"\",\""+env["project"]["description"]+"\",\""+env["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+env["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
@@ -697,6 +709,7 @@ var Space = function (){
     this.query = function(search, exUser, exApp, exProject, exRecord, exDiff, exEnv, public, page) {
         var circular_loader = "<div class='preloader-wrapper big active'><div class='spinner-layer spinner-cyan-only'><div class='circle-clipper left'><div class='circle'></div></div><div class='gap-patch'><div class='circle'></div></div><div class='circle-clipper right'><div class='circle'></div></div></div></div>";
         var linear_loader = "<div class='progress'><div class='indeterminate'></div></div>";
+        var corr_base = location.protocol + '//' + location.host + '/';
         var query_result = document.getElementById('query-result');
         if(parseInt(page) == 0){
             hits = 0;

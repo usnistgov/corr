@@ -1073,3 +1073,19 @@ def cloud_public_user_picture(user_id):
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/public/user/view/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def cloud_public_user_view(user_id):
+    logTraffic(CLOUD_URL, endpoint='/public/user/view/<user_id>')
+    if fk.request.method == 'GET':
+        user_model = UserModel.objects.with_id(user_id)
+        profile = ProfileModel.objects(user=user_model).first_or_404()
+        if profile == None:
+            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            user = {"created":str(user_model.created_at),"id":str(user_model.id), "email":user_model.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user_model.info()['total_apps'], "projects":user_model.info()['total_projects'], "records":user_model.info()['total_records']}
+            return fk.Response(json.dumps(user, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+                        

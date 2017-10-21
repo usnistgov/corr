@@ -1,11 +1,14 @@
 var sharer = {
-    user: function(object, picture){
+    user: function(object){
+        var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+        var picture = url+"/public/user/picture/"+object["id"];
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m6 l4'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='"+picture+"' alt='' class='circle responsive-img activator card-profile-image'>";
-        content += "<a onclick='config.error_modal(\"User details failed.\", \"User details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
+        content += "<a href='"+corr_base+"share/?type=user&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -25,12 +28,14 @@ var sharer = {
     },
     app: function(object){
         var object = object['content'];
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m12 l12'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/gearsIcon.png' alt='' class='circle responsive-img activator card-profile-image'>";
-        
+        content += "<a href='"+corr_base+"share/?type=app&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
+
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
         content += "<div class='row margin tooltipped' data-position='bottom' data-delay='50' data-tooltip='tags'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='app-access-"+object["id"]+"' type='text' value='"+object["access"]+"'></div></div>";
@@ -49,11 +54,13 @@ var sharer = {
     },
     project: function(object){
         var object = object['project'];
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m12 l12'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/project.png' alt='' class='circle responsive-img activator card-profile-image'>";
+        content += "<a href='"+corr_base+"share/?type=project&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
 
         content += "<span class='card-title black-text text-darken-4'> "+object["name"]+"</span>";
         content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+object["created"]+"</p>";
@@ -72,11 +79,13 @@ var sharer = {
         return content;
     },
     record: function(object){
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m12 l12' id='"+object["head"]["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/record.png' alt='' class='circle responsive-img activator card-profile-image'>";
+        content += "<a href='"+corr_base+"share/?type=record&id="+object["head"]["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull('"+object["head"]["project"]["id"]+"','"+object["head"]["id"]+"')\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='top' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["head"]["id"]+"</span>";
@@ -95,11 +104,13 @@ var sharer = {
         return content;
     },
     diff: function(object){
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m12 l12' id='"+object["id"]+"'> ";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/diff.png' alt='' class='circle responsive-img activator card-profile-image'>";
+        content += "<a href='"+corr_base+"share/?type=diff&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull_diff('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";
@@ -124,11 +135,13 @@ var sharer = {
         return content;
     },
     env: function(object){
+        var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m12 l12' id='"+object["id"]+"'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";
         content += "<div class='card-content'>";
         content += "<img src='../images/env.png' alt='' class='circle responsive-img activator card-profile-image'>";
+        content += "<a href='"+corr_base+"share/?type=env&id="+object["id"]+"' target='_blank' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='share'><i class='mdi-social-share'></i></a>";
         content += "<a onclick=\"space.pull_env('"+object["id"]+"');\" class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='download'><i class='mdi-file-cloud-download'></i></a>";        
 
         content += "<span class='card-title grey-text text-darken-4'>"+object["id"]+"</span>";
