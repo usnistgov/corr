@@ -1703,3 +1703,7 @@ footer.page-footer {
     height: 100px;
     resize: none;
 }
+
+.card-tile span:after {
+  display: inline-block;
+}
