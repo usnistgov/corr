@@ -1674,6 +1674,15 @@ footer.page-footer {
   #card-stats .card-stats-compare{
       font-size: 0.8rem;
   }
+
+  #profile-card .card-profile-image {
+    width: 66px;
+    top: 97px;
+  }
+
+  #profile-card .btn-move-up {
+    top: -9px;
+  }
 }
 
 .temporal-val {
@@ -1713,7 +1722,7 @@ footer.page-footer {
     resize: none;
 }
 
-.card .card-title span:after  span:before{
+.card .card-title span:after{
   display: inline-block;
 }
 
