@@ -1653,6 +1653,15 @@ footer.page-footer {
   .doughnut-chart-status{
     display: none;
   }
+
+  #profile-card .btn-move-up {
+    top: -16px;
+  }
+
+  #profile-card .card-profile-image {
+    width: 40px;
+    top: 115px;
+  }
 }
 
 
