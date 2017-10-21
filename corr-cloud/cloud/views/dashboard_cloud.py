@@ -926,6 +926,19 @@ def app_show(app_id):
         else:
             return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@app.route(CLOUD_URL + '/public/app/view/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def public_app_view(app_id):
+    logTraffic(CLOUD_URL, endpoint='/public/app/view/<app_id>')
+    if fk.request.method == 'GET':
+        app = ApplicationModel.objects.with_id(app_id)
+        if app == None:
+            return fk.Response('Unable to find this tool.', status.HTTP_404_NOT_FOUND)
+        else:
+            return cloud_response(200, 'Tool %s'%app.name, app.extended())
+    else:
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
 @app.route(CLOUD_URL + '/private/dashboard/developer/app/retoken/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def app_retoken(app_id):

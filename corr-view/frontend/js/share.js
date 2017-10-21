@@ -23,7 +23,7 @@ var sharer = {
         content += "</div>";
         return content;
     },
-    application: function(object){
+    app: function(object){
         var content = "<div class='col s12 m12 l12'>";
         content += "<div id='profile-card' class='card'>";
         content += "<div class='card-image waves-effect waves-block waves-light'><img class='activator' src='../images/user-bg.jpg' alt='user background'></div>";

@@ -29,7 +29,11 @@ var user = {
                 }
             } 
         };
-        xmlhttp.open("GET", this.url+"/public/"+type+"/view/"+id);
+        if(type==="app"){
+            xmlhttp.open("GET", this.url+"/public/"+type+"/show/"+id);
+        }else{
+            xmlhttp.open("GET", this.url+"/public/"+type+"/view/"+id);
+        }
         xmlhttp.send();
     },
     login: function() {

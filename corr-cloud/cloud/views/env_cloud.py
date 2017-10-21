@@ -308,3 +308,20 @@ def env_edit(env_id):
                     return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
     else:
         return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@app.route(CLOUD_URL + '/public/env/view/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def public_env_view(env_id):
+    logTraffic(CLOUD_URL, endpoint='/public/env/view/<env_id>')
+    if fk.request.method == 'GET':
+        try:
+            env = EnvironmentModel.objects.with_id(env_id)            
+        except:
+            env = None
+            print(str(traceback.print_exc()))
+        if env is None:
+            return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
+        else:
+            return fk.Response(env.to_json(), mimetype='application/json')
+    else:
+        return fk.Response('Endpoint does not support this HTTP method.', status.HTTP_405_METHOD_NOT_ALLOWED)
