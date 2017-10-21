@@ -145,7 +145,7 @@ var sharer = {
 
         content += "<a onclick='config.error_modal(\"Env resources view failed.\", \"Env resources view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='resources'><i class='mdi-action-view-list cyan-text text-darken-2'></i><span class='from badge'>"+object["resources"]+"</span></a>";
         content += "<a onclick='config.error_modal(\"Env comments view failed.\", \"Env comments view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='comments'><i class='mdi-editor-insert-comment cyan-text text-darken-2'></i> <span class='comments badge'>"+object["comments"]+"</span></a>";
-        content += "<a onclick='config.error_modal(\"Env bundle view failed.\", \"Env bundle view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='bundle'><i class='mdi-editor-insert-drive-file cyan-text text-darken-2'></i><span class='to badge'>"+object["bundle"].substring(0,4)+"..."+object["bundle"].substring(19,23)+"</span></a>";
+        content += "<a onclick='config.error_modal(\"Env bundle view failed.\", \"Env bundle view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='bundle'><i class='mdi-editor-insert-drive-file cyan-text text-darken-2'></i><span class='to badge'>"+object["bundle"]["id"].substring(0,4)+"..."+object["bundle"]["id"].substring(19,23)+"</span></a>";
 
         content += "</div>";
         content += "</div>";                
