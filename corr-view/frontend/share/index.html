@@ -128,7 +128,7 @@
                 user.share(type, id, sharer.record);
               }else if(type === "env"){
                 user.share(type, id, sharer.env);
-              }else if(type === "app"){
+              }else if(type === "application"){
                 user.share(type, id, sharer.application);
               }
             }
@@ -140,10 +140,6 @@
 
                 if (content['warning'] != ""){
                     platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
-                }
-
-                if (content['terms'] != ""){
-                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
                 }
 
                 if (content['name'] != ""){
