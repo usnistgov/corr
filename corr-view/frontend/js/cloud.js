@@ -15,6 +15,22 @@ var user = {
         }
         return true;
     },
+    share: function(type, id, render) {
+        xmlhttp.onreadystatechange = function()
+        {
+            if(this.readyState == 4){
+                if (this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    var share_content = document.getElementById("share-content");
+                    share_content.innerHTML = render(response);
+                }else {
+                    config.error_modal('An error occured during share.', this.responseText);
+                }
+            } 
+        };
+        xmlhttp.open("GET", this.url+"/public/"+type+"/view/"+id);
+        xmlhttp.send();
+    },
     login: function() {
         var email = document.getElementById("login-email").value;
         var password = document.getElementById("login-password").value;
