@@ -57,7 +57,7 @@ def private_search():
                 for key, value in fk.request.args.items():
                     if key == "req":
                          # words = value.split(" ")
-                         words = [v.lower() for v in value.split(" ")]
+                         words = [v.lower() for v in value.replace("-", " ").replace("_"," ").replace("."," ").split(" ")]
                     elif key == "page":
                         page = int(value)
                     elif key == "filter":

@@ -43,7 +43,7 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="../" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
+                        <h1 class="logo-wrapper"><a href="../" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><span id="platform-name"></span></a> <span class="logo-text">CoRR</span></h1>
                         <ul id="nav-base" class="nav-bar right">
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
@@ -345,6 +345,8 @@
         </div>
 
         <footer class="page-footer">
+            <div class="container red-text text-lighten-2" id="platform-warning">
+            </div>
             <div class="footer-copyright">
               <div class="container">
                 Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
@@ -460,6 +462,23 @@
 
             }
             
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
+                }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
         <script type="text/javascript" src="../js/callbacks/application.js"></script>
