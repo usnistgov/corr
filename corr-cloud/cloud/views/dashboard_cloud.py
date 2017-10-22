@@ -311,7 +311,7 @@ def dashboard_records(project_id):
                     for r in project.records:
                         records['records'].append(json.loads(r.summary_json()))
                 block_size = 45
-                end = -1
+                # end = -1
                 if fk.request.args:
                     page = fk.request.args.get("page")
                     begin = int(page) * block_size
@@ -570,7 +570,7 @@ def public_search():
             filtr = []
             for key, value in fk.request.args.items():
                 if key == "req":
-                     words = value.split(" ")
+                     words = [v.lower() for v in value.replace("-", " ").replace("_"," ").replace("."," ").split(" ")]
                 elif key == "page":
                     page = int(value)
                 elif key == "filter":
