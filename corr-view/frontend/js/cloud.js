@@ -8,7 +8,7 @@ var user = {
     query_result: {},
     sanitize: function(data){
         for (var i = 0; i < data.length; i++) {
-            var check = /[~`!#$%\^&*+=\[\]\\';,/{}|\\":<>\?]/g.test(data[i]);
+            var check = /[~`!#$%\^&*+=\[\]\\'/{}|\\":<>\?]/g.test(data[i]);
             if(check){
                 return false;
             }
