@@ -44,12 +44,7 @@ def make_version():
                                     '--tags',
                                     '--match',
                                     'v*'])
-            # ticket:475 - fix for bytecode received in Py3k
-            # http://jeetworks.org/node/67
             out = out.decode("utf-8")
-            # convert git long-form version string, e.g.,
-            # "version-3_1_1-127-g413ed61", into PEP 440 version,
-            # e.g., "3.1.1.dev127+g413ed61"
             version = out.strip().split("-")
             if len(version) > 1:
                 version, dev, sha = version
@@ -62,12 +57,10 @@ def make_version():
     elif os.path.exists('corrdb.egg-info'):
         from corrdb import get_version
         version = get_version()
-
     return version
 
-
 setup(name='corrdb',
-      version=make_version(),
+      version='0.1',
       description='Package for CoRR Database Models',
       author='Yannick Congo',
       author_email='yannick.congo@gmail.com',

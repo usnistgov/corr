@@ -3,7 +3,8 @@ import json
 from flask.ext.api import status
 import flask as fk
 
-from api import app, API_URL, crossdomain, check_api, check_admin, api_response, s3_delete_file, s3_get_file, web_get_file, s3_upload_file, data_pop, merge_dicts, logStat, logTraffic, logAccess, prepare_env, prepare_record, prepare_project
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from api import app, storage_manager, access_manager, secure_content ,API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -22,21 +23,23 @@ from corrdb.common.models import BundleModel
 from corrdb.common.models import VersionModel
 
 import mimetypes
-import json
+import simplejson as json
 import traceback
 import datetime
 import random
 import string
 import os
-import thread
+import _thread
 
 @app.route(API_URL + '/admin/<api_token>/search/<key_words>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_search(api_token, key_words):
-    logTraffic(endpoint='/admin/<api_token>/search/<key_words>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/search/<key_words>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
+        logAccess(fk, admin_user, API_URL,'api', '/admin/<api_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -377,9 +380,10 @@ def admin_search(api_token, key_words):
 
 # admin stuff
 @app.route(API_URL + '/admin/<api_token>/stats', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_stats(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/stats')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -393,9 +397,10 @@ def admin_stats(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/stats/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_stats_clear(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/stats/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -408,9 +413,10 @@ def admin_stats_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/traffic', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_traffic(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/traffic')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -424,9 +430,10 @@ def admin_traffic(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/traffic/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_traffic_clear(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -439,9 +446,10 @@ def admin_traffic_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/access', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_access(api_token):
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/access')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -455,10 +463,10 @@ def admin_access(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comments', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comments(api_token):
-    logTraffic(endpoint='/admin/<api_token>/comments')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comments')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -472,10 +480,10 @@ def admin_comments(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comments_clear(api_token):
-    logTraffic(endpoint='/admin/<api_token>/comments/clear')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comments/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -489,15 +497,18 @@ def admin_comments_clear(api_token):
 
 # admin comment
 @app.route(API_URL + '/admin/<api_token>/comment/<group>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_send(group, api_token):
-    logTraffic(endpoint='/admin/<api_token>/comment/<group>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comment/<group>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 item_id = data.get('item', None)
                 sender_id = data.get('sender', None)
@@ -536,10 +547,10 @@ def admin_comment_send(group, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/all/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_all(group, item_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/comment/<group>/<item_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comment/<group>/<item_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -568,15 +579,18 @@ def admin_comment_all(group, item_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/update/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_update(comment_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/comment/update/<comment_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comment/update/<comment_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 comment = CommentModel.objects.with_id(comment_id)
                 if comment == None:
@@ -593,10 +607,10 @@ def admin_comment_update(comment_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/show/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_show(comment_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/comment/show/<comment_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comment/show/<comment_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -610,10 +624,10 @@ def admin_comment_show(comment_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/comment/delete/<comment_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_comment_delete(comment_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/comment/delete/<comment_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/comment/delete/<comment_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -629,10 +643,10 @@ def admin_comment_delete(comment_id, api_token):
 
 # admin developer apps
 @app.route(API_URL + '/admin/<api_token>/apps', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_apps(api_token):
-    logTraffic(endpoint='/admin/<api_token>/apps')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/apps')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -646,15 +660,18 @@ def admin_apps(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 developer_id = data.get('developer', '')
                 name = data.get('name', '')
@@ -669,7 +686,7 @@ def admin_app_create(api_token):
                     developer = UserModel.objects.with_id(developer_id)
                     logo_encoding = ''
                     logo_mimetype = mimetypes.guess_type(logo_storage)[0]
-                    logo_buffer = s3_get_file('logo', logo_storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     if logo_buffer != None:
                         old_file_position = logo_buffer.tell()
                         logo_buffer.seek(0, os.SEEK_END)
@@ -683,7 +700,7 @@ def admin_app_create(api_token):
                     logo_description = 'This is the default image used for the application logo in case none is provided.'
                     
                     # if logo_storage == 'default-logo':
-                    #     logo_buffer = s3_get_file('logo', logo_storage)
+                    #     logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     #     logo_size = logo_buffer.tell() if logo_buffer != None else 0
                     #     logo_name = 'Default application logo'
                     #     logo_storage = 'default-logo.png'
@@ -692,7 +709,7 @@ def admin_app_create(api_token):
                     #     logo_description = 'This is the default image used for the application logo in case none is provided.'
                         
                     # elif 'http://' in logo_storage:
-                    #     logo_buffer = web_get_file(logo_storage)
+                    #     logo_buffer = storage_manager.web_get_file(logo_storage)
                     #     logo_size = logo_buffer.tell() if logo_buffer != None else 0
                     #     logo_name = '%s logo'%name
                     #     logo_storage = logo_storage
@@ -700,7 +717,7 @@ def admin_app_create(api_token):
                     #     logo_group = 'logo'
                     #     logo_description = 'This is the application %s logo.'%name
                     # else:
-                    #     logo_buffer = s3_get_file('logo', logo_storage)
+                    #     logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     #     logo_size = logo_buffer.tell() if logo_buffer != None else 0
                     #     logo_name = '%s logo'%name
                     #     logo_storage = logo_storage
@@ -726,10 +743,10 @@ def admin_app_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/show/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_show(app_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/show/<app_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/show/<app_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -743,10 +760,10 @@ def admin_app_show(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/delete/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_delete(app_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/delete/<app_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/delete/<app_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -756,7 +773,7 @@ def admin_app_delete(app_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this application.')
             else:
                 if app.logo.location == 'local':
-                    s3_delete_file('logo', app.logo.location)
+                    storage_manager.storage_delete_file('logo', app.logo.location)
                 app.logo.delete()
                 app.delete()
                 logStat(deleted=True, application=application)
@@ -765,10 +782,10 @@ def admin_app_delete(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/delete/all', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_delete_all(api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/delete/all')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/delete/all')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -781,10 +798,10 @@ def admin_app_delete_all(api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/app/update/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_update(app_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/update/<app_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/update/<app_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -794,6 +811,9 @@ def admin_app_update(app_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this application.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
 
                     developer_id = data.get('developer', None)
@@ -822,7 +842,7 @@ def admin_app_update(app_id, api_token):
                             logo_mimetype = mimetypes.guess_type(logo_storage)[0]
                             
                             if logo_storage == 'default-logo.png':
-                                logo_buffer = s3_get_file('logo', logo.storage)
+                                logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                                 # logo_size = logo_buffer.tell() if logo_buffer != None else 0
                                 logo_name = 'default-logo.png'
                                 logo_storage = 'default-logo.png'
@@ -831,7 +851,7 @@ def admin_app_update(app_id, api_token):
                                 logo_description = 'This is the default image used for the application logo in case none is provided.'
                                 
                             elif 'http://' in logo_storage:
-                                logo_buffer = web_get_file(logo.storage)
+                                logo_buffer = storage_manager.web_get_file(logo.storage)
                                 # logo_size = logo_buffer.tell() if logo_buffer != None else 0
                                 logo_name = '%s_%s'%(str(app.logo.id), logo_buffer.filename)
                                 logo_storage = '%s_%s'%(str(app.logo.id), logo_buffer.filename)
@@ -841,7 +861,7 @@ def admin_app_update(app_id, api_token):
                             else:
                                 # Do not use this one to update the logo.
                                 # Not recommended.
-                                logo_buffer = s3_get_file('logo', logo.storage)
+                                logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                                 # logo_size = logo_buffer.tell() if logo_buffer != None else 0
                                 logo_name = '%s_%s'%(str(app.logo.id), logo_buffer.filename)
                                 logo_storage = '%s_%s'%(str(app.logo.id), logo_buffer.filename)
@@ -856,7 +876,7 @@ def admin_app_update(app_id, api_token):
                             else:
                                 logo_size = 0
                             if app.logo.storage != 'default-logo.png' and 'http://' not in app.logo.storage:
-                                s3_delete_file('logo', app.logo.storage)
+                                storage_manager.storage_delete_file('logo', app.logo.storage)
                             logo.name = logo_name
                             logo.mimetype=logo_mimetype
                             logo.size=logo_size
@@ -879,10 +899,10 @@ def admin_app_update(app_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/app/logo/<app_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_app_logo(app_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/app/logo/<app_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/app/logo/<app_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -892,17 +912,17 @@ def admin_app_logo(app_id, api_token):
                 name = app.name if app.name != '' and app.name != None else 'unknown'
                 logo = app.logo
                 if logo.location == 'local' and 'http://' not in logo.storage:
-                    logo_buffer = s3_get_file('logo', logo.storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                     else:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                 elif logo.location == 'remote':
-                    logo_buffer = web_get_file(logo.storage)
+                    logo_buffer = storage_manager.web_get_file(logo.storage)
                     if logo_buffer != None:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     else:
-                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -912,11 +932,11 @@ def admin_app_logo(app_id, api_token):
                     if 'http://' in logo.storage:
                         logo.location = 'remote'
                         logo.save()
-                        logo_buffer = web_get_file(logo.storage)
+                        logo_buffer = storage_manager.web_get_file(logo.storage)
                         if logo_buffer != None:
                             return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                         else:
-                            logo_buffer = s3_get_file('logo', 'default-logo.png')
+                            logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                             else:
@@ -924,7 +944,7 @@ def admin_app_logo(app_id, api_token):
                     else:
                         logo.location = 'local'
                         logo.save()
-                        logo_buffer = s3_get_file('logo', logo.storage)
+                        logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -936,10 +956,10 @@ def admin_app_logo(app_id, api_token):
 
 ### admin users
 @app.route(API_URL + '/admin/<api_token>/users', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_users(api_token):
-    logTraffic(endpoint='/admin/<api_token>/users')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/users')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -953,10 +973,10 @@ def admin_users(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/profiles/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_profiles_clear(api_token):
-    logTraffic(endpoint='/admin/<api_token>/profiles/clear')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/profiles/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -972,15 +992,18 @@ def admin_profiles_clear(api_token):
 # @app.route(API_URL + '/admin/<api_token>/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/user/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 pswd1 = data.get('password', None)
@@ -1006,15 +1029,18 @@ def admin_user_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_login(api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/login')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/login')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 pswd1 = data.get('password', None)
@@ -1037,10 +1063,10 @@ def admin_user_login(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/token/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_token_update(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/token/update/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/token/update/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1058,10 +1084,10 @@ def admin_user_token_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/logout/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_logout(session_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/logout/<session_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/logout/<session_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1080,15 +1106,18 @@ def admin_user_logout(session_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/password/lost', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_password_lost(api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/password/lost')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/password/lost')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 email = data.get('email', '')
                 if email == '':
@@ -1109,10 +1138,10 @@ def admin_user_password_lost(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/session/recover/<session_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_session_recover(session_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/session/recover/<session_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/session/recover/<session_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1131,10 +1160,10 @@ def admin_user_session_recover(session_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/create/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_create(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/profile/create/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/create/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1144,6 +1173,9 @@ def admin_user_profile_create(user_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this user account.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     fname = data.get('fname', '')
                     lname = data.get('lname', '')
@@ -1152,7 +1184,7 @@ def admin_user_profile_create(user_id, api_token):
                     about = data.get('about', '')
                     picture_encoding = ''
                     picture_mimetype = mimetypes.guess_type(picture_storage)[0]
-                    picture_buffer = s3_get_file('picture', picture_storage)
+                    picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
                     if picture_buffer != None:
                         old_file_position = picture_buffer.tell()
                         picture_buffer.seek(0, os.SEEK_END)
@@ -1167,7 +1199,7 @@ def admin_user_profile_create(user_id, api_token):
                         
 
                     # if picture_storage == 'default-picture':
-                    #     picture_buffer = s3_get_file('picture', picture_storage)
+                    #     picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
                     #     picture_size = picture_buffer.tell() if picture_buffer != None else 0
                     #     picture_name = 'Default user picture'
                     #     picture_storage = 'default-picture.png'
@@ -1176,7 +1208,7 @@ def admin_user_profile_create(user_id, api_token):
                     #     picture_description = 'This is the default image used for the user profile picture in case none is provided.'
                         
                     # elif 'http://' in picture_storage:
-                    #     picture_buffer = web_get_file(picture_storage)
+                    #     picture_buffer = storage_manager.web_get_file(picture_storage)
                     #     picture_size = picture_buffer.tell() if picture_buffer != None else 0
                     #     picture_name = '%s picture'%fname
                     #     picture_storage = picture_storage
@@ -1184,7 +1216,7 @@ def admin_user_profile_create(user_id, api_token):
                     #     picture_group = 'picture'
                     #     picture_description = 'This is the user %s profile picture.'%fname
                     # else:
-                    #     picture_buffer = s3_get_file('picture', picture_storage)
+                    #     picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
                     #     picture_size = picture_buffer.tell() if picture_buffer != None else 0
                     #     picture_name = '%s picture'%fname
                     #     picture_storage = picture_storage
@@ -1207,10 +1239,10 @@ def admin_user_profile_create(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_show(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/show/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/show/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1224,10 +1256,10 @@ def admin_user_show(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/show/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_show(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/profile/show/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/show/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1245,10 +1277,10 @@ def admin_user_profile_show(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/delete/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_delete(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/delete/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/delete/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1260,7 +1292,7 @@ def admin_user_delete(user_id, api_token):
                 profile = ProfileModel.objects(user=user)
                 if profile != None:
                     if profile.picture.location == 'local':
-                        s3_delete_file('picture', profile.picture.location)
+                        storage_manager.storage_delete_file('picture', profile.picture.location)
                 profile.picture.delete()
                 profile.delete()
                 logStat(deleted=True, user=user)
@@ -1269,10 +1301,10 @@ def admin_user_delete(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_update(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/update/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/update/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1282,6 +1314,9 @@ def admin_user_update(user_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this user.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     email = data.get('email', user.email)
                     pswd1 = data.get('password', None)
@@ -1300,10 +1335,10 @@ def admin_user_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/profile/update/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_profile_update(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/profile/update/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/profile/update/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1317,6 +1352,9 @@ def admin_user_profile_update(user_id, api_token):
                     return api_response(404, 'User %s profile is empty'%user.email, 'You have to create a profile for this user.')
                 else:
                     if fk.request.data:
+                        security = secure_content(fk.request.data)
+                        if not security[0]:
+                            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                         data = json.loads(fk.request.data)
                         user_id_new = data.get('user', None)
                         fname = data.get('fname', profile.fname)
@@ -1336,7 +1374,7 @@ def admin_user_profile_update(user_id, api_token):
                             picture_encoding = ''
                             picture_mimetype = mimetypes.guess_type(picture_storage)[0]
                             if picture_storage == 'default-picture.png':
-                                picture_buffer = s3_get_file('picture', picture_storage)
+                                picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
                                 # picture_size = picture_buffer.tell() if picture_buffer != None else 0
                                 picture_name = 'default-picture.png'
                                 picture_storage = 'default-picture.png'
@@ -1345,7 +1383,7 @@ def admin_user_profile_update(user_id, api_token):
                                 picture_description = 'This is the default image used for the user profile picture in case none is provided.'
                                 
                             elif 'http://' in picture_storage:
-                                picture_buffer = web_get_file(picture_storage)
+                                picture_buffer = storage_manager.web_get_file(picture_storage)
                                 # picture_size = picture_buffer.tell() if picture_buffer != None else 0
                                 picture_name = '%s_%s'%(str(profile.picture.id), picture_buffer.filename)
                                 picture_storage = '%s_%s'%(str(profile.picture.id), picture_buffer.filename)
@@ -1353,7 +1391,7 @@ def admin_user_profile_update(user_id, api_token):
                                 picture_group = 'picture'
                                 picture_description = 'This is the user %s profile picture.'%fname
                             else:
-                                picture_buffer = s3_get_file('picture', picture_storage)
+                                picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
                                 # picture_size = picture_buffer.tell() if picture_buffer != None else 0
                                 picture_name = '%s_%s'%(str(profile.picture.id), picture_buffer.filename)
                                 picture_storage = '%s_%s'%(str(profile.picture.id), picture_buffer.filename)
@@ -1369,7 +1407,7 @@ def admin_user_profile_update(user_id, api_token):
                                 picture_size = 0
                             # picture, picture_created = FileModel.objects.get_or_create(encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
                             if profile.picture.storage != 'default-picture.png' and 'http://' not in profile.picture.storage:
-                                s3_delete_file('picture', profile.picture.storage)
+                                storage_manager.storage_delete_file('picture', profile.picture.storage)
                             picture.name = picture_name
                             picture.mimetype=picture_mimetype
                             picture.size=picture_size
@@ -1391,10 +1429,10 @@ def admin_user_profile_update(user_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_user_picture(user_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/user/picture/<user_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/user/picture/<user_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1403,7 +1441,7 @@ def admin_user_picture(user_id, api_token):
             if user != None:
                 profile = ProfileModel.objects(user=user).first()
                 if profile == None:
-                    picture_buffer = s3_get_file('picture', 'default-picture.png')
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                     if picture_buffer == None:
                         return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                     else:
@@ -1411,23 +1449,23 @@ def admin_user_picture(user_id, api_token):
                 else:
                     picture = profile.picture
                     if picture == None:
-                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                         else:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     elif picture.location == 'local' and 'http://' not in picture.storage:
-                        picture_buffer = s3_get_file('picture', picture.storage)
+                        picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
                             return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%logo.storage)
                         else:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     elif picture.location == 'remote':
-                        picture_buffer = web_get_file(picture.storage)
+                        picture_buffer = storage_manager.web_get_file(picture.storage)
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = s3_get_file('picture', 'default-picture.png')
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                             if picture_buffer == None:
                                 return api_response(404, 'No picture found', 'We could not fetch the picture [default-picture.png].')
                             else:
@@ -1437,11 +1475,11 @@ def admin_user_picture(user_id, api_token):
                         if 'http://' in picture.storage:
                             picture.location = 'remote'
                             picture.save()
-                            picture_buffer = web_get_file(picture.storage)
+                            picture_buffer = storage_manager.web_get_file(picture.storage)
                             if picture_buffer != None:
                                 return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                             else:
-                                picture_buffer = s3_get_file('picture', 'default-picture.png')
+                                picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                                 if picture_buffer == None:
                                     return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                                 else:
@@ -1449,7 +1487,7 @@ def admin_user_picture(user_id, api_token):
                         else:
                             picture.location = 'local'
                             picture.save()
-                            picture_buffer = s3_get_file('picture', picture.storage)
+                            picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                             if picture_buffer == None:
                                 return api_response(404, 'No picture found', 'We could not fetch the picture [%s].'%picture.storage)
                             else:
@@ -1462,10 +1500,10 @@ def admin_user_picture(user_id, api_token):
 
 ### admin projects
 @app.route(API_URL + '/admin/<api_token>/projects', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_projects(api_token):
-    logTraffic(endpoint='/admin/<api_token>/projects')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/projects')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1479,10 +1517,10 @@ def admin_projects(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/projects/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_projects_clear(api_token):
-    logTraffic(endpoint='/admin/<api_token>/projects/clear')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/projects/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1494,10 +1532,10 @@ def admin_projects_clear(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/envs/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_envs_clear(api_token):
-    logTraffic(endpoint='/admin/<api_token>/envs/clear')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/envs/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1517,9 +1555,9 @@ def admin_envs_clear(api_token):
 # []
 
 # @app.route(API_URL + '/admin/<api_token>/projects/comments/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-# @crossdomain(origin='*')
+# @crossdomain(fk=fk, app=app, origin='*')
 # def admin_projects_comments_clear(api_token):
-#     logTraffic(endpoint='/admin/<api_token>/comments/clear')
+#     logTraffic(API_URL, endpoint='/admin/<api_token>/comments/clear')
 #     if fk.request.method == 'GET':
 #         projects = ProjectModel.objects()
 #         for project in projects:
@@ -1533,10 +1571,10 @@ def admin_envs_clear(api_token):
 #         return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_comments(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/comments/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/comments/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1557,15 +1595,18 @@ def admin_project_comments(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 # application_id = data.get('app_token', None)
                 owner_id = data.get('api_token', None)
@@ -1585,7 +1626,7 @@ def admin_project_create(api_token):
                     logo_storage = 'default-project.png'
                     logo_encoding = ''
                     logo_mimetype = mimetypes.guess_type(logo_storage)[0]
-                    logo_buffer = s3_get_file('logo', logo_storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     if logo_buffer != None:
                         old_file_position = logo_buffer.tell()
                         logo_buffer.seek(0, os.SEEK_END)
@@ -1635,10 +1676,10 @@ def admin_project_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/records/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_records(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/records/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/records/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1657,10 +1698,10 @@ def admin_project_records(project_id, api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/project/show/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_show(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/show/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/show/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1674,10 +1715,10 @@ def admin_project_show(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/logo/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_logo(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/logo/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/logo/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1686,17 +1727,17 @@ def admin_project_logo(project_id, api_token):
             if project != None:
                 logo = project.logo
                 if logo.location == 'local' and 'http://' not in logo.storage:
-                    logo_buffer = s3_get_file('logo', logo.storage)
+                    logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                     if logo_buffer == None:
                         return api_response(404, 'No logo found', 'We could not fetch the logo at [%s].'%logo.storage)
                     else:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                 elif logo.location == 'remote':
-                    logo_buffer = web_get_file(logo.storage)
+                    logo_buffer = storage_manager.web_get_file(logo.storage)
                     if logo_buffer != None:
                         return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                     else:
-                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -1706,11 +1747,11 @@ def admin_project_logo(project_id, api_token):
                     if 'http://' in logo.storage:
                         logo.location = 'remote'
                         logo.save()
-                        logo_buffer = web_get_file(logo.storage)
+                        logo_buffer = storage_manager.web_get_file(logo.storage)
                         if logo_buffer != None:
                             return fk.send_file(logo_buffer, attachment_filename=logo.name, mimetype=logo.mimetype)
                         else:
-                            logo_buffer = s3_get_file('logo', 'default-logo.png')
+                            logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                             if logo_buffer == None:
                                 return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                             else:
@@ -1718,7 +1759,7 @@ def admin_project_logo(project_id, api_token):
                     else:
                         logo.location = 'local'
                         logo.save()
-                        logo_buffer = s3_get_file('logo', logo.storage)
+                        logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                         if logo_buffer == None:
                             return api_response(404, 'No logo found', 'We could not fetch the logo at %s.'%logo.storage)
                         else:
@@ -1729,10 +1770,10 @@ def admin_project_logo(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/delete/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_delete(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/delete/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/delete/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1749,10 +1790,10 @@ def admin_project_delete(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/update/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_update(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/update/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/update/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1762,6 +1803,9 @@ def admin_project_update(project_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     
                     # application_id = data.get('application', None)
@@ -1819,10 +1863,10 @@ def admin_project_update(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/download/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_download(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/download/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/download/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1831,7 +1875,7 @@ def admin_project_download(project_id, api_token):
             if project == None:
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
-                prepared = prepare_project(project)
+                prepared = storage_manager.prepare_project(project)
                 if prepared[0] == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                 else:
@@ -1841,10 +1885,10 @@ def admin_project_download(project_id, api_token):
 
 
 @app.route(API_URL + '/admin/<api_token>/project/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_envs(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/envs/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/envs/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1864,10 +1908,10 @@ def admin_project_envs(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/envs/head/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_envs_head(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/envs/head')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/envs/head')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1884,10 +1928,10 @@ def admin_project_envs_head(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/show/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_show(project_id, env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/show/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/show/<project_id>/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -1908,15 +1952,18 @@ def admin_project_env_show(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/next/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_push(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/next/<project_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/next/<project_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 application_id = data.get('app_token', None)
                 group = data.get('group', 'undefined')
@@ -1956,7 +2003,7 @@ def admin_project_env_push(project_id, api_token):
                                 def handle_file_resolution(_bundle, api_token):
                                     # print _bundle
                                     bundle = BundleModel.objects.with_id(_bundle)
-                                    bundle_buffer = web_get_file(location)
+                                    bundle_buffer = storage_manager.web_get_file(location)
                                     bundle.mimetype = mimetypes.guess_type(location)[0]
                                     old_file_position = bundle_buffer.tell()
                                     bundle_buffer.seek(0, os.SEEK_END)
@@ -1975,15 +2022,18 @@ def admin_project_env_push(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/update/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_update(project_id, env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/update/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/update/<project_id>/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 project = ProjectModel.objects.with_id(project_id)
                 if project == None:
@@ -2017,7 +2067,7 @@ def admin_project_env_update(project_id, env_id, api_token):
                                     def handle_file_resolution(_bundle, api_token):
                                         # print _bundle
                                         bundle = BundleModel.objects.with_id(_bundle)
-                                        bundle_buffer = web_get_file(location)
+                                        bundle_buffer = storage_manager.web_get_file(location)
                                         bundle.mimetype = mimetypes.guess_type(location)[0]
                                         old_file_position = bundle_buffer.tell()
                                         bundle_buffer.seek(0, os.SEEK_END)
@@ -2036,15 +2086,18 @@ def admin_project_env_update(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/update/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_update(env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/update/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/update/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 env = EnvironmentModel.objects.with_id(env_id)
                 if env == None:
@@ -2071,7 +2124,7 @@ def admin_env_update(env_id, api_token):
                             def handle_file_resolution(_bundle, api_token):
                                 # print _bundle
                                 bundle = BundleModel.objects.with_id(_bundle)
-                                bundle_buffer = web_get_file(location)
+                                bundle_buffer = storage_manager.web_get_file(location)
                                 bundle.mimetype = mimetypes.guess_type(location)[0]
                                 old_file_position = bundle_buffer.tell()
                                 bundle_buffer.seek(0, os.SEEK_END)
@@ -2090,10 +2143,10 @@ def admin_env_update(env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/show/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_show(env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/show/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/show/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2107,10 +2160,10 @@ def admin_env_show(env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/delete/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_delete(env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/delete/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/delete/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2122,17 +2175,17 @@ def admin_env_delete(env_id, api_token):
                 env.delete()
                 bundle = env.bundle
                 if 'http://' not in bundle.location and 'https://' not in bundle.location:
-                    s3_delete_file('bundle', bundle.location)
+                    storage_manager.storage_delete_file('bundle', bundle.location)
                 #delete the files
                 return api_response(200, 'Environment %s deleted'%env_id, 'All the information about this environment was deleted.')
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/download/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_download(project_id, env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/download/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/download/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2141,7 +2194,7 @@ def admin_env_download(project_id, env_id, api_token):
             if env == None:
                 return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
             else:
-                prepared = prepare_env(project, env)
+                prepared = storage_manager.prepare_env(project, env)
                 if prepared[0] == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                 else:
@@ -2150,15 +2203,18 @@ def admin_env_download(project_id, env_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_env_push(project_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
 
                 group = data.get('group', 'undefined')
@@ -2187,7 +2243,7 @@ def admin_env_push(project_id, api_token):
                             def handle_file_resolution(_bundle, api_token):
                                 # print _bundle
                                 bundle = BundleModel.objects.with_id(_bundle)
-                                bundle_buffer = web_get_file(location)
+                                bundle_buffer = storage_manager.web_get_file(location)
                                 bundle.mimetype = mimetypes.guess_type(location)[0]
                                 old_file_position = bundle_buffer.tell()
                                 bundle_buffer.seek(0, os.SEEK_END)
@@ -2204,10 +2260,10 @@ def admin_env_push(project_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/project/env/download/<project_id>/<env_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_project_env_download(project_id, env_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/project/env/download/<project_id>/<env_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/project/env/download/<project_id>/<env_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2223,7 +2279,7 @@ def admin_project_env_download(project_id, env_id, api_token):
                     if env == None:
                         return api_response(404, 'Request suggested an empty response', 'Unable to load this project environment.')
                     else:
-                        prepared = prepare_env(project, env)
+                        prepared = storage_manager.prepare_env(project, env)
                         if prepared[0] == None:
                             return api_response(404, 'Request suggested an empty response', 'Unable to retrieve an environment to download.')
                         else:
@@ -2237,10 +2293,10 @@ def admin_project_env_download(project_id, env_id, api_token):
 
 ### admin records
 @app.route(API_URL + '/admin/<api_token>/records', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_records(api_token):
-    logTraffic(endpoint='/admin/<api_token>/records')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/records')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2254,10 +2310,10 @@ def admin_records(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/records/clear', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_records_clear(api_token):
-    logTraffic(endpoint='/admin/<api_token>/records/clear')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/records/clear')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2274,15 +2330,18 @@ def admin_records_clear(api_token):
 # @app.route(API_URL + '/admin/<api_token>/record/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/record/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/record/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/record/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 project_id = data.get('project', None)
                 data_pop(data, 'project')
@@ -2369,10 +2428,10 @@ def admin_record_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/show/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_show(record_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/record/show/<record_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/record/show/<record_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2386,10 +2445,10 @@ def admin_record_show(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/delete/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_delete(record_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/record/delete/<record_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/record/delete/<record_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2406,10 +2465,10 @@ def admin_record_delete(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/update/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_update(record_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/record/update/<record_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/record/update/<record_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2419,6 +2478,9 @@ def admin_record_update(record_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this project.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
 
                     project_id = data.get('project', None)
@@ -2523,10 +2585,10 @@ def admin_record_update(record_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/record/download/<project_id>/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_record_download(project_id, record_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/record/download/<project_id>/<record_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/record/download/<project_id>/<record_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2538,7 +2600,7 @@ def admin_record_download(project_id, record_id, api_token):
                 if str(record.project.id) != project_id:
                     return api_response(401, 'Unauthorized access to this record', 'This record is not part of the provided project.')
                 else:
-                    prepared = prepare_record(record)
+                    prepared = storage_manager.prepare_record(record)
                     if prepared[0] == None:
                         return api_response(404, 'Request suggested an empty response', 'Unable to retrieve a record to download.')
                     else:
@@ -2560,10 +2622,10 @@ def admin_record_download(project_id, record_id, api_token):
 
 ### admin diffs
 @app.route(API_URL + '/admin/<api_token>/diffs', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diffs(api_token):
-    logTraffic(endpoint='/admin/<api_token>/diffs')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/diffs')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2581,15 +2643,18 @@ def admin_diffs(api_token):
 # @app.route(API_URL + '/admin/<api_token>/diff/comments/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
 
 @app.route(API_URL + '/admin/<api_token>/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/diff/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/diff/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 sender_id =  data.get('session', None)
                 record_from_id = data.get('from', None)
@@ -2624,10 +2689,10 @@ def admin_diff_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/show/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_show(diff_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/diff/show/<diff_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/diff/show/<diff_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2641,10 +2706,10 @@ def admin_diff_show(diff_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/delete/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_delete(diff_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/diff/delete/<diff_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/diff/delete/<diff_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2661,10 +2726,10 @@ def admin_diff_delete(diff_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/diff/update/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_diff_update(diff_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/diff/update/<diff_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/diff/update/<diff_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2674,6 +2739,9 @@ def admin_diff_update(diff_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this diff.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
 
                     sender_id =  data.get('sender', None)
@@ -2722,10 +2790,10 @@ def admin_diff_update(diff_id, api_token):
 
 ### admin files
 @app.route(API_URL + '/admin/<api_token>/files', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_files(api_token):
-    logTraffic(endpoint='/admin/<api_token>/files')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/files')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2740,10 +2808,10 @@ def admin_files(api_token):
 
 # @TODO
 @app.route(API_URL + '/admin/<api_token>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_upload(group, item_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/upload/<group>/<item_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/upload/<group>/<item_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2848,7 +2916,7 @@ def admin_file_upload(group, item_id, api_token):
                             _file.mimetype = mimetype
                             _file.group = group_
                             _file.save()
-                            uploaded = s3_upload_file(_file, file_obj)
+                            uploaded = storage_manager.storage_upload_file(_file, file_obj)
                             if not uploaded[0]:
                                 _file.delete()
                                 return api_response(500, 'An error occured', "%s"%uploaded[1])
@@ -2866,7 +2934,7 @@ def admin_file_upload(group, item_id, api_token):
                                 elif group == 'bundle':
                                     _file.delete()
                                     if item.location != storage:
-                                        s3_delete_file('bundle',item.location)
+                                        storage_manager.storage_delete_file('bundle',item.location)
                                     item.encoding = encoding
                                     item.size = size
                                     item.scope = 'local'
@@ -2877,12 +2945,12 @@ def admin_file_upload(group, item_id, api_token):
                                     item.attachments.append(str(_file.id))
                                 elif group == 'picture':
                                     if item.picture.location != storage:
-                                        s3_delete_file('picture',item.picture.storage)
+                                        storage_manager.storage_delete_file('picture',item.picture.storage)
                                     if item != None:
                                         item.picture = _file
                                 elif 'logo' in group:
                                     if item.logo.location != storage:
-                                        s3_delete_file('logo',item.logo.storage)
+                                        storage_manager.storage_delete_file('logo',item.logo.storage)
                                     if item != None:
                                         item.logo = _file
                                 elif 'resource' in group:
@@ -2898,10 +2966,10 @@ def admin_file_upload(group, item_id, api_token):
 
 # @TODO
 @app.route(API_URL + '/admin/<api_token>/file/download/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_download(file_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/download/<file_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/download/<file_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -2912,9 +2980,9 @@ def admin_file_download(file_id, api_token):
             else:
                 file_obj = None
                 if file_meta.location == 'remote':
-                    file_obj = web_get_file(file_meta.storage)
+                    file_obj = storage_manager.web_get_file(file_meta.storage)
                 elif file_meta.location == 'local':
-                    file_obj = s3_get_file(file_meta.group, file_meta.storage)
+                    file_obj = storage_manager.storage_get_file(file_meta.group, file_meta.storage)
 
                 if file_obj == None:
                     return api_response(404, 'Request suggested an empty response', 'No content found for this file.')
@@ -2950,6 +3018,9 @@ def admin_file_download(file_id, api_token):
                                 )
 
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 encoding = data.get('developer', '')
                 size = data.get('developer', 0)
@@ -2974,15 +3045,18 @@ def admin_file_download(file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 encoding = data.get('encoding', '')
                 size = data.get('size', 0)
@@ -3014,10 +3088,10 @@ def admin_file_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/show/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_show(file_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/show/<file_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/show/<file_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3031,10 +3105,10 @@ def admin_file_show(file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/delete/<item_id>/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_delete(item_id, file_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/delete/<item_id>/<file_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/delete/<item_id>/<file_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3051,7 +3125,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.delete()
                             item.inputs.remove(file_id)
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                 elif _file.group == 'output':
@@ -3061,7 +3135,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.delete()
                             item.outputs.remove(file_id)
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                 elif _file.group == 'dependencie':
@@ -3071,7 +3145,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.delete()
                             item.dependencies.remove(file_id)
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                 elif _file.group == 'diff':
@@ -3081,7 +3155,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.delete()
                             item.resources.remove(file_id)
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                 elif _file.group == 'attach':
@@ -3091,7 +3165,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.delete()
                             item.attachments.remove(file_id)
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                     else:
@@ -3101,14 +3175,14 @@ def admin_file_delete(item_id, file_id, api_token):
                                 _file.delete()
                                 item.attachments.remove(file_id)
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                 elif _file.group == 'picture':
                     item = ProfileModel.objects.with_id(item_id)
                     if item != None:
                         _file.storage = 'default-picture.png'
-                        picture_buffer = s3_get_file('picture', 'default-picture.png')
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                         _file.name = 'default-picture.png'
                         _file.location = 'local'
                         _file.group = 'picture'
@@ -3122,13 +3196,13 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.size = 0
                         _file.save()
                         if _file.location == 'local':
-                            s3_delete_file(_file.group, _file.storage)
+                            storage_manager.storage_delete_file(_file.group, _file.storage)
 
                 elif _file.group == 'logo':
                     item = ApplicationModel.objects.with_id(item_id)
                     if item != None:
                         _file.storage = 'default-logo.png'
-                        logo_buffer = s3_get_file('logo', 'default-logo.png')
+                        logo_buffer = storage_manager.storage_get_file('logo', 'default-logo.png')
                         _file.name = 'default-logo.png'
                         _file.location = 'local'
                         _file.group = 'logo'
@@ -3142,12 +3216,12 @@ def admin_file_delete(item_id, file_id, api_token):
                             _file.size = 0
                         _file.save()
                         if _file.location == 'local':
-                            s3_delete_file(_file.group, _file.storage)
+                            storage_manager.storage_delete_file(_file.group, _file.storage)
                     else:
                         item = ProjectModel.objects.with_id(item_id)
                         if item != None:
                             _file.storage = 'default-project.png'
-                            logo_buffer = s3_get_file('logo', 'default-project.png')
+                            logo_buffer = storage_manager.storage_get_file('logo', 'default-project.png')
                             _file.name = 'default-project.png'
                             _file.location = 'local'
                             _file.group = 'logo'
@@ -3161,7 +3235,7 @@ def admin_file_delete(item_id, file_id, api_token):
                                 _file.size = 0
                             _file.save()
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
 
                 elif _file.group == 'resource':
                     item = RecordModel.objects.with_id(item_id)
@@ -3170,7 +3244,7 @@ def admin_file_delete(item_id, file_id, api_token):
                             item.resources.remove(file_id)
                             _file.delete()
                             if _file.location == 'local':
-                                s3_delete_file(_file.group, _file.storage)
+                                storage_manager.storage_delete_file(_file.group, _file.storage)
                         except ValueError:
                             pass
                     else:
@@ -3180,7 +3254,7 @@ def admin_file_delete(item_id, file_id, api_token):
                                 item.resources.remove(file_id)
                                 _file.delete()
                                 if _file.location == 'local':
-                                    s3_delete_file(_file.group, _file.storage)
+                                    storage_manager.storage_delete_file(_file.group, _file.storage)
                             except ValueError:
                                 pass
                         else:
@@ -3190,7 +3264,7 @@ def admin_file_delete(item_id, file_id, api_token):
                                     item.resources.remove(file_id)
                                     _file.delete()
                                     if _file.location == 'local':
-                                        s3_delete_file(_file.group, _file.storage)
+                                        storage_manager.storage_delete_file(_file.group, _file.storage)
                                 except ValueError:
                                     pass
                             else:
@@ -3200,13 +3274,13 @@ def admin_file_delete(item_id, file_id, api_token):
                                         item.resources.remove(file_id)
                                         _file.delete()
                                         if _file.location == 'local':
-                                            s3_delete_file(_file.group, _file.storage)
+                                            storage_manager.storage_delete_file(_file.group, _file.storage)
                                     except ValueError:
                                         pass
                 if item == None:
                     if item_id in _file.storage or item_id in _file.name:
                         _file.delete()
-                        s3_delete_file(_file.group, _file.storage)
+                        storage_manager.storage_delete_file(_file.group, _file.storage)
                         logStat(deleted=True, file_obj=_file)
                         return api_response(200, 'Deletion succeeded', 'The file %s was succesfully deleted.'%_file.name)
                     else:
@@ -3219,10 +3293,10 @@ def admin_file_delete(item_id, file_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/file/update/<file_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_file_update(file_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/file/update/<file_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/file/update/<file_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3232,6 +3306,9 @@ def admin_file_update(file_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
 
                     encoding = data.get('encoding', _file.encoding)
@@ -3265,10 +3342,10 @@ def admin_file_update(file_id, api_token):
 
 ### admin messages
 @app.route(API_URL + '/admin/<api_token>/messages', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_messages(api_token):
-    logTraffic(endpoint='/admin/<api_token>/messages')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/messages')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3282,15 +3359,18 @@ def admin_messages(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_create(api_token):
-    logTraffic(endpoint='/admin/<api_token>/message/create')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/message/create')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'POST':
             if fk.request.data:
+                security = secure_content(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 sender_id = data.get('sender', None)
                 receiver_id = data.get('receiver', None)
@@ -3320,10 +3400,10 @@ def admin_message_create(api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/show/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_show(message_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/message/show/<message_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/message/show/<message_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3337,10 +3417,10 @@ def admin_message_show(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/delete/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_delete(message_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/message/delete/<message_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/message/delete/<message_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3357,10 +3437,10 @@ def admin_message_delete(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
 
 @app.route(API_URL + '/admin/<api_token>/message/update/<message_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_message_update(message_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/message/update/<message_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/message/update/<message_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
@@ -3370,6 +3450,9 @@ def admin_message_update(message_id, api_token):
                 return api_response(404, 'Request suggested an empty response', 'Unable to find this message.')
             else:
                 if fk.request.data:
+                    security = secure_content(fk.request.data)
+                    if not security[0]:
+                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     sender_id = data.get('sender', None)
                     receiver_id = data.get('receiver', None)
@@ -3403,10 +3486,10 @@ def admin_message_update(message_id, api_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a POST method.')
 
 @app.route(API_URL + '/admin/<api_token>/resolve/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
-@crossdomain(origin='*')
+@crossdomain(fk=fk, app=app, origin='*')
 def admin_resolve_item(item_id, api_token):
-    logTraffic(endpoint='/admin/<api_token>/resolve/<item_id>')
-    admin_user = check_admin(api_token)
+    logTraffic(API_URL, endpoint='/admin/<api_token>/resolve/<item_id>')
+    admin_user = access_manager.check_admin(api_token)
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:

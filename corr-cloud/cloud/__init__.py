@@ -1,19 +1,30 @@
 import flask as fk
+from flask.ext.api import status
+from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel  
+from corrdb.common.models import RecordModel
+from corrdb.common.models import BundleModel
+from corrdb.common.models import VersionModel
 from corrdb.common.models import AccessModel
-import tarfile
-from StringIO import StringIO
+from corrdb.common.models import FileModel
+from corrdb.common.models import CommentModel
+from corrdb.common.models import MessageModel
+from corrdb.common.models import ProfileModel
+from corrdb.common.models import EnvironmentModel
+from corrdb.common.models import RecordBodyModel
+from corrdb.common.models import DiffModel
+
+from io import StringIO
 from io import BytesIO
 import zipfile
-import json
+import simplejson as json
 import time
-import boto3
-import traceback 
+import traceback
 import datetime
 
 import requests
@@ -21,22 +32,32 @@ from datetime import date, timedelta
 from functools import update_wrapper
 from calendar import monthrange
 import time
+from mongoengine.queryset.visitor import Q
 
-app = setup_app(__name__)
+app, storage_manager, access_manager = setup_app(__name__)
 
-s3 =  boto3.resource('s3')
-
-S3_BUCKET = app.config['S3_BUCKET']
+CLOUD_VERSION = 0.1
+CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 # Stormpath
 
-from flask.ext.stormpath import StormpathManager
+# from flask.ext.stormpath import StormpathManager
 
-stormpath_manager = StormpathManager(app)
+# stormpath_manager = StormpathManager(app)
 
 from datetime import date, timedelta
 from functools import update_wrapper
 
+pagination_logs = []
+
+def secure_content(content):
+    # security = None
+    # for key, value in json.loads(content).items():
+    #     security = storage_manager.is_safe(str(value).encode('utf-8'))
+    #     if not security[0]:
+    #         return security
+    # return security
+    return [True, "No content. So it is very safe."]
 
 def get_week_days(year, week):
     d = date(year,1,1)
@@ -89,474 +110,702 @@ class InMemoryZip(object):
         f.write(self.read())
         f.close()
 
-
-def crossdomain(origin=None, methods=None, headers=None,
-                max_age=21600, attach_to_all=True,
-                automatic_options=True):
-    if methods is not None:
-        methods = ', '.join(sorted(x.upper() for x in methods))
-    if headers is not None and not isinstance(headers, basestring):
-        headers = ', '.join(x.upper() for x in headers)
-    if not isinstance(origin, basestring):
-        origin = ', '.join(origin)
-    if isinstance(max_age, timedelta):
-        max_age = max_age.total_seconds()
-
-    def get_methods():
-        if methods is not None:
-            return methods
-
-        options_resp = app.make_default_options_response()
-        return options_resp.headers['allow']
-
-    def decorator(f):
-        def wrapped_function(*args, **kwargs):
-            if automatic_options and fk.request.method == 'OPTIONS':
-                resp = app.make_default_options_response()
-            else:
-                resp = fk.make_response(f(*args, **kwargs))
-            if not attach_to_all and fk.request.method != 'OPTIONS':
-                return resp
-
-            h = resp.headers
-
-            h['Access-Control-Allow-Origin'] = origin
-            h['Access-Control-Allow-Methods'] = get_methods()
-            h['Access-Control-Max-Age'] = str(max_age)
-            if headers is not None:
-                h['Access-Control-Allow-Headers'] = headers
-            return resp
-
-        f.provide_automatic_options = False
-        return update_wrapper(wrapped_function, f)
-    return decorator
-
-    return [memory_file, record.environment.bundle['location'].split("/")[-1].split(".")[0]+".zip"]
-
-def delete_project_files(project):
-    from corrdb.common.models import ProjectModel
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import EnvironmentModel
-    from corrdb.common.models import FileModel
-
-    # print s3_files
-    # project resources
-    for _file in project.resources:
-        file_ = FileModel.objects.with_id(_file)
-        if file_:
-            # print file_.to_json()
-            result = s3_delete_file(file_.group, file_.storage)
-            if result:
-                logStat(deleted=True, file_obj=file_)
-                file_.delete()
-
-    # project records resources
-    for record in project.records:
-        result = delete_record_files(record)
-        if result:
-            logStat(deleted=True, record=record)
-            record.delete()
-
-    for environment_id in project.history:
-        _environment = EnvironmentModel.objects.with_id(environment_id)
-        if _environment.bundle["scope"] == "local":
-            s3_bundles.delete_key(_environment.bundle.location)
-            result = s3_delete_file('bundle', _environment.bundle.location)
-            if result:
-                logStat(deleted=True, bundle=_environment.bundle)
-                logStat(deleted=True, environment=_environment)
-                _environment.bundle.delete()
-                _environment.delete()
-        else:
-            logStat(deleted=True, environment=_environment)
-            _environment.delete()
-
 def cloud_response(code, title, content):
     import flask as fk
     response = {'code':code, 'title':title, 'content':content}
     # print response
     return fk.Response(json.dumps(response, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
 
-def delete_record_files(record):
-    # s3_files = s3.Bucket('reproforge-files')
 
-    from corrdb.common.models import RecordModel
-    from corrdb.common.models import FileModel
-    final_result = True
-    for _file_id in record.resources:
-        _file = FileModel.objects.with_id(_file_id)
-        result = delete_record_file(_file)
-        if not result:
-            final_result = result
-    return final_result
+def data_pop(data=None, element=''):
+    """Pop an element of a dictionary.
+    """
+    if data != None:
+        try:
+            del data[element]
+        except:
+            pass
 
-def delete_record_file(record_file):
-    result = s3_delete_file(record_file.group, record_file.storage)
-    if result:
-        logStat(deleted=True, file_obj=record_file)
-        record_file.delete()
+def merge_dicts(*dict_args):
+    """
+    Given any number of dicts, shallow copy and merge into a new dict,
+    precedence goes to key value pairs in latter dicts.
+    """
+    result = {}
+    for dictionary in dict_args:
+        result.update(dictionary)
     return result
 
-def s3_get_file(group='', key=''):
-    file_buffer = StringIO()
-    print 'corr-{0}s/{1}'.format(group,key)
-    try:
-        obj = None
-        if key != '':
-            obj = s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/{1}'.format(group,key))
-        else:
-            if group == 'picture' or group == 'logo':
-                obj = s3.Object(bucket_name=S3_BUCKET, key='corr-{0}s/default-{1}.png'.format(group,key))
-    except:
-        print 'corr-{0}s/{1}'.format(group,key)
-        print traceback.print_exc()
-        if group == 'picture' or group == 'logo':
-            obj = s3.Object(bucket_name=S3_BUCKET, key='corr-logos/default-{0}.png'.format(group))
-
-    try:
-        res = obj.get()
-        file_buffer.write(res['Body'].read())
-        file_buffer.seek(0)
-        return file_buffer
-    except:
-        print 'corr-{0}s/{1}'.format(group,key)
-        print traceback.print_exc()
-        return None
-
-def s3_upload_file(file_meta=None, file_obj=None):
-    if file_meta != None and file_obj != None:
-        if file_meta.location == 'local':
-            dest_filename = file_meta.storage
-            try:
-                group = 'corr-resources'
-                if file_meta.group != 'descriptive':
-                    group = 'corr-%ss'%file_meta.group
-                print group
-                s3_files = s3.Bucket(S3_BUCKET)
-                s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
-                return [True, "File uploaded successfully"]
-            except:
-                return [False, traceback.format_exc()]
-        else:
-            return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
-    else:
-        return [False, "file meta data does not exist or file content is empty."]
-
-def s3_delete_file(group='', key=''):
-    deleted = False
-    if key not in ["default-logo.png", "default-picture.png"]:
-        s3_files = s3.Bucket(S3_BUCKET)
-        for _file in s3_files.objects.all():
-            if _file.key == 'corr-{0}s/{1}'.format(group, key): 
-                _file.delete()
-                print "File deleted!"
-                deleted = True
-                break
-        if not deleted:
-            print "File not deleted"
-    return deleted
-
-def logTraffic(endpoint=''):
-    # created_at=datetime.datetime.utcnow()
-    (traffic, created) = TrafficModel.objects.get_or_create(service="cloud", endpoint="%s%s"%(CLOUD_URL, endpoint))
-    if not created:
-        traffic.interactions += 1 
-        traffic.save()
-    else:
-        traffic.interactions = 1
-        traffic.save()
-
-def logAccess(scope='root', endpoint=''):
-    (traffic, created) = AccessModel.objects.get_or_create(scope=scope, endpoint="%s%s"%(CLOUD_URL, endpoint))
-
-def prepare_record(record=None):
-    if record == None:
-        return [None, '']
-    else:
-        env = record.environment
-        memory_file = BytesIO()
-        with zipfile.ZipFile(memory_file, 'w') as zf:
-            record_dict = record.extended()
-            environment = record_dict['head']['environment']
-            del record_dict['head']['environment']
-            comments = record_dict['head']['comments']
-            del record_dict['head']['comments']
-            resources = record_dict['head']['resources']
-            del record_dict['head']['resources']
-            inputs = record_dict['head']['inputs']
-            del record_dict['head']['inputs']
-            outputs = record_dict['head']['outputs']
-            del record_dict['head']['outputs']
-            dependencies = record_dict['head']['dependencies']
-            del record_dict['head']['dependencies']
-            application = record_dict['head']['application']
-            del record_dict['head']['application']
-            parent = record_dict['head']['parent']
-            del record_dict['head']['parent']
-            body = record_dict['body']
-            del record_dict['body']
-            execution = record_dict['head']['execution']
-            del record_dict['head']['execution']
-            project = record.project.info()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("project.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(comments, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("comments.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(resources, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("resources.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(inputs, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("inputs.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(outputs, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("outputs.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(dependencies, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("dependencies.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(application, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("application.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(parent, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("parent.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(body, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("body.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(execution, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("execution.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(environment, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-
-                data = zipfile.ZipInfo("environment.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            try:
-                json_buffer = StringIO()
-                json_buffer.write(json.dumps(record_dict, sort_keys=True, indent=4, separators=(',', ': ')))
-                json_buffer.seek(0)
-                data = zipfile.ZipInfo("record.json")
-                data.date_time = time.localtime(time.time())[:6]
-                data.compress_type = zipfile.ZIP_DEFLATED
-                data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                zf.writestr(data, json_buffer.read())
-            except:
-                print traceback.print_exc()
-            if env != None and env.bundle.location != '':
-                try:
-                    bundle_buffer = StringIO()
-                    if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
-                        bundle_buffer = web_get_file(env.bundle.location)
-                    else:
-                        bundle_buffer = s3_get_file('bundle', env.bundle.location)
-
-                    data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                    zf.writestr(data, bundle_buffer.read())
-                except:
-                    print traceback.print_exc()
-            for resource in resources:
-                try:
-                    bundle_buffer = StringIO()
-                    data = None
-                    if 'http://' in resource['storage'] or 'https://' in resource['storage']:
-                        bundle_buffer = web_get_file(resource['storage'])
-                        data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage'].split('/')[-1]))
-                    else:
-                        bundle_buffer = s3_get_file(resource['group'], resource['storage'])
-                        data = zipfile.ZipInfo("%s-%s"%(resource['group'], resource['storage']))
-                    data.date_time = time.localtime(time.time())[:6]
-                    data.compress_type = zipfile.ZIP_DEFLATED
-                    data.external_attr |= 0777 << 16L # -rwx-rwx-rwx
-                    zf.writestr(data, bundle_buffer.read())
-                except:
-                    print traceback.print_exc()
-            
-        memory_file.seek(0)
-
-    return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
-
-def logStat(deleted=False, user=None, message=None, application=None, project=None, record=None, diff=None, file_obj=None, comment=None):
-    category = ''
-    periode = ''
-    traffic = 0
-    interval = ''
-    today = datetime.date.today()
-    last_day = monthrange(today.year, today.month)[1]
-
-    if user != None:
-        category = 'user'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if project != None:
-        category = 'project'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if application != None:
-        category = 'application'
-        periode = 'yearly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_01-%s_12"%(today.year, today.year)
-
-    if message != None:
-        category = 'message'
-        periode = 'monthly'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_01-%s_%s_%s"%(today.year, today.month, today.year, today.month, last_day)
-
-    if record != None:
-        category = 'record'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if diff != None:
-        category = 'collaboration'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-    if file_obj != None:
-        category = 'storage'
-        periode = 'daily'
-        traffic = file_obj.size * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    if comment != None:
-        category = 'comment'
-        periode = 'daily'
-        traffic = 1 * (-1 if deleted else 1)
-        interval = "%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day)
-
-
-    #created_at=datetime.datetime.utcnow()
-    (stat, created) = StatModel.objects.get_or_create(interval=interval, category=category, periode=periode)
-    print "Stat Traffic {0}".format(traffic)
-    if not created:
-        print "Not created stat"
-        if (stat.traffic + traffic) >= 0:
-            stat.traffic += traffic
-        stat.save()
-    else:
-        print "Created stat"
-        stat.traffic = traffic
-        stat.save()
-
-CLOUD_VERSION = 0.1
-CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
-
-VIEW_HOST = app.config['VIEW_SETTINGS']['host']
+MODE = app.config['MODE']
+VIEW_HOST = '{0}://{1}'.format(MODE, app.config['VIEW_SETTINGS']['host'])
 VIEW_PORT = app.config['VIEW_SETTINGS']['port']
 
-API_HOST = app.config['VIEW_SETTINGS']['host']
-API_PORT = app.config['VIEW_SETTINGS']['port']
+API_HOST = '{0}://{1}'.format(MODE, app.config['API_SETTINGS']['host'])
+API_PORT = app.config['API_SETTINGS']['port']
+
+ACC_SEC = app.config['SECURITY_MANAGEMENT']['account']
+CNT_SEC = app.config['SECURITY_MANAGEMENT']['content']
+
+def filter2filters(filtr):
+    filtrs = []
+    if filtr[0] == "true":
+        filtrs.append("user")
+    if filtr[1] == "true":
+        filtrs.append("tool")
+    if filtr[2] == "true":
+        filtrs.append("project")
+    if filtr[3] == "true":
+        filtrs.append("record")
+    if filtr[4] == "true":
+        filtrs.append("diff")
+    if filtr[5] == "true":
+        filtrs.append("env")
+    pagination_logs.append("{0} -- filter2filters: {1}".format(datetime.datetime.utcnow(), filtrs))
+    return filtrs
+
+def raw2dict(raw, page):
+    block_size = 45
+    begin = page*block_size
+    end = begin + block_size
+    results = {'user':[], 'tool':[], 'project':[], 'record':[], 'diff':[], 'env':[]}
+    if begin > len(raw):
+        return 0, results
+    else:
+        if end > len(raw):
+            page_block = raw[begin:]
+        else:
+            page_block = raw[begin:end]
+        for r in page_block:
+            if isinstance(r, UserModel):
+                results['user'].append(r)
+            elif isinstance(r, ApplicationModel):
+                results['tool'].append(r)
+            elif isinstance(r, ProjectModel):
+                results['project'].append(r)
+            elif isinstance(r, RecordModel):
+                results['record'].append(r)
+            elif isinstance(r, DiffModel):
+                results['diff'].append(r)
+            elif isinstance(r, EnvironmentModel):
+                results['env'].append(r)
+        pagination_logs.append("{0} -- raw2dict: {1}, {2}".format(datetime.datetime.utcnow(), len(page_block), results))
+        return len(page_block), results
+
+
+def query_basic(words, page, filtr, current_user):
+    filtrs = filter2filters(filtr)
+    raw = []
+    if "user" not in filtrs:
+        raw.extend([u for u in UserModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words)])
+        # _users = UserModel.objects(Q(email__in=words)|Q(email__in=words)|)
+        # _users_P = ProfileModel.objects()
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    if "tool" not in filtrs:
+        raw.extend([u for u in ApplicationModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words)])
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    if "project" not in filtrs:
+        raw.extend([u for u in ProjectModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words) and (u.access == 'public' or current_user and (current_user == u.owner or current_user.group == "admin"))])
+
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    if "record" not in filtrs:
+        raw.extend([u for u in RecordModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words) and (u.access == 'public' or (current_user and u.project) and (current_user == u.project.owner or current_user.group == "admin"))])
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    if "diff" not in filtrs:
+        raw.extend([u for u in DiffModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words) and ((u.record_from.access == 'public' and u.record_to.access == 'public') or (current_user and (current_user.group == "admin" or current_user == u.record_from.project.owner or current_user == u.record_to.project.owner)))])
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    if "env" not in filtrs:
+        raw.extend([u for u in EnvironmentModel.objects().order_by('+created_at') if all(w in str(u.extended()).lower() for w in words) and (len(ProjectModel.objects(history=str(u.id))) > 0 and (ProjectModel.objects(history=str(u.id))[0].access == 'public' or current_user and (current_user == ProjectModel.objects(history=str(u.id))[0].owner or current_user.group == "admin")))])
+        pagination_logs.append("{0} -- query_basic: {1}".format(datetime.datetime.utcnow(), raw))
+    return raw2dict(raw, page)
+
+
+def query_parse(request=None):
+    queries = []
+    if request:
+        query_parts = request.split("&")
+        for query_index in range(len(query_parts)):
+            query_pipes = []
+            pipe_parts = query_parts[query_index].split("|")
+            next_piped = False
+            for pipe_index in range(len(pipe_parts)):
+                query = {"values":None, "models":None, "tree":False, "piped":False}
+                if next_piped:
+                    query["piped"] = True
+                    next_piped = False
+                if len(pipe_parts) - pipe_index - 1 > 0:
+                    next_piped = True
+                blocks = pipe_parts[pipe_index].split("]")
+                if len(blocks) == 3 and "~" in blocks[2]:
+                    query["tree"] = True
+                if "![" in blocks[0]:
+                    index_val = 0
+                    index_mod = 1
+                else:
+                    index_val = 1
+                    index_mod = 0
+                if blocks[index_val] != "![":
+                    query["values"] = blocks[index_val].split("![")[1].split(",")
+                if blocks[index_mod] != "?[":
+                    query["models"] = blocks[index_mod].split("?[")[1].split(",")
+                query_pipes.append(query)
+            queries.append(query_pipes)
+    return queries
+
+# processRequest("![yannick,sumatra]?[0.user.email,1.file]~|![]?[profile]|![]?[profile]~")
+
+# allowed_models = ["user", "version", "record", "project", "file", "profile", "env", "diff", "tool", "bundle"]
+allowed_models = ["user", "tool", "project", "record", "env", "diff"]
+
+relationships = {}
+# relationships["user"] = ["project", "file", "profile", "tool"]
+relationships["user"] = ["tool", "project"]
+relationships["version"] = ["env"]
+relationships["record"] = ["diff"]
+relationships["project"] = ["record"]
+# relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+# relationships["profile"] = []
+relationships["env"] = ["project", "record"]
+relationships["diff"] = []
+relationships["tool"] = []
+# relationships["bundle"] = ["env"]
+
+def query_analyse(queries=None):
+    if len(queries) > 0 and len(queries[0]) > 0:
+        included = []
+        for querie in queries:
+            included_here = []
+            previous_models = []
+            for pipe_index in range(len(querie)):
+                pipe = querie[pipe_index]
+                current_models = []
+                if pipe["models"]:
+                    for model_block in pipe["models"]:
+                        if "." in model_block:
+                            model = None
+                            for bl in model_block.split("."):
+                                if bl in allowed_models:
+                                    model = bl
+                                    break
+                                else:
+                                    try:
+                                        value_index = int(bl)
+                                        if pipe["values"]:
+                                            if len(pipe["values"]) <= value_index:
+                                                return (False, "Syntax error. Model referenced value {0} cannot be bigger than the size of the values: {1}.".format(bl, len(pipe["values"])), included)
+                                        else:
+                                            (False, "Syntax error. Model referenced value {0} does not exist.".format(bl), included)
+                                    except:
+                                        return (False, "Syntax error. Model referenced value {0} has to be an integer and not a {1}".format(bl, type(bl)), included)
+                        else:
+                            model = model_block
+                        current_models.append(model)
+                        if model not in allowed_models:
+                            return (False, "Syntax error. Unknown model: {0}\n We only accept: {1}".format(model, allowed_models), included)
+                if pipe_index > 0:
+                    for model in current_models:
+                        if model not in previous_models:
+                            return (False, "Context error in piped query. The model: {0} is not in previous scope of models: {1}".format(model, previous_models), included)
+                    previous_models = current_models
+                else:
+                    previous_models = current_models
+                if pipe["tree"]:
+                    for model in current_models:
+                        previous_models.extend(relationships[model])
+                    previous_models = list(set(previous_models))
+                included_here.append(previous_models)
+            included.append(included_here)
+    return (True, "Query syntax is correct.", included)
+
+def queryModelGeneric(objectModel, field, value, offset, leftover):
+    # try:
+    if field != "*" and value != "*":
+        if len(value) > 0:
+            if objectModel == RecordModel:
+                els = [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
+            else:
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value)]
+        else:
+            if objectModel == RecordModel:
+                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
+            else:
+                els = [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
+    elif field == "*" and value != "*":
+        if len(value) > 0:
+            if objectModel == RecordModel:
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value)]
+            else:
+                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value)]
+        else:
+            if objectModel == RecordModel:
+                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
+            else:
+                els = [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
+    elif field != "*" and value == "*":
+        if objectModel == RecordModel:
+            els = [o for o in objectModel.objects() if o.extended()[field] != ""]
+        else:
+            els = [o for o in objectModel.objects() if o.info()[field] != ""]
+    else:
+        els = [el for el in objectModel.objects()]
+
+    if objectModel == ProfileModel:
+        els = [el.user for el in els]
+
+    size = len(els)
+    if size == 0:
+        return [], size
+    else:
+        if size > offset:
+            if offset > 0:
+                left = size-offset
+                if left > leftover:
+                    return els[offset:offset+leftover], offset
+                else:
+                    return els[offset:offset+left], offset
+            else:
+                if size > leftover:
+                    return els[:leftover], leftover
+                else:
+                    return els, size
+        else:
+            return [], size
+
+    # except:
+    #     return []
+
+def queryContextGeneric(context, name, field, value, offset, leftover):
+    # try:
+    if field != "*" and value != "*":
+        if len(value) > 0:
+            if name == "record":
+                els = [el for el in context if any(val.lower() in str(o.extended()['head'][field]).lower() or val.lower() in str(o.extended()['body'][field]).lower() for val in value)]
+            else:
+                els = [el for el in context if any(val in str(el.extended()[field]).lower() for val in value)]
+        else:
+            if name == "record":
+                els = [o for o in context if value.lower() in str(o.extended()['head'][field]).lower() or value.lower() in str(o.extended()['body'][field]).lower()]
+            else:
+                els = [o for o in context if value.lower() in str(o.extended()[field]).lower()]
+    elif field == "*" and value != "*":
+        if len(value) > 0:
+            els = [el for el in context if any(val in str(el.extended()).lower() for val in value)]
+        else:
+            els = [o for o in context if value.lower() in str(o.extended()).lower()]
+    elif field != "*" and value == "*":
+        els = [o for o in context if o.info()[field] != ""]
+    else:
+        els = []
+    # if name == "profile":
+    #     els = [el.user for el in els]
+    size = len(els)
+    if size == 0:
+        return [], size
+    else:
+        if size > offset:
+            if offset > 0:
+                left = size-offset
+                if left > leftover:
+                    return els[offset:offset+leftover], offset
+                else:
+                    return els[offset:offset+left], offset
+            else:
+                if size > leftover:
+                    return els[:leftover], leftover
+                else:
+                    return els, size
+        else:
+            return [], size
+
+# relationships["user"] = ["project", "file", "profile", "tool"]
+# # relationships["version"] = ["env"]
+# relationships["record"] = ["diff"]
+# relationships["project"] = ["record"]
+# # relationships["file"] = ["record", "project", "profile", "env", "diff", "tool"]
+# relationships["profile"] = []
+# relationships["env"] = ["project", "record"]
+# relationships["diff"] = []
+# relationships["tool"] = []
+# relationships["bundle"] = ["env"]
+
+def paginate(query, offset, leftover, size):
+    if leftover == 0:
+        return [], size + 0, offset, leftover
+    else:
+        if len(query) > offset:
+            end = offset + leftover
+            if len(query) >= end:
+                filtered = query[offset:end]
+                return filtered, size + leftover, end, 0
+            else:
+                filtered = query[offset:]
+                return filtered, size + len(filtered), end, leftover-len(filtered)
+        else:
+            return [], size + len(query), offset, leftover
+
+
+def fetchDependencies(name, obj, offset, leftover, filtrs):
+    deps = {}
+    size = 0
+    if name == "user":
+        # profiles, size, offset, leftover = paginate(ProfileModel.objects(user=obj), offset, leftover, size)
+        # deps["profile"] = profiles
+        if "file" not in filtrs:
+            files, size, offset, leftover = paginate(FileModel.objects(owner=obj), offset, leftover, size)
+            deps["file"] = files
+        if "project" not in filtrs:
+            projects, size, offset, leftover = paginate(ProjectModel.objects(owner=obj), offset, leftover, size)
+            deps["project"] = projects
+        if "tool" not in filtrs:
+            tools, size, offset, leftover = paginate(ApplicationModel.objects(developer=obj), offset, leftover, size)
+            deps["tool"] = tools
+    # elif name == "version":
+    #     if "env" not in filtrs:
+    #         envs, size, offset, leftover = paginate(EnvironmentModel.objects(version=obj), offset, leftover, size)
+    #         deps["env"] = envs
+    elif name == "record":
+        if "diff" not in filtrs:
+            diffs_from, size, offset, leftover = paginate(DiffModel.objects(record_from=obj), offset, leftover, size)
+            deps["diff"] = diffs_from
+            diffs_to = [el for el in DiffModel.objects(record_to=obj)]
+            diffs_more = []
+            for rec in diffs_to:
+                if rec not in deps["diff"]:
+                    diffs_more.append(rec)
+            diffs_more, size, offset, leftover = paginate(diffs_more, offset, leftover, size)
+            deps["diff"].extend(diffs_more)
+    elif name == "project":
+        if "record" not in filtrs:
+            records, size, offset, leftover = paginate(RecordModel.objects(project=obj), offset, leftover, size)
+            deps["record"] = records
+    # elif name == "file":
+    #     projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.resources]
+    #     logo_projects = [el for el in ProjectModel.objects(logo=obj)]
+    #     for pr in logo_projects:
+    #         if pr not in projects:
+    #             projects.append(pr)
+    #     projects, size, offset, leftover = paginate(projects, offset, leftover, size)
+    #     deps["project"] = projects
+
+    #     records = [rec for rec in RecordModel.objects() if str(obj.id) in rec.resources]
+    #     records, size, offset, leftover = paginate(records, offset, leftover, size)
+    #     deps["record"] = records
+
+    #     tools, size, offset, leftover = paginate(ApplicationModel.objects(logo=obj), offset, leftover, size)
+    #     deps["tool"] = tools
+
+    #     envs = [env for env in EnvironmentModel.objects() if str(obj.id) in env.resources]
+    #     envs, size, offset, leftover = paginate(envs, offset, leftover, size)
+    #     deps["env"] = envs
+
+    #     diffs = [dff for dff in DiffModel.objects() if str(obj.id) in dff.resources]
+    #     diffs, size, offset, leftover = paginate(diffs, offset, leftover, size)
+    #     deps["diff"] = diffs
+
+    #     profiles, size, offset, leftover = paginate(ProfileModel.objects(picture=obj), offset, leftover, size)
+    #     deps["profile"] = profiles
+    elif name == "env":
+        if "record" not in filtrs:
+            records, size, offset, leftover = paginate(RecordModel.objects(environment=obj), offset, leftover, size)
+            deps["record"] = records
+
+        if "project" not in filtrs:
+            projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
+            projects, size, offset, leftover = paginate(projects, offset, leftover, size)
+            deps["project"] = projects
+    # elif name == "bundle":
+    #     envs, size, offset, leftover = paginate(EnvironmentModel.objects(bundle=obj), offset, leftover, size)
+    #     deps["env"] = envs
+    pagination_logs.append("{0} -- fetchDependencies: {1}, {2}, {3}, {4}".format(datetime.datetime.utcnow(), size, offset, leftover))
+    return deps, size, offset, leftover
+
+def queryModel(context, name, field, value, offset, leftover, filtrs):
+    if name in filtrs:
+        if context:
+            els = context
+            size = 0
+        else:
+            els = []
+            size = 0
+        return els, size
+    else:
+        if name == "user":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(UserModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "version":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(VersionModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "record":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(RecordModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "project":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(ProjectModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "file":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(FileModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "profile":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(ProfileModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "env":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(EnvironmentModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "diff":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(DiffModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        elif name == "tool":
+            if context:
+                els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+            else:
+                els, size = queryModelGeneric(ApplicationModel, field, value, offset, leftover)
+                pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        # elif name == "bundle":
+        #     if context:
+        #         els, size = queryContextGeneric(context[name], name, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryContextGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        #     else:
+        #         els, size = queryModelGeneric(BundleModel, field, value, offset, leftover)
+        #         pagination_logs.append("{0} -- queryModelGeneric: {1}, {2}".format(datetime.datetime.utcnow(), els, size))
+        else:
+            if context:
+                els = context
+                size = 0
+            else:
+                els = []
+                size = 0
+        return els, size
+
+def executeQuery(context, query, page, history, leftover, filtrs):
+    context_current = context
+    block_size = 45
+    offset = page * block_size
+    if query["models"]:
+        for model in query["models"]:
+            target_value = None
+            target_field = None
+            target_model = None
+            if "." in model:
+                blocks = model.split(".")
+                for bl_index in range(len(blocks)):
+                    if blocks[bl_index] in allowed_models:
+                        target_model = blocks[bl_index]
+                        if len(blocks) == 2:
+                            if bl_index == 0:
+                                target_field = blocks[bl_index+1]
+                                if query["values"]:
+                                    target_value = query["values"]
+                                else:
+                                    target_value = "*"
+                            else:
+                                if query["values"]:
+                                    target_value = query["values"][bl_index-1]
+                                else:
+                                    target_value = "*"
+                                target_field = "*"
+                        if len(blocks) == 3:
+                            target_field = blocks[bl_index+1]
+                            if query["values"]:
+                                target_value = query["values"][bl_index-1]
+                            else:
+                                target_value = "*"
+            else:
+                target_model = model
+                target_field = "*"
+                if query["values"]:
+                    target_value = query["values"]
+                else:
+                    target_value = "*"
+            if leftover > 0:
+                if not query["piped"]:
+                    objs, size = queryModel(None, target_model, target_field, target_value, offset, leftover, filtrs)
+                    counter = 0
+                    for obj in objs:
+                        if obj not in context_current[target_model]:
+                            # if target_model == "profile":
+                            #     context_current["user"].append(obj)
+                            # else:
+                            context_current[target_model].append(obj)
+                            counter = counter + 1
+                    leftover = leftover - counter
+                    history = history + size + counter
+                    offset = page * block_size - history
+                    if query["tree"]:
+                        for obj in context_current[target_model]:
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover, filtrs)
+                            for key, value in deps.items():
+                                # if key == "profile":
+                                #     context_current["user"].append(deps[key])
+                                # else:
+                                context_current[key].extend(deps[key])
+                                counter = counter + 1
+                            leftover = leftover - counter
+                            history = history + size + counter
+                            offset = page * block_size - history
+                else:
+                    context_current[target_model], size = queryModel(context_current, target_model, target_field, target_value, offset, leftover, filtrs)
+                    if query["tree"]:
+                        counter = 0
+                        for obj in context_current[target_model]:
+                            deps, size, offset, leftover = fetchDependencies(target_model, obj, offset, leftover, filtrs)
+                            for key, value in deps.items():
+                                # if key == "profile":
+                                #     context_current["user"].append(deps[key])
+                                # else:
+                                context_current[key].extend(deps[key])
+                                counter = counter + 1
+                            leftover = leftover - counter
+                            history = history + size + counter
+                            offset = page * block_size - history
+            pagination_logs.append("{0} -- executeQuery: {1}, {2}, {3}".format(datetime.datetime.utcnow(), leftover, history, offset))
+            print("?{0}.{1} == {2}".format(target_model, target_field, target_value))
+    else:
+        target_model = "*"
+        target_field = "*"
+        if query["values"]:
+            target_value = query["values"]
+        else:
+            target_value = "*"
+
+        if not query["piped"]:
+            for model in allowed_models:
+                counter = 0
+                objs, size = queryModel(None, model, target_field, target_value, offset, leftover, filtrs)
+                for obj in objs:
+                    if obj not in context_current[model]:
+                        # if target_model == "profile":
+                        #     context_current["user"].append(obj)
+                        # else:
+                        context_current[model].append(obj)
+                        counter = counter + 1
+                leftover = leftover - counter
+                history = history + size + counter
+                offset = page * block_size - history
+                if query["tree"]:
+                    for obj in context_current[model]:
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover, filtrs)
+                        for key, value in deps.items():
+                            # if key == "profile":
+                            #     context_current["user"].append(deps[key])
+                            # else:
+                            context_current[key].extend(deps[key])
+                            counter = counter + 1
+                        leftover = leftover - counter
+                        history = history + size + counter
+                        offset = page * block_size - history
+        else:
+            for model in allowed_models:
+                counter = 0
+                context_current[model], size = queryModel(context_current, model, target_field, target_value, offset, leftover, filtrs)
+                if query["tree"]:
+                    for obj in context_current[model]:
+                        deps, size, offset, leftover = fetchDependencies(model, obj, offset, leftover, filtrs)
+                        for key, value in deps.items():
+                            # if key == "profile":
+                            #     context_current["user"].append(deps[key])
+                            # else:
+                            context_current[key].extend(deps[key])
+                            counter = counter + 1
+                        leftover = leftover - counter
+                        history = history + size + counter
+                        offset = page * block_size - history
+        pagination_logs.append("{0} -- executeQuery: {1}, {2}, {3}".format(datetime.datetime.utcnow(), leftover, history, offset))
+    return context_current, history, leftover
+
+
+def processRequest(request, page, filtr):
+    queries = query_parse(request)
+    valid, message, included = query_analyse(queries)
+    contexts = []
+    history = 0
+    leftover = 45
+    if valid:
+        for query_index in range(len(queries)):
+            context = {}
+            context["user"] = []
+            # context["version"] = []
+            context["tool"] = []
+            context["project"] = []
+            context["record"] = []
+            
+            # context["file"] = []
+            # context["profile"] = []
+            context["env"] = []
+            context["diff"] = []
+            
+            # context["bundle"] = []
+            filtrs = []
+
+            if filtr[0] == "true":
+                filtrs.append("user")
+            if filtr[1] == "true":
+                filtrs.append("tool")
+            if filtr[2] == "true":
+                filtrs.append("project")
+            if filtr[3] == "true":
+                filtrs.append("record")
+            if filtr[4] == "true":
+                filtrs.append("diff")
+            if filtr[5] == "true":
+                filtrs.append("env")
+
+            query = queries[query_index]
+            for pipe_index in range(len(query)):
+                pipe = query[pipe_index]
+                context, history, leftover = executeQuery(context, pipe, page, history, leftover, filtrs)
+                if leftover == 0:
+                    break
+            contexts.append(context)
+        for context in contexts:
+            for key, value in context.items():
+                    context[key] = list(set(value))
+        return ("{0} {1}".format(message,queries), contexts, leftover)
+    else:
+        return ("{0} {1}".format(message,queries), None, leftover)
+
+def queryResponseDict(contexts):
+    contexts_json = []
+    if contexts:
+        for context in contexts:
+            context_json = {}
+            for key, value in context.items():
+                if key == "record":
+                    context_json[key] = [val.extended() for val in value]
+                else:
+                    context_json[key] = [val.info() for val in value]
+            contexts_json.append(context_json)
+    return contexts_json
 
 
 from . import views

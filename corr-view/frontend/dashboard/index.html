@@ -19,12 +19,13 @@
         
         <title>CoRR - Cloud of Reproducible Records</title>
 
-        <link rel="icon" href="../images/logo.png" sizes="32x32">
-        <link rel="apple-touch-icon-precomposed" href="../images/logo.png" sizes="152x152">
+        <link rel="icon" href="../images/logo.ico" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="../images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <meta name="msapplication-TileImage" content="../images/logo.png" sizes="144x144">
+        <meta name="msapplication-TileImage" content="../images/logo.svg" sizes="144x144">
 
         <link rel="stylesheet" href="../css/jquery.nouislider.min.css"></link>
+        <link href="../css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="../css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="../css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
 
@@ -46,15 +47,10 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
-                        <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><span id="platform-name"></span></a> <span class="logo-text">CoRR</span></h1>
+                        <ul id="nav-base" class="nav-bar right">
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
-                            </li>
-                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
-                                <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
-                                    <i class=" nav-action mdi-action-search"></i>
-                                </a>
                             </li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="../" id= "nav-home-2" class="waves-effect waves-block waves-light">
@@ -62,7 +58,7 @@
                                 </a>
                             </li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                                <a href="../help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                <a href="http://corr.readthedocs.io/en/latest/rst/README.html" target="_blank" id= "nav-help" class="waves-effect waves-block waves-light">
                                     <i class="nav-action mdi-communication-live-help"></i>
                                 </a>
                             </li>
@@ -75,7 +71,558 @@
             </div>
         </header>
 
-        <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <div id="error-display-modal" class="modal modal-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="system message logo">
+                    <label for="picture-error">
+                        <img src="../images/error.png" alt="" id="update-error-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-image-details prefix"></i>
+                    <input id="error-title" type="text" readonly></input>
+                    <label for="error-title">Title</label>
+                  </div>
+               </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="error-details" class="materialize-textarea" readonly></textarea>
+                    <label for="error-details">Details</label>
+                  </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row margin">
+                <div class="input-field col s12">
+                  <a onclick="$('#error-display-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div id="user-view-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row">
+                  <div class="input-field col s12 center">
+                    <img id="user-picture" src="../images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login">
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-perm-identity prefix"></i>
+                    <input id="user-fname" type="text">
+                    <label id="user-fname-value" for="user-fname">First Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment-ind prefix"></i>
+                    <input id="user-lname" type="text">
+                    <label id="user-lname-value" for="user-lname">Last Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-home prefix"></i>
+                    <input id="user-org" type="text">
+                    <label id="user-org-value" for="user-org">Organisation</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="user-about" class="materialize-textarea"></textarea>
+                    <label id="user-about-value" for="user-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-view-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="app-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="application logo">
+                    <label for="picture-input">
+                        <img src="../images/gearsIcon.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-lock-outline prefix"></i>
+                    <input id="app-name" type="text"></input>
+                    <label for="app-name">App Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="app-access">
+                      <option value="activated" disabled selected>Activated</option>
+                      <option value="blocked">Blocked</option>
+                      <option value="deactivated">Deactivated</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assignment prefix"></i>
+                    <textarea id="app-about" class="materialize-textarea"></textarea>
+                    <label id="app-about-value" for="app-about">About</label>
+                  </div>
+                </div>
+                <div class="row margin" id="app-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#app-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="project-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="project logo">
+                    <label for="picture-input">
+                        <img src="../images/project.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="project-name" type="text"></input>
+                    <label for="project-name">Project Name</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="project-tags" type="text"></input>
+                    <label id="project-tags-value" for="project-tags">Project Tags</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-description prefix"></i>
+                    <textarea id="project-description" class="materialize-textarea"></textarea>
+                    <label id="project-description-value" for="project-description">Description</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="project-goals" class="materialize-textarea"></textarea>
+                    <label id="project-goals-value" for="project-goals">Goals</label>
+                  </div>
+                </div>
+                <div class="row margin" id="project-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_project();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#project-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="diff-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
+                    <label for="picture-input">
+                        <img src="../images/diff.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-cloud-download prefix"></i>
+                    <input id="diff-from" type="text"></input>
+                    <label for="diff-from">Record From</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-cloud-upload prefix"></i>
+                    <input id="diff-to" type="text"></input>
+                    <label for="diff-to">Record To</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="diff-method">
+                      <option value="default" disabled selected>Default</option>
+                      <!-- <option value="default">Default</option> -->
+                      <option value="visual">Visual</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="diff-proposition">
+                      <option value="repeated" disabled selected>Repeated</option>
+                      <option value="replicated">replicated</option>
+                      <option value="reproduced">Reproduced</option>
+                      <option value="non-replicated">Non-replicated</option>
+                      <option value="non-repeated">Non-repeated</option>
+                      <option value="non-reproduced">Non-reproduced</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="diff-status">
+                      <option value="proposed" disabled selected>Proposed</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_diff();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#diff-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="env-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
+                    <label for="picture-input">
+                        <img src="../images/env.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-cloud-download prefix"></i>
+                    <input id="env-project" type="text"></input>
+                    <label for="env-project">Project</label>
+                  </div>
+               </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-navigation-apps prefix"></i>
+                    <input id="env-app" type="text" placeholder="App name"></input>
+                    <label for="env-app">Application</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-group">
+                      <option value="computational" disabled selected>Computational</option>
+                      <option value="experimental">Experimental</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-version">
+                      <option value="unknown" disabled selected>Unknown</option>
+                      <option value="git">Git</option>
+                      <option value="mercurial">Mercurial</option>
+                      <option value="subversion">Subversion</option>
+                      <option value="cvs">Cvs</option>
+                      <option value="bazaar">Bazaar</option>
+                      <option value="arch">Arch</option>
+                      <option value="monotone">Monotone</option>
+                      <option value="fastcst">Fastcst</option>
+                      <option value="opencm">Opencm</option>
+                      <option value="vesta">Vesta</option>
+                      <option value="codeville">Codeville</option>
+                      <option value="darcs">Darcs</option>
+                      <option value="bitkeeper">Bitkeeper</option>
+                      <option value="perforce">Perforce</option>
+                      <option value="clearcase">Clearcase</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-track-changes prefix"></i>
+                    <input id="env-vc-location" type="text" placeholder="local|master~hash or https://...|master~hash"></input>
+                    <label for="env-vc-location">Location</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-system">
+                      <option value="container-based" disabled selected>Container</option>
+                      <option value="vm-based">Virtual Machine</option>
+                      <option value="tool-based">Tool</option>
+                      <option value="cloud-based">Cloud</option>
+                      <option value="device-based">Device</option>
+                      <option value="lab-based">Lab</option>
+                      <option value="custom-based">Custom</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <select id="env-location" onchange="reloadEnvLocation()">
+                      <option value="unknown" disabled selected>Unknown</option>
+                      <option value="local">Local</option>
+                      <option value="remote">Remote</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12" id="env-bundle-location">
+                    <input id="bundle-path" class="file-path validate" type="text"></input>
+                    <div class="btn">
+                      <span>File</span>
+                      <input id="bundle-file" type="file"></input>
+                    </div>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_env();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#env-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="record-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="project-id" type="text"></input>
+                    <label id="project-id-value" for="project-id">Project</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="record-tags" type="text"></input>
+                    <label id="record-tags-value" for="record-tags">Tags</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <textarea id="record-rationels" class="materialize-textarea"></textarea>
+                    <label id="record-rationels-value" for="record-rationels">Rationels</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="record-status">
+                      <option value="finished" disabled selected>Finished</option>
+                      <option value="crashed">Crashed</option>
+                      <option value="starting">Starting</option>
+                      <option value="started">Started</option>
+                      <option value="paused">Paused</option>
+                      <option value="sleeping">Sleeping</option>
+                      <option value="resumed">Resumed</option>
+                      <option value="running">Running</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin" id="record-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="user-email" type="text"></input>
+                    <label id="user-email-value" for="user-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="user-password" type="password"></input>
+                    <label id="user-password-value" for="user-password">Password</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="user-group-dropdown">
+                    <select id="user-group">
+                      <option value="user" disabled selected>User</option>
+                      <option value="developer">Developer</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin" id="user-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_user();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="record-upload-modal" class="modal modal-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/record.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="record-id" type="text"></input>
+                    <label id="record-id-value" for="record-id">Record</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="upload-group" onchange="reloadUploadGroup()">
+                      <option value="body" selected>Record Body</option>
+                      <option value="input">Record input</option>
+                      <option value="output">Record output</option>
+                      <option value="resource-record">Record resource</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12">
+                    <input id="upload-path" class="file-path validate" type="text"></input>
+                    <div class="btn">
+                      <span>File</span>
+                      <input id="upload-file" type="file"></input>
+                    </div>
+                  </div>
+                </div>
+                <div class="row margin" id="type-div">
+                  <div class="input-field col s12" id="record-status-dropdown">
+                    <select id="upload-type" onchange="reloadUploadGuide()">
+                      <option value="json" selected>Json</option>
+                      <option value="yaml">Yaml</option>
+                      <option value="xml">Xml</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin" id="guide-div">
+                  <div class="input-field col s12">
+                    <i class="mdi-notification-event-note prefix"></i>
+                    <textarea id="upload-guide" readonly class="materialize-textarea"></textarea>
+                    <label id="upload-guide-value" for="upload-guide">Guide</label>
+                  </div>
+                </div>
+                <div class="row margin" id="record-upload-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.upload_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Upload</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-upload-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-modal" class="modal modal-form">
+          <div class="modal-content">
+            <div class="row">
+              <div class="col s12 center">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+                <p>Wait...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
+        </div>
+
+        <div id="float-settings" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         </div>
 
         <div id="main">
@@ -87,23 +634,41 @@
             </div>
         </div>
 
+        <div id="terms-modal" class="modal">
+            <div class="modal-content">
+                <div class="row center">
+                    <img src="../images/disclaimer.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                </div>
+                <div class="row center">
+                    <span class="card-title black-text text-darken-4">Terms of Service</span>
+                </div>
+                <div class="divider"></div>
+                <div class="row" id="platform-terms-pop">
+                    <span>No Specific mention. The platform has open terms.</span>
+                </div>
+            </div>
+        </div>
+
         <footer class="page-footer">
+            <div class="container red-text text-lighten-2" id="platform-warning">
+            </div>
             <div class="footer-copyright">
               <div class="container">
-                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
                 <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
                 </div>
             </div>
         </footer>
 
+        <script type="text/javascript" src="../js/purify.min.js"></script>
+        <script type="text/javascript" src="../js/js.cookie.js"></script>
         <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
-        <script type="text/javascript" src="../js/materialize.min.js"></script>
-        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
-        <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
+        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>    
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
@@ -111,130 +676,497 @@
         <script type="text/javascript" src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
         <script type="text/javascript" src="../js/plugins/jvectormap/vectormap-script.js"></script>
         <script type="text/javascript" src="../js/plugins.js"></script>
-        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/clipboard.min.js"></script>
         <script type="text/javascript" src="../js/wNumb.min.js"></script>
         <script type="text/javascript" src="../js/jquery.nouislider.min.js"></script>
         <script type="text/javascript" src="../js/jquery.liblink.js"></script>
+        <script type="text/javascript" src="../js/xml2json.js"></script>
+        <script type="text/javascript" src="../js/js-yaml.js"></script>
 
         <script type="text/javascript" src="../js/init.js"></script>
+        <script type="text/javascript" src="../js/render.js"></script>
         <script type="text/javascript" src="../js/cloud.js"></script>
+        <script type="text/javascript" src="../js/content.js"></script>
         <script type="text/javascript" src="../js/dashboard.js"></script>
 
         <script type="text/javascript">
-            // setInterval(function() {
+            $(document).ready(function() {
+              $('.modal-trigger').leanModal();
+              document.getElementById("nav-home").href = window.location.origin;
+              document.getElementById("nav-home-2").href = window.location.origin;
+              document.getElementById("nav-dashboard").href = window.location.origin+"/dashboard";
+            });
+            
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
-            // var session = "";
             var view_selected = "";
             var options = [];
+            var head = document.getElementsByTagName('head')[0];
+            var js = document.createElement("script");
+            js.type = "text/javascript";
+            // Extract the parameters session, view and others from the url.
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
-                if(parts[0] == "session"){
-                    user.session = parts[1];
-                }else if(parts[0] == "view"){
+                if(parts[0] == "view"){
                     view_selected = parts[1];
                 }else{
                     options.push(blocks[i]);
                 }
             }
-            if(user.session != "" && view_selected == ""){
-                dashboard.activity(user.session);
-                var space = new Space(user.session);
-            }else if(user.session != "" && view_selected == "apps"){
-                dashboard.apps(user.session);
-            }else if(user.session != "" && view_selected == "projects"){
-                dashboard.projects(user.session);
-                var space = new Space(user.session);
-            }else if(user.session != "" && view_selected == "records"){
-                dashboard.records(user.session, options);
-                var space = new Space(user.session);
-            }else if(user.session != "" && view_selected == "diffs"){
-                dashboard.diffs(user.session, options);
-            }else if(user.session != "" && view_selected == "query"){
-                dashboard.query(user.session, options);
-            }else{
-                window.location.replace("../error-404/");
+            // Inject the default dashboard view
+            if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
+                dashboard.activity(options);
+                var space = new Space();
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                }
+                js.src = "../js/plugins/chartist-js/chartist.min.js";
+                head.appendChild(js);
+            }
+            // Inject the applications dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "apps"){
+                dashboard.apps();
+                if(Cookies.get('group') == "admin"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create application'><i class='mdi-content-add'></i></a>";
+                }
+            }
+            // Inject the projects dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "projects"){
+                dashboard.projects(options);
+                var space = new Space();
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                }
+            }
+            // Inject the records dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "records"){
+                dashboard.records(options);
+                var space = new Space();
+                var selected_records = [];
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
+                }
+            }
+            // Inject the diffs dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "diffs"){
+                dashboard.diffs(options);
+                var space = new Space();
+                // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+            }
+            // Inject the envs dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "envs"){
+                dashboard.envs(options);
+                var space = new Space();
+                // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
+            }
+            // Inject the query dashboard view
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "query"){
+                var space = new Space();
+                var hits = 0;
+                var selected_records = [];
+                dashboard.query(options);
+
+                document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
+            }
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "users"){
+                dashboard.users(options);
+                var space = new Space();
+
+                document.getElementById("float-menu").innerHTML = "<a onclick='launchUserModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create user'><i class='large mdi-content-add'></i></a>";
+            }
+            // Otherwise redirect to a 404
+            else{
+              // window.location.replace("../");
+              config.error_modal("User access denied", "You have to log back in.");
             }
 
-            if (user.session != ""){
-                document.getElementById("nav-home-2").href = "../?session="+user.session;
-                document.getElementById("nav-home").href = "../?session="+user.session;
-                document.getElementById("nav-help").href = "../help/?session="+user.session;
-                document.getElementById("nav-dashboard").href = "./?session="+user.session;
+            // In case home has session key (logged in)
+            if (Cookies.get('session') != undefined && Cookies.get('session') != 'none'){
+                // Inject the nav menu and the dashboard floating menu
+                document.getElementById("nav-home-2").href = "../";
+                document.getElementById("nav-home").href = "../";
+                document.getElementById("nav-dashboard").href = "./";
 
-                // Target.
-                document.getElementById("float-menu").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query disabled');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                var menu_dash = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li>";
+                if(Cookies.get('group') == "admin"){
+                  menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='users'><a class='modal-trigger btn-floating btn-large grey darken-1' onclick=\"return view('users');\"><i class='large mdi-social-person'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li>";
+                }else{
+                  menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li>";
+                }
+                menu_dash += "</ul>";
+                document.getElementById("float-settings").innerHTML = menu_dash;
             }
 
+            // View switching function
             function view(scope){
-                window.location.replace("./?session="+user.session+"&view="+scope);
+                window.location.replace("./?view="+scope);
             }
 
-            function projectEdit(project_id){
-                var project_update = document.getElementById('update-project-'+project_id);
-                project_update.innerHTML = "<a id='update-action' onclick='projectSave(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
-                var tags = document.getElementById('project-tags-'+project_id);
-                var description = document.getElementById('project-desc-'+project_id);
-                var goals = document.getElementById('project-goals-'+project_id);
-                tags.removeAttribute("readonly");
-                description.removeAttribute("readonly");
-                goals.removeAttribute("readonly");
+            function launchEnvModal(project_id){
+              $('#env-add-modal').openModal();
+              var env_project = document.getElementById("env-project");
+              env_project.value = project_id;
             }
 
-            function projectSave(project_id){
-                var project_update = document.getElementById('update-project-'+project_id);
-                project_update.innerHTML = "<a id='update-action' onclick='projectEdit(\""+project_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
-                var tags = document.getElementById('project-tags-'+project_id);
-                var description = document.getElementById('project-desc-'+project_id);
-                var goals = document.getElementById('project-goals-'+project_id);
-                // description.setAttribute("readonly", null);
-                // goals.setAttribute("readonly", null);
-                var project = new Project(user.session, project_id);
-                project.save(tags.value, description.value, goals.value);
+            function launchRecordModal(project_id){
+              $('#record-add-modal').openModal();
+              var project_ref = document.getElementById("project-id");
+              project_ref.value = project_id;
             }
 
-            function projectRemove(project_name, project_id){
-                Materialize.toast("<span>Delete "+project_name+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/project/remove/"+project_id+"\">Confirm</a>", 5000);
+            function launchDiffModal(){
+              if(selected_records.length == 2){
+                $('#diff-add-modal').openModal();
+                var record_from = document.getElementById("diff-from");
+                var record_to = document.getElementById("diff-to");
+                record_from.value = selected_records[0];
+                record_to.value = selected_records[1];
+              }else{
+                // Materialize.toast('<span>Please select up to two records!</span>', 3000);
+                config.error_modal('Diff create failed', 'Please select only two records.')
+              }
             }
 
-            function projectRemoveAgree(session, project_id){
-                console.log("in projectRemoveAgree!");
-                var project = new Project(session, project_id);
-                project.trash();
-                window.location.reload();
+            function launchUserModal(){
+              $('#user-add-modal').openModal();
             }
 
-            function uploadRecord(project_name, project_id){
-                Materialize.toast('<span>Uploading a new record to Project ['+project_name+']...</span>', 3000);
+            function userViewModal(_id, fname, lname, org, about){
+              $('#user-view-modal').openModal();
+              var user_picture = document.getElementById("user-picture");
+              var user_fname = document.getElementById("user-fname");
+              var user_lname = document.getElementById("user-lname");
+              var user_org = document.getElementById("user-org");
+              var user_about = document.getElementById("user-about");
+              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+              user_picture.src = url+"/public/user/picture/"+_id;
+              user_fname.value = fname;
+              user_fname.readOnly = true;
+              user_lname.value = lname;
+              user_lname.readOnly = true;
+              user_org.value = org;
+              user_org.readOnly = true;
+              user_about.value = about;
+              user_about.readOnly = true;
             }
 
-            function recordEdit(record_id){
-                var project_update = document.getElementById('update-record-'+record_id);
-                project_update.innerHTML = "<a id='update-action' onclick='recordSave(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-content-save'></i></a>";
-                var tags = document.getElementById('record-tags-'+record_id);
-                var rationels = document.getElementById('record-rationels-'+record_id);
-                tags.removeAttribute("readonly");
-                rationels.removeAttribute("readonly");
+            function recordViewModal(record_id, project_name, tags, rationels, status){
+              $('#record-add-modal').openModal();
+              var project_ref = document.getElementById("project-id");
+              var record_tags = document.getElementById("record-tags");
+              var record_rationels = document.getElementById("record-rationels");
+              var record_status = document.getElementById("record-status-dropdown");
+              project_ref.value = project_name;
+              project_ref.readOnly = true;
+              record_tags.value = tags;
+              record_tags.readOnly = true;
+              guide.value = rationels;
+              record_rationels.readOnly = true;
+              record_status.innerHTML = "<i class='mdi-notification-sync prefix'></i><input id='record-status' type='text' value='"+status+"'></input><label id='record-status-value' for='record-status'>Status</label>";
+              record_status.readOnly = true;
+              var add_callback = document.getElementById("record-add-callback");
+              add_callback.innerHTML = "";
+
             }
 
-            function recordSave(record_id){
-                var project_update = document.getElementById('update-record-'+record_id);
-                project_update.innerHTML = "<a id='update-action' onclick='recordEdit(\""+record_id+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right'><i class='mdi-editor-mode-edit'></i></a>";
-                var tags = document.getElementById('record-tags-'+record_id);
-                var rationels = document.getElementById('record-rationels-'+record_id);
-                // tags.setAttribute("readonly", null);
-                // rationels.setAttribute("readonly", null);
-                var record = new Record(user.session, record_id);
-                record.save(tags.value, rationels.value);
+            function recordUploadModal(record_id){
+              $('#record-upload-modal').openModal();
+              var record = document.getElementById("record-id");
+              var guide = document.getElementById("upload-guide");
+              record.value = record_id;
+              record.readOnly = true;
+              guide.readOnly = true;
+              guide.value = "{\n";
+              guide.value += "  'system':{\n";
+              guide.value += "    'model':'System76',\n";
+              guide.value += "    'architecture':'x86_64',\n";
+              guide.value += "    'cpu':'Intel CORE i7',\n";
+              guide.value += "    'gpu':'NVIDIA GT9600',\n";
+              guide.value += "    'os':'ubuntu 16.04',\n";
+              guide.value += "    ...,\n";
+              guide.value += "  },\n";
+              guide.value += "  'execution':{\n";
+              guide.value += "    'parameters':{\n";
+              guide.value += "      'param1':'value1',\n";
+              guide.value += "      'param2':'value2',\n";
+              guide.value += "      ...,\n";
+              guide.value += "    },\n";
+              guide.value += "    'cmd_line':'executed command'\n";
+              guide.value += "  },\n";
+              guide.value += "  'inputs':[\n";
+              guide.value += "    {\n";
+              guide.value += "      'path':'input file_name',\n";
+              guide.value += "      'metadata':{\n";
+              guide.value += "        'encoding':'utf-8',\n";
+              guide.value += "        'mimetype':'txt/json',\n";
+              guide.value += "        'size':'2500'\n";
+              guide.value += "      }\n";
+              guide.value += "    },\n";
+              guide.value += "    ...,\n";
+              guide.value += "  ],\n";
+              guide.value += "  'outputs':[\n";
+              guide.value += "    {\n";
+              guide.value += "      'path':'output file_name',\n";
+              guide.value += "      'metadata':{\n";
+              guide.value += "        'encoding':'utf-8',\n";
+              guide.value += "        'mimetype':'txt/json',\n";
+              guide.value += "        'size':'2500'\n";
+              guide.value += "      }\n";
+              guide.value += "    },\n";
+              guide.value += "    ...,\n";
+              guide.value += "  ],\n";
+              guide.value += "  'dependencies':[\n";
+              guide.value += "    {\n";
+              guide.value += "      'name':'denpency name',\n";
+              guide.value += "      'version':'denpency version',\n";
+              guide.value += "      'language':'programming language',\n";
+              guide.value += "      'url':'denpency url',\n";
+              guide.value += "    },\n";
+              guide.value += "    ...,\n";
+              guide.value += "  ]\n";
+              guide.value += "}";
             }
 
-            function recordRemove(record_id){
-                Materialize.toast("<span>Delete "+record_id+"</span><a class=\"btn light-blue\" href=\"http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/record/remove/"+record_id+"\">Confirm</a>", 5000);
+            function reloadUploadGroup(){
+              var group = document.getElementById("upload-group").value;
+              var type_div = document.getElementById("type-div");
+              var guide_div = document.getElementById("guide-div");
+              if(group == "body"){
+                type_div.style.display = 'block';
+                guide_div.style.display = 'block';
+              }else{
+                type_div.style.display = 'none';
+                guide_div.style.display = 'none';
+              }
             }
-            // }, 5000);
+
+            function reloadEnvLocation(){
+              var location = document.getElementById("env-location").value;
+              var bundle_location_div = document.getElementById("env-bundle-location");
+              if(location == "remote"){
+                bundle_location_div.innerHTML = "<i class=\"mdi-file-cloud prefix\"></i><input id=\"bundle-file\" type=\"text\" placeholder=\"https://...|http://...|tcp:...\"></input><label for=\"bundle-path\">Location</label></div>";
+              }else{
+                bundle_location_div.innerHTML = "<input id=\"bundle-path\" class=\"file-path validate\" type=\"text\"></input><div class=\"btn\"><span>File</span><input id=\"bundle-file\" type=\"file\"></input></div>";
+              }
+            }
+
+            function reloadUploadGuide(){
+              var guide = document.getElementById("upload-guide");
+              var upload_type = document.getElementById("upload-type");
+              var type_selected = upload_type.options[upload_type.selectedIndex].text
+              if(type_selected == "Json"){
+                guide.value = "{\n";
+                guide.value += "  'system':{\n";
+                guide.value += "    'model':'System76',\n";
+                guide.value += "    'architecture':'x86_64',\n";
+                guide.value += "    'cpu':'Intel CORE i7',\n";
+                guide.value += "    'gpu':'NVIDIA GT9600',\n";
+                guide.value += "    'os':'ubuntu 16.04',\n";
+                guide.value += "    ...,\n";
+                guide.value += "  },\n";
+                guide.value += "  'execution':{\n";
+                guide.value += "    'parameters':{\n";
+                guide.value += "      'param1':'value1',\n";
+                guide.value += "      'param2':'value2',\n";
+                guide.value += "      ...,\n";
+                guide.value += "    },\n";
+                guide.value += "    'cmd_line':'executed command'\n";
+                guide.value += "  },\n";
+                guide.value += "  'inputs':[\n";
+                guide.value += "    {\n";
+                guide.value += "      'path':'input file_name',\n";
+                guide.value += "      'metadata':{\n";
+                guide.value += "        'encoding':'utf-8',\n";
+                guide.value += "        'mimetype':'txt/json',\n";
+                guide.value += "        'size':'2500'\n";
+                guide.value += "      }\n";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
+                guide.value += "  ],\n";
+                guide.value += "  'outputs':[\n";
+                guide.value += "    {\n";
+                guide.value += "      'path':'output file_name',\n";
+                guide.value += "      'metadata':{\n";
+                guide.value += "        'encoding':'utf-8',\n";
+                guide.value += "        'mimetype':'txt/json',\n";
+                guide.value += "        'size':'2500'\n";
+                guide.value += "      }\n";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
+                guide.value += "  ],\n";
+                guide.value += "  'dependencies':[\n";
+                guide.value += "    {\n";
+                guide.value += "      'name':'denpency name',\n";
+                guide.value += "      'version':'denpency version',\n";
+                guide.value += "      'language':'programming language',\n";
+                guide.value += "      'url':'denpency url',\n";
+                guide.value += "    },\n";
+                guide.value += "    ...,\n";
+                guide.value += "  ]\n";
+                guide.value += "}";
+              }else if(type_selected == "Xml"){
+                guide.value = "<body>\n";
+                guide.value += "  <system>\n";
+                guide.value += "    <model>x86_64</model>\n";
+                guide.value += "    <architecture>x86_64</architecture>\n";
+                guide.value += "    <cpu>Intel CORE i7</cpu>\n";
+                guide.value += "    <gpu>NVIDIA GT9600</gpu>\n";
+                guide.value += "    <os>ubuntu 16.04</os>\n";
+                guide.value += "    ...\n";
+                guide.value += "  </system>\n";
+                guide.value += "  <execution>\n";
+                guide.value += "    <parameters>\n";
+                guide.value += "      <param1>value1</param1>\n";
+                guide.value += "      <param2>value2</param2>\n";
+                guide.value += "      ...\n";
+                guide.value += "    </parameters>\n";
+                guide.value += "    <cmd_line>executed command</cmd_line>\n";
+                guide.value += "  </execution>\n";
+                guide.value += "  <inputs>\n";
+                guide.value += "    <path>input file_name</path>\n";
+                guide.value += "    <metadata>\n";
+                guide.value += "      <encoding>utf-8</encoding>\n";
+                guide.value += "      <mimetype>txt:json</mimetype>\n";
+                guide.value += "      <size>2500</size>\n";
+                guide.value += "    </metadata>\n";
+                guide.value += "  </inputs>\n";
+                guide.value += "  <inputs>\n";
+                guide.value += "    ...\n";
+                guide.value += "  </inputs>\n";
+                guide.value += "  <outputs>\n";
+                guide.value += "    <path>output file_name</path>\n";
+                guide.value += "    <metadata>\n";
+                guide.value += "      <encoding>utf-8</encoding>\n";
+                guide.value += "      <mimetype>txt:json</mimetype>\n";
+                guide.value += "      <size>2500</size>\n";
+                guide.value += "    </metadata>\n";
+                guide.value += "  </outputs>\n";
+                guide.value += "  <outputs>\n";
+                guide.value += "    ...\n";
+                guide.value += "  </outputs>\n";
+                guide.value += "  <dependencies>\n";
+                guide.value += "    <name>denpency name</name>\n";
+                guide.value += "    <version>denpency version</version>\n";
+                guide.value += "    <language>programming language</language>\n";
+                guide.value += "    <url>denpency url</url>\n";
+                guide.value += "  </dependencies>\n";
+                guide.value += "  <dependencies>\n";
+                guide.value += "    ...\n";
+                guide.value += "  </dependencies>\n";
+                guide.value += "</body>";
+              }else if(type_selected == "Yaml"){
+                guide.value = "system:\n";
+                guide.value += "  model: System76\n";
+                guide.value += "  architecture: x86_64\n";
+                guide.value += "  cpu: Intel CORE i7\n";
+                guide.value += "  gpu: NVIDIA GT9600\n";
+                guide.value += "  os: ubuntu 16.04\n";
+                guide.value += "  ...\n";
+                guide.value += "execution:\n";
+                guide.value += "  parameters:\n";
+                guide.value += "    param1: value1\n";
+                guide.value += "    param2: value2\n";
+                guide.value += "    ...\n";
+                guide.value += "  cmd_line: executed command\n";
+                guide.value += "inputs:\n";
+                guide.value += "  - path: input file_name\n";
+                guide.value += "    metadata:\n";
+                guide.value += "      encoding: utf-8\n";
+                guide.value += "      mimetype: txt/json\n";
+                guide.value += "      size: 2500\n";
+                guide.value += "  - ...\n";
+                guide.value += "outputs:\n";
+                guide.value += "  - path: output file_name\n";
+                guide.value += "    metadata:\n";
+                guide.value += "      encoding: utf-8\n";
+                guide.value += "      mimetype: txt/json\n";
+                guide.value += "      size: 2500\n";
+                guide.value += "  - ...\n";
+                guide.value += "dependencies:\n";
+                guide.value += "  - name: denpency name\n";
+                guide.value += "    version: denpency version\n";
+                guide.value += "    language: programming language\n";
+                guide.value += "    url: denpency url\n";
+                guide.value += "  - ...";
+              }
+            }
+
+            function projectViewModal(name, tags, description, goals){
+              $('#project-add-modal').openModal();
+              var project_name = document.getElementById("project-name");
+              var project_tags = document.getElementById("project-tags");
+              var project_description = document.getElementById("project-description");
+              var project_goals = document.getElementById("project-goals");
+              project_name.value = name;
+              project_name.readOnly = true;
+              project_tags.value = tags;
+              project_tags.readOnly = true;
+              project_description.value = description;
+              project_description.readOnly = true;
+              project_goals.value = goals;
+              project_goals.readOnly = true;
+              var add_callback = document.getElementById("project-add-callback");
+              add_callback.innerHTML = "";
+
+            }
+
+            function appViewModal(name, access, about){
+              $('#app-add-modal').openModal();
+              var app_name = document.getElementById("app-name");
+              var app_access = document.getElementById("app-access");
+              var app_about = document.getElementById("app-about");
+              app_name.value = name;
+              app_name.readOnly = true;
+              app_access.value = access;
+              app_access.readOnly = true;
+              app_about.value = about;
+              app_about.readOnly = true;
+              var add_callback = document.getElementById("app-add-callback");
+              add_callback.innerHTML = "";
+
+            }
+
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+                var platform_terms_pop = document.getElementById("platform-terms-pop");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
+                }
+
+                if (content['terms'] != ""){
+                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
+            
         </script>
+        <script type="text/javascript" src="../js/callbacks/user.js"></script>
+        <script type="text/javascript" src="../js/callbacks/application.js"></script>
+        <script type="text/javascript" src="../js/callbacks/project.js"></script>
+        <script type="text/javascript" src="../js/callbacks/record.js"></script>
+        <script type="text/javascript" src="../js/callbacks/diff.js"></script>
+        <script type="text/javascript" src="../js/callbacks/env.js"></script>
+        <script type="text/javascript" src="../js/callbacks/search.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart-script.js"></script>
+        <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+                ga('create', 'UA-64854835-2', 'auto');
+                ga('send', 'pageview');
+        </script>
     </body>
 
 </html>

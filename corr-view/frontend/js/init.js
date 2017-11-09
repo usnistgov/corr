@@ -1,9 +1,6 @@
 (function($){
   $(function(){
 
-    // $('.button-collapse').sideNav();
-    // $('.scrollspy').scrollSpy();
-
     /*** Animate word ***/
 
     //set animation timing
@@ -34,9 +31,6 @@
             var word = $(this),
                 letters = word.text().split(''),
                 selected = word.hasClass('is-visible');
-            // console.log(word);
-            // console.log(letters);
-            // console.log(selected);
             for (i in letters) {
                 if(word.parents('.rotate-2').length > 0) letters[i] = '<em>' + letters[i] + '</em>';
                 letters[i] = (selected) ? '<i class="in">' + letters[i] + '</i>': '<i>' + letters[i] + '</i>';
@@ -159,10 +153,6 @@
         $oldWord.removeClass('is-visible').addClass('is-hidden');
         $newWord.removeClass('is-hidden').addClass('is-visible');
     }
-
-    // [].forEach.call(card, function(card) {
-    //     card.addEventListener('click', scaleCard, false);
-    // });
 
     }); // end of document ready
 })(jQuery); // end of jQuery name space

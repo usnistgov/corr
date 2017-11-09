@@ -1,9 +1,0 @@
-DEBUG = {{ debug }}
-
-MONGODB_SETTINGS = {
-    'db': 'corr-production',
-    'host': '{{ hostvars['dbhost']['ansible_ssh_host'] }}',
-    'port': 27017
-}
-
-S3_BUCKET = '{{s3_bucket}}'

@@ -1,0 +1,60 @@
+<div id="card-widgets">
+  <br />
+  <div class="nav-wrapper">
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <div class="input-field">
+          <input id="search" type="text" required="" onkeypress="searchKeyPress(event, false);"/>
+          <label for="search" class="">
+            <i class="mdi-action-search"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-users" />
+          <label for="exclude-users">
+            Exclude Users
+          </label>
+      </div>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-applications" />
+          <label for="exclude-applications">
+            Exclude Applications
+          </label>
+      </div>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-projects" />
+          <label for="exclude-projects">
+            Exclude Projects
+          </label>
+      </div>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-records" />
+          <label for="exclude-records">
+            Exclude Records
+          </label>
+      </div>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-diffs" />
+          <label for="exclude-diffs">
+            Exclude Diffs
+          </label>
+      </div>
+      <div class="input-field col s12 m4 l2">
+          <input type="checkbox" id="exclude-envs" />
+          <label for="exclude-envs">
+            Exclude Envs
+          </label>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+  <div id="query-result" class="row" data-distance="100">
+  </div>
+  <br />
+  <div id="temporal-slider">
+  </div>
+</div>

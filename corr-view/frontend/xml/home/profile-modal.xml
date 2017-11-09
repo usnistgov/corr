@@ -1,0 +1,41 @@
+<div class="modal-content">
+   <div class="row">
+      <div class="input-field col s12 center">
+        <img src="images/picture.png" alt="" id="profile-user-picture" class="circle responsive-img valign profile-image-login" />
+      </div>
+   </div>
+   <div class="divider" />
+   <div class="row margin">
+      <div class="input-field col s12">
+        <i class="mdi-action-perm-identity prefix" />
+        <input id="view-fname" type="text" />
+        <label id="view-fname-value" for="view-fname">First Name</label>
+      </div>
+   </div>
+   <div class="row margin">
+      <div class="input-field col s12">
+        <i class="mdi-action-assignment-ind prefix" />
+        <input id="view-lname" type="text" />
+        <label id="view-lname-value" for="view-lname">Last Name</label>
+      </div>
+   </div>
+   <div class="row margin">
+      <div class="input-field col s12">
+         <i class="mdi-action-home prefix" />
+         <input id="view-org" type="text" />
+         <label id="view-org-value" for="view-org">Organisation</label>
+      </div>
+   </div>
+   <div class="row margin">
+      <div class="input-field col s12">
+        <i class="mdi-action-assignment prefix" />
+        <textarea id="view-about" class="materialize-textarea" />
+        <label id="view-about-value" for="view-about">About</label>
+      </div>
+   </div>
+   <div class="row margin">
+      <div class="input-field col s12">
+        <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+      </div>
+   </div>
+</div>

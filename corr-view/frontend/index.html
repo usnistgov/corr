@@ -18,10 +18,10 @@
 
         <title>CoRR - Cloud of Reproducible Records</title>
 
-        <link rel="icon" href="images/logo.png" sizes="32x32">
-        <link rel="apple-touch-icon-precomposed" href="images/logo.png" sizes="152x152">
+        <link rel="icon" href="images/logo.ico" sizes="32x32">
+        <link rel="apple-touch-icon-precomposed" href="images/logo.svg" sizes="152x152">
         <meta name="msapplication-TileColor" content="#00bcd4">
-        <meta name="msapplication-TileImage" content="images/logo.png" sizes="144x144">
+        <meta name="msapplication-TileImage" content="images/logo.svg" sizes="144x144">
 
         <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
         <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -43,24 +43,21 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><!-- title="corr logo"--></a> <span class="logo-text">CoRR</span></h1>
-                        <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
-                            <li class="search-out">
-                                <input type="text" class="search-out-text">
-                            </li>
-                            <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="search">
-                                <a href="javascript:void(0);" class="waves-effect waves-block waves-light show-search">
-                                    <i class=" nav-action mdi-action-search"></i>
-                                </a>
-                            </li>
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="images/corr-logo.png" alt="corr logo"/><span id="platform-name"></span></a> <span class="logo-text">CoRR</span></h1>
+                        <ul id="nav-base" class="nav-bar right">
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="home">
                                 <a href="./" id= "nav-home-2" class="waves-effect waves-block waves-light">
                                     <i class="nav-action nav-action mdi-action-home"></i>
                                 </a>
                             </li>
                             <li class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="help">
-                                <a href="./help" id= "nav-help" class="waves-effect waves-block waves-light">
+                                <a href="http://corr.readthedocs.io/en/latest/rst/README.html" target="_blank" id= "nav-help" class="waves-effect waves-block waves-light">
                                     <i class="nav-action mdi-communication-live-help"></i>
+                                </a>
+                            </li>
+                            <li class="tooltipped" id="item-search" data-position="bottom" data-delay="50" data-tooltip="search">
+                                <a href="./search" id= "nav-search" class="waves-effect waves-block waves-light">
+                                    <i class="nav-action mdi-action-search"></i>
                                 </a>
                             </li>
                             <li id="nav-login" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="login">
@@ -134,7 +131,7 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header teal white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
+                            <div class="collapsible-header blue-grey white-text"><i class="mdi-communication-vpn-key"></i>Forgot Password</div>
                             <div class="collapsible-body recent-activity">
                                 <div class="row margin">
                                   <div class="input-field col s12">
@@ -151,11 +148,20 @@
                             </div>
                         </li>
                         <li>
-                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
-
+                            <div class="collapsible-header orange white-text"><i class="mdi-communication-chat"></i><a class="white-text" href="https://gitter.im/usnistgov/corr" target="_blank">Chat</a></div>
                         </li>
                         <li>
-                            <div class="collapsible-header red white-text"><i class="mdi-communication-email"></i><a href="mailto:contactus.corr@gmail.com">Email</a></div>
+                            <div class="collapsible-header purple white-text"><i class="mdi-communication-email"></i><a class="white-text" href="mailto:yannick.congo@gmail.com">Email</a></div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header red white-text"><i class="mdi-action-assignment"></i>Terms of Service</div>
+                            <div class="collapsible-body recent-activity">
+                                <div class="row red-text text-lighten-2" id="platform-terms">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header green white-text"><i class="mdi-action-favorite"></i><a class="white-text" href="https://donorbox.org/corr-root-instance-donation" target="_blank">Donate to Support</a></div>
                         </li>
                     </ul>
                 </li>
@@ -176,11 +182,7 @@
                             <i class="mdi-image-flash-on"></i>
                             <h4 class="promo-caption">Integration</h4>
                             <p class="front-text light center">
-                              Integrate existing simulation management
-                              tools such
-                              as <a href="http://neuralensemble.org/sumatra/" target="_blank">Sumatra</a>
-                              with CoRR's robust and flexible API to log
-                              simulation records.
+                              Integrate existing software management tools with CoRR's robust API to push simulation records.
                             </p>
                         </div>
                     </div>
@@ -189,9 +191,7 @@
                             <i class="mdi-social-group"></i>
                             <h4 class="promo-caption">Collaboration</h4>
                             <p class="light center front-text">
-                              Collaborate with other scientists by sharing
-                              simulation records and computational
-                              environments.
+                              Collaborate with other scientists by showing simulation records and computational environments.
                             </p>
                         </div>
                     </div>
@@ -200,9 +200,7 @@
                             <i class="mdi-device-devices"></i>
                             <h4 class="promo-caption">Management</h4>
                             <p class="light center front-text">
-                              Manage simulation records to maintain
-                              history, organize future jobs and enhance
-                              reproduciblity.
+                              Manage simulation records to maintain history, organize future jobs and enhance reproduciblity.
                             </p>
                         </div>
                     </div>
@@ -212,6 +210,8 @@
 
         <div id="float-profile" class="fixed-action-btn" style="bottom: 45px; right: 24px;">
         </div>
+
+        <div id="card-widgets"></div>
 
         <div class="container">
             <section id="content">
@@ -230,7 +230,7 @@
                             <div class="col s12 m6 l2">
                                 <div class="card">
                                     <div class="card-content purple white-text">
-                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Applications</p>
+                                        <p class="card-stats-title"><i class="mdi-navigation-apps"></i> Tools</p>
                                         <h4 class="card-stats-number" id="total-apps">N/A</h4>
                                     </div>
                                 </div>
@@ -273,12 +273,96 @@
             </section>
         </div>
 
+        <div id="loading-modal" class="modal modal-form">
+          <div class="modal-content center">
+            <div class="preloader-wrapper big active">
+              <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+              <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+              <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+              <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+            <p>Wait...</p>
+          </div>
+        </div>
+
+        <div id="error-display-modal" class="modal modal-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="diff logo">
+                    <label for="picture-error">
+                        <img src="images/error.png" alt="" id="update-error-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-image-details prefix"></i>
+                    <input id="error-title" type="text" readonly></input>
+                    <label for="error-title">Title</label>
+                  </div>
+               </div>
+               <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-subject prefix"></i>
+                    <textarea id="error-details" class="materialize-textarea" readonly></textarea>
+                    <label for="error-details">Details</label>
+                  </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row margin">
+                <div class="input-field col s12">
+                  <a onclick="$('#error-display-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                </div>
+              </div>
+            </div>
+        </div>
+
         <div id="account-modal" class="modal login-form">
             <div class="modal-content">
-                <div class="row">
-                  <div class="input-field col s12 center">
-                    <img src="images/picture.png" id="account-user-picture" alt="" class="circle responsive-img valign profile-image-login">
-                  </div>
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
+                    <label for="picture-input">
+                        <img src="images/picture.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                    </label>
+                    <input id="picture-input" type="file" style="display: none;"/>
                 </div>
                 <div class="divider"></div>
                 <div class="row margin">
@@ -297,28 +381,6 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <!-- <button data-clipboard-action="copy" data-clipboard-target="#view-api" class="btn waves-effect waves-light col s12">Copy Token</button> -->
-                    <a onclick="return user.config();" class="modal-trigger btn waves-effect waves-light col s12">Download Config</a>
-                  </div>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
-                    <a href="#account-update-modal" class="modal-trigger btn waves-effect waves-light col s12">Update Account</a>
-                  </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="account-update-modal" class="modal login-form">
-            <div class="modal-content">
-                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="click to change">
-                    <label for="picture-input">
-                        <img src="images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login">
-                    </label>
-                    <input id="picture-input" type="file" style="display: none;"/>
-                </div>
-                <div class="row margin">
-                  <div class="input-field col s12">
                     <i class="mdi-action-lock-outline prefix"></i>
                     <input id="edit-new-password" type="password">
                     <label for="edit-new-password">New Password</label>
@@ -333,8 +395,23 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
-                    <a onclick="return user.update();" class="btn waves-effect waves-light col s12">Confirm</a>
+                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Account</a>
                   </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.config('none');" class="modal-trigger btn waves-effect grey waves-light col s12">Download Config</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="return user.renew();" class="modal-trigger btn waves-effect waves-light col s12 modal-action">Key Renew</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                      <a onclick="$('#account-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -363,6 +440,20 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
+                    <i class="mdi-notification-disc-full prefix"></i>
+                    <input id="view-quota" placeholder='in GB' type="text" readonly>
+                    <label id="view-quota-value" for="view-quota">Quota</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-assessment prefix"></i>
+                    <input id="view-usage" type="text" readonly>
+                    <label id="view-usage-value" for="view-usage">Usage</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
                     <i class="mdi-action-home prefix"></i>
                     <input id="view-org" type="text">
                     <label id="view-org-value" for="view-org">Organisation</label>
@@ -375,32 +466,81 @@
                     <label id="view-about-value" for="view-about">About</label>
                   </div>
                 </div>
-                <div class="row margin">
+                <div class="row margin" id="user-update-callback">
                   <div class="input-field col s12">
-                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12">Update Profile</a>
+                    <a onclick="return user.update();" class="modal-trigger btn waves-effect waves-light col s12 modal-action modal-close">Update Profile</a>
                   </div>
+                </div>
+                <div class="row margin">
+                    <div class="input-field col s12">
+                      <a onclick="$('#profile-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disclaimer-modal" class="modal">
+            <div class="modal-content">
+                <div class="row center">
+                    <img src="images/disclaimer.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                </div>
+                <div class="row center">
+                    <span class="card-title black-text text-darken-4">Disclaimer</span>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <p>Any mention of commercial products within NIST web pages is for information only; it does not imply recommendation or endorsement by NIST.</p>
+                    <p><strong>Use of NIST Information</strong></p>
+                    <p>These World Wide Web pages are provided as a public service by the National Institute of Standards and Technology (NIST). With the exception of material marked as copyrighted, information presented on these pages is considered public information and may be distributed or copied. Use of appropriate byline/photo/image credits is requested.</p>
+                    <p><strong>Software Disclaimer</strong></p>
+                    <p>NIST-developed software is provided by NIST as a public service. You may use, copy and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.</p>
+                    <p>NIST-developed software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.</p>
+                    <p>You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property. The software developed by NIST employees is not subject to copyright protection within the United States.</p>
+                    <p><strong><a href="https://www.nist.gov/privacy-policy">See the NIST Privacy, Security Notice, and Accessibility Statement</a></strong></p>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://www.nist.gov/privacy-policy" class="waves-effect waves-red btn-flat">Disagree</a>
+                    <a onclick="return agree_disclaim();" class="waves-effect waves-green btn-flat modal-action modal-close">Agree</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="terms-modal" class="modal">
+            <div class="modal-content">
+                <div class="row center">
+                    <img src="images/disclaimer.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                </div>
+                <div class="row center">
+                    <span class="card-title black-text text-darken-4">Terms of Service</span>
+                </div>
+                <div class="divider"></div>
+                <div class="row" id="platform-terms-pop">
+                    <span>No Specific mention. The platform has open terms.</span>
                 </div>
             </div>
         </div>
 
         <footer class="page-footer">
+            <div class="container red-text text-lighten-2" id="platform-warning">
+            </div>
             <div class="footer-copyright">
               <div class="container">
-                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
                 <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
                 </div>
             </div>
         </footer>
 
-        <script src="js/config.js"></script>
+        <script type="text/javascript" src="js/purify.min.js"></script>
+        <script type="text/javascript" src="js/js.cookie.js"></script>
 
+        <script type="text/javascript" src="js/config.js"></script>
+
+        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="js/materialize.js"></script>
         <script type="text/javascript" src="js/prism.js"></script>
-        <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
-        <script type="text/javascript" src="js/materialize.min.js"></script>
         <script type="text/javascript" src="js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script type="text/javascript" src="js/plugins/chartist-js/chartist.min.js"></script>
-        <script type="text/javascript" src="js/plugins/chartjs/chart.min.js"></script>
+        <script type="text/javascript" src="js/plugins/spark-md5.js"></script>
         <script type="text/javascript" src="js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="js/plugins/sparkline/sparkline-script.js"></script>
         <script type="text/javascript" src="js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
@@ -412,26 +552,30 @@
 
         <script type="text/javascript" src="js/init.js"></script>
         <script type="text/javascript" src="js/cloud.js"></script>
+        <script type="text/javascript" src="js/content.js"></script>
 
         <script type="text/javascript">
             $(document).ready(function(){
                 $('.tooltipped').tooltip({delay: 50});
-                // new Clipboard('.btn');
+                $('.collapsible').collapsible({accordion : false});
+                $('.modal-trigger').leanModal();
+                document.getElementById("nav-home").href = window.location.origin;
+                var search_menu = document.getElementById("nav-search");
+                if(search_menu != null){
+                    search_menu.href = window.location.origin+"/search";
+                }
+                // if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
+                //     $('#disclaimer-modal').openModal();
+                // }
+                
             });
             var xmlhttp = new XMLHttpRequest();
-            console.log(this.session);
-            xmlhttp.open("GET", "http://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
-            xmlhttp.send();
             xmlhttp.onreadystatechange=function()
             {
-                console.log(xmlhttp.responseText);
-                if ((xmlhttp.status >= 200 && xmlhttp.status <= 300) || xmlhttp.status == 304) {
-                    console.log(xmlhttp.responseText);
-                    if(xmlhttp.responseText == ""){
-                        console.log("Cloud returned empty response!");
-                    }else{
-                        var response = JSON.parse(xmlhttp.responseText);
-                        console.log(response);
+                if(this.readyState == 4){
+                    if (this.status == 200) {
+                        var response = JSON.parse(this.responseText);
+                        // Data provisioned by the cloud service.
                         var version = response["version"];
                         var users = response["users"];
                         var projects = response["projects"];
@@ -439,57 +583,43 @@
                         var storage = response["storage"];
                         var apps = response["apps"];
                         var traffic = response["traffic"];
+                        // Home page dynamic component data injection from reponse.
                         document.getElementById("total-users").innerHTML = users["number"];
                         document.getElementById("total-projects").innerHTML = projects["number"];
                         document.getElementById("total-records").innerHTML = records["number"];
                         document.getElementById("total-storage").innerHTML = storage["size"];
-                        console.log("Version: "+version);
                         document.getElementById("footer-version").innerHTML = version;
                         document.getElementById("total-apps").innerHTML = apps["size"];
                         document.getElementById("total-traffic").innerHTML = traffic["size"];
-                        console.log("Total Users:"+users["number"]);
-                        console.log("Total Projects:"+projects["number"]);
-                        console.log("Total Records:"+records["number"]);
-                        console.log("Total Storage:"+storage["size"]);
-                        console.log("CoRR Version:"+version);
-                        console.log("Total Apps:"+apps["size"]);
-                        console.log("Total Traffic:"+traffic["size"]);
-                        console.log("++Total Users:"+document.getElementById("total-users").value);
-                        console.log("++Total Projects:"+document.getElementById("total-projects").value);
-                        console.log("++Total Records:"+document.getElementById("total-records").value);
-                        console.log("++Total Stage:"+document.getElementById("total-storage").value);
-                        console.log("++CoRR Version:"+document.getElementById("footer-version").value);
-                        console.log("++Total Apps:"+document.getElementById("total-apps").value);
-                        console.log("++Total Traffic:"+document.getElementById("total-traffic").value);
+                    } else {
+                        config.error_modal('An error occured.', this.responseText);
                     }
-                } else {
-                    console.log("Cannot reach the cloud!");
                 }
             }
-            var param = window.location.search.substring(1);
-            var parts = param.split("=");
-            if(parts[0] == "session"){
-                user.session = parts[1];
-                console.log(user.session);
+            xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
+            xmlhttp.send();
+            if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
+                // Check that the user is trusted with this session key.
                 user.trusted();
                 user.account();
-                console.log("Api Index: "+this.api);
-                document.getElementById("nav-home-2").href = "./?session="+user.session;
-                document.getElementById("nav-home").href = "./?session="+user.session;
-                document.getElementById("nav-help").href = "./help/?session="+user.session;
+                // If the session is trusted, inject user nav menu session tabs and account floating menu.
+                document.getElementById("nav-home-2").href = window.location.origin;
+                document.getElementById("nav-home").href = window.location.origin;
                 document.getElementById("nav-login").remove();
-                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='./dashboard/?session="+user.session+"' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
-                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-communication-email'></i></a></li></ul>";
+                document.getElementById("item-search").remove();
+                document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='"+window.location.origin+"/dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
+                document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large purple darken-1'><i class='large mdi-communication-email'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='donate to Support'><a href='https://donorbox.org/corr-root-instance-donation' class='modal-trigger btn-floating btn-large green darken-1' target='_blank'><i class='large mdi-action-favorite'></i></a></li></ul>";
 
-                document.getElementById('account-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
-                document.getElementById('update-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
-                document.getElementById('profile-user-picture').src = "http://"+config.host+":"+config.port+"/cloud/v0.1/private/"+user.session+"/user/picture";
-            }else if(parts[0] == "action"){
-                var scope = parts[1];
-                if (scope == "message_sent"){
-                    Materialize.toast('<span>Your message has been sent!</span>', 3000);
-                }
+                document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
+                document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
             }
+
+            if(Cookies.get('group') == "admin"){
+                var quota = document.getElementById('view-quota');
+                quota.removeAttribute("readonly");
+            }
+
+            // Enter key handlers for login/recover/register and email us.
             function loginKeyPress(e)
             {
                 e = e || window.event;
@@ -522,14 +652,59 @@
                     document.getElementById('buttonEmail').click();
                 }
             }
-         </script>
-         <script>
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-          ga('create', 'UA-64854835-1', 'auto');
-          ga('send', 'pageview');
+
+            function tools_succeed(xhttp, params){
+                var content = xhttp.responseText;
+                var container = document.getElementById("card-widgets");
+                container.innerHTML = content;
+            };
+
+            function tools_failed(){
+                console.log("Error loading tools content.");
+            };
+
+            function agree_disclaim(){
+                Cookies.set('disclaimer', true, {expires: 365, path: '' });
+            };
+
+
+            config.load_xml('tools_content.xml', null, tools_succeed, tools_failed);
+
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+                var platform_terms = document.getElementById("platform-terms");
+                var platform_terms_pop = document.getElementById("platform-terms-pop");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
+                }
+
+                if (content['terms'] != ""){
+                    if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
+                        platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    }else{
+                        platform_terms.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                    }
+                }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
+        </script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-64854835-2', 'auto');
+            ga('send', 'pageview');
         </script>
 
     </body>

@@ -1,8 +1,8 @@
 /*================================================================================
-    Item Name: Materialize - Material Design Admin Template
-    Version: 1.0
-    Author: GeeksLabs
-    Author URL: http://www.themeforest.net/user/geekslabs
+    Item Name: CoRR - Cloud of Reproducible Records
+    Version: 0.1
+    Authors: Faical Yannick P. Congo & Daniel Wheeler
+    Authors URL: https://github.com/usnistgov/corr
 ================================================================================*/
 /*-----------------------------------------
 
@@ -26,6 +26,11 @@ body {
 
 #main {
   flex: 1 0 auto;
+}
+
+span#platform-name {
+    vertical-align: middle;
+    position: absolute;
 }
 
 #main,
@@ -472,7 +477,7 @@ header .brand-logo {
   /*padding: 0 42px;
   padding: 0px 10px 0 75px;*/
 
-  padding: 0 20px;
+  padding: 0 0px;
 }
 @media only screen and (max-width: 992px) {
   nav .nav-wrapper {
@@ -800,6 +805,9 @@ h5.breadcrumbs-header {
 #flight-card .card-header .card-title {
   padding: 20px;
 }
+#flight-card .card-header .tool-title {
+  padding: 20px;
+}
 #flight-card .flight-card-title {
   margin: 0;
   font-weight: 300;
@@ -833,7 +841,28 @@ h5.breadcrumbs-header {
   /* SASS Internet Explorer */
 }
 #flight-card .card-content-bg {
-  background: url(../images/sample-1.jpg) no-repeat center center;
+  background: cyan;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#flight-card .sumatra-tool-bg {
+  background: url(../images/sumatra.jpg) no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#flight-card .reprozip-tool-bg {
+  background: url(../images/reprozip.jpg) no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#flight-card .panda-tool-bg {
+  background: url(../images/panda.jpg) no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -843,7 +872,7 @@ h5.breadcrumbs-header {
   background: rgba(0, 0, 0, 0.25);
 }
 #flight-card .flight-state-wrapper {
-  margin: 0 0 100px 0 !important;
+  margin: 0 0 0 0 !important;
 }
 /*task-card*/
 
@@ -1347,6 +1376,9 @@ tr.group:hover {
 .login-form {
   width: 280px;
 }
+.modal-form {
+  width: 25%;
+}
 .login-form-text{
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -1624,6 +1656,15 @@ footer.page-footer {
   .doughnut-chart-status{
     display: none;
   }
+
+  #profile-card .btn-move-up {
+    top: -16px;
+  }
+
+  #profile-card .card-profile-image {
+    width: 40px;
+    top: 115px;
+  }
 }
 
 
@@ -1635,6 +1676,15 @@ footer.page-footer {
   }
   #card-stats .card-stats-compare{
       font-size: 0.8rem;
+  }
+
+  #profile-card .card-profile-image {
+    width: 66px;
+    top: 97px;
+  }
+
+  #profile-card .btn-move-up {
+    top: -9px;
   }
 }
 
@@ -1668,3 +1718,10 @@ footer.page-footer {
 .front-text {
     font-size: 20px;
 }
+
+#upload-guide {
+    overflow-y: scroll;
+    height: 100px;
+    resize: none;
+}
+

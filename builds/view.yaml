@@ -1,6 +1,0 @@
-- name: install jekyll
-  apt:
-    name: jekyll
-    state: present
-    force: yes
-  become: true

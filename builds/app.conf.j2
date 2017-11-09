@@ -1,7 +1,0 @@
-description "{{ app_service_name }}"
-
-start on (filesytem)
-
-chdir {{ corr_path }}
-
-exec {{ env_path }}/gunicorn -c {{ local_path }}/.config/{{ gunicorn_config_file }} --bind unix:{{ socket_file }} run:app
