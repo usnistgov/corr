@@ -7,7 +7,7 @@ from .managers import AccessManager
 
 db = MongoEngine()
 
-def setup_app(name, config='config'):
+def setup_app(name, config='config.default'):
     """Setup a flask app instance with a config file.
     Each application has to provide its python config
     parameters.
