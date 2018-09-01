@@ -27,7 +27,7 @@ from io import BytesIO
 @app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_register():
-    logTraffic(CLOUD_URL, endpoint='/public/user/register')        
+    logTraffic(CLOUD_URL, endpoint='/public/user/register')
     if fk.request.method == 'POST':
         if fk.request.data:
             security = secure_content(fk.request.data)
@@ -64,12 +64,12 @@ def user_register():
                         return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
-                        print("Token %s"%user_model.api_token)
-                        print(fk.request.headers.get('User-Agent'))
-                        print(fk.request.remote_addr)
+                        # print("Token %s"%user_model.api_token)
+                        # print(fk.request.headers.get('User-Agent'))
+                        # print(fk.request.remote_addr)
                         user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
                         user_model.retoken()
-                        print("Session: %s"%user_model.session)
+                        # print("Session: %s"%user_model.session)
                         if admin != '':
                             admin_account = UserModel.objects(session=admin).first()
                             if admin_account and admin_account.group == "admin":
@@ -107,7 +107,7 @@ def user_register():
 def user_password_reset():
     logTraffic(CLOUD_URL, endpoint='/public/user/password/reset')
     if fk.request.method == 'POST':
-        print("Request: %s"%str(fk.request.data))
+        # print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             email = data.get('email', '')
@@ -157,7 +157,7 @@ def user_password_change():
 def user_login():
     logTraffic(CLOUD_URL, endpoint='/public/user/login')
     if fk.request.method == 'POST':
-        print("Request: %s"%str(fk.request.data))
+        # print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             security = secure_content(fk.request.data)
             if not security[0]:
@@ -188,7 +188,7 @@ def user_login():
                             elif account_only.auth == "wrong3":
                                 account_only.auth = "blocked"
                             account_only.save()
-                        
+
                         return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
 
@@ -202,9 +202,9 @@ def user_login():
                         return fk.Response('Your account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
                     elif account.auth == 'unregistered':
                         return fk.Response('You unregistered. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
-                    print("Token %s"%account.api_token)
-                    print(fk.request.headers.get('User-Agent'))
-                    print(fk.request.remote_addr)
+                    # print("Token %s"%account.api_token)
+                    # print(fk.request.headers.get('User-Agent'))
+                    # print(fk.request.remote_addr)
                     if  "logout" in account.session:
                         account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
 
@@ -214,7 +214,7 @@ def user_login():
                     print(str(traceback.print_exc()))
                     return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                     # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
-                    
+
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
@@ -259,8 +259,8 @@ def user_logout():
 @app.route(CLOUD_URL + '/private/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_unregister():
-    logTraffic(CLOUD_URL, endpoint='/private/user/unregister') 
-    hash_session = basicAuthSession(fk.request)       
+    logTraffic(CLOUD_URL, endpoint='/private/user/unregister')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
@@ -367,8 +367,8 @@ def user_dashboard():
 @app.route(CLOUD_URL + '/private/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_update():
-    logTraffic(CLOUD_URL, endpoint='/private/user/update') 
-    hash_session = basicAuthSession(fk.request) 
+    logTraffic(CLOUD_URL, endpoint='/private/user/update')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
@@ -429,7 +429,7 @@ def user_update():
 @app.route(CLOUD_URL + '/private/account/update/<account_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def account_update(account_id):
-    logTraffic(CLOUD_URL, endpoint='/private/account/update/<account_id>')  
+    logTraffic(CLOUD_URL, endpoint='/private/account/update/<account_id>')
     hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
@@ -1100,4 +1100,3 @@ def cloud_public_user_view(user_id):
             return fk.Response(json.dumps(user, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
-                        

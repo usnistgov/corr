@@ -22,7 +22,7 @@ import mimetypes
 @crossdomain(fk=fk, app=app, origin='*')
 def record_remove(record_id):
     logTraffic(CLOUD_URL, endpoint='/private/record/remove/<record_id>')
-    hash_session = basicAuthSession(fk.request)     
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
@@ -86,7 +86,7 @@ def record_comment(record_id):
                     if len(comment) != 0:
                         record.comments.append(comment)
                         record.save()
-                        return fk.Response('Projject comment posted', status.HTTP_200_OK)
+                        return fk.Response('Project comment posted', status.HTTP_200_OK)
                     else:
                         return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -96,7 +96,7 @@ def record_comment(record_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/record/comments/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -119,7 +119,7 @@ def record_comments(record_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -201,7 +201,7 @@ def record_create(project_id):
                                 return cloud_response(201, 'Record successfully created.', json.loads(project.summary_json()))
                             except:
                                 print(str(traceback.print_exc()))
-                                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
                 else:
@@ -300,7 +300,7 @@ def record_edit(record_id):
                                 return fk.Response(record.summary_json(), mimetype='application/json')
                             except:
                                 print(str(traceback.print_exc()))
-                                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                                return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
@@ -320,7 +320,7 @@ def pull_record(hash_session, record_id):
         except:
             record = None
             print(str(traceback.print_exc()))
-            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
         if record is None:
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -351,7 +351,7 @@ def public_record_comments(record_id):
         else:
             return fk.Response(json.dumps(record.comments, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT)) 
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/record/view/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -370,7 +370,7 @@ def public_record_view(record_id):
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))   
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/record/pull/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -394,7 +394,7 @@ def public_pull_record(record_id):
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 #To be fixed.
 #Implement the quotas here image_obj.tell()
@@ -407,7 +407,7 @@ def file_add(record_id):
     user_model = access_resp[1]
     if user_model is None:
         return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
-    else:    
+    else:
         if fk.request.method == 'POST':
             infos = {}
             try:
@@ -524,4 +524,3 @@ def file_remove(file_id):
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
-

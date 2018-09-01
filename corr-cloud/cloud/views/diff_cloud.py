@@ -22,7 +22,7 @@ import mimetypes
 # CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 #Only redirects to pages that signify the state of the problem or the result.
-#The API will return some json response at all times. 
+#The API will return some json response at all times.
 #I will handle my own status and head and content and stamp
 
 @app.route(CLOUD_URL + '/private/diff/create', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
@@ -79,7 +79,7 @@ def diff_create():
                         else:
                             return fk.Response('Both record from and to have to exist.', status.HTTP_404_NOT_FOUND)
                     except:
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
     else:
@@ -99,7 +99,7 @@ def diff_remove(diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
                 return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
@@ -128,7 +128,7 @@ def diff_comment(diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -149,7 +149,7 @@ def diff_comment(diff_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
+       return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/diff/view/<diff_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -165,7 +165,7 @@ def diff_view(diff_id):
                 diff = DiffModel.objects.with_id(diff_id)
             except:
                 print(str(traceback.print_exc()))
-                return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
             if diff is None:
                 return fk.Response('Unable to find this diff.', status.HTTP_404_NOT_FOUND)
             else:
@@ -217,7 +217,7 @@ def diff_edit(diff_id):
                             return fk.Response('Diff edited', status.HTTP_200_OK)
                         except:
                             print(str(traceback.print_exc()))
-                            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
                 else:
@@ -254,7 +254,7 @@ def download_diff(hash_session, diff_id):
         except:
             diff = None
             print(str(traceback.print_exc()))
-            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
         if diff is None:
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:

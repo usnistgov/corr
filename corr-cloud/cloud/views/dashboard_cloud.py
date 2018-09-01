@@ -20,14 +20,14 @@ import traceback
 import mimetypes
 
 #Only redirects to pages that signify the state of the problem or the result.
-#The API will return some json response at all times. 
+#The API will return some json response at all times.
 #I will handle my own status and head and content and stamp
 
 # Query language that follows reference relationship in models.
 # ![val1,val2,...] => looking for these values (empty means all).
 # ?[mod1,mod2,...] => looking in models (all means all) (>|<|>=|<=modX.fieldY)
 # ~ at end => include models and models depending on them
-# none => only models that depends on them. 
+# none => only models that depends on them.
 # | => pipe the result of the precedent to another query. ? is not accepted here
 # & => adding another query as a separate one to merge their results.
 # There is no or because these are enoug. we are not working on conditionals.
@@ -122,7 +122,7 @@ def project_dashboard():
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/projects')
-            
+
             if current_user.group == "admin":
                 projects = ProjectModel.objects().order_by('-updated_at')
             else:
@@ -170,7 +170,7 @@ def users_dashboard():
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/dashboard/users')
-            
+
             if current_user.group == "admin":
                 users = UserModel.objects().order_by('-updated_at')
             else:
@@ -184,9 +184,9 @@ def users_dashboard():
             summaries = []
             for u in users:
                 if u != current_user:
-                    print(u)
+                    # print(u)
                     profile = ProfileModel.objects(user=u).first()
-                    print(ProfileModel.objects(user=u))
+                    # print(ProfileModel.objects(user=u))
                     user_info = {}
                     user_info["created"] = str(u.created_at)
                     user_info["id"] = str(u.id)
@@ -255,7 +255,7 @@ def diffs_dashboard(project_id):
             else:
                 diffs_send = DiffModel.objects(sender=current_user).order_by('-updated_at')
                 diffs_targ = DiffModel.objects(targeted=current_user).order_by('-updated_at')
-                
+
                 for d in diffs_send:
                     if project_id == "all":
                         summaries.append(d.info())
@@ -327,7 +327,7 @@ def dashboard_records(project_id):
                             else:
                                 end = len(records['records'])
                             records['records'] = records['records'][begin:end]
-                records['end'] = end 
+                records['end'] = end
                 records['size'] = len(records['records'])
                 return fk.Response(json.dumps(records, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
@@ -341,7 +341,7 @@ def dashboard_records(project_id):
                     else:
                         return fk.Response(project.activity_json(), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/dashboard/envs/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -422,7 +422,7 @@ def dashboard_envs(project_id):
                     envs['size'] = len(envs['envs'])
                     return fk.Response(json.dumps(envs, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/private/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -450,9 +450,9 @@ def record_diff(record_id):
                     founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
-                            diffs.append(diff.info())  
+                            diffs.append(diff.info())
                     record_info = record.info()
-                    record_info['diffs'] = diffs 
+                    record_info['diffs'] = diffs
                     block_size = 45
                     end = -1
                     if fk.request.args:
@@ -471,7 +471,7 @@ def record_diff(record_id):
                                 else:
                                     end = len(record_info['diffs'])
                                 record_info['diffs'] = record_info['diffs'][begin:end]
-                    record_info['end'] = end         
+                    record_info['end'] = end
                     return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 else:
                     return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -542,7 +542,7 @@ def reproducibility_assess(record_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))      
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
 ### Public access
@@ -651,7 +651,7 @@ def public_search():
                         # if not skip:
                         # if (diff.record_from.access == 'public' and diff.record_to.access == 'public'):
                         diffs.append({"id":str(diff.id), "created":str(diff.created_at), "from":diff.record_from.info(), "to":diff.record_to.info(), "sender":diff.sender.info(), "targeted":diff.targeted.info(), "proposition":diff.proposition, "method":diff.method, "status":diff.status, "comments":len(diff.comments)})
-                
+
                 block_size = 45
                 if size == 0:
                     end = -1
@@ -749,7 +749,7 @@ def public_dashboard_records(project_id):
                     founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                     if founds != None:
                         for diff in founds:
-                            diffs.append(diff.info()) 
+                            diffs.append(diff.info())
 
                     record_object['diffs'] = len(diffs)
                     records_object.append(record_object)
@@ -759,7 +759,7 @@ def public_dashboard_records(project_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))  
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
 @app.route(CLOUD_URL + '/public/dashboard/record/diff/<record_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
@@ -783,7 +783,7 @@ def public_record_diff(record_id):
                 founds = DiffModel.objects(record_to=record).order_by('-updated_at')
                 if founds != None:
                     for diff in founds:
-                        diffs.append(diff.info())  
+                        diffs.append(diff.info())
                 record_info = record.info()
                 record_info['diffs'] = diffs
                 block_size = 45
@@ -803,8 +803,8 @@ def public_record_diff(record_id):
                                 end = int(page)*block_size + block_size
                             else:
                                 end = len(record_info['diffs'])
-                            record_info['diffs'] = record_info['diffs'][begin:end]  
-                record_info['end'] = end        
+                            record_info['diffs'] = record_info['diffs'][begin:end]
+                record_info['end'] = end
                 return fk.Response(json.dumps(record_info, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
             else:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
@@ -891,7 +891,7 @@ def app_create():
                     logo_name = '{0}-logo.png'.format(name)
                     logo_location = 'remote'
                     logo_group = 'logo'
-                    
+
                     query_app = ApplicationModel.objects(developer=developer, name=name).first()
                     if query_app:
                         return fk.Response('Tool already exists.', status.HTTP_403_FORBIDDEN)

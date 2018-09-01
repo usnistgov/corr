@@ -181,7 +181,7 @@ def project_create():
                         return fk.Response('A project with this name already exists.', status.HTTP_403_FORBIDDEN)
                 except:
                     print(str(traceback.print_exc()))
-                    return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
         else:
@@ -245,7 +245,7 @@ def project_edit(project_id):
                         return fk.Response('Project updated', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
         else:
@@ -256,7 +256,7 @@ def project_edit(project_id):
 @app.route(CLOUD_URL + '/private/project/record/<project_name>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def project_records(project_name):
-    logTraffic(CLOUD_URL, endpoint='/private/project/record/<project_name>')   
+    logTraffic(CLOUD_URL, endpoint='/private/project/record/<project_name>')
     hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
@@ -290,7 +290,7 @@ def public_project_sync(project_id):
             project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
             return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))        
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 @app.route(CLOUD_URL + '/public/project/record/<project_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
@@ -332,4 +332,4 @@ def public_project_view(project_id):
             project["activity"] = {"number":len(records), "records":[{"id":str(record.id), "created":str(record.created_at), "updated":str(record.updated_at), "status":str(record.status)} for record in records]}
             return fk.Response(json.dumps(project, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
-        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))    
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

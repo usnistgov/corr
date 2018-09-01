@@ -24,7 +24,7 @@ import mimetypes
 @crossdomain(fk=fk, app=app, origin='*')
 def env_remove(env_id):
     logTraffic(CLOUD_URL, endpoint='/private/env/remove/<env_id>')
-    hash_session = basicAuthSession(fk.request)     
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method in ['GET', 'DELETE']:
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         current_user = access_resp[1]
@@ -42,7 +42,7 @@ def env_remove(env_id):
                 # result = storage_manager.delete_env_files(env)
                 # if result:
                 # implement project history en removal: project.history.append(str(env.id))
-                
+
                 count = 0
                 for project in ProjectModel.objects(owner=current_user):
                     try:
@@ -143,7 +143,7 @@ def env_create(record_id):
                         return cloud_response(201, 'Environment successfully created.', project.history)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
     else:
@@ -224,7 +224,7 @@ def env_next(project_id):
                         return cloud_response(201, 'Environment successfully created.', project_content)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return fk.Response('No content provided for the creation.', status.HTTP_204_NO_CONTENT)
     else:
@@ -254,7 +254,7 @@ def download_env(hash_session, env_id):
             env = None
             project = None
             print(str(traceback.print_exc()))
-            return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
         if env is None or project is None:
             return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
         else:
@@ -310,7 +310,7 @@ def env_edit(env_id):
                         return fk.Response('Environment edited', status.HTTP_200_OK)
                     except:
                         print(str(traceback.print_exc()))
-                        return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return fk.Response('Failure to process. Contact admin if it persists.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return fk.Response('No content provided for the update.', status.HTTP_204_NO_CONTENT)
     else:
@@ -322,7 +322,7 @@ def public_env_view(env_id):
     logTraffic(CLOUD_URL, endpoint='/public/env/view/<env_id>')
     if fk.request.method == 'GET':
         try:
-            env = EnvironmentModel.objects.with_id(env_id)            
+            env = EnvironmentModel.objects.with_id(env_id)
         except:
             env = None
             print(str(traceback.print_exc()))
