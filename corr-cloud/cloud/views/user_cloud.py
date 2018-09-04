@@ -414,10 +414,10 @@ def user_update():
                 user_model.save()
 
                 if password != "":
-                    response, messsage = access_manager.change_password(user_model, password)
+                    response, message = access_manager.change_password(user_model, password)
                     if response is None:
-                        if len(messsage) >0:
-                            return fk.Response(' '.join(messsage), status.HTTP_401_UNAUTHORIZED)
+                        if len(message) >0:
+                            return fk.Response(' '.join(message), status.HTTP_401_UNAUTHORIZED)
                         else:
                             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 return fk.Response('Account update succeed', status.HTTP_200_OK)
@@ -478,8 +478,8 @@ def account_update(account_id):
 
                         if password:
                             account, message = access_manager.change_password(account_model, password)
-                            if len(messsage) >0:
-                                return fk.Response(' '.join(messsage), status.HTTP_401_UNAUTHORIZED)
+                            if len(message) >0:
+                                return fk.Response(' '.join(message), status.HTTP_401_UNAUTHORIZED)
                         return fk.Response('Account update succeed', status.HTTP_200_OK)
                 else:
                     return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
@@ -952,10 +952,10 @@ def user_profile():
     if fk.request.method == 'GET':
         access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
-        user_model.save()
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
+            user_model.save()
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
             if profile_model == None:
