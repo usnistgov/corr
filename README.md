@@ -14,6 +14,9 @@ Installation instructions are available at <a href="https://github.com/usnistgov
 <a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
 <a href="">Panda</a>
 <a href="">CDE</a>
+<a href="">NoWorkflow</a>
+<a href="">MaestroWf</a>
+<a href="">CDE</a>
 <a href="">Taverna</a>
 <a href="">Kepler</a>
 <a href="">Galaxy</a>
@@ -60,7 +63,7 @@ and posterity is so critical now.
 The platform is composed of five components. A database component which stores the meta-data about
 the diverse entities in relationship within the platform. An api component which identifies and allow
 software management tools to interact with the platform. A cloud component dedicated for the frontend
-component access to the meta-data and records. A storage component that handles non meta-data 
+component access to the meta-data and records. A storage component that handles non meta-data
 files management.
 </p>
 <p align="justify">
