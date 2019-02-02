@@ -189,12 +189,12 @@ so will cause stability issue.
 To require account verification before the first login, after registration, the admin must go to the users page and approve them.
 This is the default behavior of the CoRR instance. To allow automatic login on registration and turn down requirement for admin
 initial acceptance, refer to your your_setup_path/corr-setup/config/config/config-(cloud, api).py SECURITY_MANAGEMENT section. Turn the
-`account` key value to false to turn off on registration moderation and true to require it before login.
+`account` key value to 'False' to turn off on registration moderation and true to require it before login.
 
 ## Platform communication scanning
 
 The corrapi and corrcloud are designed to work with [ClamAV antivirus](http://www.clamav.net). Thus, security checks on all content
-sent to these services can be enforced. By default in the current instance this is not enabled as it stalls the instance much. However,
-activating it provide a greater security regarding what is received from users, tools and what is effectively stored on the system.
-To turn this feature on, go to your_setup_path/corr-setup/config/config/config-(cloud, api).py under the same SECURITY_MANAGEMENT as
-before and change `content` key value to true.
+sent to these services can be enforced. By default in the current instance this is enabled as it stalls the instance much. Activating
+it provide a greater security regarding what is received from users, tools and what is effectively stored on the system.
+To turn this feature off, go to your_setup_path/corr-setup/config/config/config-(cloud, api).py under the same SECURITY_MANAGEMENT as
+before and change `content` key value to 'False'.
