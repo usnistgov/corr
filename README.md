@@ -70,4 +70,4 @@ provided in [LAUNCH](./LAUNCH.md) and also in videos (click on the corr youtube 
 ## Citation
 
 * [Congo, F.Y.P., Wheeler, D., Hill, D.R.C. 2015. Building a Cloud Service for Reproducible Simulation Management. SciPy proceedings. 2015.](http://conference.scipy.org/proceedings/scipy2015/pdfs/yannick_congo.pdf)
-* [Congo, F. Y. P. 2015. CoRR - Materials Genome Initiation (MGI) at NIST](https://mgi.nist.gov/cloud-reproducible-records)
+* [Congo, F. Y. P. 2015. CoRR - Materials Genome Initiation (MGI) at NIST.](https://mgi.nist.gov/cloud-reproducible-records)
