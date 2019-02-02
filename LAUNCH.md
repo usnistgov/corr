@@ -171,7 +171,7 @@ exception in a specific one. Please refer to [How to use](USE.md) to understand 
 # Advanced configuration
 
 By default a CoRR instance uses local filesystem for data storage, does user moderation (no automatic login after registration.  
-users must be approved by the admin) and communication to the instance is not scanned. The can be changed but will require
+users must be approved by the admin) and communication to the instance is not scanned. They can be changed and will not require
 rebuilding the containers.
 
 ## Storage options
