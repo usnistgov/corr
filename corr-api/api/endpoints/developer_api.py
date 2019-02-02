@@ -1,6 +1,6 @@
 import json
 
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
@@ -34,7 +34,7 @@ def apps_get(api_token):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
         elif current_user.group == "admin": # An admin is a meta developer.
-            apps = ApplicationModel.objects()
+            apps = ApplicationModel.objects
             apps_json = {'total_apps':len(apps), 'apps':[]}
             for application in apps:
                 apps_json['apps'].append(application.extended())
@@ -173,4 +173,3 @@ def app_connectivity(app_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
     else:
         return api_response(401, 'Unauthorized access to the API', 'This is not an app token.')
-

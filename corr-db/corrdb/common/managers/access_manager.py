@@ -1,14 +1,19 @@
+"""Manage access control.
+"""
 # from .. import logAccess
-from flask.ext.stormpath import StormpathManager
-from flask.ext.stormpath import user
-from flask.ext.stormpath import login_required
-from stormpath.error import Error
+# from flask.ext.stormpath import StormpathManager
+# from flask.ext.stormpath import user
+# from flask.ext.stormpath import login_required
+# from stormpath.error import Error
 import flask as fk
 
 import hashlib
 import datetime
 
 import re
+
+def get_or_create(document=None, **kwargs):
+    return (document(**kwargs).save(), True)
 
 # No admin access for now.
 # Only user access is handled.
@@ -20,10 +25,11 @@ class AccessManager:
         self.config = app.config['ACCOUNT_MANAGEMENT']
         self.secur = app.config['SECURITY_MANAGEMENT']['account']
 
-        if self.config['type'] == 'stormpath':
-            self.manager = StormpathManager(app)
-            self.type = 'stormpath'
-        elif self.config['type'] == 'api-token':
+        # if self.config['type'] == 'stormpath':
+        #     self.manager = StormpathManager(app)
+        #     self.type = 'stormpath'
+        # el
+        if self.config['type'] == 'api-token':
             self.manager = None
             self.type = 'api-token'
         elif self.config['type'] == 'mongodb':
@@ -32,8 +38,9 @@ class AccessManager:
 
     def create_account(self, email, password, fname, lname, mname):
         """Create an account.
-            Returns:
-                Tuple of the account object and a message in case of an error.
+
+        Returns:
+          Tuple of the account object and a message in case of an error.
         """
         try:
             _account = self.manager.application.accounts.create({
@@ -56,8 +63,9 @@ class AccessManager:
 
     def register(self, email, password, fname, lname, mname):
         """Registration handler.
-            Returns:
-                User account registered.
+
+        Returns:
+          User account registered.
         """
         from corrdb.common.models import UserModel
         account = None
@@ -93,7 +101,7 @@ class AccessManager:
                 if self.type == 'stormpath':
                     account = UserModel.objects(email=email).first()
                     if account is None:
-                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                        (account, created) = get_or_create(document=UserModel, created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                     if _account is None:
                         failure = self.create_account(email, password, fname, lname, mname)[0] is None
                         if failure:
@@ -102,7 +110,7 @@ class AccessManager:
                 if self.type == 'mongodb':
                     account = UserModel.objects(email=email).first()
                     if account is None:
-                        (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                        (account, created) = get_or_create(document=UserModel, created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                     account.password = hash_pwd
                     account.save()
                 account.save()
@@ -114,8 +122,9 @@ class AccessManager:
 
     def login(self, email, password):
         """Account login handler.
-            Returns:
-                User account instance if successful otherwise None.
+
+        Returns:
+          User account instance if successful otherwise None.
         """
         from corrdb.common.models import UserModel
         account = None
@@ -155,7 +164,7 @@ class AccessManager:
                 else:
                     account = UserModel.objects(email=email, password=hash_pwd).first()
             else:
-                # (account, created) = UserModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
+                # (account, created) = get_or_create(document=UserModel, created_at=str(datetime.datetime.utcnow()), email=email, group='user', api_token=hashlib.sha256(('CoRRToken_%s_%s'%(email, str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest())
                 # account.password = hash_pwd
                 # account.save()
                 account = None
@@ -182,8 +191,9 @@ class AccessManager:
 
     def unregister(self, session_token):
         """Account unregistration handler.
-            Returns:
-                None in case of a success. Otherwise return the account object.
+
+        Returns:
+          None in case of a success. Otherwise return the account object.
         """
         # No unregister yet.
         if self.type == 'stormpath':
@@ -196,8 +206,9 @@ class AccessManager:
 
     def reset_password(self, email):
         """Password recovery handler.
-            Returns:
-                User Account in case of a success, otherwise None.
+
+        Returns:
+          User Account in case of a success, otherwise None.
         """
         account = None
         if self.type == 'stormpath':
@@ -218,8 +229,9 @@ class AccessManager:
 
     def change_password(self, user_model, password):
         """Password change handler.
-            Returns:
-                User Account in case of a success, otherwise None.
+
+        Returns:
+          User Account in case of a success, otherwise None.
         """
         account = None
         check_password = self.password_check(password)
@@ -255,15 +267,16 @@ class AccessManager:
         return account, []
 
     def password_check(self, password):
-        """
-        Verify the strength of 'password'
-        Returns a dict indicating the wrong criteria
+        """Verify the strength of 'password'.
         A password is considered strong if:
             8 characters length or more
             1 digit or more
             1 symbol or more
             1 uppercase letter or more
             1 lowercase letter or more
+
+        Returns:
+          a dict indicating the wrong criteria.
         """
 
         # calculating the length
@@ -296,21 +309,23 @@ class AccessManager:
 
     def accounts(self):
         """Retrieve the registered accounts.
-            Returns:
-                List of registered users accounts.
+
+        Returns:
+          List of registered users accounts.
         """
         from corrdb.common.models import UserModel
         users = None
         if self.type == 'stormpath':
             users = self.manager.application.accounts
         elif self.type == 'api-token' or self.type == 'mongodb':
-            users = UserModel.objects()
+            users = UserModel.objects
         return users
 
     def check_cloud(self, hash_session, acc_sec=False, cnt_sec=False):
         """Check that a session is valid.
-            Returns:
-                Tuple of Validation Boolean and the account instance.
+
+        Returns:
+          Tuple of Validation Boolean and the account instance.
         """
         from corrdb.common.models import UserModel
         if hash_session == "logout":
@@ -332,14 +347,15 @@ class AccessManager:
                     return True, account
             else:
                 return False, account
-            
+
     def check_api(self, token, acc_sec=False, cnt_sec=False):
         from corrdb.common.models import UserModel
         """Get the user object instance from its api token.
-            Returns:
-                The user object instance.
+
+        Returns:
+          The user object instance.
         """
-        print([user.extended() for user in UserModel.objects()])
+        print([user.extended() for user in UserModel.objects])
         account = UserModel.objects(api_token=token).first()
         if account.extend.get('access', 'verified') != 'verified':
             return None
@@ -349,13 +365,14 @@ class AccessManager:
     def check_app(self, token, acc_sec=False, cnt_sec=False):
         from corrdb.common.models import ApplicationModel
         """Get the application object instance from its api token.
-            Returns:
-                The application object instance.
+
+        Returns:
+          The application object instance.
         """
         if token == "no-app":
             return None
         else:
-            for application in ApplicationModel.objects():
+            for application in ApplicationModel.objects:
                 print("{0} -- {1}.".format(str(application.developer.id), application.name))
             application = ApplicationModel.objects(app_token=token).first()
             developer = application.developer
@@ -363,5 +380,3 @@ class AccessManager:
                 return None
             else:
                 return application
-
-

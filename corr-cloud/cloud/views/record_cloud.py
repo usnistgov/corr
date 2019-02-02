@@ -6,9 +6,9 @@ from corrdb.common.models import RecordModel
 from corrdb.common.models import RecordBodyModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel
-from flask.ext.stormpath import user
-from flask.ext.stormpath import login_required
-from flask.ext.api import status
+from flask_stormpath import user
+from flask_stormpath import login_required
+from flask_api import status
 import flask as fk
 from cloud import app, cloud_response, storage_manager, access_manager, data_pop, secure_content, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
@@ -287,7 +287,7 @@ def record_edit(record_id):
 
                                 # Allow all the extra keys to go inside body.
                                 if len(data) != 0:
-                                    body, created = RecordBodyModel.objects.get_or_create(head=record)
+                                    body, created = get_or_create(document=RecordBodyModel, head=record)
                                     if created:
                                         body.data = data
                                     else:
@@ -424,7 +424,7 @@ def file_add(record_id):
                     security = secure_content(fk.request.data)
                     if not security[0]:
                         return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
-                    file_model = FileModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                    file_model = get_or_create(document=FileModel, created_at=datetime.datetime.utcnow())
                     infos = json.loads(fk.request.data)
                     relative_path = infos.get("relative_path", "./")
                     group = infos.get("group", "undefined")
@@ -447,7 +447,7 @@ def file_add(record_id):
                                         file_model.relative_path = relative_path
                                         file_model.location = location
                                         today = datetime.date.today()
-                                        (stat, created) = StatModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), interval="%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day), category="storage", periode="daily")
+                                        (stat, created) = get_or_create(document=StatModel, created_at=str(datetime.datetime.utcnow()), interval="%s_%s_%s_0_0_0-%s_%s_%s_23_59_59"%(today.year, today.month, today.day, today.year, today.month, today.day), category="storage", periode="daily")
                                         if not created:
                                             stat.traffic += file_obj.tell()
                                             stat.save()

@@ -1,10 +1,10 @@
 """CoRR user api endpoints."""
 import json
 
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, get_or_create
 from api import app, storage_manager, access_manager, secure_content ,API_URL, ACC_SEC, CNT_SEC, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
@@ -59,7 +59,7 @@ def user_search(api_token, app_token, key_words):
 
             words = key_words.split('-')
 
-            for user in UserModel.objects():
+            for user in UserModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 profile = ProfileModel.objects(user=user).first()
@@ -89,7 +89,7 @@ def user_search(api_token, app_token, key_words):
                     results['results']['users']['users-list'].append({'user':user.info(), 'profile':profile.info()})
                 results['results']['users']['users-total'] = len(results['results']['users']['users-list'])
 
-            for app in ApplicationModel.objects():
+            for app in ApplicationModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -127,7 +127,7 @@ def user_search(api_token, app_token, key_words):
                     results['results']['apps']['apps-list'].append(app.info())
                 results['results']['apps']['apps-total'] = len(results['results']['apps']['apps-list'])
 
-            for project in ProjectModel.objects():
+            for project in ProjectModel.objects:
                 if project.access == "public" or (project.access == "private" and project.owner == current_user):
                     exists = [False for word in words]
                     condition = [True for word in words]
@@ -164,7 +164,7 @@ def user_search(api_token, app_token, key_words):
                                     exists[index] = True
                             except:
                                 pass
-                            
+
                         else:
                             exists[index] = True
                         index += 1
@@ -172,7 +172,7 @@ def user_search(api_token, app_token, key_words):
                         results['results']['projects']['projects-list'].append(project.info())
                     results['results']['projects']['projects-total'] = len(results['results']['projects']['projects-list'])
 
-            for record in RecordModel.objects():
+            for record in RecordModel.objects:
                 if record.access == "public" or (record.access == "private" and record.project.owner == current_user):
                     exists = [False for word in words]
                     condition = [True for word in words]
@@ -241,7 +241,7 @@ def user_search(api_token, app_token, key_words):
                         results['results']['records']['records-list'].append(record.info())
                     results['results']['records']['records-total'] = len(results['results']['records']['records-list'])
 
-            for env in EnvironmentModel.objects():
+            for env in EnvironmentModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -269,7 +269,7 @@ def user_search(api_token, app_token, key_words):
                     results['results']['envs']['envs-list'].append(env.info())
                 results['results']['envs']['envs-total'] = len(results['results']['envs']['envs-list'])
 
-            for bundle in BundleModel.objects():
+            for bundle in BundleModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -297,7 +297,7 @@ def user_search(api_token, app_token, key_words):
                     results['results']['bundles']['bundles-list'].append(bundle.info())
                 results['results']['bundles']['bundles-total'] = len(results['results']['bundles']['bundles-list'])
 
-            for file_ in FileModel.objects():
+            for file_ in FileModel.objects:
                 if file_ == None or (file_ != None and file_.owner == current_user):
                     exists = [False for word in words]
                     condition = [True for word in words]
@@ -346,7 +346,7 @@ def user_search(api_token, app_token, key_words):
                         results['results']['files']['files-list'].append(file_.info())
                     results['results']['files']['files-total'] = len(results['results']['files']['files-list'])
 
-            for version in VersionModel.objects():
+            for version in VersionModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -382,7 +382,7 @@ def user_search(api_token, app_token, key_words):
             results['total-results'] += results['results']['bundles']['bundles-total']
             results['total-results'] += results['results']['files']['files-total']
             results['total-results'] += results['results']['versions']['versions-total']
-            
+
             return api_response(200, 'Search results for: [%s]'%key_words, results)
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
@@ -619,9 +619,9 @@ def user_message_create(api_token, app_token):
                     else:
                         if title == '' and content == '':
                             return api_response(400, 'Missing mandatory fields', 'A message cannot have title and content empty.')
-                        
+
                         receiver = UserModel.objects.with_id(receiver_id)
-                        message, created = MessageModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=current_user, receiver=receiver, title=title, attachments=attachments, content=content)
+                        message, created = get_or_create(document=MessageModel, created_at=str(datetime.datetime.utcnow()), sender=current_user, receiver=receiver, title=title, attachments=attachments, content=content)
                         if receiver == None:
                             return api_response(400, 'Missing mandatory fields', 'A message should have an existing receiver.')
                         if not created:
@@ -777,7 +777,7 @@ def user_files(api_token, app_token):
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/files')
             if fk.request.method == 'GET':
                 files = []
-                for _file in FileModel.objects():
+                for _file in FileModel.objects:
                     info = _file.info()
                     if info['owner'] == 'public' or info['owner'] == str(current_user.id):
                         files.append(_file.info())
@@ -813,7 +813,7 @@ def user_file_upload(api_token, app_token, group, item_id):
                     if fk.request.files:
                         file_obj = fk.request.files['file']
                         filename = '%s_%s'%(item_id, file_obj.filename)
-                        _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
+                        _file, created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), name=filename)
                         if not created:
                             return api_response(200, 'File already exists with same name for this item', _file.info())
                         else:
@@ -883,7 +883,7 @@ def user_file_upload(api_token, app_token, group, item_id):
                                 env = EnvironmentModel.objects(bundle=item).first()
                                 rec_temp = RecordModel.objects(environment=env).first()
                                 if rec_temp == None: # No record yet performed.
-                                    for project in ProjectModel.objects():
+                                    for project in ProjectModel.objects:
                                         if str(env.id) in project.history:
                                             owner = project.owner
                                             break
@@ -1022,7 +1022,7 @@ def user_file_download(api_token, app_token, file_id):
         else:
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/download/<file_id>')
             if fk.request.method == 'GET':
-                # print [f.extended() for f in FileModel.objects()]
+                # print [f.extended() for f in FileModel.objects]
                 file_meta = FileModel.objects.with_id(file_id)
                 if file_meta == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
@@ -1110,7 +1110,7 @@ def user_file_create(api_token, app_token):
                     if storage == '' or name == '':
                         return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url).')
                     else:
-                        
+
                         if 'http://' in storage or 'https://' in storage:
                             file_buffer = storage_manager.web_get_file(storage)
                             location = 'remote'
@@ -1125,9 +1125,9 @@ def user_file_create(api_token, app_token):
                         else:
                             return api_response(400, 'Could not reach the file location', 'We could not find the file raw content at the location provided.')
                         if access == 'public':
-                            _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
+                            _file, created = get_or_create(document=FileModel, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
                         else:
-                            _file, created = FileModel.objects.get_or_create(owner=owner, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
+                            _file, created = get_or_create(document=FileModel, owner=owner, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
                         if not created:
                             return api_response(200, 'File already exists', _file.info())
                         else:
@@ -1156,7 +1156,7 @@ def user_file_show(api_token, app_token, file_id):
         else:
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/show/<file_id>')
             if fk.request.method == 'GET':
-                # print [f.extended() for f in FileModel.objects()]
+                # print [f.extended() for f in FileModel.objects]
                 _file = FileModel.objects.with_id(file_id)
                 if _file == None:
                     return api_response(404, 'Request suggested an empty response', 'Unable to find this file.')
@@ -1358,7 +1358,7 @@ def user_file_delete(api_token, app_token, item_id, file_id):
                             if item != None:
                                 rec_temp = RecordModel.objects(environment=item).first()
                                 if rec_temp == None:
-                                    for p in ProjectModel.objects():
+                                    for p in ProjectModel.objects:
                                         if str(item.id) in p.history:
                                             owner = p.owner
                                             break
@@ -1646,8 +1646,8 @@ def user_project_create(api_token, app_token):
                     logo_location = 'local'
                     logo_group = 'logo'
                     logo_description = 'This is the default image used for the project logo in case none is provided.'
-                    logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
-                    
+                    logo, logo_created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+
                     application = None
                     cloned_from = ''
                     if cloned_from_id != '':
@@ -1660,7 +1660,7 @@ def user_project_create(api_token, app_token):
                     if project:
                         return api_response(200, 'Project already exists', project.info())
                     else:
-                        project, created = ProjectModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
+                        project, created = get_or_create(document=ProjectModel, created_at=str(datetime.datetime.utcnow()), owner=current_user, name=name)
                         # project.application = current_app
                         project.description = description
                         project.goals = goals
@@ -2119,20 +2119,20 @@ def user_project_env_push(api_token, app_token, project_id):
                             return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                         else:
                             if app_token == "no-app":
-                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                                env, created = get_or_create(document=EnvironmentModel, created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
                             else:
-                                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
+                                env, created = get_or_create(document=EnvironmentModel, created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics, application = current_app)
                             if not created:
                                 return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                             else:
-                                version, created = VersionModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()))
+                                version, created = get_or_create(document=VersionModel, created_at=str(datetime.datetime.utcnow()))
                                 if version_dict != None:
                                     version.system = version_dict.get('system','unknown')
                                     version.baseline = version_dict.get('baseline','')
                                     version.marker = version_dict.get('marker','')
                                     version.save()
                                     env.version = version
-                                bundle, created = BundleModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()))
+                                bundle, created = get_or_create(document=BundleModel, created_at=str(datetime.datetime.utcnow()))
                                 if bundle_dict != None:
                                     bundle.scope = bundle_dict.get('scope','unknown')
                                     location = bundle_dict.get('location', '')
@@ -2417,7 +2417,7 @@ def user_record_create(api_token, app_token, project_id):
                             if len(history) > 0:
                                 environment = history[-1] # Create with the latest environment.
                             else:
-                                environment, create = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), application=current_app, group="unknown", system="undefined")
+                                environment, create = get_or_create(document=EnvironmentModel, created_at=str(datetime.datetime.utcnow()), application=current_app, group="unknown", system="undefined")
                         # if len(resources) > 0:
                         #     for res_id in resources_ids:
                         #         res = FileModel.objects.with_id(res_id)
@@ -2425,12 +2425,12 @@ def user_record_create(api_token, app_token, project_id):
                         #             resources.append(res)
                         # print resources
                         if environment != None:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
+                            record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
                         else:
-                            record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
-                        
+                            record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels, execution=execution)
+
                         if len(data) != 0:
-                            body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
+                            body, created = get_or_create(document=RecordBodyModel, head=record, data=data)
                         logStat(record=record)
                         current_app.records = current_app.records + 1
                         current_app.save()
@@ -2641,7 +2641,7 @@ def user_record_update(api_token, app_token, record_id):
                             record.resources.extend(resources)
                             record.save()
                             if len(data) != 0:
-                                body, created = RecordBodyModel.objects.get_or_create(head=record)
+                                body, created = get_or_create(document=RecordBodyModel, head=record)
                                 if created:
                                     body.data = data
                                     body.save()
@@ -2707,7 +2707,7 @@ def user_diffs(api_token, app_token):
         else:
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/diffs')
             if fk.request.method == 'GET':
-                diffs = DiffModel.objects()
+                diffs = DiffModel.objects
                 diffs_dict = {'total_diffs':0, 'diffs':[]}
                 for diff in diffs:
                     if (diff.record_from.project.owner != current_user and diff.record_to.project.owner != current_user) and (diff.record_from.access == 'private' and diff.record_to.access == 'private'):
@@ -2765,7 +2765,7 @@ def user_diff_create(api_token, app_token):
                         if sender == None or record_from == None or record_to == None:
                             return api_response(400, 'Missing references mandatory fields', 'A diff should have at least an existing sender, an existing record from where the diff is linked and an existing record to which it is linked.')
                         if (record_to.access != 'private' or (record_from.access == 'private' and record_from.project.owner == sender)) and ((record_from.access == 'private' and record_from.project.owner == sender) or record_from.access != 'private'):
-                            diff, created = DiffModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
+                            diff, created = get_or_create(document=DiffModel, created_at=str(datetime.datetime.utcnow()), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
                             if not created:
                                 return api_response(200, 'Diff already exists', diff.info())
                             else:
@@ -2947,7 +2947,7 @@ def user_resolve_item(api_token, app_token, item_id):
                 resolution = {'type':'', 'endpoints':[]}
                 if item_id == 'root':
                     resolution['type'] = 'User'
-                    
+
                     resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['status', '--st'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/status'})
                     resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['connectivity', '--cn'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/connectivity'})
                     resolution['endpoints'].append({'methods':['GET','POST','PUT','UPDATE','DELETE','POST'], 'struct':{}, 'meta':['profile', '--pf'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/profile/show'})

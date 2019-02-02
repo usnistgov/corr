@@ -1,0 +1,14 @@
+---
+# Testing the CoRR API micro-service
+test_name: Testing the CoRR API micro-service.
+
+stages:
+  - name: Check that it is accessible.
+    request:
+      url: http://corrapi:5100/corr/api/v0.2/public/users
+      method: GET
+    response:
+      status_code: 200
+      body:
+        code: 200
+        title: "Users list"

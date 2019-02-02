@@ -1,5 +1,5 @@
 var Space = function (){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     this.dash_content = "";
     this.query_result = "";
     this.dashboard = function(page) {
@@ -858,7 +858,7 @@ var Space = function (){
 };
 
 var Record = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     var self = this;
     self._id = _id;
     self.switchAccess = function() {
@@ -968,7 +968,7 @@ var Record = function (_id){
 };
 
 var Account = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     var self = this;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a record and change its content we reload the whole page.
@@ -1006,7 +1006,7 @@ var Account = function (_id){
 };
 
 var Project = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     var self = this;
     self._id = _id;
     self.switchAccess = function() {
@@ -1113,7 +1113,7 @@ var Project = function (_id){
 };
 
 var Application = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update an app and change its content we reload the whole page.
     this.save = function(name, about, access) {
@@ -1190,7 +1190,7 @@ var Application = function (_id){
 };
 
 var Diff = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a diff and change its content we reload the whole page.
     this.save = function(method, proposition, status) {
@@ -1241,7 +1241,7 @@ var Diff = function (_id){
 };
 
 var Environment = function (_id){
-    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+    var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
     self._id = _id;
     // This way of doing is not optimal as we do not atomically update a env and change its content we reload the whole page.
     this.save = function(group, system) {

@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession, get_or_create
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ApplicationModel
@@ -10,7 +10,7 @@ from corrdb.common.models import TrafficModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
 from corrdb.common.models import BundleModel
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 from cloud import app, storage_manager, access_manager, secure_content, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
@@ -63,7 +63,7 @@ def user_register():
                         # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
                         return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
+                        (profile_model, created) = get_or_create(document=ProfileModel, created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
                         # print("Token %s"%user_model.api_token)
                         # print(fk.request.headers.get('User-Agent'))
                         # print(fk.request.remote_addr)
@@ -295,7 +295,7 @@ def user_dashboard():
             except:
                 pass
             if user_model.group == "admin":
-                projects = ProjectModel.objects().order_by('-updated_at')
+                projects = ProjectModel.objects.order_by('-updated_at')
             else:
                 projects = ProjectModel.objects(owner=user_model).order_by('-updated_at')
             if profile_model is not None:
@@ -512,7 +512,7 @@ def user_file_upload(group, item_id):
                 if fk.request.files:
                     file_obj = fk.request.files['file']
                     filename = '%s_%s'%(item_id, file_obj.filename)
-                    _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
+                    _file, created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), name=filename)
                     if not created:
                         return cloud_response(200, 'File already exists with same name for this item', _file.info())
                     else:
@@ -586,7 +586,7 @@ def user_file_upload(group, item_id):
                             env = EnvironmentModel.objects(bundle=item).first()
                             rec_temp = RecordModel.objects(environment=env).first()
                             if rec_temp == None: # No record yet performed.
-                                for project in ProjectModel.objects():
+                                for project in ProjectModel.objects:
                                     if str(env.id) in project.history:
                                         owner = project.owner
                                         break
@@ -897,12 +897,12 @@ def user_trusted():
 def user_home():
     logTraffic(CLOUD_URL, endpoint='/public/user/home')
     if fk.request.method == 'GET':
-        users = UserModel.objects()
-        projects = ProjectModel.objects()
-        records = RecordModel.objects()
-        environments = EnvironmentModel.objects()
-        apps = ApplicationModel.objects()
-        traffic = TrafficModel.objects()
+        users = UserModel.objects
+        projects = ProjectModel.objects
+        records = RecordModel.objects
+        environments = EnvironmentModel.objects
+        apps = ApplicationModel.objects
+        traffic = TrafficModel.objects
         print(fk.request.path)
 
         users_stat = {"number":len(users)}
@@ -959,7 +959,7 @@ def user_profile():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
             if profile_model == None:
-                profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
+                profile_model, created = get_or_create(document=ProfileModel, user=user_model, fname="None", lname="None", organisation="None", about="None")
                 if created:
                     profile_model.created_at=str(datetime.datetime.utcnow())
                     profile_model.save()

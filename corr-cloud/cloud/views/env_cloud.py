@@ -8,9 +8,9 @@ from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel
 from corrdb.common.models import VersionModel
 from corrdb.common.models import BundleModel
-from flask.ext.stormpath import user
-from flask.ext.stormpath import login_required
-from flask.ext.api import status
+from flask_stormpath import user
+from flask_stormpath import login_required
+from flask_api import status
 import flask as fk
 from cloud import app, cloud_response, storage_manager, access_manager, secure_content ,CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
@@ -246,7 +246,7 @@ def download_env(hash_session, env_id):
                         project = pro
                         break
             else:
-                for pro in ProjectModel.objects():
+                for pro in ProjectModel.objects:
                     if str(env.id) in pro.history:
                         project = pro
                         break

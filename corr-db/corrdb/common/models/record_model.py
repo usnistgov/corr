@@ -64,13 +64,14 @@ class RecordModel(db.Document):
 
     def save(self, *args, **kwargs):
         """Overwite the record mongoengine save.
+
         Returns:
-            The call to the mongoengine Document save function.
+          The call to the mongoengine Document save function.
         """
         self.updated_at = str(datetime.datetime.utcnow())
         self.project.save()
         return super(RecordModel, self).save(*args, **kwargs)
-    
+
     def update_fields(self, data):
         """Update the fields based on the data.
         """
@@ -78,7 +79,7 @@ class RecordModel(db.Document):
             if not v.required:
                 if k != 'created_at':
                         yield k, v
-    
+
     def update(self, data):
         """Overwite the record mongoengine update.
         """
@@ -89,25 +90,27 @@ class RecordModel(db.Document):
                 else:
                     setattr(self, k, data[k])
                 del data[k]
-        self.save()       
+        self.save()
         if data:
-            body, created = RecordBodyModel.objects.get_or_create(head=self)
+            body, created = get_or_create(document=RecordBodyModel, head=self)
             body.data.update(data)
             body.save()
 
     @property
     def body(self):
         """Retrieve the record body.
+
         Returns:
-            The record body.
+          The record body.
         """
         return RecordBodyModel.objects(head=self).first()
 
     @property
     def duration(self):
         """Compute the record duration.
+
         Returns:
-            The record duration.
+          The record duration.
         """
 
         updated_strp = datetime.datetime.strptime(str(self.updated_at), '%Y-%m-%d %H:%M:%S.%f')
@@ -118,8 +121,9 @@ class RecordModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an record model instance content.
+
         Returns:
-            The dictionary content of the record model.
+          The dictionary content of the record model.
         """
         data = {}
         data['head'] = {'updated':str(self.updated_at),
@@ -155,8 +159,9 @@ class RecordModel(db.Document):
 
     def _comments(self):
         """Gather the project comments.
+
         Returns:
-            The project comments.
+          The project comments.
         """
         comments = []
         for com_id in self.comments:
@@ -167,8 +172,9 @@ class RecordModel(db.Document):
 
     def _resources(self):
         """Filter out the project resources files.
+
         Returns:
-            The project files.
+          The project files.
         """
         resources = []
         for f_id in self.resources:
@@ -180,8 +186,9 @@ class RecordModel(db.Document):
     def extended(self):
         """Add the extend, system, execution, preparation, inputs, outputs, dependencies, comments,
         resources, rationels fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['head']['system'] = self.system
@@ -216,16 +223,18 @@ class RecordModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-    
+
     def summary_json(self):
         """Transform the info dictionary with inputs, outputs, dependencies, comments, resources, rationels fields into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         data['head']['inputs'] = len(self.inputs)
@@ -255,8 +264,9 @@ class RecordBodyModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an record body model instance content.
+
         Returns:
-            The dictionary content of the record body model.
+          The dictionary content of the record body model.
         """
         data = {}
         data['head'] = str(self.head.id)
@@ -265,8 +275,9 @@ class RecordBodyModel(db.Document):
 
     def extended(self):
         """Add the extend field to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['extend'] = self.extend
@@ -274,20 +285,18 @@ class RecordBodyModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-
-
-        
-

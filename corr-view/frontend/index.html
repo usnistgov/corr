@@ -531,7 +531,7 @@
         <script type="text/javascript" src="js/purify.min.js"></script>
         <script type="text/javascript" src="js/js.cookie.js"></script>
 
-        <script type="text/javascript" src="js/config/default.js"></script>
+        <script type="text/javascript" src="js/config.js"></script>
 
         <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="js/materialize.js"></script>
@@ -564,7 +564,7 @@
                 // if(Cookies.get("disclaimer") == undefined || Cookies.get("disclaimer") == null){
                 //     $('#disclaimer-modal').openModal();
                 // }
-                
+
             });
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange=function()
@@ -593,7 +593,7 @@
                     }
                 }
             }
-            xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/public/user/home");
+            xmlhttp.open("GET", config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version+"/public/user/home");
             xmlhttp.send();
             if(Cookies.get('session') != undefined && Cookies.get('session') != null && Cookies.get('session') != 'none'){
                 // Check that the user is trusted with this session key.
@@ -607,8 +607,8 @@
                 document.getElementById("nav-base").innerHTML += "<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='dashboard'><a href='"+window.location.origin+"/dashboard' class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-dashboard'></i></a></li>\n<li class='tooltipped' data-position='bottom' data-delay='50' data-tooltip='logout'><a onclick=\"user.logout()\" class='waves-effect waves-block waves-light'><i class='nav-action mdi-action-exit-to-app'></i></a></li>";
                 document.getElementById("float-profile").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-settings'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='account'><a href='#account-modal' class='modal-trigger btn-floating btn-large green'><i class='large mdi-communication-vpn-key'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='profile'><a href='#profile-modal' class='modal-trigger btn-floating btn-large grey darken-1'><i class='large mdi-action-account-circle'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='chat'><a href='https://gitter.im/usnistgov/corr' class='modal-trigger btn-floating btn-large orange darken-1' target='_blank'><i class='large mdi-communication-chat'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='email'><a href='mailto:contactus.corr@gmail.com' class='modal-trigger btn-floating btn-large purple darken-1'><i class='large mdi-communication-email'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li></ul>";
 
-                document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
-                document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture";
+                document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version+"/private/"+Cookies.get('session')+"/user/picture";
+                document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version+"/private/"+Cookies.get('session')+"/user/picture";
             }
 
             if(Cookies.get('group') == "admin"){

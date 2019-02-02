@@ -60,9 +60,9 @@ def make_version():
     return version
 
 setup(name='corrdb',
-      version='0.1',
+      version='0.2',
       description='Package for CoRR Database Models',
-      author='Yannick Congo',
+      author='Faical Yannick Congo',
       author_email='yannick.congo@gmail.com',
       url='https://github.com/usnistgov/corr',
       packages=find_packages(),

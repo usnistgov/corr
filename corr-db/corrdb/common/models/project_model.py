@@ -6,7 +6,7 @@ from ..models import CommentModel
 from ..models import EnvironmentModel
 import json
 from bson import ObjectId
-          
+
 class ProjectModel(db.Document):
     """CoRR backend project model.
     This model represents how a project is stored in CoRR.
@@ -49,8 +49,9 @@ class ProjectModel(db.Document):
 
     def save(self, *args, **kwargs):
         """Overwrite the project mongoengine save.
+
         Returns:
-            The call to the mongoengine Document save function.
+          The call to the mongoengine Document save function.
         """
         try:
             self.updated_at = str(datetime.datetime.utcnow())
@@ -60,8 +61,9 @@ class ProjectModel(db.Document):
 
     def _history(self):
         """Gather the project environments history.
+
         Returns:
-            The environments history.
+          The environments history.
         """
         history = []
         for env_id in self.history:
@@ -72,8 +74,9 @@ class ProjectModel(db.Document):
 
     def _comments(self):
         """Gather the project comments.
+
         Returns:
-            The project comments.
+          The project comments.
         """
         comments = []
         for com_id in self.comments:
@@ -84,8 +87,9 @@ class ProjectModel(db.Document):
 
     def _resources(self):
         """Filter out the project resources files.
+
         Returns:
-            The project files.
+          The project files.
         """
         resources = []
         for f_id in self.resources:
@@ -96,11 +100,12 @@ class ProjectModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an project model instance content.
+
         Returns:
-            The dictionary content of the project model.
+          The dictionary content of the project model.
         """
-        data = {'created':str(self.created_at), 'updated':str(self.last_updated), 'id': str(self.id), 
-        'owner':self.owner.info(), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags), 
+        data = {'created':str(self.created_at), 'updated':str(self.last_updated), 'id': str(self.id),
+        'owner':self.owner.info(), 'name': self.name, 'access':self.access, 'tags':','.join(self.tags),
         'duration': str(self.duration), 'records':self.record_count, 'environments':len(self.history),
         'diffs':self.diff_count, 'comments':len(self.comments), 'resources':len(self.resources)}
         # data['owner-profile'] = self.owner.info()['user-name']
@@ -116,8 +121,9 @@ class ProjectModel(db.Document):
 
     def extended(self):
         """Add the extend, goals, history, description, comments, resources fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['history'] = [env.extended() for env in self._history()]
@@ -128,16 +134,18 @@ class ProjectModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-    
+
     def summary_json(self):
         """Transform the info dictionary with goals, description fields into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary.
+          The pretty json of the info dictionary.
         """
         data = self.info()
         if self.goals != None:
@@ -152,8 +160,9 @@ class ProjectModel(db.Document):
 
     def activity_json(self, public=False, page=0):
         """Gather all the activity done on the project.
+
         Returns:
-            The pretty json of the project activity.
+          The pretty json of the project activity.
         """
         records = self.records
         block_size = 45
@@ -198,8 +207,9 @@ class ProjectModel(db.Document):
 
     def compress(self):
         """Extract out a 'compressed' structure of the project with its records and diffs.
+
         Returns:
-            The dictionary of the augmented extended dictionary.
+          The dictionary of the augmented extended dictionary.
         """
         data = self.extended()
         data['records'] = [record.extended() for record in self.records]
@@ -209,20 +219,22 @@ class ProjectModel(db.Document):
     @property
     def record_count(self):
         """Count the project's records.
+
         Returns:
-            The number of records in the project.
+          The number of records in the project.
         """
         return self.records.count()
 
     @property
     def diff_count(self):
         """Count the project's records' diffs
+
         Returns:
-            The number of records' diffs in the project.
+          The number of records' diffs in the project.
         """
         from ..models import DiffModel
         diffs = []
-        for diff in DiffModel.objects():
+        for diff in DiffModel.objects:
             if diff.record_from.project == self and str(diff.id) not in [str(d.id) for d in diffs]:
                 diffs.append(diff)
             if diff.record_to.project == self and str(diff.id) not in [str(d.id) for d in diffs]:
@@ -232,12 +244,13 @@ class ProjectModel(db.Document):
     @property
     def diffs(self):
         """Gather all the project's records' diffs.
+
         Returns:
-            All the project's records' diffs.
+          All the project's records' diffs.
         """
         from ..models import DiffModel
         diffs = []
-        for diff in DiffModel.objects():
+        for diff in DiffModel.objects:
             if diff.record_from.project == self:
                 diffs.append(diff)
             if diff.record_to.project == self:
@@ -247,8 +260,9 @@ class ProjectModel(db.Document):
     @property
     def records(self):
         """Gather all the project's records.
+
         Returns:
-            The project's records.
+          The project's records.
         """
         from ..models import RecordModel
         return RecordModel.objects(project=self).order_by('-updated_at')
@@ -256,20 +270,22 @@ class ProjectModel(db.Document):
     @property
     def envs(self):
         """Gather all the project's records.
+
         Returns:
-            The project's records.
+          The project's records.
         """
         envs = []
         for record in self.records:
             if record.environment:
                 envs.append(record.environment)
         return envs
-    
+
     @property
     def last_updated(self):
         """Compute the last time the project was updated based on the records history.
+
         Returns:
-            The most recent time a record in the project was record or project data changed.
+          The most recent time a record in the project was record or project data changed.
         """
         try:
             updated = self.updated_at
@@ -283,8 +299,9 @@ class ProjectModel(db.Document):
     @property
     def duration(self):
         """Compute the project duration from the creation stamp to the last updated.
+
         Returns:
-            The duration of the project from its creation to its latest update.
+          The duration of the project from its creation to its latest update.
         """
         last_updated_strp = datetime.datetime.strptime(str(self.last_updated), '%Y-%m-%d %H:%M:%S.%f')
         # created_strp = datetime.datetime.strptime(str(self.created_at), '%Y-%m-%d %H:%M:%S.%f')

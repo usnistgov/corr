@@ -2,7 +2,7 @@ import datetime
 from ..core import db
 import json
 from bson import ObjectId
-          
+
 class VersionModel(db.Document):
     """CoRR backend version model.
     The model holding the environment version.
@@ -23,6 +23,8 @@ class VersionModel(db.Document):
     extend = db.DictField()
 
     def clone(self):
+        """Cloning the mongoengine object instance.
+        """
         del self.__dict__['_id']
         del self.__dict__['_created']
         del self.__dict__['_changed_fields']
@@ -30,8 +32,9 @@ class VersionModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an version model instance content.
+
         Returns:
-            The dictionary content of the version model.
+          The dictionary content of the version model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'system':self.system,
         'baseline':self.baseline, 'marker':self.marker}
@@ -39,8 +42,9 @@ class VersionModel(db.Document):
 
     def extended(self):
         """Add the extend field to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['extend'] = self.extend
@@ -48,16 +52,18 @@ class VersionModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

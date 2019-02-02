@@ -1,12 +1,12 @@
 import flask as fk
-from flask.ext.api import status
+from flask_api import status
 from corrdb.common import logAccess, logStat, logTraffic
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
 from corrdb.common.models import ApplicationModel
 from corrdb.common.models import TrafficModel
-from corrdb.common.models import StatModel  
+from corrdb.common.models import StatModel
 from corrdb.common.models import RecordModel
 from corrdb.common.models import BundleModel
 from corrdb.common.models import VersionModel
@@ -36,7 +36,7 @@ from mongoengine.queryset.visitor import Q
 
 app, storage_manager, access_manager = setup_app(__name__)
 
-CLOUD_VERSION = 0.1
+CLOUD_VERSION = 0.2
 CLOUD_URL = '/cloud/v{0}'.format(CLOUD_VERSION)
 
 # Stormpath
@@ -84,7 +84,7 @@ class InMemoryZip(object):
         self.in_memory_zip = StringIO()
 
     def append(self, filename_in_zip, file_contents):
-        '''Appends a file with name filename_in_zip and contents of 
+        '''Appends a file with name filename_in_zip and contents of
         file_contents to the in-memory zip.'''
         # Get a handle to the in-memory zip in append mode
         zf = zipfile.ZipFile(self.in_memory_zip, "a", zipfile.ZIP_DEFLATED, False)
@@ -95,7 +95,7 @@ class InMemoryZip(object):
         # Mark the files as having been created on Windows so that
         # Unix permissions are not inferred as 0000
         for zfile in zf.filelist:
-            zfile.create_system = 0        
+            zfile.create_system = 0
 
         return self
 
@@ -321,32 +321,32 @@ def queryModelGeneric(objectModel, field, value, offset, leftover):
     if field != "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                els = [el for el in objectModel.objects() if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
+                els = [el for el in objectModel.objects if any(val.lower() in str(o.extended()["head"][field]).lower() or val.lower() in str(o.extended()["body"][field]).lower() for val in value)]
             else:
-                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()[field]).lower() for val in value)]
+                els = [el for el in objectModel.objects if any(val.lower() in str(el.info()[field]).lower() for val in value)]
         else:
             if objectModel == RecordModel:
-                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
+                els = [o for o in objectModel.objects if value.lower() in str(o.extended()["head"][field]).lower() or value.lower() in str(o.extended()["body"][field]).lower()]
             else:
-                els = [o for o in objectModel.objects() if value.lower() in str(o.info()[field]).lower()]
+                els = [o for o in objectModel.objects if value.lower() in str(o.info()[field]).lower()]
     elif field == "*" and value != "*":
         if len(value) > 0:
             if objectModel == RecordModel:
-                els = [el for el in objectModel.objects() if any(val.lower() in str(el.extended()).lower() for val in value)]
+                els = [el for el in objectModel.objects if any(val.lower() in str(el.extended()).lower() for val in value)]
             else:
-                els = [el for el in objectModel.objects() if any(val.lower() in str(el.info()).lower() for val in value)]
+                els = [el for el in objectModel.objects if any(val.lower() in str(el.info()).lower() for val in value)]
         else:
             if objectModel == RecordModel:
-                els = [o for o in objectModel.objects() if value.lower() in str(o.extended()).lower()]
+                els = [o for o in objectModel.objects if value.lower() in str(o.extended()).lower()]
             else:
-                els = [o for o in objectModel.objects() if value.lower() in str(o.info()).lower()]
+                els = [o for o in objectModel.objects if value.lower() in str(o.info()).lower()]
     elif field != "*" and value == "*":
         if objectModel == RecordModel:
-            els = [o for o in objectModel.objects() if o.extended()[field] != ""]
+            els = [o for o in objectModel.objects if o.extended()[field] != ""]
         else:
-            els = [o for o in objectModel.objects() if o.info()[field] != ""]
+            els = [o for o in objectModel.objects if o.info()[field] != ""]
     else:
-        els = [el for el in objectModel.objects()]
+        els = [el for el in objectModel.objects]
 
     if objectModel == ProfileModel:
         els = [el.user for el in els]
@@ -509,7 +509,7 @@ def fetchDependencies(name, obj, offset, leftover, filtrs):
             deps["record"] = records
 
         if "project" not in filtrs:
-            projects = [pr for pr in ProjectModel.objects() if str(obj.id) in pr.history]
+            projects = [pr for pr in ProjectModel.objects if str(obj.id) in pr.history]
             projects, size, offset, leftover = paginate(projects, offset, leftover, size)
             deps["project"] = projects
     # elif name == "bundle":
@@ -758,12 +758,12 @@ def processRequest(request, page, filtr):
             context["tool"] = []
             context["project"] = []
             context["record"] = []
-            
+
             # context["file"] = []
             # context["profile"] = []
             context["env"] = []
             context["diff"] = []
-            
+
             # context["bundle"] = []
             filtrs = []
 

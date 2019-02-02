@@ -1,7 +1,7 @@
 """Usage: run.py [--host=<host>] [--port=<port>] [--debug | --no-debug]
 
 --host=<host>   set the host address or leave it to 0.0.0.0.
---port=<port>   set the port number or leave it to 5000.
+--port=<port>   set the port number or leave it to 5200.
 
 """
 from cloud import app

@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession, get_or_create
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ProjectModel
@@ -9,9 +9,9 @@ from corrdb.common.models import RecordModel
 from corrdb.common.models import FileModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import StatModel
-from flask.ext.stormpath import user
-from flask.ext.stormpath import login_required
-from flask.ext.api import status
+from flask_stormpath import user
+from flask_stormpath import login_required
+from flask_api import status
 import flask as fk
 from cloud import app, query_basic, paginate, pagination_logs, cloud_response, storage_manager, access_manager, secure_content ,processRequest, queryResponseDict, CLOUD_URL, MODE, VIEW_HOST, VIEW_PORT, ACC_SEC, CNT_SEC
 import datetime
@@ -844,7 +844,7 @@ def app_all():
             # Show all the apps for now. Only admin can create them anyways.
             apps = ApplicationModel.objects().order_by('-created_at')
             # if current_user.group == "admin":
-            #     apps = ApplicationModel.objects()
+            #     apps = ApplicationModel.objects
             # else:
             #     apps = ApplicationModel.objects(developer=current_user)
             apps_json = {'total_apps':len(apps), 'apps':[]}
@@ -896,8 +896,8 @@ def app_create():
                     if query_app:
                         return fk.Response('Tool already exists.', status.HTTP_403_FORBIDDEN)
                     else:
-                        logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
-                        app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
+                        logo, logo_created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                        app, created = get_or_create(document=ApplicationModel, developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
                         if not created:
                             return fk.Response('For some reason the tool was not created. Try again later.', status.HTTP_500_INTERNAL_SERVER_ERROR)
                         else:
@@ -1121,11 +1121,10 @@ def app_logo(app_id):
         else:
             return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-
 @app.route(CLOUD_URL + '/public/dashboard/query', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_query_dashboard():
-    logTraffic(fk=None, account=None, component=CLOUD_URL, endpoint='/public/dashboard/query')
+    logTraffic(CLOUD_URL, endpoint='/public/dashboard/query')
     if fk.request.method == 'GET':
         _request = ""
         for key, value in fk.request.args.items():
@@ -1137,3 +1136,12 @@ def public_query_dashboard():
         return cloud_response(200, message, queryResponseDict(context))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/public/cloud/status', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def public_cloud_status():
+    logTraffic(CLOUD_URL, endpoint='/public/cloud/status')
+    if fk.request.method == 'GET':
+        return cloud_response(200, 'Cloud reached', 'This CoRR Cloud instance is up and running')
+    else:
+        return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')

@@ -357,13 +357,13 @@
 
         <script type="text/javascript" src="../js/purify.min.js"></script>
         <script type="text/javascript" src="../js/js.cookie.js"></script>
-        <script type="text/javascript" src="../js/config/default.js"></script>
+        <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
         <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>    
+        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
@@ -402,7 +402,7 @@
               var user_lname = document.getElementById("user-lname");
               var user_org = document.getElementById("user-org");
               var user_about = document.getElementById("user-about");
-              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
               user_picture.src = url+"/public/user/picture/"+_id;
               user_fname.value = fname;
               user_fname.readOnly = true;
@@ -461,7 +461,7 @@
               app_about.readOnly = true;
 
             }
-            
+
             function custom_succeed(xhttp){
                 var content = JSON.parse(xhttp.responseText);
                 var platform_name = document.getElementById("platform-name");

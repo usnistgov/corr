@@ -25,17 +25,19 @@ class TrafficModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an traffic model instance content.
+
         Returns:
-            The dictionary content of the traffic model.
+          The dictionary content of the traffic model.
         """
-        data = {'created':str(self.created_at), 'id': str(self.id), 
+        data = {'created':str(self.created_at), 'id': str(self.id),
         'service':str(self.service), 'endpoint':self.endpoint}
         return data
 
     def extended(self):
         """Add the extend, interactions fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['interactions'] = self.interactions
@@ -44,16 +46,18 @@ class TrafficModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-    
+
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

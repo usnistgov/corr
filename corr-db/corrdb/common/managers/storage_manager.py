@@ -1,10 +1,12 @@
+"""Manage storage control.
+"""
 import boto3
 from io import StringIO
 from io import BytesIO
 import zipfile
 import simplejson as json
 import time
-import traceback 
+import traceback
 import datetime
 import requests
 import os
@@ -47,8 +49,9 @@ class StorageManager:
 
     def storage_get_file(self, group='', key=''):
         """Retreive a file from the file storage.
-            Returns:
-                File buffer.
+
+        Returns:
+          File buffer.
         """
         try:
             obj = None
@@ -104,10 +107,11 @@ class StorageManager:
 
     def storage_upload_file(self, file_meta=None, file_obj=None):
         """Upload a file into the s3 bucket.
-            Returns:
-                an array of two elements. one is the status
-                of the upload and the other is a message 
-                accompanying it.
+
+        Returns:
+          an array of two elements. one is the status
+          of the upload and the other is a message
+          accompanying it.
         """
         if file_meta != None and file_obj != None:
             m = hashlib.md5()
@@ -155,8 +159,9 @@ class StorageManager:
 
     def agent_delete(self, group, path, key):
         """Agent function that deletes a file in the storage.
-            Returns:
-                Deletion status of file.
+
+        Returns:
+          Deletion status of file.
         """
         found = False
         for file_path in glob.glob('{0}/corr-{1}s'.format(path, group)):
@@ -168,8 +173,9 @@ class StorageManager:
 
     def agent_prepare(self, zf, group, object_dict):
         """Agent function that prepares a dictionary for storage in a compressed files.
-            Returns:
-                Zipping status
+
+        Returns:
+          Zipping status
         """
         object_buffer = StringIO()
         object_buffer.write(json.dumps(object_dict, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -182,16 +188,17 @@ class StorageManager:
 
     def storage_delete_file(self, group='', key=''):
         """Delete a file from the s3 bucket.
-            Returns:
-                The status of the deletion. True for success
-                and False for failure.
+
+        Returns:
+          The status of the deletion. True for success
+          and False for failure.
         """
         deleted = False
         if key not in ["default-logo.png", "default-picture.png"]:
             if self.config['type'] == 's3':
                 s3_files = self.s3.Bucket(self.bucket)
                 for _file in s3_files.objects.all():
-                    if _file.key == 'corr-{0}s/{1}'.format(group, key): 
+                    if _file.key == 'corr-{0}s/{1}'.format(group, key):
                         _file.delete()
                         print("File deleted!")
                         deleted = True
@@ -239,8 +246,9 @@ class StorageManager:
 
     def delete_record_files(self, record, logStat):
         """Delete a record files.
-            Returns:
-                True if all files are deleted.
+
+        Returns:
+          True if all files are deleted.
         """
         from corrdb.common.models import FileModel
         final_result = True
@@ -253,8 +261,9 @@ class StorageManager:
 
     def delete_record_file(self, record_file, logStat):
         """Delete a record file and log the stats.
-            Returns:
-                Return of the storage_delete_file call.
+
+        Returns:
+          Return of the storage_delete_file call.
         """
         result = self.storage_delete_file(record_file.group, record_file.storage)
         if result:
@@ -264,8 +273,9 @@ class StorageManager:
 
     def web_get_file(self, url):
         """Retrieve a externaly hosted file.
-            Returns:
-                File buffer.
+
+        Returns:
+          File buffer.
         """
         try:
             print(url)
@@ -279,8 +289,9 @@ class StorageManager:
 
     def prepare_env(self, project=None, env=None):
         """Bundle a project's environment.
-            Returns:
-                Zip file buffer of the environment's content.
+
+        Returns:
+          Zip file buffer of the environment's content.
         """
         if project == None or env == None:
             return [None, '']
@@ -322,8 +333,9 @@ class StorageManager:
 
     def prepare_project(self, project=None):
         """Bundle an entire project
-            Returns:
-                Zip file buffer of the project's content.
+
+        Returns:
+          Zip file buffer of the project's content.
         """
         if project == None:
             return [None, '']
@@ -377,8 +389,9 @@ class StorageManager:
 
     def prepare_record(self, record=None):
         """Bundle a record.
-            Returns:
-                Zip file buffer of a record's content.
+
+        Returns:
+          Zip file buffer of a record's content.
         """
         if record == None:
             return [None, '']
@@ -487,15 +500,16 @@ class StorageManager:
                         zf.writestr(data, bundle_buffer.read())
                     except:
                         print(traceback.print_exc())
-                
+
             memory_file.seek(0)
 
         return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
 
     def prepare_diff(self, diff=None):
         """Bundle a diff.
-            Returns:
-                Zip file buffer of a diff's content.
+
+        Returns:
+          Zip file buffer of a diff's content.
         """
         if diff == None:
             return [None, '']
@@ -503,7 +517,7 @@ class StorageManager:
             records = []
             records.append(diff.record_from)
             records.append(diff.record_to)
-           
+
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
                 self.agent_prepare(zf, 'diff', diff.info())
@@ -611,7 +625,7 @@ class StorageManager:
                             zf.writestr(data, bundle_buffer.read())
                         except:
                             print(traceback.print_exc())
-                
+
             memory_file.seek(0)
 
         return [memory_file, "diff-%s.zip"%(str(diff.id))]

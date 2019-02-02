@@ -2,7 +2,7 @@ import datetime
 from ..core import db
 import json
 from bson import ObjectId
-          
+
 class BundleModel(db.Document):
     """CoRR backend bundle model.
     Meta-data about the environment bundle is stored in
@@ -28,8 +28,9 @@ class BundleModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an bundle model instance content.
+
         Returns:
-            The dictionary content of the bundle model.
+          The dictionary content of the bundle model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'scope':self.scope,
         'storage':self.storage, 'size':self.size, 'mimetype':self.mimetype}
@@ -43,8 +44,9 @@ class BundleModel(db.Document):
 
     def extended(self):
         """Add the extend field to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['extend'] = self.extend
@@ -52,16 +54,18 @@ class BundleModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

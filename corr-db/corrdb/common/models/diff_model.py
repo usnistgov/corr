@@ -11,7 +11,7 @@ from bson import ObjectId
 class DiffModel(db.Document):
     """CoRR backend diff model.
     Model that define how the differentiation between two records
-    can be stored. It captures the various interactions between 
+    can be stored. It captures the various interactions between
     users around their data and the path to agreement or disagreement
     about diff request from a user based on his record and another's.
 
@@ -48,8 +48,9 @@ class DiffModel(db.Document):
 
     def _comments(self):
         """Retrieve the diff's comments objects.
+
         Returns:
-            The diff's comments.
+          The diff's comments.
         """
         comments = []
         for com_id in self.comments:
@@ -60,8 +61,9 @@ class DiffModel(db.Document):
 
     def _resources(self):
         """Filter out the diff's resources files objects.
+
         Returns:
-            The diff's resources.
+          The diff's resources.
         """
         resources = []
         for f_id in self.resources:
@@ -72,11 +74,12 @@ class DiffModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an diff model instance content.
+
         Returns:
-            The dictionary content of the diff model.
+          The dictionary content of the diff model.
         """
-        data = {'created':str(self.created_at), 'id': str(self.id), 
-        'from':self.record_from.info(), 'to': self.record_to.info(), 'proposition':self.proposition, 
+        data = {'created':str(self.created_at), 'id': str(self.id),
+        'from':self.record_from.info(), 'to': self.record_to.info(), 'proposition':self.proposition,
         'method': self.method, 'status': self.status}
         data['sender'] = str(self.sender.id)
         data['targeted'] = str(self.targeted.id)
@@ -86,8 +89,9 @@ class DiffModel(db.Document):
 
     def extended(self):
         """Add the extend, sender, targeted, resources, comments fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         sender_profile = ProfileModel.objects(user=self.sender).first()
@@ -99,16 +103,18 @@ class DiffModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-    
+
     def summary_json(self):
         """Transform the info dictionary with sender, targeted, comments, resources fields into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         data['sender'] = str(self.sender.id)

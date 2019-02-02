@@ -1,6 +1,6 @@
 var sharer = {
     user: function(object){
-        var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+        var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
         var picture = url+"/public/user/picture/"+object["id"];
         var corr_base = location.protocol + '//' + location.host + '/';
         var content = "<div class='col s12 m6 l4'>";

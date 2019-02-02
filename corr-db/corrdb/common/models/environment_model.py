@@ -7,7 +7,7 @@ from ..models import VersionModel
 from ..models import CommentModel
 from ..models import FileModel
 from ..models import ApplicationModel
-          
+
 class EnvironmentModel(db.Document):
     """CoRR backend environment model.
     Model that represents how the environment is recorded.
@@ -36,7 +36,7 @@ class EnvironmentModel(db.Document):
     group = db.StringField(default="unknown", choices=possible_group)
     possible_system = ["container-based", "vm-based", "tool-based", "cloud-based", "device-based", "lab-based", "custom-based", "undefined"]
     system = db.StringField(default="undefined", choices=possible_system)
-    specifics = db.DictField() 
+    specifics = db.DictField()
     version = db.ReferenceField(VersionModel)
     bundle = db.ReferenceField(BundleModel)
     comments = db.ListField(db.StringField())
@@ -45,8 +45,9 @@ class EnvironmentModel(db.Document):
 
     def _comments(self):
         """Gather the environment comments.
+
         Returns:
-            The environment comments.
+          The environment comments.
         """
         comments = []
         for com_id in self.comments:
@@ -57,8 +58,9 @@ class EnvironmentModel(db.Document):
 
     def _resources(self):
         """Filter out the environment resources files.
+
         Returns:
-            The environment files.
+          The environment files.
         """
         resources = []
         for f_id in self.resources:
@@ -69,8 +71,9 @@ class EnvironmentModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an environment model instance content.
+
         Returns:
-            The dictionary content of the environment model.
+          The dictionary content of the environment model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'group':self.group,
         'system':self.system, 'specifics':self.specifics}
@@ -94,10 +97,11 @@ class EnvironmentModel(db.Document):
         return data
 
     def extended(self):
-        """Add the extend, comments, resources, application, version, bundle fields 
+        """Add the extend, comments, resources, application, version, bundle fields
         to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['comments'] = [comment.extended() for comment in self._comments()]
@@ -120,16 +124,18 @@ class EnvironmentModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary with comments, resources fields into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         data['comments'] = len(self.comments)

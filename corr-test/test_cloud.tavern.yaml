@@ -1,0 +1,13 @@
+---
+# Testing the CoRR Cloud micro-service
+test_name: Testing the CoRR Cloud micro-service.
+
+stages:
+  - name: Check that it is accessible.
+    request:
+      url: http://corrcloud:5200/cloud/v0.2/public/user/home
+      method: GET
+    response:
+      status_code: 200
+      body:
+        version: "0.1"

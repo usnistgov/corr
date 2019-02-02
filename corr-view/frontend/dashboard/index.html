@@ -16,7 +16,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
         <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
-        
+
         <title>CoRR - Cloud of Reproducible Records</title>
 
         <link rel="icon" href="../images/logo.ico" sizes="32x32">
@@ -38,7 +38,7 @@
     <body>
 
         <div id="loader-wrapper">
-            <div id="loader"></div>        
+            <div id="loader"></div>
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
@@ -662,13 +662,13 @@
 
         <script type="text/javascript" src="../js/purify.min.js"></script>
         <script type="text/javascript" src="../js/js.cookie.js"></script>
-        <script type="text/javascript" src="../js/config/default.js"></script>
+        <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
         <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>    
+        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
@@ -696,7 +696,7 @@
               document.getElementById("nav-home-2").href = window.location.origin;
               document.getElementById("nav-dashboard").href = window.location.origin+"/dashboard";
             });
-            
+
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
             var view_selected = "";
@@ -838,7 +838,7 @@
               var user_lname = document.getElementById("user-lname");
               var user_org = document.getElementById("user-org");
               var user_about = document.getElementById("user-about");
-              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
               user_picture.src = url+"/public/user/picture/"+_id;
               user_fname.value = fname;
               user_fname.readOnly = true;
@@ -1148,7 +1148,7 @@
                 console.log("No Custom JSON file found.")
             };
             config.load_xml('custom.json', [], custom_succeed, custom_failed);
-            
+
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
         <script type="text/javascript" src="../js/callbacks/application.js"></script>

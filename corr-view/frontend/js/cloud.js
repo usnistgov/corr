@@ -1,6 +1,6 @@
 var client = new XMLHttpRequest();
 var user = {
-    url: config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1",
+    url: config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version,
     username:"",
     email: "",
     api: "",
@@ -27,7 +27,7 @@ var user = {
                 }else {
                     config.error_modal('An error occured during share.', this.responseText);
                 }
-            } 
+            }
         };
         xmlhttp.open("GET", this.url+"/public/"+type+"/view/"+id);
         xmlhttp.send();
@@ -45,14 +45,14 @@ var user = {
                     var response = JSON.parse(this.responseText);
                     Cookies.set('session', response['session'], { path: '' });
                     Cookies.set('group', response['group'], { path: '' });
-                    
+
                     // window.location.reload();
                     window.location.replace(window.location.origin);
                 }else {
                     $('#loading-modal').closeModal();
                     config.error_modal('An error occured during login.', this.responseText);
                 }
-            } 
+            }
         };
         xmlhttp.open("POST", this.url+"/public/user/login");
         xmlhttp.send(JSON.stringify(request));
@@ -83,7 +83,7 @@ var user = {
             xmlhttp.send(JSON.stringify(request));
         }else{
             config.error_modal('Register failed', 'Passwords mismatch');
-        }  
+        }
     },
     logout: function(where) {
         var xmlhttp = new XMLHttpRequest();
@@ -105,11 +105,11 @@ var user = {
                     $('#loading-modal').closeModal();
                     config.error_modal('Logout failed', this.responseText);
                 }
-            } 
+            }
         };
         xmlhttp.open("GET", this.url+"/private/user/logout");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();   
+        xmlhttp.send();
     },
     renew: function() {
         var xmlhttp = new XMLHttpRequest();
@@ -124,11 +124,11 @@ var user = {
                     $('#loading-modal').closeModal();
                     config.error_modal('Revew API token failed', this.responseText);
                 }
-            } 
+            }
         };
         xmlhttp.open("GET", this.url+"/private/user/renew");
         xmlhttp.setRequestHeader("Authorization", "Basic " + btoa("user-session:" + Cookies.get('session')));
-        xmlhttp.send();   
+        xmlhttp.send();
     },
     update: function() {
         var xmlhttp = new XMLHttpRequest();
@@ -140,7 +140,7 @@ var user = {
         }else{
             var fname = document.getElementById('view-fname').value;
             var lname = document.getElementById('view-lname').value;
-            
+
             var org = document.getElementById('view-org').value;
             var about = document.getElementById('view-about').value;
             if(fname == "None"){
@@ -194,7 +194,7 @@ var user = {
         var formData = new FormData();
         formData.append("file", file.files[0], file.files[0].name);
         var url_temp = this.url;
-        
+
         var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
             _file = file.files[0],
             chunkSize = 2097152,  // Read in chunks of 2MB
@@ -214,7 +214,7 @@ var user = {
                 $.ajax({
                     url        : url_temp+"/private/file/upload/"+group+"/"+item_id+"?checksum="+spark.end(),
                     type       : "POST",
-                    data       : formData, 
+                    data       : formData,
                     async      : true,
                     cache      : false,
                     processData: false,
@@ -238,8 +238,8 @@ var user = {
                             }
 
                             if(group=="picture"){
-                                document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
-                                document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
+                                document.getElementById('account-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version+"/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
+                                document.getElementById('profile-user-picture').src = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version+"/private/"+Cookies.get('session')+"/user/picture?t=" + new Date().getTime();
                             }
                         }
                     },
@@ -285,7 +285,7 @@ var user = {
                     console.log("Recover successfull!");
                 } else {
                     $('#loading-modal').closeModal();
-                    config.error_modal('Recover failed', this.responseText);           
+                    config.error_modal('Recover failed', this.responseText);
                 }
             }
         }
@@ -417,7 +417,7 @@ var user = {
                     } else {
                         config.error_modal('Add app failed', this.responseText);
                     }
-                } 
+                }
             };
             if(!user.sanitize([name, about, access])){
                 Materialize.toast('Update failed: Invalid characters found!', 3000, 'rounded');
@@ -506,7 +506,7 @@ var user = {
             }
         }else{
             config.error_modal('Add project failed', 'Project name should not be empty.');
-        }  
+        }
     },
     add_user: function() {
         var email = document.getElementById("user-email").value;
@@ -621,7 +621,7 @@ var user = {
                         content += "</div>";
                         content += "</div>";
                         content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
-                    
+
                         project_content.innerHTML = content;
                         $('#loading-modal').closeModal();
                         config.error_modal('Add record successfull', 'Your changes to the project were accepted.');
@@ -688,7 +688,7 @@ var user = {
                             }
                             if(request != null && request != undefined){
                                 var xmlhttp = new XMLHttpRequest();
-                                var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+                                var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
                                 xmlhttp.onreadystatechange = function()
                                 {
                                     if(this.readyState == 4){
@@ -717,7 +717,7 @@ var user = {
                                             content += "<a onclick='config.error_modal(\"Record details failed\", \"Record details not implemented yet!\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right disabled tooltipped' data-position='bottom' data-delay='50' data-tooltip='details'><i class='mdi-action-visibility'></i></a>";
 
                                             if(Cookies.get("group") == "admin"){
-                                                content += "<a onclick='projectViewModal(\""+record["head"]["project"]["name"]+"\",\""+record["head"]["project"]["tags"]+"\",\""+record["head"]["project"]["description"]+"\",\""+record["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";                        
+                                                content += "<a onclick='projectViewModal(\""+record["head"]["project"]["name"]+"\",\""+record["head"]["project"]["tags"]+"\",\""+record["head"]["project"]["description"]+"\",\""+record["head"]["project"]["goals"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["name"]+"'><i class='mdi-file-folder'></i></a>";
                                                 content += "<a onclick='userViewModal(\""+record["head"]["project"]["owner"]["id"]+"\",\""+record["head"]["project"]["owner"]["profile"]["fname"]+"\""+",\""+record["head"]["project"]["owner"]["profile"]["lname"]+"\",\""+record["head"]["project"]["owner"]["profile"]["organisation"]+"\",\""+record["head"]["project"]["owner"]["profile"]["about"]+"\");' class='btn-floating activator btn-move-up waves-effect waves-light darken-2 right tooltipped' data-position='bottom' data-delay='50' data-tooltip='"+record["head"]["project"]["owner"]["profile"]["fname"]+"'><i class='mdi-social-person'></i></a>";
                                             }
 
@@ -726,7 +726,7 @@ var user = {
                                             content += "<span class='card-title activator grey-text text-darken-4'>"+record["head"]["id"]+"</span>";
                                             content += "<p class='grey-text ultra-small'><i class='mdi-device-access-time cyan-text text-darken-2'></i> "+record["head"]["created"]+"</p>";
                                             content += "<p><i class='mdi-action-restore cyan-text text-darken-2'></i> "+record["head"]["duration"].split(",")[0].split(".")[0]+" ago.</p>";
-                                            
+
                                             if(accessible){
                                                 content += "<div class='row margin'><div class='switch col s12'><i class='mdi-social-public prefix cyan-text text-darken-2'></i> <label>Private <input id='record-access-"+record["head"]["id"]+"' onclick='recordAccess(\""+record["head"]["id"]+"\");' type='checkbox' checked><span class='lever'></span> Public</label></div></div>";
                                             }else{
@@ -738,7 +738,7 @@ var user = {
                                             }
                                             content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-action-turned-in prefix cyan-text text-darken-2'></i><input readonly id='record-tags-"+record["head"]["id"]+"' type='text' value='"+record["head"]["tags"]+"'></div></div>";
                                             content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-event-note prefix cyan-text text-darken-2'></i><input readonly id='record-rationels-"+record["head"]["id"]+"' type='text' value='"+record["head"]["rationels"]+"'></div></div>";
-                                            
+
                                             var status_select = [];
                                             status_select.push("<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><select id='record-status-"+record["head"]["id"]+"'>");
                                             status_select.push("<option value='unknown' disabled>Choose status</option>");
@@ -775,13 +775,13 @@ var user = {
                                             }
 
                                             content += "<div class='row margin'><div class='input-field col s12'><i class='mdi-notification-sync prefix cyan-text text-darken-2'></i><input readonly placeholder='finished,crashed,terminated,running' id='record-status-"+record["head"]["id"]+"' type='text' value='"+record["head"]["status"]+"'></div></div>";
-                                            
+
                                             content += "<div class='card-action center-align'>";
                                             content += "<a onclick='config.error_modal(\"Record inputs view failed\", \"Record inputs view not implemented yet!\");' class='valign left tooltipped' data-position='bottom' data-delay='50' data-tooltip='inputs'><i class='mdi-communication-call-received cyan-text text-darken-2'></i> <span class='inputs badge'>"+record["head"]["inputs"]+"</span></a>";
                                             content += "<a onclick='config.error_modal(\"Record outputs view failed\", \"Record outputs view not implemented yet!\");' class='valign tooltipped' data-position='bottom' data-delay='50' data-tooltip='outputs'><i class='mdi-communication-call-made cyan-text text-darken-2'></i> <span class='outputs badge'>"+record["head"]["outputs"]+"</span></a>";
                                             content += "<a onclick='config.error_modal(\"Record dependencies view failed\", \"Record dependencies view not implemented yet!\");' class='valign right tooltipped' data-position='bottom' data-delay='50' data-tooltip='dependencies'><i class='mdi-editor-insert-link cyan-text text-darken-2'></i> <span class='dependencies badge'>"+record["head"]["dependencies"]+"</span></a>";
                                             content += "</div>";
-                                            content += "</div>";                
+                                            content += "</div>";
                                             content += "</div>";
                                             record_content.innerHTML = content;
                                             config.error_modal('Update succeeded', 'Your changes to this record were pushed.');
@@ -812,7 +812,7 @@ var user = {
                     config.error_modal('Upload record failed', 'Env bundle upload not implemented yet.');
                 }
             }
-            
+
         }else{
             config.error_modal('Upload record failed', 'Record id should not be empty.');
         }
@@ -907,7 +907,7 @@ var user = {
                         content += "</div>";
                         content += "</div>";
                         content += "<div id='project-"+project["id"]+"-confirm' class='modal'></div>";
-                    
+
                         project_content.innerHTML = content;
                         if(env_location != "remote"){
                             if (bundle.files.length > 0) {

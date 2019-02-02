@@ -27,10 +27,11 @@ class AccessModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an access model instance content.
+
         Returns:
-            The dictionary content of the access model.
+          The dictionary content of the access model.
         """
-        data = {'created':str(self.created_at), 'id': str(self.id), 
+        data = {'created':str(self.created_at), 'id': str(self.id),
         'scope':str(self.scope), 'endpoint': str(self.endpoint)}
         if self.application != None:
             data['application'] = str(self.application.id)
@@ -40,8 +41,9 @@ class AccessModel(db.Document):
 
     def extended(self):
         """Add the extend field to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['extend'] = self.extend
@@ -49,16 +51,18 @@ class AccessModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
@@ -66,8 +70,9 @@ class AccessModel(db.Document):
     @staticmethod
     def application_access(application=None):
         """Filter down the access to a specific application.
+
         Returns:
-            The filtered dictionary of the application access.
+          The filtered dictionary of the application access.
         """
         data = {}
         if application != None:
@@ -75,17 +80,18 @@ class AccessModel(db.Document):
             data['access'] = [acc.info() for acc in AccessModel.objects(application=application).order_by('-created_at')]
             return data
         return data
-    
+
     @staticmethod
     def activity_json():
         """Build an activity json about the access on the platform.
+
         Returns:
-            The activity json.
+          The activity json.
         """
         data = {}
         data['api'] = {'total':len(AccessModel.objects(scope='api')), 'endpoints':[]}
         data['api']['endpoints'] = AccessModel.objects(scope='api').order_by('-endpoint')
         data['cloud'] = {'total':len(AccessModel.objects(scope='cloud')), 'endpoints':[]}
         data['cloud']['endpoints'] = AccessModel.objects(scope='cloud').order_by('-endpoint')
-        
+
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
