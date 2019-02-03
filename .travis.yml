@@ -10,13 +10,14 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
   - echo $TRAVIS_BUILD_DIR
+  - cat travis-compose.yaml
 
 # command to install dependencies
 install:
-  - docker-compose build -f travis-compose.yaml
+  - docker-compose -f travis-compose.yaml build
 
 before_script:
-  - docker-compose up -d -f travis-compose.yaml
+  - docker-compose -f travis-compose.yaml up -d
 
 notifications:
   email: "yannick.congo@gmail.com"

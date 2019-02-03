@@ -98,12 +98,11 @@ will be looking for these exactly.
 ## Monitoring an instance
 
 To monitor your CoRR instance, there are three folder to look into in your your_setup_path/corr-setup.
-Right after your first launch we recommend looking into the <b>test<b/> folder. What you are looking for is the passed keyword.
+Right after your first launch we recommend looking into the <b>test</b> folder. What you are looking for is the passed keyword.
 We are working on more adequate testing. So bare with us while we work on this. Then, the admin should refer to the <b>log</b> folder
-regularly. It contains the <b>access</b> and <b>error<b/> of the corrapi, corrcloud, corrview and nginx micro-services logs. A word of warning
-here is that <b>corrapi-error</b> and <b>corrcloud-error</b> are not only showing <b>errors</b> but also log the services workers executions. We
-apologize for the confusion that this must create. Finally, the corr-storage folder contains the data stored in CoRR in complement to
-the metadata present in the mongodb database.
+regularly. It contains the <b>access</b> and <b>error</b> of the corrapi, corrcloud, corrview and nginx micro-services logs. A word of warning
+here is that <b>corrapi-error</b> and <b>corrcloud-error</b> are not only showing <b>errors</b> but also log the services workers executions. We apologize for the confusion that this must create. Finally, the corr-storage folder contains the data stored in CoRR
+in complement to the metadata present in the mongodb database.
 
 ## Security and scale
 
@@ -179,7 +178,7 @@ rebuilding the containers.
 To change the storage option, the administrator will have to edit the config-(api, cloud) files in your_setup_path/corr-setup/config.
 The section FILE_STORAGE is a dictionary that can be changed. The present version of CoRR v0.2 also support s3 storage. To switch to s3,
 change the values of the keys <b>type</b>, <b>location</b>, <b>name</b>, <b>id</b>, <b>key</b> to <b>s3</b>, <b>aws_region_name</b>, <b>s3_bucket_name</b>,
-<b>aws_access_key_id<b> and </b>aws_secret_access_key</b>. Moreover, we recommend providing this content to your <b>s3</b> folder files. For more
+<b>aws_access_key_id</b> and </b>aws_secret_access_key</b>. Moreover, we recommend providing this content to your <b>s3</b> folder files. For more
 information refer to the [AWS Boto3 documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html).
 Beware that this must be done for both corrapi and corrcloud simultaniously as they must both store data at the same location. Not doing
 so will cause stability issue.
@@ -202,5 +201,5 @@ before and change <b>content</b> key value to False.
 ## Platform Responsiveness
 
 Please be advised that due to multiple security policies, the default CoRR instance requires a machine with average capabilities.
-The security features impedding hugely on the platform responsiveness are mostly the full scan on all communications between clients
+The security features impeding hugely on the platform responsiveness are mostly the full scan on all communications between clients
 and the platforms. In addition to all file uploads, any HTTP request payload is scanned.
