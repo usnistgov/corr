@@ -24,10 +24,3 @@ alt="Slack">
 <img src="https://img.shields.io/badge/license-mit-blue.svg" alt="License" height="18">
 </a>
 </p>
-
-# Launching an instance
-
-CoRR is designed as a web platform. CoRR is not a tool for a single user perspective
-but rather a community oriented portal. The present document explains how to configure
-and launch a CoRR instance. For more help, please refer to the slack workspace provided in badge
-above. Also, video tutorials are provided which demonstrate what is explained here.
