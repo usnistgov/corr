@@ -109,10 +109,9 @@ html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 html_theme_options = {
     'navbar_title': "*",
     'navbar_links': [
-        ("0.1", "https://corr.readthedocs.io/en/v0.1", True),
-        ("launch an instance", "rst/LAUNCH.html", True),
-        ("use an instance", "rst/USE.html", True),
-        ("source code", "https://github.com/usnistgov/corr/", True),
+        ("launch", "rst/LAUNCH.html", True),
+        ("use", "rst/USE.html", True),
+        ("contribute", "https://github.com/usnistgov/corr", True),
         ("corr.nist.gov", "https://corr.nist.gov", True),
     ],
     'navbar_pagenav': False,

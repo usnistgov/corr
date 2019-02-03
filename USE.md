@@ -14,8 +14,8 @@ alt="CoRR NIST Public Instance">
 <img src="https://img.shields.io/badge/corr-slack-purple.svg"
 alt="Slack">
 </a>
-<a href="http://corr.readthedocs.io/en/latest/?badge=latest" target="_blank">
-<img src="https://readthedocs.org/projects/corr/badge/?version=0.2" alt="Reathedocs">
+<a href="https://corr.readthedocs.io/en/v0.2" target="_blank">
+<img src="https://corr.readthedocs.io/en/v0.2/?badge=v0.2" alt="Reathedocs">
 </a>
 <a href="https://www.youtube.com/playlist?list=PLiWY1GXAXKFk4aSwI9CfyAoDwR6bjD8zV">
 <img src="https://img.shields.io/badge/corr-youtube-red.svg" alt="Youtube Playlist" height="18">
