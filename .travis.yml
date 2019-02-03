@@ -17,6 +17,6 @@ notifications:
 
 # command to run tests
 script:
-  - docker-compose --verbose -f travis-compose.yaml up -d
+  - docker-compose -f travis-compose.yaml up -d
   - cat corr-setup/test/test_corrapi.txt
   - cart corr-setup/test/test_corrcloud.txt
