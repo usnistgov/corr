@@ -85,15 +85,26 @@ class StorageManager:
             return None
 
     def is_safe(self, content=None):
-        if self.secur == "False":
+        """Make sure a content is free of malicious data.
+        It called the antivirus ClamAV through its python interface to
+        do the job.
+
+        Returns:
+          A pair of two values. The first says if it is virus free and
+          the second says something nice or bad about it.
+        """
+        if not self.secur:
             return [True, "Security is not required."]
         else:
-            if content:
+            if content is not None:
                 cd = clamd.ClamdUnixSocket()
                 if cd.ping() == 'PONG':
                     cd.reload()
                     file_buffer = BytesIO()
-                    file_buffer.write(content)
+                    try:
+                        file_buffer.write(content)
+                    except:
+                        file_buffer.write(content.encode())
                     file_buffer.seek(0)
                     result = cd.instream(file_buffer)
                     if result['stream'] == ('OK', None):

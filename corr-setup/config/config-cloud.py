@@ -35,7 +35,7 @@ ACCOUNT_MANAGEMENT = {
 
 SECURITY_MANAGEMENT = {
     'account': True,
-    'content': 'False'
+    'content': True
 }
 
 ENVIRONMENT = 'development'

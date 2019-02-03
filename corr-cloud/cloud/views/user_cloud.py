@@ -12,7 +12,7 @@ from corrdb.common.models import StatModel
 from corrdb.common.models import BundleModel
 from flask_api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, secure_content, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -30,9 +30,6 @@ def user_register():
     logTraffic(CLOUD_URL, endpoint='/public/user/register')
     if fk.request.method == 'POST':
         if fk.request.data:
-            security = secure_content(fk.request.data)
-            if not security[0]:
-                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
             data = json.loads(fk.request.data)
             email = data.get('email', '').lower()
             password = data.get('password', '')
@@ -137,9 +134,6 @@ def user_password_change():
                 logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/password/change')
                 user_model = access_resp[1]
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     password = data.get('password', '')
                     response = access_manager.change_password(user_model, password)
@@ -159,9 +153,6 @@ def user_login():
     if fk.request.method == 'POST':
         # print("Request: %s"%str(fk.request.data))
         if fk.request.data:
-            security = secure_content(fk.request.data)
-            if not security[0]:
-                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
             data = json.loads(fk.request.data)
             email = data.get('email', '').lower()
             password = data.get('password', '')
@@ -232,8 +223,8 @@ def user_sync():
         else:
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/sync')
             user_model = access_resp[1]
-            print(fk.request.path)
-            user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+            # print(fk.request.path)
+            # user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
             return fk.Response(json.dumps({'session':user_model.session, 'group':user_model.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
@@ -378,9 +369,6 @@ def user_update():
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/update')
             user_model = access_resp[1]
             if fk.request.data:
-                security = secure_content(fk.request.data)
-                if not security[0]:
-                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                 data = json.loads(fk.request.data)
                 profile_model = ProfileModel.objects(user=user_model).first_or_404()
                 fname = data.get("fname", profile_model.fname)
@@ -443,9 +431,6 @@ def account_update(account_id):
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     account_model = UserModel.objects.with_id(account_id)
                     if account_model is None:
                         return fk.Response('Unable to find the user account.', status.HTTP_401_UNAUTHORIZED)

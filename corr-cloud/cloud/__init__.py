@@ -50,15 +50,6 @@ from functools import update_wrapper
 
 pagination_logs = []
 
-def secure_content(content):
-    # security = None
-    # for key, value in json.loads(content).items():
-    #     security = storage_manager.is_safe(str(value).encode('utf-8'))
-    #     if not security[0]:
-    #         return security
-    # return security
-    return [True, "No content. So it is very safe."]
-
 def get_week_days(year, week):
     d = date(year,1,1)
     if(d.weekday()>3):

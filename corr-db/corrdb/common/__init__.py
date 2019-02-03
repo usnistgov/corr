@@ -106,10 +106,18 @@ def logStat(deleted=False, user=None, message=None, application=None, project=No
 
 def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_age=21600, attach_to_all=True, automatic_options=True):
     """Allow crossdomain calls from other domains and port.
+    Crossdomain also ensures that the content passed through flask request is safe if needed.
 
     Returns:
       decorator to wrap on the endpoints.
     """
+    if fk is not None and app is not None:
+        from .managers import StorageManager
+        storage_manager = StorageManager(app)
+        security = storage_manager.is_safe(fk.request.data)
+        if not security[0]:
+            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
+
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
     if headers is not None and not isinstance(headers, str):

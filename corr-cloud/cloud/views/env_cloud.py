@@ -12,7 +12,7 @@ from flask_stormpath import user
 from flask_stormpath import login_required
 from flask_api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, secure_content ,CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, cloud_response, storage_manager, access_manager, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -110,9 +110,6 @@ def env_create(record_id):
                 return fk.Response('Unable to find the referenced record.', status.HTTP_404_NOT_FOUND)
             else:
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     try:
                         env = EnvironmentModel(created_at=str(datetime.datetime.utcnow()))
@@ -173,9 +170,6 @@ def env_next(project_id):
                 if project.owner != current_user:
                     return fk.Response('Unauthorized action on this project.', status.HTTP_401_UNAUTHORIZED)
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     try:
                         env = EnvironmentModel(created_at=str(datetime.datetime.utcnow()))
@@ -297,9 +291,6 @@ def env_edit(env_id):
                 return fk.Response('Unable to find this environment.', status.HTTP_404_NOT_FOUND)
             else:
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     try:
                         group = data.get("group", env.group)

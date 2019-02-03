@@ -332,21 +332,22 @@ class AccessManager:
             account = None
         else:
             account = UserModel.objects(session=hash_session).first()
-        print(fk.request.path)
         if account is None:
             return False, None
         else:
-            # print "Connected_at: %s"%str(user_model.connected_at)
-            allowance = account.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            print("Allowance: {0}".format(allowance))
-            # print "Connected_at: %s"%str(user_model.connected_at)
-            if allowance == hash_session:
-                if acc_sec and account.extend.get('access', 'verified') != 'verified':
-                    return False, account
-                else:
-                    return True, account
-            else:
-                return False, account
+            # We want multiple browser logins without being thrown out.
+            return True, account
+            # # print "Connected_at: %s"%str(user_model.connected_at)
+            # allowance = account.allowed("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+            # print("Allowance: {0}".format(allowance))
+            # # print "Connected_at: %s"%str(user_model.connected_at)
+            # if allowance == hash_session:
+            #     if acc_sec and account.extend.get('access', 'verified') != 'verified':
+            #         return False, account
+            #     else:
+            #         return True, account
+            # else:
+            #     return False, account
 
     def check_api(self, token, acc_sec=False, cnt_sec=False):
         from corrdb.common.models import UserModel

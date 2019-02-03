@@ -10,7 +10,7 @@ from flask_stormpath import user
 from flask_stormpath import login_required
 from flask_api import status
 import flask as fk
-from cloud import app, cloud_response, storage_manager, access_manager, data_pop, secure_content, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, cloud_response, storage_manager, access_manager, data_pop, CLOUD_URL, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -78,9 +78,6 @@ def record_comment(record_id):
             else:
                 # if record.project.owner == current_user  or current_user.group == "admin":
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     comment = data.get("comment", {})
                     if len(comment) != 0:
@@ -170,9 +167,6 @@ def record_create(project_id):
             else:
                 if project.owner == current_user  or current_user.group == "admin":
                     if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             try:
                                 record = RecordModel(created_at=str(datetime.datetime.utcnow()), project=project)
@@ -232,9 +226,6 @@ def record_edit(record_id):
             else:
                 if record.project.owner == current_user  or current_user.group == "admin":
                     if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             try:
                                 tags = data.get("tags", ','.join(record.tags))
@@ -421,9 +412,6 @@ def file_add(record_id):
                 return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
             else:
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     file_model = get_or_create(document=FileModel, created_at=datetime.datetime.utcnow())
                     infos = json.loads(fk.request.data)
                     relative_path = infos.get("relative_path", "./")

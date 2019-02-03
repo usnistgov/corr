@@ -5,7 +5,7 @@ from flask_api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain, get_or_create
-from api import app, storage_manager, access_manager, secure_content ,API_URL, ACC_SEC, CNT_SEC, api_response, data_pop, merge_dicts
+from api import app, storage_manager, access_manager ,API_URL, ACC_SEC, CNT_SEC, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import TrafficModel
@@ -606,9 +606,6 @@ def user_message_create(api_token, app_token):
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/message/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     receiver_id = data.get('receiver', None)
                     title = data.get('title', '')
@@ -720,9 +717,6 @@ def user_message_update(api_token, app_token, message_id):
                 else:
                     if message.sender == current_user or message.receiver == current_user:
                         if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             sender_id = data.get('sender', None)
                             receiver_id = data.get('receiver', None)
@@ -1093,9 +1087,6 @@ def user_file_create(api_token, app_token):
             logAccess(fk, current_user, API_URL, 'api', '/private/<api_token>/<app_token>/file/create')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     encoding = data.get('encoding', '')
                     size = data.get('size', 0)
@@ -1442,9 +1433,6 @@ def user_file_update(api_token, app_token, file_id):
                         return api_response(401, 'Undefined access', 'This file is public and we do not allow public file upates yet.')
                     else:
                         if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             encoding = data.get('encoding', _file.encoding)
                             size = data.get('size', _file.size)
@@ -1617,9 +1605,6 @@ def user_project_create(api_token, app_token):
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     name = data.get('name', '')
                     description = data.get('description', '')
@@ -1878,9 +1863,6 @@ def user_project_update(api_token, app_token, project_id):
                         return api_response(401, 'Unauthorized access', 'You are not this project owner.')
                     else:
                         if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             # application_id = data.get('application', None)
                             owner_id = data.get('owner', None)
@@ -2100,9 +2082,6 @@ def user_project_env_push(api_token, app_token, project_id):
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     group = data.get('group', 'undefined')
                     system = data.get('system', 'undefined')
@@ -2182,9 +2161,6 @@ def user_project_env_update(api_token, app_token, project_id, env_id):
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     project = ProjectModel.objects.with_id(project_id)
                     if project == None:
@@ -2366,9 +2342,6 @@ def user_record_create(api_token, app_token, project_id):
                     return api_response(401, 'Unauthorized access', 'You are this project owner.')
                 else:
                     if fk.request.data:
-                        security = secure_content(fk.request.data)
-                        if not security[0]:
-                            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                         data = json.loads(fk.request.data)
                         parent_id = data.get('parent', '')
                         data_pop(data, 'parent')
@@ -2535,9 +2508,6 @@ def user_record_update(api_token, app_token, record_id):
                         return api_response(401, 'Unauthorized access', 'You are this record\'s project owner.')
                     else:
                         if fk.request.data:
-                            security = secure_content(fk.request.data)
-                            if not security[0]:
-                                return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                             data = json.loads(fk.request.data)
                             project_id = data.get('project', None)
                             data_pop(data, 'project')
@@ -2742,9 +2712,6 @@ def user_diff_create(api_token, app_token):
                 return api_response(401, 'Unauthorized storage size', 'You have exceeded your allowed maximum quota.')
             if fk.request.method == 'POST':
                 if fk.request.data:
-                    security = secure_content(fk.request.data)
-                    if not security[0]:
-                        return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                     data = json.loads(fk.request.data)
                     # sender_id =  data.get('session', None)
                     record_from_id = data.get('from', None)
@@ -2872,9 +2839,6 @@ def user_diff_update(api_token, app_token, diff_id):
                     return api_response(401, 'Unauthorized access', 'You have to be the owner of one of the two records.')
                 else:
                     if fk.request.data:
-                        security = secure_content(fk.request.data)
-                        if not security[0]:
-                            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
                         data = json.loads(fk.request.data)
                         sender_id =  data.get('sender', None)
                         record_from_id = data.get('from', None)
