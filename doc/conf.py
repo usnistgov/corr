@@ -318,10 +318,14 @@ files_to_copy = (
     'README.md',
     'LAUNCH.md',
     'USE.md',
-    'LICENSE',
+    'LICENSE'
 )
+
+print("+"*24)
+print(files_to_copy)
 
 for fpath in files_to_copy:
     for fpath_glob in glob.glob(os.path.join('..', fpath)):
         fpath_glob_ = '/'.join(fpath_glob.split('/')[1:])
+        print("{} -> {}".format(fpath_glob, os.path.join(rst_directory, fpath_glob_)))
         shutil.copy(fpath_glob, os.path.join(rst_directory, fpath_glob_))

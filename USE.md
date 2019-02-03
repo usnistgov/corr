@@ -25,7 +25,7 @@ alt="Slack">
 </a>
 </p>
 
-# Introduction
+# Using an instance
 
 Before going further, you must have access to a running instance of CoRR. Please refer to
 [How to launch one](./LAUNCH.md) if you are a administrator or contact your administrator to do so.

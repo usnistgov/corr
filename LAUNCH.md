@@ -25,7 +25,7 @@ alt="Slack">
 </a>
 </p>
 
-# Introduction
+# Launching an instance
 
 CoRR is designed as a web platform. CoRR is not a tool for a single user perspective
 but rather a community oriented portal. The present document explains how to configure
