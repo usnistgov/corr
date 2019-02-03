@@ -17,6 +17,6 @@ notifications:
 
 # command to run tests
 script:
-  - docker-compose -f travis-compose.yaml up -d
-  - cat corr-setup/test/test_corrapi.txt
-  - cart corr-setup/test/test_corrcloud.txt
+  - docker-compose -f travis-compose.yaml build --force-rm
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+  - docker-compose -f travis-compose.yaml push
