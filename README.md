@@ -41,7 +41,7 @@ alt="CoRR ReproZip Integration Status">
 alt="CoRR CDE Integration Status">
 </a>
 <a href="https://github.com/usnistgov/corr-pfhub" target="_blank">
-<img src="https://img.shields.io/badge/corr-pfhub-orange.svg"
+<img src="https://img.shields.io/badge/corr-pfhub-yellow.svg"
 alt="CoRR PFHub Integration Status">
 </a>
 <a href="https://github.com/usnistgov/corr-noworkflow" target="_blank">
