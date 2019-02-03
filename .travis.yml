@@ -17,7 +17,7 @@ install:
   - docker-compose -f travis-compose.yaml pull
 
 before_script:
-  - docker-compose -f travis-compose.yaml up --verbose
+  - docker-compose --verbose -f travis-compose.yaml up
 
 notifications:
   email: "yannick.congo@gmail.com"
