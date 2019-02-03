@@ -3,6 +3,7 @@ from ..core import db
 import json
 import hashlib
 import time
+from hurry.filesize import size
 
 # TODO: Issue with connected_at and datetime in general that makes it not stable in mongodb.
 # TODO: Add the filemodel to the quota check.
@@ -29,33 +30,40 @@ class UserModel(db.Document):
     session = db.StringField(max_length=256, unique=True)
     possible_group = ["admin", "user", "developer", "public", "unknown"]
     group = db.StringField(default="unknown", choices=possible_group)
+    possible_auth = ["unregistered", "blocked", "approved", "signup", "wrong1", "wrong2", "wrong3"]
+    auth = db.StringField(default="signup", choices=possible_auth)
+    max_quota = db.FloatField(default=1.0) # Terms of Gigabits
     extend = db.DictField()
 
     def is_authenticated(self):
         """Check if the user authenticated.
+
         Returns:
-            The authenticated status.
+          The authenticated status.
         """
         return True
 
     def is_active(self):
         """Check if the user is currently connected.
+
         Returns:
-            The activity status of the user.
+          The activity status of the user.
         """
         return True
 
     def is_anonymous(self):
         """Check if the user is anonymous.
+
         Returns:
-            The user anonymous state.
+          The user anonymous state.
         """
         return False
 
     def get_id(self):
         """Get the user id properly
+
         Returns:
-            The user object id.
+          The user object id.
         """
         try:
             return unicode(self.id)
@@ -64,9 +72,12 @@ class UserModel(db.Document):
 
     def save(self, *args, **kwargs):
         """Overwrite the user mongoengine save
+
         Returns:
-            The call to the mongoengine Document save function.
+          The call to the mongoengine Document save function.
         """
+        if not self.max_quota:
+            self.max_quota = 1.0
         if not self.created_at:
             self.created_at = str(datetime.datetime.utcnow())
 
@@ -99,6 +110,19 @@ class UserModel(db.Document):
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
 
+    def logout(self, unic):
+        """Renew the user session.
+        """
+        print("connected_at: %s"%str(self.connected_at))
+        self.connected_at = str(datetime.datetime.utcnow())
+        print("connected_at: %s"%str(self.connected_at))
+        print("session: %s"%str(self.session))
+        self.session = str(hashlib.sha256(('CoRRSession_%s_%s_%s'%(self.email, str(self.connected_at), unic)).encode("ascii")).hexdigest())
+        self.session = "logout%s"%self.session[6:]
+        self.save()
+        print("connected_at: %s"%str(self.connected_at))
+        print("session: %s"%str(self.session))
+
     def retoken(self):
         """Renew the user api token.
         """
@@ -107,8 +131,9 @@ class UserModel(db.Document):
 
     def allowed(self, unic):
         """Build the allowence to access the session for the user.
+
         Returns:
-            The hash of the allowence string content.
+          The hash of the allowence string content.
         """
         print("connected_at: %s"%str(self.connected_at))
         print("session: %s"%str(self.session))
@@ -118,21 +143,36 @@ class UserModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an user model instance content.
+
         Returns:
-            The dictionary content of the user model.
+          The dictionary content of the user model.
         """
-        data = {'created':str(self.created_at), 
+        data = {'created':str(self.created_at),
         'id': str(self.id), 'email' : self.email,
          'group':self.group, 'total_projects' : len(self.projects), 'total_duration':self.duration, 'total_records':self.record_count, 'total_apps':len(self.apps)}
         from ..models import ProfileModel
         profile = ProfileModel.objects(user=self).first()
-        data['profile'] = profile.extended()
+        if profile:
+            data['profile'] = profile.extended()
+        try:
+            data["auth"] = self.auth
+        except:
+            self.auth = "signup"
+            self.save()
+            data["auth"] = self.auth
+        try:
+            data["max-quota"] = self.max_quota
+        except:
+            self.max_quota = 1.0
+            self.save()
+            data["max-quota"] = self.max_quota
         return data
 
     def extended(self):
         """Add the extend, apiToken, session fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['apiToken'] = self.api_token
@@ -142,8 +182,9 @@ class UserModel(db.Document):
 
     def home(self):
         """Build the dictionary of the user home info.
+
         Returns:
-            The home dictionary.
+          The home dictionary.
         """
         from ..models import ProfileModel
         data = {}
@@ -158,16 +199,18 @@ class UserModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def activity_json(self, admin=False):
         """Build a pretty json of the user activity.
+
         Returns:
-            The pretty json of the user activity.
+          The pretty json of the user activity.
         """
         projects_summary = [json.loads(p.summary_json()) for p in self.projects if not p.private or admin]
         return json.dumps({'user':self.extended(), 'projects' : projects_summary}, sort_keys=True, indent=4, separators=(',', ': '))
@@ -175,8 +218,9 @@ class UserModel(db.Document):
     @property
     def projects(self):
         """Extract the user's projects.
+
         Returns:
-            The projects list.
+          The projects list.
         """
         from ..models import ProjectModel
         return ProjectModel.objects(owner=self)
@@ -184,8 +228,9 @@ class UserModel(db.Document):
     @property
     def apps(self):
         """Extract the user applications.
+
         Returns:
-            The user applications list.
+          The user applications list.
         """
         from ..models import ApplicationModel
         return [appli for appli in ApplicationModel.objects(developer=self)]
@@ -193,8 +238,9 @@ class UserModel(db.Document):
     @property
     def records(self):
         """Extract the user's projects' records.
+
         Returns:
-            The user records.
+          The user records.
         """
         records = []
         for project in self.projects:
@@ -204,8 +250,9 @@ class UserModel(db.Document):
     @property
     def quota(self):
         """Compute the the user quota.
+
         Returns:
-            quota used by the user.
+          quota used by the user.
         """
         from ..models import FileModel
         from ..models import EnvironmentModel
@@ -263,28 +310,40 @@ class UserModel(db.Document):
                                     pass
 
         return occupation
-    
+
     @property
     def record_count(self):
         """Count all the user records.
+
         Returns:
-            The user total records.
+          The user total records.
         """
         return sum([p.record_count for p in self.projects])
 
     @property
+    def since(self):
+        """Compute the time since last connection.
+
+        Returns:
+          The user duration since last connection.
+        """
+        updated_strp = datetime.datetime.strptime(str(self.connected_at), '%Y-%m-%d %H:%M:%S.%f')
+        today_strp = datetime.datetime.strptime(str(datetime.datetime.utcnow()), '%Y-%m-%d %H:%M:%S.%f')
+        value = today_strp-updated_strp
+        return value.total_seconds()
+
+    @property
     def duration(self):
         """Compute the duration a user used the platform.
+
         Returns:
-            The user usage duration.
+          The user usage duration.
         """
         d = 0
         for p in self.projects:
             try:
                 d += p.duration.total_seconds()
             except:
-                d = d + p.duration
+                total_seconds = (p.duration.microseconds + (p.duration.seconds + p.duration.days * 24 * 3600) * 1e6) / 1e6
+                d += total_seconds
         return str(datetime.timedelta(seconds=d))
-
-
-            

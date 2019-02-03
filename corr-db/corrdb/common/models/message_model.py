@@ -5,7 +5,7 @@ from bson import ObjectId
 
 from ..models import UserModel
 from ..models import FileModel
-          
+
 class MessageModel(db.Document):
     """CoRR backend message model.
     The model holding the message interaction between two users.
@@ -29,8 +29,9 @@ class MessageModel(db.Document):
 
     def _attachments(self):
         """Gather the files attached to the message.
+
         Returns:
-            The message attachments files.
+          The message attachments files.
         """
         attachments = []
         for f_id in self.attachments:
@@ -41,8 +42,9 @@ class MessageModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an message model instance content.
+
         Returns:
-            The dictionary content of the message model.
+          The dictionary content of the message model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'sender':str(self.sender.id),
         'receiver':str(self.receiver.id), 'title':self.title}
@@ -51,8 +53,9 @@ class MessageModel(db.Document):
 
     def extended(self):
         """Add the extend, content and attachments fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['content'] = self.content
@@ -62,16 +65,18 @@ class MessageModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary with content, attachments fields into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         if self.content != None:

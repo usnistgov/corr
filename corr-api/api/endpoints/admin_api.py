@@ -1,9 +1,9 @@
 import json
 
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, get_or_create
 from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
@@ -39,7 +39,7 @@ def admin_search(api_token, key_words):
     if admin_user == None:
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
-        logAccess(API_URL,'api', '/admin/<api_token>/search/<key_words>')
+        logAccess(fk, admin_user, API_URL,'api', '/admin/<api_token>/search/<key_words>')
         if fk.request.method == 'GET':
             results = {'results':{}, 'total-results':0}
             results['results']['users'] = {'users-list':[], 'users-total':0}
@@ -53,7 +53,7 @@ def admin_search(api_token, key_words):
 
             words = key_words.split('-')
 
-            for user in UserModel.objects():
+            for user in UserModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 profile = ProfileModel.objects(user=user).first()
@@ -83,7 +83,7 @@ def admin_search(api_token, key_words):
                     results['results']['users']['users-list'].append({'user':user.info(), 'profile':profile.info()})
                 results['results']['users']['users-total'] = len(results['results']['users']['users-list'])
 
-            for app in ApplicationModel.objects():
+            for app in ApplicationModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -121,7 +121,7 @@ def admin_search(api_token, key_words):
                     results['results']['apps']['apps-list'].append(app.info())
                 results['results']['apps']['apps-total'] = len(results['results']['apps']['apps-list'])
 
-            for project in ProjectModel.objects():
+            for project in ProjectModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -157,7 +157,7 @@ def admin_search(api_token, key_words):
                                 exists[index] = True
                         except:
                             pass
-                        
+
                     else:
                         exists[index] = True
                     index += 1
@@ -165,7 +165,7 @@ def admin_search(api_token, key_words):
                     results['results']['projects']['projects-list'].append(project.info())
                 results['results']['projects']['projects-total'] = len(results['results']['projects']['projects-list'])
 
-            for record in RecordModel.objects():
+            for record in RecordModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -233,7 +233,7 @@ def admin_search(api_token, key_words):
                     results['results']['records']['records-list'].append(record.info())
                 results['results']['records']['records-total'] = len(results['results']['records']['records-list'])
 
-            for env in EnvironmentModel.objects():
+            for env in EnvironmentModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -261,7 +261,7 @@ def admin_search(api_token, key_words):
                     results['results']['envs']['envs-list'].append(env.info())
                 results['results']['envs']['envs-total'] = len(results['results']['envs']['envs-list'])
 
-            for bundle in BundleModel.objects():
+            for bundle in BundleModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -289,7 +289,7 @@ def admin_search(api_token, key_words):
                     results['results']['bundles']['bundles-list'].append(bundle.info())
                 results['results']['bundles']['bundles-total'] = len(results['results']['bundles']['bundles-list'])
 
-            for file_ in FileModel.objects():
+            for file_ in FileModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -337,7 +337,7 @@ def admin_search(api_token, key_words):
                     results['results']['files']['files-list'].append(file_.info())
                 results['results']['files']['files-total'] = len(results['results']['files']['files-list'])
 
-            for version in VersionModel.objects():
+            for version in VersionModel.objects:
                 exists = [False for word in words]
                 condition = [True for word in words]
                 index = 0
@@ -373,7 +373,7 @@ def admin_search(api_token, key_words):
             results['total-results'] += results['results']['bundles']['bundles-total']
             results['total-results'] += results['results']['files']['files-total']
             results['total-results'] += results['results']['versions']['versions-total']
-            
+
             return api_response(200, 'Search results for: [%s]'%key_words, results)
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
@@ -388,7 +388,7 @@ def admin_stats(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            stats = StatModel.objects()
+            stats = StatModel.objects
             stats_dict = {'total_stats':len(stats), 'stats':[]}
             for stat in stats:
                 stats_dict['stats'].append(stat.extended())
@@ -405,7 +405,7 @@ def admin_stats_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            stats = StatModel.objects()
+            stats = StatModel.objects
             for stat in stats:
                 stat.delete()
             return api_response(200, 'CoRR stats clear', 'All the stats in CoRR have been cleared.')
@@ -421,7 +421,7 @@ def admin_traffic(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            traffics = TrafficModel.objects()
+            traffics = TrafficModel.objects
             traffics_dict = {'total_traffics':len(traffics), 'traffics':[]}
             for traffic in traffics:
                 traffics_dict['traffics'].append(traffic.extended())
@@ -438,9 +438,9 @@ def admin_traffic_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            traffics = TrafficModel.objects()
+            traffics = TrafficModel.objects
             for traffic in traffics:
-                traffic.delete() 
+                traffic.delete()
             return api_response(200, 'CoRR traffic cleared', 'All the traffic in CoRR have been cleared.')
         else:
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
@@ -454,7 +454,7 @@ def admin_access(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            accesses = AccessModel.objects()
+            accesses = AccessModel.objects
             accesses_dict = {'total_accesses':len(accesses), 'accesses':[]}
             for access in accesses:
                 accesses_dict['accesses'].append(access.extended())
@@ -471,7 +471,7 @@ def admin_comments(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            comments = CommentModel.objects()
+            comments = CommentModel.objects
             comments_json = {'total_comments':len(comments), 'comments':[]}
             for comment in comments:
                 comments_json['comments'].append(comment.extended())
@@ -488,7 +488,7 @@ def admin_comments_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            comments = CommentModel.objects()
+            comments = CommentModel.objects
             comments.delete()
             return api_response(200, 'All comments cleared', 'All comments deleted.')
         else:
@@ -515,7 +515,7 @@ def admin_comment_send(group, api_token):
                 if item_id == None or sender_id == None:
                     return api_response(400, 'Missing mandatory fields', 'A comment creation requires an item and a sender.')
                 if title == '' and content == '':
-                    return api_response(400, 'Missing mandatory fields', 'A comment must contains at least a title or a content.')        
+                    return api_response(400, 'Missing mandatory fields', 'A comment must contains at least a title or a content.')
                 item = None
                 sender = None
                 if group == 'project':
@@ -533,7 +533,7 @@ def admin_comment_send(group, api_token):
                 sender = UserModel.objects(session=sender_id).first()
                 if item == None or sender == None:
                     return api_response(400, 'Missing mandatory fields', 'A comment creation requires a existing item and a existing sender.')
-                comment, created = CommentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, title=title, content=content)
+                comment, created = get_or_create(document=CommentModel, created_at=str(datetime.datetime.utcnow()), sender=sender, title=title, content=content)
                 logStat(comment=comment)
                 item.comments.append(str(comment.id))
                 item.save()
@@ -645,7 +645,7 @@ def admin_apps(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            apps = ApplicationModel.objects()
+            apps = ApplicationModel.objects
             apps_json = {'total_apps':len(apps), 'apps':[]}
             for application in apps:
                 apps_json['apps'].append(application.extended())
@@ -689,7 +689,7 @@ def admin_app_create(api_token):
                     logo_location = 'local'
                     logo_group = 'logo'
                     logo_description = 'This is the default image used for the application logo in case none is provided.'
-                    
+
                     # if logo_storage == 'default-logo':
                     #     logo_buffer = storage_manager.storage_get_file('logo', logo_storage)
                     #     logo_size = logo_buffer.tell() if logo_buffer != None else 0
@@ -698,7 +698,7 @@ def admin_app_create(api_token):
                     #     logo_location = 'local'
                     #     logo_group = 'logo'
                     #     logo_description = 'This is the default image used for the application logo in case none is provided.'
-                        
+
                     # elif 'http://' in logo_storage:
                     #     logo_buffer = storage_manager.web_get_file(logo_storage)
                     #     logo_size = logo_buffer.tell() if logo_buffer != None else 0
@@ -715,14 +715,14 @@ def admin_app_create(api_token):
                     #     logo_location = 'local'
                     #     logo_group = 'logo'
                     #     logo_description = 'This is the application %s logo.'%name
-                    logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+                    logo, logo_created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
                     app, created = None, False
                     if developer == None or developer.group != 'developer':
                         return api_response(400, 'A field is not applicable', 'The application user has to be a developer.')
                     # elif logo == None:
-                    #     app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, access=access, network=network, visibile=visibile)
+                    #     app, created = get_or_create(document=ApplicationModel, developer=developer, name=name, about=about, access=access, network=network, visibile=visibile)
                     else:
-                        app, created = ApplicationModel.objects.get_or_create(developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
+                        app, created = get_or_create(document=ApplicationModel, developer=developer, name=name, about=about, logo=logo, access=access, network=network, visibile=visibile)
                     if not created:
                         return api_response(200, 'Application already exists', app.info())
                     else:
@@ -828,7 +828,7 @@ def admin_app_update(app_id, api_token):
                         if logo_storage != None:
                             logo_encoding = ''
                             logo_mimetype = mimetypes.guess_type(logo_storage)[0]
-                            
+
                             if logo_storage == 'default-logo.png':
                                 logo_buffer = storage_manager.storage_get_file('logo', logo.storage)
                                 # logo_size = logo_buffer.tell() if logo_buffer != None else 0
@@ -837,7 +837,7 @@ def admin_app_update(app_id, api_token):
                                 logo_location = 'local'
                                 logo_group = 'logo'
                                 logo_description = 'This is the default image used for the application logo in case none is provided.'
-                                
+
                             elif 'http://' in logo_storage:
                                 logo_buffer = storage_manager.web_get_file(logo.storage)
                                 # logo_size = logo_buffer.tell() if logo_buffer != None else 0
@@ -952,7 +952,7 @@ def admin_users(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            users = UserModel.objects()
+            users = UserModel.objects
             users_dict = {'total_users':len(users), 'users':[]}
             for user in users:
                 users_dict['users'].append(user.extended())
@@ -969,7 +969,7 @@ def admin_profiles_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            profiles = ProfileModel.objects()
+            profiles = ProfileModel.objects
             profiles.delete()
             return api_response(200, 'Profiles cleared', 'All the profiles have been deleted.')
         else:
@@ -1000,12 +1000,12 @@ def admin_user_create(api_token):
                     return api_response(400, 'Mismatching requirement', 'password and passwordAgain should be equal.')
                 else:
                     # Add stormpath to test the link for password handling.
-                    user, created = UserModel.objects.get_or_create(email=email, group=group)
+                    user, created = get_or_create(document=UserModel, email=email, group=group)
                     if not created:
                         return api_response(302, 'User already exists', user.info())
                     else:
                         logStat(user=user)
-                        ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user, fname='', lname='', organisation='', about='')
+                        get_or_create(document=ProfileModel, created_at=str(datetime.datetime.utcnow()), user=user, fname='', lname='', organisation='', about='')
 
                         return api_response(201, 'User account created', user.info())
             else:
@@ -1172,7 +1172,7 @@ def admin_user_profile_create(user_id, api_token):
                     picture_location = 'local'
                     picture_group = 'picture'
                     picture_description = 'This is the default image used for the user profile picture in case none is provided.'
-                        
+
 
                     # if picture_storage == 'default-picture':
                     #     picture_buffer = storage_manager.storage_get_file('picture', picture_storage)
@@ -1182,7 +1182,7 @@ def admin_user_profile_create(user_id, api_token):
                     #     picture_location = 'local'
                     #     picture_group = 'picture'
                     #     picture_description = 'This is the default image used for the user profile picture in case none is provided.'
-                        
+
                     # elif 'http://' in picture_storage:
                     #     picture_buffer = storage_manager.web_get_file(picture_storage)
                     #     picture_size = picture_buffer.tell() if picture_buffer != None else 0
@@ -1199,12 +1199,12 @@ def admin_user_profile_create(user_id, api_token):
                     #     picture_location = 'local'
                     #     picture_group = 'picture'
                     #     picture_description = 'This is the user %s profile picture.'%fname
-                    picture, picture_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
+                    picture, picture_created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
                     profile, created = None, False
                     if picture == None:
-                        profile, created = ProfileModel.objects.get_or_create(user=user, fname=fname, lname=lname, organisation=organisation, about=about)
+                        profile, created = get_or_create(document=ProfileModel, user=user, fname=fname, lname=lname, organisation=organisation, about=about)
                     else:
-                        profile, created = ProfileModel.objects.get_or_create(user=user, fname=fname, lname=lname, picture=picture, organisation=organisation, about=about)
+                        profile, created = get_or_create(document=ProfileModel, user=user, fname=fname, lname=lname, picture=picture, organisation=organisation, about=about)
                     if not created:
                         return api_response(200, 'Profile already exists', profile.info())
                     else:
@@ -1351,7 +1351,7 @@ def admin_user_profile_update(user_id, api_token):
                                 picture_location = 'local'
                                 picture_group = 'picture'
                                 picture_description = 'This is the default image used for the user profile picture in case none is provided.'
-                                
+
                             elif 'http://' in picture_storage:
                                 picture_buffer = storage_manager.web_get_file(picture_storage)
                                 # picture_size = picture_buffer.tell() if picture_buffer != None else 0
@@ -1375,7 +1375,7 @@ def admin_user_profile_update(user_id, api_token):
                                 picture_buffer.seek(old_file_position, os.SEEK_SET)
                             else:
                                 picture_size = 0
-                            # picture, picture_created = FileModel.objects.get_or_create(encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
+                            # picture, picture_created = get_or_create(document=FileModel, encoding=picture_encoding, name=picture_name, mimetype=picture_mimetype, size=picture_size, storage=picture_storage, location=picture_location, group=picture_group, description=picture_description)
                             if profile.picture.storage != 'default-picture.png' and 'http://' not in profile.picture.storage:
                                 storage_manager.storage_delete_file('picture', profile.picture.storage)
                             picture.name = picture_name
@@ -1478,7 +1478,7 @@ def admin_projects(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            projects = ProjectModel.objects()
+            projects = ProjectModel.objects
             projects_dict = {'total_projects':len(projects), 'projects':[]}
             for project in projects:
                 projects_dict['projects'].append(project.extended())
@@ -1495,7 +1495,7 @@ def admin_projects_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            projects = ProjectModel.objects()
+            projects = ProjectModel.objects
             projects.delete()
             return api_response(200, 'Projects deleted', 'All the projects have been deleted.')
         else:
@@ -1510,7 +1510,7 @@ def admin_envs_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            envs = EnvironmentModel.objects()
+            envs = EnvironmentModel.objects
             envs.delete()
             return api_response(200, 'Environments deleted', 'All the environments have been deleted.')
         else:
@@ -1529,7 +1529,7 @@ def admin_envs_clear(api_token):
 # def admin_projects_comments_clear(api_token):
 #     logTraffic(API_URL, endpoint='/admin/<api_token>/comments/clear')
 #     if fk.request.method == 'GET':
-#         projects = ProjectModel.objects()
+#         projects = ProjectModel.objects
 #         for project in projects:
 #             project.comments = []
 #             project.save()
@@ -1605,8 +1605,8 @@ def admin_project_create(api_token):
                     logo_location = 'local'
                     logo_group = 'logo'
                     logo_description = 'This is the default image used for the project logo in case none is provided.'
-                    logo, logo_created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
-                    
+                    logo, logo_created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), encoding=logo_encoding, name=logo_name, mimetype=logo_mimetype, size=logo_size, storage=logo_storage, location=logo_location, group=logo_group, description=logo_description)
+
                     # application = None
                     owner = None
                     cloned_from = ''
@@ -1620,9 +1620,9 @@ def admin_project_create(api_token):
                     if owner == None or (cloned_from == '' and cloned_from_id != ''):
                         return api_response(400, 'Missing references mandatory fields', 'A project should have an existing owner api token and when provided an existing application token and original record.')
                     # if application != None:
-                    #     project, created = ProjectModel.objects.get_or_create(application=application, owner=owner, name=name)
+                    #     project, created = get_or_create(document=ProjectModel, application=application, owner=owner, name=name)
                     # else:
-                    project, created = ProjectModel.objects.get_or_create(owner=owner, name=name)
+                    project, created = get_or_create(document=ProjectModel, owner=owner, name=name)
                     if not created:
                         return api_response(200, 'Project already exists', project.info())
                     else:
@@ -1771,7 +1771,7 @@ def admin_project_update(project_id, api_token):
             else:
                 if fk.request.data:
                     data = json.loads(fk.request.data)
-                    
+
                     # application_id = data.get('application', None)
                     owner_id = data.get('owner', None)
                     name = data.get('name', project.name)
@@ -1941,20 +1941,20 @@ def admin_project_env_push(project_id, api_token):
                     application = None
                     if application_id != None:
                         application = ApplicationModel.objects(app_token=application_id).first()
-                    env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                    env, created = get_or_create(document=EnvironmentModel, created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
                     if application != None:
                         env.application = application
                     if not created:
                         return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                     else:
-                        version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                        version, created = get_or_create(document=VersionModel, created_at=datetime.datetime.utcnow())
                         if version_dict != None:
                             version.system = version_dict.get('system','unknown')
                             version.baseline = version_dict.get('baseline','')
                             version.marker = version_dict.get('marker','')
                             version.save()
                             env.version = version
-                        bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                        bundle, created = get_or_create(document=BundleModel, created_at=datetime.datetime.utcnow())
                         if bundle_dict != None:
                             bundle.scope = bundle_dict.get('scope','unknown')
                             location = bundle_dict.get('location', '')
@@ -2174,18 +2174,18 @@ def admin_env_push(project_id, api_token):
                 specifics = data.get('specifics', {})
                 version_dict = data.get('version', None)
                 bundle_dict = data.get('bundle', None)
-                env, created = EnvironmentModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
+                env, created = get_or_create(document=EnvironmentModel, created_at=str(datetime.datetime.utcnow()), group=group, system=system, specifics=specifics)
                 if not created:
                     return api_response(500, 'Internal Platform Error', 'There is a possible issue with the MongoDb instance.')
                 else:
-                    version, created = VersionModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                    version, created = get_or_create(document=VersionModel, created_at=datetime.datetime.utcnow())
                     if version_dict != None:
                         version.system = version_dict.get('system','unknown')
                         version.baseline = version_dict.get('baseline','')
                         version.marker = version_dict.get('marker','')
                         version.save()
                         env.version = version
-                    bundle, created = BundleModel.objects.get_or_create(created_at=datetime.datetime.utcnow())
+                    bundle, created = get_or_create(document=BundleModel, created_at=datetime.datetime.utcnow())
                     if bundle_dict != None:
                         bundle.scope = bundle_dict.get('scope','unknown')
                         location = bundle_dict.get('location', '')
@@ -2253,7 +2253,7 @@ def admin_records(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            records = RecordModel.objects()
+            records = RecordModel.objects
             records_dict = {'total_records':len(records), 'records':[]}
             for record in records:
                 records_dict['records'].append(record.extended())
@@ -2270,7 +2270,7 @@ def admin_records_clear(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            records = RecordModel.objects()
+            records = RecordModel.objects
             records.delete()
             return api_response(200, 'Records cleared', 'All the records have been deleted.')
         else:
@@ -2359,16 +2359,16 @@ def admin_record_create(api_token):
                     # print resources
                     # if application != None:
                     #     if environment != None:
-                    #         record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                    #         record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, application=application, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     #     else:
-                    #         record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                    #         record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, application=application, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     # else:
                     if environment != None:
-                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, environment=environment, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     else:
-                        record, created = RecordModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
+                        record, created = get_or_create(document=RecordModel, created_at=str(datetime.datetime.utcnow()), project=project, parent=parent, label=label, tags=tags, system=system, inputs=inputs, outputs=outputs, dependencies=dependencies, status=status, access=access, rationels=rationels)
                     if len(data) != 0:
-                        body, created = RecordBodyModel.objects.get_or_create(head=record, data=data)
+                        body, created = get_or_create(document=RecordBodyModel, head=record, data=data)
                     logStat(record=record)
                     return api_response(201, 'Record created', record.info())
             else:
@@ -2517,7 +2517,7 @@ def admin_record_update(record_id, api_token):
                     record.resources.extend(resources)
                     record.save()
                     if len(data) != 0:
-                        body, created = RecordBodyModel.objects.get_or_create(head=record)
+                        body, created = get_or_create(document=RecordBodyModel, head=record)
                         if created:
                             body.data = data
                             body.save()
@@ -2576,7 +2576,7 @@ def admin_diffs(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            diffs = DiffModel.objects()
+            diffs = DiffModel.objects
             diffs_dict = {'total_diffs':len(diffs), 'diffs':[]}
             for diff in diffs:
                 diffs_dict['diffs'].append(diff.extended())
@@ -2618,7 +2618,7 @@ def admin_diff_create(api_token):
                     if sender == None or record_from == None or record_to == None:
                         return api_response(400, 'Missing references mandatory fields', 'A diff should have at least an existing sender, an existing record from where the diff is linked and an existing record to which it is linked.')
                     if (record_to.access != 'private' or (record_from.access == 'private' and record_from.project.owner == sender)) and ((record_from.access == 'private' and record_from.project.owner == sender) or record_from.access != 'private', api_token):
-                        diff, created = DiffModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
+                        diff, created = get_or_create(document=DiffModel, created_at=str(datetime.datetime.utcnow()), sender=sender, targeted=record_to.project.owner, record_from=record_from, record_to=record_to, method=method, resources=resources, proposition=proposition, status=status)
                         if not created:
                             return api_response(200, 'Diff already exists', diff.info())
                         else:
@@ -2738,7 +2738,7 @@ def admin_files(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            files = FileModel.objects()
+            files = FileModel.objects
             files_dict = {'total_files':len(files), 'files':[]}
             for _file in files:
                 files_dict['files'].append(_file.extended())
@@ -2762,7 +2762,7 @@ def admin_file_upload(group, item_id, api_token):
                 if fk.request.files:
                     file_obj = fk.request.files['file']
                     filename = '%s_%s'%(item_id, file_obj.filename)
-                    _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
+                    _file, created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), name=filename)
                     if not created:
                         return api_response(200, 'File already exists with same name for this item', _file.info())
                     else:
@@ -2971,7 +2971,7 @@ def admin_file_download(file_id, api_token):
                 if storage == '' or name == '':
                     return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url).')
                 else:
-                    _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, path=path, storage=storage, location=location, group=group, description=description)
+                    _file, created = get_or_create(document=FileModel, encoding=encoding, name=name, mimetype=mimetype, size=size, path=path, storage=storage, location=location, group=group, description=description)
                     if not created:
                         return api_response(200, 'File already exists', _file.info())
                     else:
@@ -3008,9 +3008,9 @@ def admin_file_create(api_token):
                     return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url). Also when a owner is provided he should exist.')
                 else:
                     if owner == None:
-                        _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
+                        _file, created = get_or_create(document=FileModel, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
                     else:
-                        _file, created = FileModel.objects.get_or_create(owner=owner, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
+                        _file, created = get_or_create(document=FileModel, owner=owner, encoding=encoding, name=name, mimetype=mimetype, size=size, storage=storage, location=location, group=group, description=description)
                     if not created:
                         return api_response(200, 'File already exists', _file.info())
                     else:
@@ -3281,7 +3281,7 @@ def admin_messages(api_token):
         return api_response(401, 'Unauthorized access to the API', 'This is not an admin account.')
     else:
         if fk.request.method == 'GET':
-            messages = MessageModel.objects()
+            messages = MessageModel.objects
             messages_dict = {'total_messages':len(messages), 'messages':[]}
             for message in messages:
                 messages_dict['messages'].append(message.extended())
@@ -3310,10 +3310,10 @@ def admin_message_create(api_token):
                 else:
                     if title == '' and content == '':
                         return api_response(400, 'Missing mandatory fields', 'A message cannot have title and content empty.')
-                    
+
                     sender = UserModel.objects(session=sender_id).first()
                     receiver = UserModel.objects.with_id(receiver_id)
-                    message, created = MessageModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), sender=sender, receiver=receiver, title=title, attachments=attachments, content=content)
+                    message, created = get_or_create(document=MessageModel, created_at=str(datetime.datetime.utcnow()), sender=sender, receiver=receiver, title=title, attachments=attachments, content=content)
                     if sender == None or receiver == None:
                         return api_response(400, 'Missing mandatory fields', 'A message should have at least an existing sender and an existing receiver.')
                     if not created:
@@ -3451,7 +3451,7 @@ def admin_resolve_item(item_id, api_token):
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'sender':'string','receiver':'string','title':'string', 'content':'string', 'attachments':'list'}, 'meta':['message-create', '--mec'], 'endpoint':'/admin/<api_token>/message/create'})
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'string', 'password':'string', 'passwordAgain':'string', 'group':'string'}, 'meta':['user-create', '--usc'], 'endpoint':'/admin/<api_token>/user/create'})
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'fname':'string', 'lname':'string', 'picture':'string','organisation':'string','about':'string'}, 'meta':['profile-create', '--pfc'], 'endpoint':'/admin/<api_token>/user/profile/create/<selected.id>'})
-                
+
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['token', '--tk'], 'endpoint':'/private/<credential.api_token>/<credential.app_token>/*'})
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'email':'<credential.email>', 'password':'<credential.password>'}, 'meta':['login', '--lg'], 'endpoint':'/admin/<api_token>/user/login'})
 
@@ -3472,7 +3472,7 @@ def admin_resolve_item(item_id, api_token):
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['messages', '--me'], 'endpoint':'/admin/<api_token>/user/messages/<selected.id>'})
                 resolution['endpoints'].append({'methods':['GET'], 'struct':{}, 'meta':['apps', '--ap'], 'endpoint':'/admin/<api_token>/user/apps/<selected.id>'})
                 resolution['endpoints'].append({'methods':['FILE'], 'struct':{'file':'mimetype'}, 'meta':['upload', '--ul'], 'endpoint':'/admin/<api_token>/file/upload/<group>/<selected.id>'})
-                
+
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'developer':'<selected.id>','name':'string','about':'string','logo':'string','access':'string','access':'string','network':'string','visibile':'string'}, 'meta':['app-created', '--apc'], 'endpoint':'/admin/<api_token>/app/create'})
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'owner':'<selected.id>','encoding':'string','size':'string','name':'string','path':'string','storage':'string','location':'string','mimetype':'string','group':'string','description':'string'}, 'meta':['file-create', '--fic'], 'endpoint':'/admin/<api_token>/file/create'})
                 resolution['endpoints'].append({'methods':['POST'], 'struct':{'session':'<selected.session>','from':'string','to':'string','':'string','method':'string','resources':'list','proposition':'string','status':'string'}, 'meta':['diff-create', '--dic'], 'endpoint':'/admin/<api_token>/diff/create'})

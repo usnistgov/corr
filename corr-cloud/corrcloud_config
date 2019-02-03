@@ -1,0 +1,3 @@
+chdir = '/home/corradmin/corr-cloud'
+accesslog = '/home/corradmin/log/corrcloud-access.log'
+errorlog = '/home/corradmin/log/corrcloud-error.log'

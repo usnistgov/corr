@@ -26,6 +26,7 @@ class FileModel(db.Document):
     """
     created_at = db.StringField(default=str(datetime.datetime.utcnow()))
     owner = db.ReferenceField(UserModel, reverse_delete_rule=db.CASCADE)
+    checksum = db.StringField()
     encoding = db.StringField()
     mimetype = db.StringField()
     size = db.LongField()
@@ -42,21 +43,29 @@ class FileModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an file model instance content.
+
         Returns:
-            The dictionary content of the file model.
+          The dictionary content of the file model.
         """
-        data = {'created_at':str(self.created_at), 'id': str(self.id), 
+        data = {'created_at':str(self.created_at), 'id': str(self.id),
         'name':self.name, 'encoding':self.encoding, 'mimetype': self.mimetype, 'size': self.size, 'storage': self.storage, 'location':self.location}
         if self.owner != None:
             data['owner'] = str(self.owner.id)
         else:
             data['owner'] = 'public'
+        try:
+            data["checksum"] = self.checksum
+        except:
+            self.checksum = ""
+            self.save()
+            data["checksum"] = self.checksum
         return data
 
     def extended(self):
         """Add the extend, storage, group, description, owner fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['storage'] = self.storage
@@ -71,16 +80,18 @@ class FileModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
-    
+
     def summary_json(self):
         """Transform the info dictionary with comments field into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         data['comments'] = len(self.comments)

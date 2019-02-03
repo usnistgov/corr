@@ -16,7 +16,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="description" content="CoRR is a generic cloud platform for reproducible records that allows software management tools and experiment control tools federation and scientific collaboration.">
         <meta name="keywords" content="simulation, experiment, cloud, service, record, atom, metadata, reproducible, repeatable, replicable, managements, generic, platform">
-        
+
         <title>CoRR - Cloud of Reproducible Records</title>
 
         <link rel="icon" href="../images/logo.ico" sizes="32x32">
@@ -38,7 +38,7 @@
     <body>
 
         <div id="loader-wrapper">
-            <div id="loader"></div>        
+            <div id="loader"></div>
             <div class="loader-section section-left"></div>
             <div class="loader-section section-right"></div>
         </div>
@@ -47,8 +47,8 @@
             <div class="navbar-fixed">
                 <nav class="cyan">
                     <div class="nav-wrapper">
-                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/></a> <span class="logo-text">CoRR</span></h1>
-                        <ul id="nav-base" class="nav-bar right hide-on-med-and-down">
+                        <h1 class="logo-wrapper"><a href="./" id="nav-home" class="brand-logo darken-1"><img src="../images/corr-logo.png" alt="corr logo"/><span id="platform-name"></span></a> <span class="logo-text">CoRR</span></h1>
+                        <ul id="nav-base" class="nav-bar right">
                             <li class="search-out">
                                 <input type="text" class="search-out-text">
                             </li>
@@ -96,7 +96,7 @@
             <div class="modal-footer">
               <div class="row margin">
                 <div class="input-field col s12">
-                  <a onclick="console.log('error display closed.');$('#error-display-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  <a onclick="$('#error-display-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                 </div>
               </div>
             </div>
@@ -138,6 +138,11 @@
                     <label id="user-about-value" for="user-about">About</label>
                   </div>
                 </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-view-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -174,6 +179,11 @@
                 <div class="row margin" id="app-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_app();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#app-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -217,6 +227,11 @@
                 <div class="row margin" id="project-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_project();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#project-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -269,15 +284,17 @@
                   <div class="input-field col s12">
                     <select id="diff-status">
                       <option value="proposed" disabled selected>Proposed</option>
-                      <!-- <option value="proposed">Proposed</option> -->
-                      <!-- <option value="agreed">Agreed</option>
-                      <option value="denied">Denied</option> -->
                     </select>
                   </div>
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
                     <a onclick="return user.add_diff();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#diff-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -293,8 +310,8 @@
                <div class="row margin">
                   <div class="input-field col s12">
                     <i class="mdi-file-cloud-download prefix"></i>
-                    <input id="env-record" type="text"></input>
-                    <label for="env-record">Record</label>
+                    <input id="env-project" type="text"></input>
+                    <label for="env-project">Project</label>
                   </div>
                </div>
                <div class="row margin">
@@ -315,6 +332,35 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
+                    <select id="env-version">
+                      <option value="unknown" disabled selected>Unknown</option>
+                      <option value="git">Git</option>
+                      <option value="mercurial">Mercurial</option>
+                      <option value="subversion">Subversion</option>
+                      <option value="cvs">Cvs</option>
+                      <option value="bazaar">Bazaar</option>
+                      <option value="arch">Arch</option>
+                      <option value="monotone">Monotone</option>
+                      <option value="fastcst">Fastcst</option>
+                      <option value="opencm">Opencm</option>
+                      <option value="vesta">Vesta</option>
+                      <option value="codeville">Codeville</option>
+                      <option value="darcs">Darcs</option>
+                      <option value="bitkeeper">Bitkeeper</option>
+                      <option value="perforce">Perforce</option>
+                      <option value="clearcase">Clearcase</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-track-changes prefix"></i>
+                    <input id="env-vc-location" type="text" placeholder="local|master~hash or https://...|master~hash"></input>
+                    <label for="env-vc-location">Location</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
                     <select id="env-system">
                       <option value="container-based" disabled selected>Container</option>
                       <option value="vm-based">Virtual Machine</option>
@@ -328,7 +374,30 @@
                 </div>
                 <div class="row margin">
                   <div class="input-field col s12">
+                    <select id="env-location" onchange="reloadEnvLocation()">
+                      <option value="unknown" disabled selected>Unknown</option>
+                      <option value="local">Local</option>
+                      <option value="remote">Remote</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="file-field col s12" id="env-bundle-location">
+                    <input id="bundle-path" class="file-path validate" type="text"></input>
+                    <div class="btn">
+                      <span>File</span>
+                      <input id="bundle-file" type="file"></input>
+                    </div>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
                     <a onclick="return user.add_env();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#env-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -376,10 +445,57 @@
                     </select>
                   </div>
                 </div>
-
                 <div class="row margin" id="record-add-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.add_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="user-add-modal" class="modal login-form">
+            <div class="modal-content">
+                <div class="row center tooltipped" data-position="top" data-delay="50" data-tooltip="record logo">
+                    <label for="picture-input">
+                        <img src="../images/picture.png" alt="" id="update-user-picture" class="circle responsive-img valign profile-image-login"></img>
+                    </label>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-file-folder prefix"></i>
+                    <input id="user-email" type="text"></input>
+                    <label id="user-email-value" for="user-email">Email</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <i class="mdi-action-turned-in prefix"></i>
+                    <input id="user-password" type="password"></input>
+                    <label id="user-password-value" for="user-password">Password</label>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12" id="user-group-dropdown">
+                    <select id="user-group">
+                      <option value="user" disabled selected>User</option>
+                      <option value="developer">Developer</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row margin" id="user-add-callback">
+                  <div class="input-field col s12">
+                    <a onclick="return user.add_user();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Confirm</a>
+                  </div>
+                </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#user-add-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
                   </div>
                 </div>
             </div>
@@ -434,12 +550,73 @@
                     <label id="upload-guide-value" for="upload-guide">Guide</label>
                   </div>
                 </div>
-                <div class="row margin" id="record-add-callback">
+                <div class="row margin" id="record-upload-callback">
                   <div class="input-field col s12">
                     <a onclick="return user.upload_record();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Upload</a>
                   </div>
                 </div>
+                <div class="row margin">
+                  <div class="input-field col s12">
+                    <a onclick="$('#record-upload-modal').closeModal();" class="btn waves-effect purple waves-light col s12 modal-action modal-close">Close</a>
+                  </div>
+                </div>
             </div>
+        </div>
+
+        <div id="loading-modal" class="modal modal-form">
+          <div class="modal-content">
+            <div class="row">
+              <div class="col s12 center">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                  <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+                <p>Wait...</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="float-menu" class="fixed-action-btn" style="bottom: 45px; left: 24px;">
@@ -457,24 +634,41 @@
             </div>
         </div>
 
+        <div id="terms-modal" class="modal">
+            <div class="modal-content">
+                <div class="row center">
+                    <img src="../images/disclaimer.png" alt="" id="account-user-picture" class="circle responsive-img valign profile-image-login">
+                </div>
+                <div class="row center">
+                    <span class="card-title black-text text-darken-4">Terms of Service</span>
+                </div>
+                <div class="divider"></div>
+                <div class="row" id="platform-terms-pop">
+                    <span>No Specific mention. The platform has open terms.</span>
+                </div>
+            </div>
+        </div>
+
         <footer class="page-footer">
+            <div class="container red-text text-lighten-2" id="platform-warning">
+            </div>
             <div class="footer-copyright">
               <div class="container">
-                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>. Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
+                <span>Funded by <a class="grey-text text-lighten-4" href="https://mgi.nist.gov/" target="_blank">NIST MGI</a>.Accessible under <a class="grey-text text-lighten-4" href="https://raw.githubusercontent.com/usnistgov/corr/master/LICENSE" target="_blank">MIT License.</a></span>
                 <span class="right"> CoRR version <a id= "footer-version" class="grey-text text-lighten-4" href="https://github.com/usnistgov/corr" target="_blank">N/A</a></span>
                 </div>
             </div>
         </footer>
 
+        <script type="text/javascript" src="../js/purify.min.js"></script>
         <script type="text/javascript" src="../js/js.cookie.js"></script>
         <script type="text/javascript" src="../js/config.js"></script>
 
         <script type="text/javascript" src="../js/jquery-1.11.2.min.js"></script>
         <script type="text/javascript" src="../js/materialize.js"></script>
         <script type="text/javascript" src="../js/prism.js"></script>
-        <script type="text/javascript" src="../js/materialize.min.js"></script>
-        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>  
-        <script type="text/javascript" src="../js/plugins/chartist-js/chartist.min.js"></script>   
+        <script type="text/javascript" src="../js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="../js/plugins/spark-md5.js"></script>
         <script type="text/javascript" src="../js/plugins/chartjs/chart.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/jquery.sparkline.min.js"></script>
         <script type="text/javascript" src="../js/plugins/sparkline/sparkline-script.js"></script>
@@ -498,11 +692,18 @@
         <script type="text/javascript">
             $(document).ready(function() {
               $('.modal-trigger').leanModal();
+              document.getElementById("nav-home").href = window.location.origin;
+              document.getElementById("nav-home-2").href = window.location.origin;
+              document.getElementById("nav-dashboard").href = window.location.origin+"/dashboard";
             });
+
             var param = window.location.search.substring(1);
             var blocks = param.split("&");
             var view_selected = "";
             var options = [];
+            var head = document.getElementsByTagName('head')[0];
+            var js = document.createElement("script");
+            js.type = "text/javascript";
             // Extract the parameters session, view and others from the url.
             for(i=0;i<blocks.length;i++){
                 var parts = blocks[i].split("=");
@@ -514,31 +715,42 @@
             }
             // Inject the default dashboard view
             if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == ""){
-                dashboard.activity();
+                dashboard.activity(options);
                 var space = new Space();
-                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                }
+                js.src = "../js/plugins/chartist-js/chartist.min.js";
+                head.appendChild(js);
             }
             // Inject the applications dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "apps"){
                 dashboard.apps();
-                document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create application'><i class='mdi-content-add'></i></a>";
+                if(Cookies.get('group') == "admin"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#app-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create application'><i class='mdi-content-add'></i></a>";
+                }
             }
             // Inject the projects dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "projects"){
-                dashboard.projects();
+                dashboard.projects(options);
                 var space = new Space();
-                document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a href='#project-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create project'><i class='mdi-content-add'></i></a>";
+                }
             }
             // Inject the records dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "records"){
                 dashboard.records(options);
                 var space = new Space();
                 var selected_records = [];
-                document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
+                if(Cookies.get('group') == "user"){
+                  document.getElementById("float-menu").innerHTML = "<a onclick='launchDiffModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create diff'><i class='large mdi-editor-vertical-align-center'></i></a>";
+                }
             }
             // Inject the diffs dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "diffs"){
                 dashboard.diffs(options);
+                var space = new Space();
                 // document.getElementById("float-menu").innerHTML = "<a href='#diff-add-modal' class='modal-trigger btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create'><i class='mdi-content-add'></i></a>";
             }
             // Inject the envs dashboard view
@@ -550,13 +762,22 @@
             // Inject the query dashboard view
             else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "query"){
                 var space = new Space();
+                var hits = 0;
+                var selected_records = [];
                 dashboard.query(options);
 
                 document.getElementById("float-menu").innerHTML = "<a id='results-display' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='number of hits'>0</a>";
             }
+            else if(Cookies.get('session') != undefined && Cookies.get('session') != 'none' && view_selected == "users"){
+                dashboard.users(options);
+                var space = new Space();
+
+                document.getElementById("float-menu").innerHTML = "<a onclick='launchUserModal();' class='btn-floating btn-large red tooltipped' data-position='right' data-delay='50' data-tooltip='create user'><i class='large mdi-content-add'></i></a>";
+            }
             // Otherwise redirect to a 404
             else{
-                window.location.replace("../");
+              // window.location.replace("../");
+              config.error_modal("User access denied", "You have to log back in.");
             }
 
             // In case home has session key (logged in)
@@ -566,7 +787,14 @@
                 document.getElementById("nav-home").href = "../";
                 document.getElementById("nav-dashboard").href = "./";
 
-                document.getElementById("float-settings").innerHTML = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings' href='./' ><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='applications'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li></ul>";
+                var menu_dash = "<a class='btn-floating btn-large cyan tooltipped' data-position='left' data-delay='50' data-tooltip='settings'><i class='mdi-action-visibility'></i></a><ul><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='query'><a class='modal-trigger btn-floating btn-large orange darken-1' onclick=\"return view('query');\"><i class='large mdi-image-tune'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='diffs'><a class='modal-trigger btn-floating btn-large green darken-1 disabled' onclick=\"return view('diffs');\"><i class='large mdi-editor-vertical-align-center'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='tools'><a class='modal-trigger btn-floating btn-large purple darken-1 disabled' onclick=\"return view('apps');\"><i class='large mdi-navigation-apps'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='records'><a class='modal-trigger btn-floating btn-large blue-grey' onclick=\"return view('records');\"><i class='large mdi-file-cloud-upload'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='projects'><a class='modal-trigger btn-floating btn-large brown darken-1' onclick=\"return view('projects');\"><i class='large mdi-file-folder'></i></a></li>";
+                if(Cookies.get('group') == "admin"){
+                  menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='users'><a class='modal-trigger btn-floating btn-large grey darken-1' onclick=\"return view('users');\"><i class='large mdi-social-person'></i></a></li><li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li>";
+                }else{
+                  menu_dash += "<li class='tooltipped' data-position='left' data-delay='50' data-tooltip='terms of service'><a href='#terms-modal' class='modal-trigger btn-floating btn-large red darken-1'><i class='large mdi-action-assignment'></i></a></li>";
+                }
+                menu_dash += "</ul>";
+                document.getElementById("float-settings").innerHTML = menu_dash;
             }
 
             // View switching function
@@ -574,10 +802,10 @@
                 window.location.replace("./?view="+scope);
             }
 
-            function launchEnvModal(record_id){
+            function launchEnvModal(project_id){
               $('#env-add-modal').openModal();
-              var env_record = document.getElementById("env-record");
-              env_record.value = record_id;
+              var env_project = document.getElementById("env-project");
+              env_project.value = project_id;
             }
 
             function launchRecordModal(project_id){
@@ -595,25 +823,29 @@
                 record_to.value = selected_records[1];
               }else{
                 // Materialize.toast('<span>Please select up to two records!</span>', 3000);
-                config.error_modal('Diff create failed', 'Please select up to two records.')
+                config.error_modal('Diff create failed', 'Please select only two records.')
               }
             }
 
-            function userViewModal(_id, fname, lname, organisation, about){
+            function launchUserModal(){
+              $('#user-add-modal').openModal();
+            }
+
+            function userViewModal(_id, fname, lname, org, about){
               $('#user-view-modal').openModal();
               var user_picture = document.getElementById("user-picture");
               var user_fname = document.getElementById("user-fname");
               var user_lname = document.getElementById("user-lname");
-              var user_organisation = document.getElementById("user-org");
+              var user_org = document.getElementById("user-org");
               var user_about = document.getElementById("user-about");
-              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v0.1";
+              var url = config.mode+"://"+config.host+":"+config.port+"/cloud/v"+config.version;
               user_picture.src = url+"/public/user/picture/"+_id;
               user_fname.value = fname;
               user_fname.readOnly = true;
               user_lname.value = lname;
               user_lname.readOnly = true;
-              user_organisation.value = organisation;
-              user_organisation.readOnly = true;
+              user_org.value = org;
+              user_org.readOnly = true;
               user_about.value = about;
               user_about.readOnly = true;
             }
@@ -699,7 +931,6 @@
               var group = document.getElementById("upload-group").value;
               var type_div = document.getElementById("type-div");
               var guide_div = document.getElementById("guide-div");
-              console.log("group: "+group);
               if(group == "body"){
                 type_div.style.display = 'block';
                 guide_div.style.display = 'block';
@@ -709,12 +940,20 @@
               }
             }
 
+            function reloadEnvLocation(){
+              var location = document.getElementById("env-location").value;
+              var bundle_location_div = document.getElementById("env-bundle-location");
+              if(location == "remote"){
+                bundle_location_div.innerHTML = "<i class=\"mdi-file-cloud prefix\"></i><input id=\"bundle-file\" type=\"text\" placeholder=\"https://...|http://...|tcp:...\"></input><label for=\"bundle-path\">Location</label></div>";
+              }else{
+                bundle_location_div.innerHTML = "<input id=\"bundle-path\" class=\"file-path validate\" type=\"text\"></input><div class=\"btn\"><span>File</span><input id=\"bundle-file\" type=\"file\"></input></div>";
+              }
+            }
+
             function reloadUploadGuide(){
               var guide = document.getElementById("upload-guide");
               var upload_type = document.getElementById("upload-type");
               var type_selected = upload_type.options[upload_type.selectedIndex].text
-              console.log("reloadUploadGuide ... ");
-              console.log(type_selected);
               if(type_selected == "Json"){
                 guide.value = "{\n";
                 guide.value += "  'system':{\n";
@@ -886,7 +1125,30 @@
               add_callback.innerHTML = "";
 
             }
-            
+
+            function custom_succeed(xhttp){
+                var content = JSON.parse(xhttp.responseText);
+                var platform_name = document.getElementById("platform-name");
+                var platform_warning = document.getElementById("platform-warning");
+                var platform_terms_pop = document.getElementById("platform-terms-pop");
+
+                if (content['warning'] != ""){
+                    platform_warning.innerHTML = "<span class='center'>"+content["warning"]+"</span>";
+                }
+
+                if (content['terms'] != ""){
+                    platform_terms_pop.innerHTML = "<span class='col 12'>"+content["terms"]+"</span>";
+                }
+
+                if (content['name'] != ""){
+                    platform_name.innerHTML = content["name"];
+                }
+            };
+            function custom_failed(){
+                console.log("No Custom JSON file found.")
+            };
+            config.load_xml('custom.json', [], custom_succeed, custom_failed);
+
         </script>
         <script type="text/javascript" src="../js/callbacks/user.js"></script>
         <script type="text/javascript" src="../js/callbacks/application.js"></script>
@@ -902,7 +1164,7 @@
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
                 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-                ga('create', 'UA-64854835-1', 'auto');
+                ga('create', 'UA-64854835-2', 'auto');
                 ga('send', 'pageview');
         </script>
     </body>

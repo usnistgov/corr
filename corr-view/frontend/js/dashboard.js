@@ -3,9 +3,6 @@ var dashboard = {
     coming_soon:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
         };
         function failed(){
@@ -13,20 +10,24 @@ var dashboard = {
         };
         config.load_xml('coming_soon.xml', [], succeed, failed);
     },
-	activity:function(){
+	activity:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
             var space = new Space();
-            space.dashboard();
+
+            space.dashboard(page);
 
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_activity.xml', [], succeed, failed);
@@ -34,9 +35,6 @@ var dashboard = {
 	apps:function(){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
@@ -44,21 +42,43 @@ var dashboard = {
 
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_applications.xml', [], succeed, failed);
     },
-	projects:function(){
+    users:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
-
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
             var space = new Space();
-            space.dashboard();
+            space.users(page);
+
+        };
+        function failed(){
+            window.location.replace("/error/?code=404");
+        };
+        config.load_xml('dashboard_users.xml', [], succeed, failed);
+    },
+	projects:function(options){
+        function succeed(xhttp){
+            dashboard.content.innerHTML = xhttp.responseText;
+            user.trusted();
+            var page = 0;
+            for(var i=0;i<options.length;i++){
+                var parts = options[i].split("=");
+                if(parts[0] == "page"){
+                    page = parts[1];
+                }
+            }
+            var space = new Space();
+            space.dashboard(page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -68,20 +88,20 @@ var dashboard = {
 	records:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
             var space = new Space();
-            space.records(project);
+            space.records(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -91,21 +111,21 @@ var dashboard = {
 	diffs:function(options){
 		function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
 
             var space = new Space();
-            space.diffs(project);
+            space.diffs(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -115,21 +135,21 @@ var dashboard = {
     envs:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var project = "all";
+            var page = 0;
             for(var i=0;i<options.length;i++){
                 var parts = options[i].split("=");
                 if(parts[0] == "project"){
                     project = parts[1];
+                }else if(parts[0] == "page"){
+                    page = parts[1];
                 }
             }
 
             var space = new Space();
-            space.envs(project);
+            space.envs(project, page);
         };
         function failed(){
             window.location.replace("/error/?code=404");
@@ -139,17 +159,11 @@ var dashboard = {
 	query:function(options){
         function succeed(xhttp){
             dashboard.content.innerHTML = xhttp.responseText;
-            console.log('Cookie session value: '+ Cookies.get('session'));
-            // user.session = session;
-            // console.log(user.session);
             user.trusted();
 
             var space = new Space();
-            // space.search();
-
         };
         function failed(){
-            console.log(window.location.host);
             window.location.replace("/error/?code=404");
         };
         config.load_xml('dashboard_query.xml', [], succeed, failed);

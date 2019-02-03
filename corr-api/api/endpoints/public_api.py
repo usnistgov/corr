@@ -1,9 +1,9 @@
 import json
 
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, get_or_create
 from api import app, storage_manager, access_manager, API_URL, api_response, data_pop, merge_dicts
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
@@ -111,7 +111,7 @@ def public_app_logo(app_id):
 def public_users():
     logTraffic(API_URL, endpoint='/public/users')
     if fk.request.method == 'GET':
-        users = UserModel.objects()
+        users = UserModel.objects
         users_dict = {'total_users':len(users), 'users':[]}
         for user in users:
             users_dict['users'].append(user.extended())
@@ -235,7 +235,7 @@ def public_user_projects(user_id):
 def public_projects():
     logTraffic(API_URL, endpoint='/public/projects')
     if fk.request.method == 'GET':
-        projects = ProjectModel.objects()
+        projects = ProjectModel.objects
         projects_dict = {'total_projects':len(projects), 'projects':[]}
         for project in projects:
             if project.access == 'public':
@@ -459,7 +459,7 @@ def public_project_env_download(project_id, env_id):
 def public_records():
     logTraffic(API_URL, endpoint='/public/records')
     if fk.request.method == 'GET':
-        records = RecordModel.objects()
+        records = RecordModel.objects
         records_dict = {'total_records':len(records), 'records':[]}
         for record in records:
             records_dict['records'].append(record.extended())
@@ -505,7 +505,7 @@ def public_record_download(project_id, record_id):
 def public_diffs():
     logTraffic(API_URL, endpoint='/public/diffs')
     if fk.request.method == 'GET':
-        diffs = DiffModel.objects()
+        diffs = DiffModel.objects
         diffs_dict = {'total_diffs':len(diffs), 'diffs':[]}
         for diff in diffs:
             diffs_dict['diffs'].append(diff.extended())
@@ -531,7 +531,7 @@ def public_diff_show(diff_id):
 def public_files():
     logTraffic(API_URL, endpoint='/public/files')
     if fk.request.method == 'GET':
-        files = FileModel.objects()
+        files = FileModel.objects
         files_dict = {'total_files':len(files), 'files':[]}
         for _file in files:
             files_dict['files'].append(_file.extended())
@@ -601,7 +601,7 @@ def public_file_download(file_id):
             if storage == '' or name == '':
                 return api_response(400, 'Missing mandatory fields', 'A file should have at least a name and a storage reference (s3 key or url).')
             else:
-                _file, created = FileModel.objects.get_or_create(encoding=encoding, name=name, mimetype=mimetype, size=size, path=path, storage=storage, location=location, group=group, description=description)
+                _file, created = get_or_create(document=FileModel, encoding=encoding, name=name, mimetype=mimetype, size=size, path=path, storage=storage, location=location, group=group, description=description)
                 if not created:
                     return api_response(200, 'File already exists', _file.info())
                 else:
@@ -629,7 +629,7 @@ def public_file_show(file_id):
 def public_messages():
     logTraffic(API_URL, endpoint='/public/messages')
     if fk.request.method == 'GET':
-        messages = MessageModel.objects()
+        messages = MessageModel.objects
         messages_dict = {'total_messages':len(messages), 'messages':[]}
         for message in messages:
             messages_dict['messages'].append(message.extended())
@@ -667,7 +667,7 @@ def public_search(key_words):
 
         words = key_words.split('-')
 
-        for user in UserModel.objects():
+        for user in UserModel.objects:
             exists = [False for word in words]
             condition = [True for word in words]
             profile = ProfileModel.objects(user=user).first()
@@ -697,7 +697,7 @@ def public_search(key_words):
                 results['results']['users']['users-list'].append({'user':user.info(), 'profile':profile.info()})
             results['results']['users']['users-total'] = len(results['results']['users']['users-list'])
 
-        for app in ApplicationModel.objects():
+        for app in ApplicationModel.objects:
             exists = [False for word in words]
             condition = [True for word in words]
             index = 0
@@ -735,7 +735,7 @@ def public_search(key_words):
                 results['results']['apps']['apps-list'].append(app.info())
             results['results']['apps']['apps-total'] = len(results['results']['apps']['apps-list'])
 
-        for project in ProjectModel.objects():
+        for project in ProjectModel.objects:
             if project.access == "public":
                 exists = [False for word in words]
                 condition = [True for word in words]
@@ -772,7 +772,7 @@ def public_search(key_words):
                                 exists[index] = True
                         except:
                             pass
-                        
+
                     else:
                         exists[index] = True
                     index += 1
@@ -780,7 +780,7 @@ def public_search(key_words):
                     results['results']['projects']['projects-list'].append(project.info())
                 results['results']['projects']['projects-total'] = len(results['results']['projects']['projects-list'])
 
-        for record in RecordModel.objects():
+        for record in RecordModel.objects:
             if record.access == "public":
                 exists = [False for word in words]
                 condition = [True for word in words]
@@ -849,7 +849,7 @@ def public_search(key_words):
                     results['results']['records']['records-list'].append(record.info())
                 results['results']['records']['records-total'] = len(results['results']['records']['records-list'])
 
-        for env in EnvironmentModel.objects():
+        for env in EnvironmentModel.objects:
             exists = [False for word in words]
             condition = [True for word in words]
             index = 0
@@ -877,7 +877,7 @@ def public_search(key_words):
                 results['results']['envs']['envs-list'].append(env.info())
             results['results']['envs']['envs-total'] = len(results['results']['envs']['envs-list'])
 
-        for bundle in BundleModel.objects():
+        for bundle in BundleModel.objects:
             exists = [False for word in words]
             condition = [True for word in words]
             index = 0
@@ -905,7 +905,7 @@ def public_search(key_words):
                 results['results']['bundles']['bundles-list'].append(bundle.info())
             results['results']['bundles']['bundles-total'] = len(results['results']['bundles']['bundles-list'])
 
-        for file_ in FileModel.objects():
+        for file_ in FileModel.objects:
             if file_.owner == None:
                 exists = [False for word in words]
                 condition = [True for word in words]
@@ -954,7 +954,7 @@ def public_search(key_words):
                     results['results']['files']['files-list'].append(file_.info())
                 results['results']['files']['files-total'] = len(results['results']['files']['files-list'])
 
-        for version in VersionModel.objects():
+        for version in VersionModel.objects:
             exists = [False for word in words]
             condition = [True for word in words]
             index = 0
@@ -1037,7 +1037,7 @@ def public_user_apps(user_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def public_apps():
     if fk.request.method == 'GET':
-        apps = ApplicationModel.objects()
+        apps = ApplicationModel.objects
         apps_json = {'total_apps':len(apps), 'apps':[]}
         for application in apps:
             apps_json['apps'].append(application.extended())

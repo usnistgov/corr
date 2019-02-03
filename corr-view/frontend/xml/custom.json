@@ -1,0 +1,5 @@
+{
+	"name": "CoRR Localhost instance",
+	"warning": "CoRR Localhost leverages cookies to use user session keys. By continueing to use this platform, the user consent to allow us to do so. Please update this before rolling your instance to the public.",
+	"terms": "CoRR Localhost has no limited terms of use. Please update this before rolling it to public."
+}

@@ -5,7 +5,7 @@ from bson import ObjectId
 
 from ..models import UserModel
 from ..models import FileModel
-          
+
 class CommentModel(db.Document):
     """CoRR backend comment model.
     The model that stores interaction between users and some objects.
@@ -32,8 +32,9 @@ class CommentModel(db.Document):
 
     def _useful(self):
         """Retrieve the list of users that marked the comment to be useful.
+
         Returns:
-            The users list.
+          The users list.
         """
         useful = []
         for u_id in self.useful:
@@ -44,8 +45,9 @@ class CommentModel(db.Document):
 
     def _attachments(self):
         """Gather the files attached to the comment.
+
         Returns:
-            The comment attachments files.
+          The comment attachments files.
         """
         attachments = []
         for f_id in self.attachments:
@@ -56,8 +58,9 @@ class CommentModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an comment model instance content.
+
         Returns:
-            The dictionary content of the comment model.
+          The dictionary content of the comment model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'sender':str(self.sender.id), 'title':self.title,
         'content':self.content}
@@ -69,8 +72,9 @@ class CommentModel(db.Document):
 
     def extended(self):
         """Add the extend, resource, useful and attachments fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         if self.resource != None:
@@ -88,16 +92,18 @@ class CommentModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary. 
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

@@ -2146,23 +2146,23 @@ ul.staggered-list li {
 **********************/
 @media only screen and (max-width: 600px) {
   .hide-on-small-only, .hide-on-small-and-down {
-    display: none !important; } }
+    display: inherit !important; } }
 
 @media only screen and (max-width: 992px) {
   .hide-on-med-and-down {
-    display: none !important; } }
+    display: inherit !important; } }
 
 @media only screen and (min-width: 601px) {
   .hide-on-med-and-up {
-    display: none !important; } }
+    display: inherit !important; } }
 
 @media only screen and (min-width: 600px) and (max-width: 992px) {
   .hide-on-med-only {
-    display: none !important; } }
+    display: inherit !important; } }
 
 @media only screen and (min-width: 993px) {
   .hide-on-large-only {
-    display: none !important; } }
+    display: inherit !important; } }
 
 @media only screen and (min-width: 993px) {
   .show-on-large {
@@ -5229,9 +5229,10 @@ nav {
       line-height: 56px; }
   nav .brand-logo {
     position: absolute;
-    color: #fff;
+    color: red;
     display: inline-block;
-    font-size: 2.1rem;
+    font-size: 1.1rem;
+    vertical-align: middle;
     padding: 0;
     white-space: nowrap; }
     nav .brand-logo.center {
@@ -5243,12 +5244,8 @@ nav {
       transform: translateX(-50%); }
     @media only screen and (max-width: 992px) {
       nav .brand-logo {
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-        -moz-transform: translateX(-50%);
-        -ms-transform: translateX(-50%);
-        -o-transform: translateX(-50%);
-        transform: translateX(-50%); } }
+        position :fixed;
+        left: 10px; } }
     nav .brand-logo.right {
       right: 0.5rem;
       padding: 0; }
@@ -5307,7 +5304,7 @@ nav {
   .navbar-fixed nav {
     position: fixed; }
 
-@media only screen and (min-width: 601px) {
+@media only screen and (min-width: 101px) {
   nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i {
     height: 64px;
     line-height: 64px; }
@@ -5344,13 +5341,19 @@ html {
   color: rgba(0, 0, 0, 0.87); }
   @media only screen and (min-width: 0) {
     html {
-      font-size: 14px; } }
+      /*font-size: 14px; */
+      } 
+  }
   @media only screen and (min-width: 992px) {
     html {
-      font-size: 14.5px; } }
+      /*font-size: 14.5px; */
+    } 
+  }
   @media only screen and (min-width: 1200px) {
     html {
-      font-size: 15px; } }
+      /*font-size: 15px; */
+      } 
+  }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 400; }
@@ -5558,7 +5561,7 @@ small {
     bottom: 0;
     width: 100%;
     padding: 20px; }
-  .card .card-move-up .card-title {
+  .card .card-move-up .card-title .tool-title{
     position: absolute;
     bottom: 0;
     left: 0;
@@ -5566,9 +5569,20 @@ small {
   .card .card-title {
     color: #fff;
     font-size: 24px;
-    font-weight: 300; }
-    .card .card-title.activator {
+    font-weight: 300;
+    white-space: nowrap; 
+    margin: 20px 0 12px 0;
+    display: inherit;}
+    .card .card-title.activator .tool-title.activator{
       cursor: pointer; }
+
+  .tool-title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300;
+    white-space: nowrap;
+    display: inherit;}
+
   .card.small, .card.medium, .card.large {
     position: relative; }
     .card.small .card-image, .card.medium .card-image, .card.large .card-image {
@@ -5616,7 +5630,7 @@ small {
       top: 0;
       bottom: 0;
       width: 100%; }
-    .card .card-image .card-title {
+    .card .card-image .card-title .tool-title{
       position: absolute;
       bottom: 0;
       left: 0;
@@ -5627,8 +5641,6 @@ small {
     .card .card-content p {
       margin: 0;
       color: inherit; }
-    .card .card-content .card-title {
-      line-height: 48px; }
   .card .card-action {
     border-top: 1px solid rgba(160, 160, 160, 0.2);
     padding: 20px; }

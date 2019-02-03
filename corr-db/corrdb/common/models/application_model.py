@@ -6,12 +6,12 @@ from bson import ObjectId
 from ..models import UserModel
 from ..models import FileModel
 import hashlib
-          
+
 class ApplicationModel(db.Document):
     """CoRR backend application model.
     Information concerning a simulation management tool.
-    An application developer will most likely register 
-    the app to allow users to push records using the 
+    An application developer will most likely register
+    the app to allow users to push records using the
     appropriate API key.
 
     Attributes:
@@ -49,8 +49,9 @@ class ApplicationModel(db.Document):
 
     def _users(self):
         """Gather all the users that used the application.
+
         Returns:
-            The users that used the application.
+          The users that used the application.
         """
         users = []
         for u_id in self.users:
@@ -61,8 +62,9 @@ class ApplicationModel(db.Document):
 
     def _resources(self):
         """Extract all the files associated as resources to the applicatin.
+
         Returns:
-            The files list.
+          The files list.
         """
         resources = []
         for f_id in self.resources:
@@ -73,12 +75,14 @@ class ApplicationModel(db.Document):
 
     def save(self, *args, **kwargs):
         """Overwrite the save function of the application mongoengine Document.
+
         Returns:
-            The call to the based mongoengine Document save function.
+          The call to the based mongoengine Document save function.
         """
         if not self.app_token:
             self.app_token = hashlib.sha256(('CoRRApp_%s'%(str(datetime.datetime.utcnow()))).encode("ascii")).hexdigest()
 
+        self.created_at = str(datetime.datetime.utcnow())
         return super(ApplicationModel, self).save(*args, **kwargs)
 
     def retoken(self):
@@ -89,8 +93,9 @@ class ApplicationModel(db.Document):
 
     def info(self):
         """Build a dictionary structure of an application model instance content.
+
         Returns:
-            The dictionary content of the application model.
+          The dictionary content of the application model.
         """
         data = {'created':str(self.created_at), 'id': str(self.id), 'developer':self.developer.info(), 'name':self.name,
         'about':self.about, 'access':self.access, 'network':self.network, 'visibile':self.visibile}
@@ -104,8 +109,9 @@ class ApplicationModel(db.Document):
 
     def extended(self):
         """Add the extend, resources, token, users, storage fields to the built dictionary content.
+
         Returns:
-            The augmented dictionary.
+          The augmented dictionary.
         """
         data = self.info()
         data['resources'] = [resource.extended() for resource in self._resources()]
@@ -119,16 +125,18 @@ class ApplicationModel(db.Document):
 
     def to_json(self):
         """Transform the extended dictionary into a pretty json.
+
         Returns:
-            The pretty json of the extended dictionary.
+          The pretty json of the extended dictionary.
         """
         data = self.extended()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))
 
     def summary_json(self):
         """Transform the info dictionary into a pretty json.
+
         Returns:
-            The pretty json of the info dictionary. 
+          The pretty json of the info dictionary.
         """
         data = self.info()
         return json.dumps(data, sort_keys=True, indent=4, separators=(',', ': '))

@@ -3,9 +3,9 @@ import flask as fk
 from corrdb.common.core import setup_app
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProjectModel
-from corrdb.common.models import ApplicationModel 
+from corrdb.common.models import ApplicationModel
 from corrdb.common.models import TrafficModel
-from corrdb.common.models import StatModel  
+from corrdb.common.models import StatModel
 from corrdb.common.models import AccessModel
 import tempfile
 from io import StringIO
@@ -30,10 +30,9 @@ import glob
 app, storage_manager, access_manager = setup_app(__name__)
 
 # The api's version
-API_VERSION = 0.1
+API_VERSION = 0.2
 # The api base url
 API_URL = '/corr/api/v{0}'.format(API_VERSION)
-
 
 def api_response(code, title, content):
     """Provides a common structure to represent the response
@@ -65,6 +64,8 @@ def merge_dicts(*dict_args):
     return result
 
 MODE = app.config['MODE']
+ACC_SEC = app.config['SECURITY_MANAGEMENT']['account']
+CNT_SEC = app.config['SECURITY_MANAGEMENT']['content']
 
 # import all the api endpoints.
 import api.endpoints

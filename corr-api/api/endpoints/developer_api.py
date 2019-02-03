@@ -1,10 +1,10 @@
 import json
 
-from flask.ext.api import status
+from flask_api import status
 import flask as fk
 
 from corrdb.common import logAccess, logStat, logTraffic, crossdomain
-from api import app, storage_manager, access_manager, API_URL, api_response
+from api import app, storage_manager, access_manager, API_URL, ACC_SEC, CNT_SEC, api_response
 from corrdb.common.models import UserModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import FileModel
@@ -20,9 +20,9 @@ import traceback
 @crossdomain(fk=fk, app=app, origin='*')
 def apps_get(api_token):
     logTraffic(API_URL, endpoint='/developer/<api_token>/apps')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
-        logAccess(API_URL,'api', '/developer/<api_token>/apps')
+        logAccess(fk, current_user, API_URL, 'api', '/developer/<api_token>/apps')
         print(current_user.group)
         if current_user.group == "developer" or current_user.group == "user":
             if fk.request.method == 'GET':
@@ -34,7 +34,7 @@ def apps_get(api_token):
             else:
                 return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
         elif current_user.group == "admin": # An admin is a meta developer.
-            apps = ApplicationModel.objects()
+            apps = ApplicationModel.objects
             apps_json = {'total_apps':len(apps), 'apps':[]}
             for application in apps:
                 apps_json['apps'].append(application.extended())
@@ -48,9 +48,9 @@ def apps_get(api_token):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_logo(api_token, app_id):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/logo/<app_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
-        logAccess(API_URL,'api', '/developer/<api_token>/app/logo/<app_id>')
+        logAccess(fk, current_user, API_URL, 'api', '/developer/<api_token>/app/logo/<app_id>')
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
@@ -108,10 +108,10 @@ def app_logo(api_token, app_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_access(api_token, app_id):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/access/<app_id>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logAccess(API_URL,'api', '/developer/<api_token>/app/access/<app_id>')
+            logAccess(fk, current_user, API_URL, 'api', '/developer/<api_token>/app/access/<app_id>')
             if fk.request.method == 'GET':
                 app = ApplicationModel.objects.with_id(app_id)
                 if app != None:
@@ -135,10 +135,10 @@ def app_access(api_token, app_id):
 @crossdomain(fk=fk, app=app, origin='*')
 def app_search(api_token, app_name):
     logTraffic(API_URL, endpoint='/developer/<api_token>/app/search/<app_name>')
-    current_user = access_manager.check_api(api_token)
+    current_user = access_manager.check_api(api_token, ACC_SEC, CNT_SEC)
     if current_user is not None:
         if current_user.group == "developer" or current_user.group == "user" or current_user.group == "admin":
-            logAccess(API_URL,'api', '/developer/<api_token>/app/search/<app_name>')
+            logAccess(fk, current_user, API_URL, 'api', '/developer/<api_token>/app/search/<app_name>')
             if fk.request.method == 'GET':
                 apps = ApplicationModel.objects(name__icontains=app_name)
                 apps_dict = {'total_apps':0, 'apps':[]}
@@ -165,7 +165,7 @@ def app_connectivity(app_token):
     logTraffic(API_URL, endpoint='/<app_token>/app/connectivity')
     current_app = access_manager.check_app(app_token)
     if current_app is not None:
-        logAccess(API_URL,'api', '/<app_token>/app/connectivity', current_app)
+        logAccess(fk, current_user, API_URL, 'api', '/<app_token>/app/connectivity', current_app)
         if fk.request.method == 'GET':
             name = current_app.name if current_app.name != '' and current_app.name != None else 'unknown'
             return api_response(200, 'Application %s is accessible'%name, current_app.info())
@@ -173,4 +173,3 @@ def app_connectivity(app_token):
             return api_response(405, 'Method not allowed', 'This endpoint supports only a GET method.')
     else:
         return api_response(401, 'Unauthorized access to the API', 'This is not an app token.')
-

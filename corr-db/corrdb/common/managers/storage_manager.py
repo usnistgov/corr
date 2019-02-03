@@ -1,14 +1,18 @@
+"""Manage storage control.
+"""
 import boto3
 from io import StringIO
 from io import BytesIO
 import zipfile
 import simplejson as json
 import time
-import traceback 
+import traceback
 import datetime
 import requests
 import os
 import glob
+import hashlib
+import clamd
 
 class StorageManager:
     def __init__(self, app):
@@ -16,6 +20,7 @@ class StorageManager:
         """
         self.app = app
         self.config = app.config['FILE_STORAGE']
+        self.secur = app.config['SECURITY_MANAGEMENT']['content']
         if self.config['type'] == 's3':
             # Boto s3 instance
             if self.config['id'] != '' and self.config['key'] != '':
@@ -44,8 +49,9 @@ class StorageManager:
 
     def storage_get_file(self, group='', key=''):
         """Retreive a file from the file storage.
-            Returns:
-                File buffer.
+
+        Returns:
+          File buffer.
         """
         try:
             obj = None
@@ -78,14 +84,48 @@ class StorageManager:
             print(traceback.print_exc())
             return None
 
+    def is_safe(self, content=None):
+        """Make sure a content is free of malicious data.
+        It called the antivirus ClamAV through its python interface to
+        do the job.
+
+        Returns:
+          A pair of two values. The first says if it is virus free and
+          the second says something nice or bad about it.
+        """
+        if not self.secur:
+            return [True, "Security is not required."]
+        else:
+            if content is not None:
+                cd = clamd.ClamdUnixSocket()
+                if cd.ping() == 'PONG':
+                    cd.reload()
+                    file_buffer = BytesIO()
+                    try:
+                        file_buffer.write(content)
+                    except:
+                        file_buffer.write(content.encode())
+                    file_buffer.seek(0)
+                    result = cd.instream(file_buffer)
+                    if result['stream'] == ('OK', None):
+                        return [True, "The uploaded contents are safe."]
+                    else:
+                        return [False, "At least one of the uploaded contents looks malicious. They have been discarded by the anti-malware module."]
+                else:
+                    return [False, "Clamd Cannot be reached."]
+            else:
+                return [True, "No content. So it is very safe."]
+
     def storage_upload_file(self, file_meta=None, file_obj=None):
         """Upload a file into the s3 bucket.
-            Returns:
-                an array of two elements. one is the status
-                of the upload and the other is a message 
-                accompanying it.
+
+        Returns:
+          an array of two elements. one is the status
+          of the upload and the other is a message
+          accompanying it.
         """
         if file_meta != None and file_obj != None:
+            m = hashlib.md5()
             if file_meta.location == 'local':
                 dest_filename = file_meta.storage
                 try:
@@ -93,27 +133,46 @@ class StorageManager:
                     if file_meta.group != 'descriptive':
                         group = 'corr-%ss'%file_meta.group
                     print(group)
-                    if self.config['type'] == 's3':
-                        s3_files = self.s3.Bucket(self.bucket)
-                        s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=file_obj.read())
-                    elif self.config['type'] == 'filesystem':
-                        self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
-                        print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
-                        with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
-                            obj.write(file_obj.read())
-                    return [True, "File uploaded successfully"]
+                    content = file_obj.read()
+                    safety = self.is_safe(content)
+                    if not safety[0]:
+                        return [False, safety[1]]
+                    else:
+                        if self.config['type'] == 's3':
+                            s3_files = self.s3.Bucket(self.bucket)
+                            s3_files.put_object(Key='{0}/{1}'.format(group, dest_filename), Body=content)
+                        elif self.config['type'] == 'filesystem':
+                            self.app.logger.info('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
+                            print('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename))
+                            with open('{0}/{1}/{2}'.format(self.storage_path, group, dest_filename), "wb") as obj:
+                                obj.write(content)
+
+                        m.update(content)
+                        file_meta.checksum = m.hexdigest()
+                        file_meta.save()
+                        return [True, "File uploaded successfully"]
                 except:
                     self.app.logger.error(traceback.print_exc())
                     return [False, traceback.format_exc()]
             else:
-                return [False, "Cannot upload a file that is remotely set. It has to be local targeted."]
+                file_obj = self.web_get_file(file_meta.storage)
+                safety = self.is_safe(content)
+                if file_obj and safety[0]:
+                    m.update(file_obj.getvalue())
+                    file_meta.checksum = m.hexdigest()
+                    file_meta.save()
+                if safety[0]:
+                    return [True, "Cannot upload a file that is remotely set. It has to be local targeted."]
+                else:
+                    return [False, safety[1]]
         else:
             return [False, "file meta data does not exist or file content is empty."]
 
     def agent_delete(self, group, path, key):
         """Agent function that deletes a file in the storage.
-            Returns:
-                Deletion status of file.
+
+        Returns:
+          Deletion status of file.
         """
         found = False
         for file_path in glob.glob('{0}/corr-{1}s'.format(path, group)):
@@ -125,8 +184,9 @@ class StorageManager:
 
     def agent_prepare(self, zf, group, object_dict):
         """Agent function that prepares a dictionary for storage in a compressed files.
-            Returns:
-                Zipping status
+
+        Returns:
+          Zipping status
         """
         object_buffer = StringIO()
         object_buffer.write(json.dumps(object_dict, sort_keys=True, indent=4, separators=(',', ': ')))
@@ -139,32 +199,25 @@ class StorageManager:
 
     def storage_delete_file(self, group='', key=''):
         """Delete a file from the s3 bucket.
-            Returns:
-                The status of the deletion. True for success
-                and False for failure.
+
+        Returns:
+          The status of the deletion. True for success
+          and False for failure.
         """
         deleted = False
         if key not in ["default-logo.png", "default-picture.png"]:
             if self.config['type'] == 's3':
                 s3_files = self.s3.Bucket(self.bucket)
                 for _file in s3_files.objects.all():
-                    if _file.key == 'corr-{0}s/{1}'.format(group, key): 
+                    if _file.key == 'corr-{0}s/{1}'.format(group, key):
                         _file.delete()
                         print("File deleted!")
                         deleted = True
                         break
             elif self.config['type'] == 'filesystem':
-                found = self.agent_delete('bundle', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('file', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('logo', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('output', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('picture', self.storage_path, key)
-                if not found:
-                    found = self.agent_delete('resource', self.storage_path, key)
+                found = self.agent_delete(group, self.storage_path, key)
+                if found:
+                    deleted = True
             if not deleted:
                 print("File not deleted")
         return deleted
@@ -193,7 +246,7 @@ class StorageManager:
             _environment = EnvironmentModel.objects.with_id(environment_id)
             if _environment:
                 if _environment.bundle and _environment.bundle.scope == "local":
-                    result = self.storage_delete_file('bundle', _environment.bundle.location)
+                    result = self.storage_delete_file('bundle', _environment.bundle.storage)
                     if result:
                         # logStat(deleted=True, bundle=_environment.bundle)
                         # logStat(deleted=True, environment=_environment)
@@ -204,8 +257,9 @@ class StorageManager:
 
     def delete_record_files(self, record, logStat):
         """Delete a record files.
-            Returns:
-                True if all files are deleted.
+
+        Returns:
+          True if all files are deleted.
         """
         from corrdb.common.models import FileModel
         final_result = True
@@ -218,8 +272,9 @@ class StorageManager:
 
     def delete_record_file(self, record_file, logStat):
         """Delete a record file and log the stats.
-            Returns:
-                Return of the storage_delete_file call.
+
+        Returns:
+          Return of the storage_delete_file call.
         """
         result = self.storage_delete_file(record_file.group, record_file.storage)
         if result:
@@ -229,8 +284,9 @@ class StorageManager:
 
     def web_get_file(self, url):
         """Retrieve a externaly hosted file.
-            Returns:
-                File buffer.
+
+        Returns:
+          File buffer.
         """
         try:
             print(url)
@@ -244,23 +300,24 @@ class StorageManager:
 
     def prepare_env(self, project=None, env=None):
         """Bundle a project's environment.
-            Returns:
-                Zip file buffer of the environment's content.
+
+        Returns:
+          Zip file buffer of the environment's content.
         """
         if project == None or env == None:
             return [None, '']
         else:
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
-                if env.bundle != None and env.bundle.location != '':
+                if env.bundle != None and env.bundle.storage != '':
                     try:
                         bundle_buffer = StringIO()
-                        if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
-                            bundle_buffer = self.web_get_file(env.bundle.location)
+                        if 'http://' in env.bundle.storage or 'https://' in env.bundle.storage:
+                            bundle_buffer = self.web_get_file(env.bundle.storage)
                         else:
-                            bundle_buffer = self.storage_get_file('bundle', env.bundle.location)
+                            bundle_buffer = self.storage_get_file('bundle', env.bundle.storage)
 
-                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
+                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.storage.split("/")[-1].split(".")[-1]))
                         data.date_time = time.localtime(time.time())[:6]
                         data.compress_type = zipfile.ZIP_DEFLATED
                         data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
@@ -284,10 +341,12 @@ class StorageManager:
 
         return [memory_file, "project-%s-env-%s.zip"%(str(project.id), str(env.id))]
 
+
     def prepare_project(self, project=None):
         """Bundle an entire project
-            Returns:
-                Zip file buffer of the project's content.
+
+        Returns:
+          Zip file buffer of the project's content.
         """
         if project == None:
             return [None, '']
@@ -341,15 +400,16 @@ class StorageManager:
 
     def prepare_record(self, record=None):
         """Bundle a record.
-            Returns:
-                Zip file buffer of a record's content.
+
+        Returns:
+          Zip file buffer of a record's content.
         """
         if record == None:
             return [None, '']
         else:
-            env = record.environment
             memory_file = BytesIO()
             with zipfile.ZipFile(memory_file, 'w') as zf:
+                env = record.environment
                 record_dict = record.extended()
                 environment = record_dict['head']['environment']
                 del record_dict['head']['environment']
@@ -420,15 +480,15 @@ class StorageManager:
                     self.agent_prepare(zf, 'record', record_dict)
                 except:
                     print(traceback.print_exc())
-                if env != None and env.bundle != None and env.bundle.location != '':
+                if env != None and env.bundle != None and env.bundle.storage != '':
                     try:
                         bundle_buffer = StringIO()
-                        if 'http://' in env.bundle.location or 'https://' in env.bundle.location:
-                            bundle_buffer = self.web_get_file(env.bundle.location)
+                        if 'http://' in env.bundle.storage or 'https://' in env.bundle.storage:
+                            bundle_buffer = self.web_get_file(env.bundle.storage)
                         else:
-                            bundle_buffer = self.storage_get_file('bundle', env.bundle.location)
+                            bundle_buffer = self.storage_get_file('bundle', env.bundle.storage)
 
-                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.location.split("/")[-1].split(".")[-1]))
+                        data = zipfile.ZipInfo("bundle.%s"%(env.bundle.storage.split("/")[-1].split(".")[-1]))
                         data.date_time = time.localtime(time.time())[:6]
                         data.compress_type = zipfile.ZIP_DEFLATED
                         data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
@@ -451,8 +511,132 @@ class StorageManager:
                         zf.writestr(data, bundle_buffer.read())
                     except:
                         print(traceback.print_exc())
-                
+
             memory_file.seek(0)
 
         return [memory_file, "project-%s-record-%s.zip"%(str(record.project.id), str(record.id))]
-        
+
+    def prepare_diff(self, diff=None):
+        """Bundle a diff.
+
+        Returns:
+          Zip file buffer of a diff's content.
+        """
+        if diff == None:
+            return [None, '']
+        else:
+            records = []
+            records.append(diff.record_from)
+            records.append(diff.record_to)
+
+            memory_file = BytesIO()
+            with zipfile.ZipFile(memory_file, 'w') as zf:
+                self.agent_prepare(zf, 'diff', diff.info())
+                for record in records:
+                    record_path = "record-{0}".format(str(record.id))
+                    env = record.environment
+                    record_dict = record.extended()
+                    environment = record_dict['head']['environment']
+                    del record_dict['head']['environment']
+                    comments = record_dict['head']['comments']
+                    del record_dict['head']['comments']
+                    resources = record_dict['head']['resources']
+                    del record_dict['head']['resources']
+                    inputs = record_dict['head']['inputs']
+                    del record_dict['head']['inputs']
+                    outputs = record_dict['head']['outputs']
+                    del record_dict['head']['outputs']
+                    dependencies = record_dict['head']['dependencies']
+                    del record_dict['head']['dependencies']
+                    application = record_dict['head']['application']
+                    del record_dict['head']['application']
+                    parent = record_dict['head']['parent']
+                    del record_dict['head']['parent']
+                    body = record_dict['body']
+                    del record_dict['body']
+                    execution = record_dict['head']['execution']
+                    del record_dict['head']['execution']
+                    project = record.project.info()
+                    try:
+                        self.agent_prepare(zf, '{0}/project'.format(record_path), project)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/comments'.format(record_path), comments)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/resources'.format(record_path), resources)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/inputs'.format(record_path), inputs)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/outputs'.format(record_path), outputs)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/dependencies'.format(record_path), dependencies)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/application'.format(record_path), application)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/parent'.format(record_path), parent)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/body'.format(record_path), body)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/execution'.format(record_path), execution)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/environment'.format(record_path), environment)
+                    except:
+                        print(traceback.print_exc())
+                    try:
+                        self.agent_prepare(zf, '{0}/record'.format(record_path), record_dict)
+                    except:
+                        print(traceback.print_exc())
+                    if env != None and env.bundle != None and env.bundle.storage != '':
+                        try:
+                            bundle_buffer = StringIO()
+                            if 'http://' in env.bundle.storage or 'https://' in env.bundle.storage:
+                                bundle_buffer = self.web_get_file(env.bundle.storage)
+                            else:
+                                bundle_buffer = self.storage_get_file('bundle', env.bundle.storage)
+
+                            data = zipfile.ZipInfo("%s/bundle.%s"%(record_path, env.bundle.storage.split("/")[-1].split(".")[-1]))
+                            data.date_time = time.localtime(time.time())[:6]
+                            data.compress_type = zipfile.ZIP_DEFLATED
+                            data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
+                            zf.writestr(data, bundle_buffer.read())
+                        except:
+                            print(traceback.print_exc())
+                    for resource in resources:
+                        try:
+                            bundle_buffer = StringIO()
+                            data = None
+                            if 'http://' in resource['storage'] or 'https://' in resource['storage']:
+                                bundle_buffer = self.web_get_file(resource['storage'])
+                                data = zipfile.ZipInfo("%s/%s-%s"%(record_path, resource['group'], resource['storage'].split('/')[-1]))
+                            else:
+                                bundle_buffer = self.storage_get_file(resource['group'], resource['storage'])
+                                data = zipfile.ZipInfo("%s/%s-%s"%(record_path, resource['group'], resource['storage']))
+                            data.date_time = time.localtime(time.time())[:6]
+                            data.compress_type = zipfile.ZIP_DEFLATED
+                            data.external_attr |= 0o777 << 16 # -rwx-rwx-rwx
+                            zf.writestr(data, bundle_buffer.read())
+                        except:
+                            print(traceback.print_exc())
+
+            memory_file.seek(0)
+
+        return [memory_file, "diff-%s.zip"%(str(diff.id))]

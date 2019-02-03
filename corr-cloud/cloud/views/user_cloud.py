@@ -1,4 +1,4 @@
-from corrdb.common import logAccess, logStat, logTraffic, crossdomain
+from corrdb.common import logAccess, logStat, logTraffic, crossdomain, basicAuthSession, get_or_create
 from corrdb.common.models import UserModel
 from corrdb.common.models import ProfileModel
 from corrdb.common.models import ApplicationModel
@@ -9,9 +9,10 @@ from corrdb.common.models import FileModel
 from corrdb.common.models import TrafficModel
 from corrdb.common.models import AccessModel
 from corrdb.common.models import StatModel
-from flask.ext.api import status
+from corrdb.common.models import BundleModel
+from flask_api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE
+from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -23,10 +24,10 @@ import os
 import mimetypes
 from io import BytesIO
 
-@app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/register', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_register():
-    logTraffic(CLOUD_URL, endpoint='/public/user/register')        
+    logTraffic(CLOUD_URL, endpoint='/public/user/register')
     if fk.request.method == 'POST':
         if fk.request.data:
             data = json.loads(fk.request.data)
@@ -36,42 +37,74 @@ def user_register():
             lname = data.get('lname', 'LastName')
             group = data.get('group', 'user')
             picture_link = data.get('picture', '')
-            admin = data.get('admin', {})
+            admin = data.get('admin', '')
             if picture_link == '':
                 picture = {'scope':'', 'location':''}
             else:
                 picture = {'scope':'remote', 'location':picture_link}
             organisation = data.get('organisation', 'No organisation provided')
             about = data.get('about', 'Nothing about me yet.')
+
             if email == '' or '@' not in email or password == '':
                 return fk.Response('Invalid email or password.', status.HTTP_400_BAD_REQUEST)
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
-                user_model = access_manager.register(email, password, fname, lname, '')
-                if user_model is None:
-                    # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
-                    return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
+                created, user_model = access_manager.register(email, password, fname, lname, '')
+                if not created:
+                    if type(user_model) is list:
+                        return fk.Response(' '.join(user_model), status.HTTP_401_UNAUTHORIZED)
+                    else:
+                        return fk.Response('This email is already used.', status.HTTP_401_UNAUTHORIZED)
                 else:
-                    (profile_model, created) = ProfileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
-                    print("Token %s"%user_model.api_token)
-                    print(fk.request.headers.get('User-Agent'))
-                    print(fk.request.remote_addr)
-                    user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                    user_model.retoken()
-                    print("Session: %s"%user_model.session)
-                    return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
-                    # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+                    if user_model is None:
+                        # return fk.redirect('{0}:{1}/error/?code=500'.format(VIEW_HOST, VIEW_PORT))
+                        return fk.Response('Unable to create the user account.', status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        (profile_model, created) = get_or_create(document=ProfileModel, created_at=str(datetime.datetime.utcnow()), user=user_model, fname=fname, lname=lname, organisation=organisation, about=about)
+                        # print("Token %s"%user_model.api_token)
+                        # print(fk.request.headers.get('User-Agent'))
+                        # print(fk.request.remote_addr)
+                        user_model.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+                        user_model.retoken()
+                        # print("Session: %s"%user_model.session)
+                        if admin != '':
+                            admin_account = UserModel.objects(session=admin).first()
+                            if admin_account and admin_account.group == "admin":
+                                user_model.group = group
+                                user_model.save()
+                                user_info = {}
+                                user_info["created"] = str(user_model.created_at)
+                                user_info["id"] = str(user_model.id)
+                                user_info["auth"] = user_model.auth
+                                user_info["max-quota"] = user_model.max_quota
+                                user_info["usage"] = round(100*user_model.quota/(user_model.max_quota*1024*1024*1024), 2)
+                                user_info["group"] = user_model.group
+                                user_info["email"] = user_model.email
+                                user_info["fname"] = profile_model.fname
+                                user_info["lname"] = profile_model.lname
+                                user_info["org"] = profile_model.organisation
+                                user_info["about"] = profile_model.about
+                                user_info["apps"] = user_model.info()['total_apps']
+                                user_info["projects"] = user_model.info()['total_projects']
+                                user_info["records"] = user_model.info()['total_records']
+                                return cloud_response(201, 'Your account was successfully created', user_info)
+
+                        if access_manager.secur:
+                            return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification. And wait for admin approval.', status.HTTP_200_OK)
+                        else:
+                            return fk.Response('Your account was successfully created. We recommend that you check your emails in case of required verification.', status.HTTP_200_OK)
+                        # return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/password/reset', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_password_reset():
     logTraffic(CLOUD_URL, endpoint='/public/user/password/reset')
     if fk.request.method == 'POST':
-        print("Request: %s"%str(fk.request.data))
+        # print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             email = data.get('email', '')
@@ -85,21 +118,23 @@ def user_password_reset():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/password/change', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_password_change():
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/password/change')        
+    logTraffic(CLOUD_URL, endpoint='/private/user/password/change')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
             if not access_resp[0]:
                 return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             else:
-                logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/password/change')
+                logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/password/change')
                 user_model = access_resp[1]
                 if fk.request.data:
+                    data = json.loads(fk.request.data)
                     password = data.get('password', '')
                     response = access_manager.change_password(user_model, password)
                     if response is None:
@@ -111,12 +146,12 @@ def user_password_change():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/login', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_login():
     logTraffic(CLOUD_URL, endpoint='/public/user/login')
     if fk.request.method == 'POST':
-        print("Request: %s"%str(fk.request.data))
+        # print("Request: %s"%str(fk.request.data))
         if fk.request.data:
             data = json.loads(fk.request.data)
             email = data.get('email', '').lower()
@@ -126,86 +161,121 @@ def user_login():
                 # return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
             else:
                 try:
+
                     account = access_manager.login(email, password)
+
                     if account == None:
+                        account_only = UserModel.objects(email=email).first()
+                        if account_only:
+                            if account_only.auth == "blocked":
+                                return fk.Response('This account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+
+                            if account_only.auth == "approved":
+                                account_only.auth = "wrong1"
+                            elif account_only.auth == "wrong1":
+                                account_only.auth = "wrong2"
+                            elif account_only.auth == "wrong2":
+                                account_only.auth = "wrong3"
+                            elif account_only.auth == "wrong3":
+                                account_only.auth = "blocked"
+                            account_only.save()
+
                         return fk.Response('Unknown email or password. Maybe you should register. Please also make sure you verified your email by clicking the link we might have sent you.', status.HTTP_401_UNAUTHORIZED)
                         # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
-                    print("Token %s"%account.api_token)
-                    print(fk.request.headers.get('User-Agent'))
-                    print(fk.request.remote_addr)
-                    account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-                    return fk.Response(json.dumps({'session':account.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+
+                    if access_manager.secur and account.group != "admin":
+                        # access = account.extend.get('access', 'verified')
+                        # account.extend['access'] = access
+                        # account.save()
+                        if account.auth == 'signup':
+                            return fk.Response('Your account is pending verification from the admin. We appologise for this convenience. For security reasons this instance requires account moderation.', status.HTTP_401_UNAUTHORIZED)
+                    if account.auth == 'blocked':
+                        return fk.Response('Your account is blocked. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+                    elif account.auth == 'unregistered':
+                        return fk.Response('You unregistered. We appologise for this convenience. Contact the admin for further actions.', status.HTTP_401_UNAUTHORIZED)
+                    # print("Token %s"%account.api_token)
+                    # print(fk.request.headers.get('User-Agent'))
+                    # print(fk.request.remote_addr)
+                    if  "logout" in account.session:
+                        account.renew("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+
+                    logAccess(fk, account, CLOUD_URL, 'cloud', '/public/user/login')
+                    return fk.Response(json.dumps({'session':account.session, 'group':account.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
                 except:
                     print(str(traceback.print_exc()))
                     return fk.Response(str(traceback.print_exc()), status.HTTP_500_INTERNAL_SERVER_ERROR)
                     # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
-                    
+
         else:
             return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/sync', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_sync(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/sync')
+def user_sync():
+    logTraffic(CLOUD_URL, endpoint='/private/user/sync')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/sync')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/sync')
             user_model = access_resp[1]
-            print(fk.request.path)
-            user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
-            return fk.Response(json.dumps({'session':user_model.session}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            # print(fk.request.path)
+            # user_model.sess_sync("%s%s"%(fk.request.headers.get('User-Agent'),fk.request.remote_addr))
+            return fk.Response(json.dumps({'session':user_model.session, 'group':user_model.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/logout', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_logout(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/logout')
+def user_logout():
+    logTraffic(CLOUD_URL, endpoint='/private/user/logout')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/logout')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/logout')
             user_model = access_resp[1]
-            user_model.renew("%sLogout"%(fk.request.headers.get('User-Agent')))
+            user_model.logout("%sLogout"%(fk.request.headers.get('User-Agent')))
             return fk.Response('Logout succeed', status.HTTP_200_OK)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/unregister', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_unregister(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/unregister')        
+def user_unregister():
+    logTraffic(CLOUD_URL, endpoint='/private/user/unregister')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/unregister')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/unregister')
             user_model = access_resp[1]
             return fk.redirect('{0}:{1}/error/?code=501'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/dashboard', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_dashboard(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/dashboard')
+def user_dashboard():
+    logTraffic(CLOUD_URL, endpoint='/private/user/dashboard')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/dashboard')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/dashboard')
             user_model = access_resp[1]
             profile_model = ProfileModel.objects(user=user_model).first()
             dashboard = {}
@@ -215,9 +285,12 @@ def user_dashboard(hash_session):
                 version = __version__
             except:
                 pass
-            projects = ProjectModel.objects(owner=user_model)
+            if user_model.group == "admin":
+                projects = ProjectModel.objects.order_by('-updated_at')
+            else:
+                projects = ProjectModel.objects(owner=user_model).order_by('-updated_at')
             if profile_model is not None:
-                dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about}
+                dashboard["profile"] = {'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'max-quota':user_model.max_quota}
             dashboard["version"] = version
             print("Version {0}".format( dashboard["version"]))
             dashboard["records_total"] = 0
@@ -226,20 +299,21 @@ def user_dashboard(hash_session):
             dashboard["environments_total"] = 0
             dashboard["projects"] = []
             for project in projects:
-                project_dash = {"name":project.name, "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
-                records = RecordModel.objects(project=project)
+                project_dash = {"name":"{0}~{1}".format(project.owner.email, project.name), "records":{"January":{"number":0, "size":0}, "February":{"number":0, "size":0}, "March":{"number":0, "size":0}, "April":{"number":0, "size":0}, "May":{"number":0, "size":0}, "June":{"number":0, "size":0}, "July":{"number":0, "size":0}, "August":{"number":0, "size":0}, "September":{"number":0, "size":0}, "October":{"number":0, "size":0}, "November":{"number":0, "size":0}, "December":{"number":0, "size":0}}}
+                records = RecordModel.objects(project=project).order_by('-updated_at')
                 dashboard["records_total"] += len(records)
+                dashboard["environments_total"] += len(project.history)
+                size = 0
                 for record in records:
-                    environment = record.environment
-                    size = 0
-                    try:
-                        size = environment.bundle["size"]
-                    except:
-                        size = 0
-
-                    dashboard["environments_total"] += size
-
                     month = str(record.created_at).split("-")[1]
+                    try:
+                        env = record.environment
+                        if env:
+                            bundle = env.bundle
+                            if bundle:
+                                size = long(bundle.size)
+                    except:
+                        pass
                     if month == "01":
                         project_dash["records"]["January"]["number"] += 1
                         project_dash["records"]["January"]["size"] += size
@@ -281,27 +355,31 @@ def user_dashboard(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/update', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_update(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/update')  
+def user_update():
+    logTraffic(CLOUD_URL, endpoint='/private/user/update')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         if access_resp[1] is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/update')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/update')
             user_model = access_resp[1]
             if fk.request.data:
                 data = json.loads(fk.request.data)
                 profile_model = ProfileModel.objects(user=user_model).first_or_404()
                 fname = data.get("fname", profile_model.fname)
                 lname = data.get("lname", profile_model.lname)
+                user_model.save()
+                max_quota = data.get("max-quota", user_model.max_quota)
                 password = data.get("pwd", "")
                 organisation = data.get("org", profile_model.organisation)
                 about = data.get("about", profile_model.about)
                 picture_link = data.get("picture", "")
+
                 picture = profile_model.picture
                 if picture_link != "":
                     picture['location'] = picture_link
@@ -317,38 +395,109 @@ def user_update(hash_session):
 
                 profile_model.save()
 
+                max_quota = str(max_quota)
+                if "GB" in max_quota:
+                    max_quota = max_quota.split("GB")[0]
+                user_model.max_quota = float(max_quota)
+                user_model.save()
+
                 if password != "":
-                    response = access_manager.change_password(user_model, password)
+                    response, message = access_manager.change_password(user_model, password)
                     if response is None:
-                        return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                        if len(message) >0:
+                            return fk.Response(' '.join(message), status.HTTP_401_UNAUTHORIZED)
+                        else:
+                            return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                 return fk.Response('Account update succeed', status.HTTP_200_OK)
             else:
                 return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/account/update/<account_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_file_upload(hash_session, group, item_id):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/file/upload/<group>/<item_id>')
+def account_update(account_id):
+    logTraffic(CLOUD_URL, endpoint='/private/account/update/<account_id>')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'POST':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
+        if access_resp[1] is None:
+            # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
+        else:
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/account/update/<account_id>')
+            user_model = access_resp[1]
+            if user_model.group != "admin":
+                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+            else:
+                if fk.request.data:
+                    account_model = UserModel.objects.with_id(account_id)
+                    if account_model is None:
+                        return fk.Response('Unable to find the user account.', status.HTTP_401_UNAUTHORIZED)
+                    else:
+                        data = json.loads(fk.request.data)
+                        profile_model = ProfileModel.objects(user=account_model).first_or_404()
+                        group = data.get("group", account_model.group)
+                        auth = data.get("auth", account_model.auth)
+                        fname = data.get("fname", profile_model.fname)
+                        lname = data.get("lname", profile_model.lname)
+                        password = data.get("password", None)
+                        organisation = data.get("org", profile_model.organisation)
+                        about = data.get("about", profile_model.about)
+                        max_quota = data.get("max-quota", account_model.max_quota)
+
+                        account_model.group = group
+                        account_model.auth = auth
+                        max_quota = str(max_quota)
+                        if "GB" in max_quota:
+                            max_quota = max_quota.split("GB")[0]
+                        account_model.max_quota = float(max_quota)
+
+                        profile_model.fname = fname
+                        profile_model.lname = lname
+                        profile_model.organisation = organisation
+                        profile_model.about = about
+
+                        profile_model.save()
+                        account_model.save()
+
+                        if password:
+                            account, message = access_manager.change_password(account_model, password)
+                            if len(message) >0:
+                                return fk.Response(' '.join(message), status.HTTP_401_UNAUTHORIZED)
+                        return fk.Response('Account update succeed', status.HTTP_200_OK)
+                else:
+                    return fk.redirect('{0}:{1}/error/?code=400'.format(VIEW_HOST, VIEW_PORT))
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/private/file/upload/<group>/<item_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def user_file_upload(group, item_id):
+    logTraffic(CLOUD_URL, endpoint='/private/file/upload/<group>/<item_id>')
+    hash_session = basicAuthSession(fk.request)
+    if fk.request.method == 'POST':
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
             return fk.Response('Unable to find this account.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/file/upload/<group>/<item_id>')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/file/upload/<group>/<item_id>')
             if group not in ["input", "output", "dependencie", "file", "descriptive", "diff", "resource-record", "resource-env", "resource-app", "attach-comment", "attach-message", "picture" , "logo-project" , "logo-app" , "resource", "bundle"]:
                 return cloud_response(405, 'Method Group not allowed', 'This endpoint supports only a specific set of groups.')
             else:
+                if fk.request.args:
+                    checksum = fk.request.args.get('checksum')
+                else:
+                    checksum = None
                 if group == "picture":
                     item_id = str(user_model.id)
                 print("item_id: %s"%item_id)
                 if fk.request.files:
                     file_obj = fk.request.files['file']
                     filename = '%s_%s'%(item_id, file_obj.filename)
-                    _file, created = FileModel.objects.get_or_create(created_at=str(datetime.datetime.utcnow()), name=filename)
+                    _file, created = get_or_create(document=FileModel, created_at=str(datetime.datetime.utcnow()), name=filename)
                     if not created:
                         return cloud_response(200, 'File already exists with same name for this item', _file.info())
                     else:
@@ -422,14 +571,15 @@ def user_file_upload(hash_session, group, item_id):
                             env = EnvironmentModel.objects(bundle=item).first()
                             rec_temp = RecordModel.objects(environment=env).first()
                             if rec_temp == None: # No record yet performed.
-                                for project in ProjectModel.objects():
+                                for project in ProjectModel.objects:
                                     if str(env.id) in project.history:
                                         owner = project.owner
                                         break
                             else:
                                 owner = rec_temp.project.owner
                             if user_model != owner:
-                                return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
+                                return cloud_response(401, 'Unauthorized upload', "Unauthorized owner.")
+                                # return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
                         elif group == 'picture':
                             item = ProfileModel.objects(user=user_model).first()
                             owner = item.user
@@ -498,6 +648,9 @@ def user_file_upload(hash_session, group, item_id):
                                 _file.delete()
                                 return cloud_response(500, 'An error occured', "%s"%uploaded[1])
                             else:
+                                if checksum and checksum != _file.checksum:
+                                    _file.delete()
+                                    return cloud_response(401, 'Unauthorized upload', "Invalid checksum received: {0} and computed: {1}".format(checksum, _file.checksum))
                                 logStat(file_obj=_file)
                                 if group == 'input':
                                     item.resources.append(str(_file.id))
@@ -510,19 +663,26 @@ def user_file_upload(hash_session, group, item_id):
                                 elif group == 'diff':
                                     item.resources.append(str(_file.id))
                                 elif group == 'bundle':
-                                    if item.storage != storage:
-                                        storage_manager.storage_delete_file('bundle', item.storage, logStat)
+                                    item.checksum = _file.checksum
+                                    if item.storage and item.storage != storage:
+                                        storage_manager.storage_delete_file('bundle', item.storage)
+                                        return cloud_response(401, 'Unauthorized upload', "Inconsistent storage location.")
+                                    if checksum and checksum != _file.checksum:
+                                        storage_manager.storage_delete_file('bundle', item.storage)
+                                        return cloud_response(401, 'Unauthorized upload', "Invalid checksum.")
+                                    del _file
                                     item.encoding = encoding
                                     item.size = size
                                     item.storage = storage
                                     item.mimetype = mimetype
                                     item.save()
+                                    return cloud_response(201, 'New bundle file uploaded', item.info())
                                 elif 'attach' in group:
                                     item.attachments.append(str(_file.id))
                                 elif group == 'picture':
                                     if item.picture != None:
                                         if _file.storage != old_storage:
-                                            deleted = storage_manager.storage_delete_file('picture',old_storage, logStat)
+                                            deleted = storage_manager.storage_delete_file('picture',old_storage)
                                             if deleted:
                                                 logStat(deleted=True, file_obj=item.picture)
                                         else:
@@ -533,20 +693,22 @@ def user_file_upload(hash_session, group, item_id):
                                         item.picture = _file
                                 elif 'logo' in group:
                                     if item.logo.location != storage:
-                                        storage_manager.storage_delete_file('logo',item.logo.storage, logStat)
+                                        storage_manager.storage_delete_file('logo',item.logo.storage)
                                     if item != None:
                                         item.logo = _file
                                 elif 'resource' in group:
                                     item.resources.append(str(_file.id))
                                 if item != None:
                                     item.save()
+
                                 return cloud_response(201, 'New file created', _file.info())
                 else:
-                    return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
+                    return cloud_response(204, 'No content provided', "No data in the request")
+                    # return fk.redirect('{0}:{1}/error/?code=204'.format(VIEW_HOST, VIEW_PORT))
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/contactus', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_contactus():
     logTraffic(CLOUD_URL, endpoint='/public/user/contactus')
@@ -573,7 +735,7 @@ def user_contactus():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/version', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def public_version():
     logTraffic(CLOUD_URL, endpoint='/public/version')
@@ -588,39 +750,46 @@ def public_version():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/config', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/config/<tool_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_config(hash_session):
+def user_config(hash_session, tool_id):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/config')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/config')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
-            config_content = {'default':{'app':'', 'api':{'host':API_HOST, 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
+            config_content = {'default':{'app':'', 'api':{'host':'{0}'.format(VIEW_HOST), 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
+            tool_name = "generic"
+            if tool_id != 'none':
+                tool = ApplicationModel.objects.with_id(tool_id)
+                if tool:
+                    config_content['default']['app'] = tool.app_token
+                    tool_name = tool.name
             config_buffer.write(json.dumps(config_content, sort_keys=True, indent=4, separators=(',', ': ')).encode('utf-8'))
             config_buffer.seek(0)
-            return fk.send_file(config_buffer, as_attachment=True, attachment_filename='config.json', mimetype='application/json')
+            return fk.send_file(config_buffer, as_attachment=True, attachment_filename='{0}-config.json'.format(tool_name), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/<hash_session>/user/picture', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_picture(hash_session):
     logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/picture')
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/user/picture')
             profile = ProfileModel.objects(user=user_model).first()
             if profile == None:
-                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
                     return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -628,7 +797,8 @@ def user_picture(hash_session):
             else:
                 picture = profile.picture
                 if picture == None:
-                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                    # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
                         return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
@@ -636,7 +806,8 @@ def user_picture(hash_session):
                 elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
@@ -648,7 +819,8 @@ def user_picture(hash_session):
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                        # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
@@ -661,7 +833,8 @@ def user_picture(hash_session):
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                         else:
-                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                            # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                             if picture_buffer == None:
                                 return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                             else:
@@ -671,7 +844,8 @@ def user_picture(hash_session):
                         picture.save()
                         picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                         if picture_buffer == None:
-                            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                            # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                             if picture_buffer != None:
                                 return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                             else:
@@ -681,38 +855,39 @@ def user_picture(hash_session):
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/trusted', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_truested(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/trusted')
+def user_trusted():
+    logTraffic(CLOUD_URL, endpoint='/private/user/trusted')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
-        if user_model is None:
+        if user_model is None or (user_model is not None and user_model.group != "admin" and user_model.auth != "approved"):
             return fk.Response('Unauthorized access.', status.HTTP_401_UNAUTHORIZED)
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/trusted')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/trusted')
             version = 'N/A'
             try:
                 from corrdb import __version__
                 version = __version__
             except:
                 pass
-            return fk.Response(json.dumps({'version':version}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'version':version, 'group':user_model.group}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/home', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def user_home():
     logTraffic(CLOUD_URL, endpoint='/public/user/home')
     if fk.request.method == 'GET':
-        users = UserModel.objects()
-        projects = ProjectModel.objects()
-        records = RecordModel.objects()
-        environments = EnvironmentModel.objects()
-        apps = ApplicationModel.objects()
-        traffic = TrafficModel.objects()
+        users = UserModel.objects
+        projects = ProjectModel.objects
+        records = RecordModel.objects
+        environments = EnvironmentModel.objects
+        apps = ApplicationModel.objects
+        traffic = TrafficModel.objects
         print(fk.request.path)
 
         users_stat = {"number":len(users)}
@@ -754,46 +929,49 @@ def user_home():
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/profile', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_profile(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/profile')
+def user_profile():
+    logTraffic(CLOUD_URL, endpoint='/private/user/profile')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/profile')
+            user_model.save()
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/profile')
             profile_model = ProfileModel.objects(user=user_model).first()
             if profile_model == None:
-                profile_model, created = ProfileModel.objects.get_or_create(user=user_model, fname="None", lname="None", organisation="None", about="None")
+                profile_model, created = get_or_create(document=ProfileModel, user=user_model, fname="None", lname="None", organisation="None", about="None")
                 if created:
                     profile_model.created_at=str(datetime.datetime.utcnow())
                     profile_model.save()
             print(fk.request.path)
-            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(json.dumps({'fname':profile_model.fname, 'lname':profile_model.lname, 'organisation':profile_model.organisation, 'about':profile_model.about, 'email':user_model.email, 'session':user_model.session, 'api':user_model.api_token, 'max-quota':user_model.max_quota, 'usage':round(100*(user_model.quota/(user_model.max_quota*1024*1024*1024)), 2)}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/private/<hash_session>/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/private/user/renew', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
-def user_renew(hash_session):
-    logTraffic(CLOUD_URL, endpoint='/private/<hash_session>/user/renew')
+def user_renew():
+    logTraffic(CLOUD_URL, endpoint='/private/user/renew')
+    hash_session = basicAuthSession(fk.request)
     if fk.request.method == 'GET':
-        access_resp = access_manager.check_cloud(hash_session)
+        access_resp = access_manager.check_cloud(hash_session, ACC_SEC, CNT_SEC)
         user_model = access_resp[1]
         if user_model is None:
             return fk.redirect('{0}:{1}/error/?code=401'.format(VIEW_HOST, VIEW_PORT))
         else:
-            logAccess(CLOUD_URL, 'cloud', '/private/<hash_session>/user/renew')
+            logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/user/renew')
             print(fk.request.path)
             user_model.retoken()
-            return fk.Response(json.dumps({'api':user_model.api_token}, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
+            return fk.Response(user_model.api_token, status.HTTP_200_OK)
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/recover', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def cloud_public_user_recover():
     logTraffic(CLOUD_URL, endpoint='/public/user/recover')
@@ -818,7 +996,7 @@ def cloud_public_user_recover():
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
 
-@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST'])
+@app.route(CLOUD_URL + '/public/user/picture/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
 @crossdomain(fk=fk, app=app, origin='*')
 def cloud_public_user_picture(user_id):
     logTraffic(CLOUD_URL, endpoint='/public/user/picture/<user_id>')
@@ -826,7 +1004,8 @@ def cloud_public_user_picture(user_id):
         user_model = UserModel.objects.with_id(user_id)
         profile = ProfileModel.objects(user=user_model).first_or_404()
         if profile == None:
-            picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+            picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+            # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
             if picture_buffer == None:
                 return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
             else:
@@ -834,7 +1013,8 @@ def cloud_public_user_picture(user_id):
         else:
             picture = profile.picture
             if picture == None:
-                picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                 if picture_buffer == None:
                     return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                 else:
@@ -842,7 +1022,8 @@ def cloud_public_user_picture(user_id):
             elif picture.location == 'local' and 'http://' not in picture.storage and 'https://' not in picture.storage:
                 picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                 if picture_buffer == None:
-                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                    # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                     else:
@@ -854,7 +1035,8 @@ def cloud_public_user_picture(user_id):
                 if picture_buffer != None:
                     return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                 else:
-                    picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                    picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                    # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                     if picture_buffer == None:
                         return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
@@ -867,7 +1049,8 @@ def cloud_public_user_picture(user_id):
                     if picture_buffer != None:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
                     else:
-                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                        # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer == None:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                         else:
@@ -877,12 +1060,28 @@ def cloud_public_user_picture(user_id):
                     picture.save()
                     picture_buffer = storage_manager.storage_get_file('picture', picture.storage)
                     if picture_buffer == None:
-                        picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
+                        picture_buffer = storage_manager.storage_get_file('picture', 'default-picture.png')
+                        # picture_buffer = storage_manager.web_get_file('{0}:{1}/images/picture.png'.format(VIEW_HOST, VIEW_PORT))
                         if picture_buffer != None:
                             return fk.send_file(picture_buffer, attachment_filename='default-picture.png', mimetype='image/png')
                         else:
                             return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
                     else:
                         return fk.send_file(picture_buffer, attachment_filename=picture.name, mimetype=picture.mimetype)
+    else:
+        return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))
+
+@app.route(CLOUD_URL + '/public/user/view/<user_id>', methods=['GET','POST','PUT','UPDATE','DELETE','POST', 'OPTIONS'])
+@crossdomain(fk=fk, app=app, origin='*')
+def cloud_public_user_view(user_id):
+    logTraffic(CLOUD_URL, endpoint='/public/user/view/<user_id>')
+    if fk.request.method == 'GET':
+        user_model = UserModel.objects.with_id(user_id)
+        profile = ProfileModel.objects(user=user_model).first_or_404()
+        if profile == None:
+            return fk.redirect('{0}:{1}/error/?code=404'.format(VIEW_HOST, VIEW_PORT))
+        else:
+            user = {"created":str(user_model.created_at),"id":str(user_model.id), "email":user_model.email, "name":"{0} {1}".format(profile.fname, profile.lname), "organisation":profile.organisation, "about":profile.about, "apps": user_model.info()['total_apps'], "projects":user_model.info()['total_projects'], "records":user_model.info()['total_records']}
+            return fk.Response(json.dumps(user, sort_keys=True, indent=4, separators=(',', ': ')), mimetype='application/json')
     else:
         return fk.redirect('{0}:{1}/error/?code=405'.format(VIEW_HOST, VIEW_PORT))

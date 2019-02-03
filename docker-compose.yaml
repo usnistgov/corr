@@ -1,0 +1,113 @@
+version: '2.1'
+services:
+  corrdb:
+    build:
+      context: ./corr-db
+    image: palingwende/corrdb:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrdb:28017"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - /path/to/your/corr_setup_folder/corr-setup/data:/data
+  corrapi:
+    build:
+      context: ./corr-api
+    image: palingwende/corrapi:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrapi:5100/corr/api/v0.2/public/api/status"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - /path/to/your/corr_setup_folder/corr-setup/corr-storage:/home/corradmin/corr-storage
+     - /path/to/your/corr_setup_folder/corr-setup/s3:/home/corradmin/s3
+     - /path/to/your/corr_setup_folder/corr-setup/log:/home/corradmin/log
+     - /path/to/your/corr_setup_folder/corr-setup/config/config-api.py:/home/corradmin/corr-api/config.py
+    depends_on:
+      corrdb:
+        condition: service_healthy
+    links:
+      - corrdb
+  corrcloud:
+    build:
+      context: ./corr-cloud
+    image: palingwende/corrcloud:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrcloud:5200/cloud/v0.2/public/cloud/status"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - /path/to/your/corr_setup_folder/corr-setup/corr-storage:/home/corradmin/corr-storage
+     - /path/to/your/corr_setup_folder/corr-setup/s3:/home/corradmin/s3
+     - /path/to/your/corr_setup_folder/corr-setup/log:/home/corradmin/log
+     - /path/to/your/corr_setup_folder/corr-setup/credentials:/home/corradmin/credentials
+     - /path/to/your/corr_setup_folder/corr-setup/config/config-cloud.py:/home/corradmin/corr-cloud/config.py
+    depends_on:
+      corrdb:
+        condition: service_healthy
+      corrapi:
+        condition: service_healthy
+    links:
+      - corrdb
+      - corrapi
+  corrview:
+    build:
+      context: ./corr-view
+    image: palingwende/corrview:0.2
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://corrview:5000"]
+        interval: 1m
+        timeout: 1m
+        retries: 10
+    volumes:
+      - /path/to/your/corr_setup_folder/corr-setup/config/config-view.js:/home/corradmin/corr-view/frontend/js/config.js
+      - /path/to/your/corr_setup_folder/corr-setup/config/custom.json:/home/corradmin/corr-view/frontend/xml/custom.json
+      - /path/to/your/corr_setup_folder/corr-setup/log/corrview.log:/home/corradmin/corrview.log
+    depends_on:
+      corrcloud:
+        condition: service_healthy
+    links:
+      - corrcloud
+  nginx:
+    image: nginx:latest
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://0.0.0.0:443"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      corrview:
+        condition: service_healthy
+    links:
+      - corrview
+      - corrcloud
+      - corrapi
+    volumes:
+      - /path/to/your/corr_setup_folder/corr-setup/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /path/to/your/corr_setup_folder/corr-setup/nginx/corr.conf:/etc/nginx/conf.d/default.conf
+      - /path/to/your/corr_setup_folder/corr-setup/log/nginx-error.log:/var/nginx/error.log
+      - /path/to/your/corr_setup_folder/corr-setup/log/nginx-access.log:/var/nginx/access.log
+      - /path/to/your/corr_setup_folder/corr-setup/nginx/corr.cer:/etc/nginx/ssl/corr.cer
+      - /path/to/your/corr_setup_folder/corr-setup/nginx/corr.key:/etc/nginx/ssl/corr.key
+      - /path/to/your/corr_setup_folder/corr-setup/nginx/corr.crt:/etc/nginx/ssl/corr.bundle.crt
+  corrtest:
+    build:
+      context: ./corr-test
+    image: palingwende/corrtest:0.2
+    depends_on:
+      corrview:
+        condition: service_healthy
+    links:
+      - corrview
+      - corrcloud
+      - corrapi
+      - corrdb
+    volumes:
+      - /path/to/your/corr_setup_folder/corr-setup/test:/home/corradmin/test

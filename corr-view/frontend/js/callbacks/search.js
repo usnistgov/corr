@@ -1,5 +1,5 @@
 // Search processor
-function processSearch()
+function processSearch(public)
 {
     var query_search = document.getElementById("search").value;
     var usersQ = document.getElementById("exclude-users").checked;
@@ -8,7 +8,7 @@ function processSearch()
     var recordsQ = document.getElementById("exclude-records").checked;
     var diffsQ = document.getElementById("exclude-diffs").checked;
     var envsQ = document.getElementById("exclude-envs").checked;
-    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ, envsQ);
+    space.query(query_search, usersQ, applicationsQ, projectsQ, recordsQ, diffsQ, envsQ, public, 0);
 }
 
 // Search link sub research injection
@@ -35,11 +35,11 @@ function customSearch(type, value)
 }
 
 // Enter key for search process trigger.
-function searchKeyPress(e)
+function searchKeyPress(e, public)
 {
     e = e || window.event;
     if (e.keyCode == 13)
     {
-        processSearch();
+        processSearch(public);
     }
 }

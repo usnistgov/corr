@@ -1,0 +1,113 @@
+version: '2.1'
+services:
+  corrdb:
+    build:
+      context: ./corr-db
+    image: palingwende/corrdb:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrdb:28017"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - $TRAVIS_BUILD_DIR/corr-setup/data:/data
+  corrapi:
+    build:
+      context: ./corr-api
+    image: palingwende/corrapi:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrapi:5100/corr/api/v0.2/public/api/status"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - $TRAVIS_BUILD_DIR/corr-setup/corr-storage:/home/corradmin/corr-storage
+     - $TRAVIS_BUILD_DIR/corr-setup/s3:/home/corradmin/s3
+     - $TRAVIS_BUILD_DIR/corr-setup/log:/home/corradmin/log
+     - $TRAVIS_BUILD_DIR/corr-setup/config/config-api.py:/home/corradmin/corr-api/config.py
+    depends_on:
+      corrdb:
+        condition: service_healthy
+    links:
+      - corrdb
+  corrcloud:
+    build:
+      context: ./corr-cloud
+    image: palingwende/corrcloud:0.2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://corrcloud:5200/cloud/v0.2/public/cloud/status"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    volumes:
+     - $TRAVIS_BUILD_DIR/corr-setup/corr-storage:/home/corradmin/corr-storage
+     - $TRAVIS_BUILD_DIR/corr-setup/s3:/home/corradmin/s3
+     - $TRAVIS_BUILD_DIR/corr-setup/log:/home/corradmin/log
+     - $TRAVIS_BUILD_DIR/corr-setup/credentials:/home/corradmin/credentials
+     - $TRAVIS_BUILD_DIR/corr-setup/config/config-cloud.py:/home/corradmin/corr-cloud/config.py
+    depends_on:
+      corrdb:
+        condition: service_healthy
+      corrapi:
+        condition: service_healthy
+    links:
+      - corrdb
+      - corrapi
+  corrview:
+    build:
+      context: ./corr-view
+    image: palingwende/corrview:0.2
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://corrview:5000"]
+        interval: 1m
+        timeout: 1m
+        retries: 10
+    volumes:
+      - $TRAVIS_BUILD_DIR/corr-setup/config/config-view.js:/home/corradmin/corr-view/frontend/js/config.js
+      - $TRAVIS_BUILD_DIR/corr-setup/config/custom.json:/home/corradmin/corr-view/frontend/xml/custom.json
+      - $TRAVIS_BUILD_DIR/corr-setup/log/corrview.log:/home/corradmin/corrview.log
+    depends_on:
+      corrcloud:
+        condition: service_healthy
+    links:
+      - corrcloud
+  nginx:
+    image: nginx:latest
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://0.0.0.0:443"]
+      interval: 1m
+      timeout: 1m
+      retries: 10
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      corrview:
+        condition: service_healthy
+    links:
+      - corrview
+      - corrcloud
+      - corrapi
+    volumes:
+      - $TRAVIS_BUILD_DIR/corr-setup/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - $TRAVIS_BUILD_DIR/corr-setup/nginx/corr.conf:/etc/nginx/conf.d/default.conf
+      - $TRAVIS_BUILD_DIR/corr-setup/log/nginx-error.log:/var/nginx/error.log
+      - $TRAVIS_BUILD_DIR/corr-setup/log/nginx-access.log:/var/nginx/access.log
+      - $TRAVIS_BUILD_DIR/corr-setup/nginx/corr.cer:/etc/nginx/ssl/corr.cer
+      - $TRAVIS_BUILD_DIR/corr-setup/nginx/corr.key:/etc/nginx/ssl/corr.key
+      - $TRAVIS_BUILD_DIR/corr-setup/nginx/corr.crt:/etc/nginx/ssl/corr.bundle.crt
+  corrtest:
+    build:
+      context: ./corr-test
+    image: palingwende/corrtest:0.2
+    depends_on:
+      corrview:
+        condition: service_healthy
+    links:
+      - corrview
+      - corrcloud
+      - corrapi
+      - corrdb
+    volumes:
+      - $TRAVIS_BUILD_DIR/corr-setup/test:/home/corradmin/test
