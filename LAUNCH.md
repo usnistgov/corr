@@ -86,7 +86,7 @@ that location and copy the path to this folder (your_setup_path). We will use it
 # Dockercompose recipe
 
 Open the [docker-compose recipe](docker-compose.yaml) in a text editor and replace all occurrences of
-/Users/fyc/CoRR-Final-2018/corr with your_setup_path. Then if you need specific files or folders in
+/path/to/your/corr_setup_folder with your_setup_path. Then if you need specific files or folders in
 your corr-setup folder relocated, do so but provide their paths in the appropriate volumes line. For
 example if we wanted to relocate the corr-storage folder (holds the actual files in complement to the
 metadata stored in mongodb) to a different disk that has more space such as /more-space. We will have to
