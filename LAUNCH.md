@@ -41,11 +41,11 @@ commands must be present on the system. The present version has been tested on t
     $ Docker version 1.13.0, build 49bf474
     $ docker-compose version 1.23.2, build 1110ad0
 
-The CoRR instance requires a location to store its [setup folder](./corr-setup). The content of
+The CoRR instance requires a location to store its [setup folder](corr-setup). The content of
 this folder does not have to remain in the same folder. Rather this is done for convenience. The
 instance administrator (admin) may decide to reloaded the data/db folder which is needed by the mongodb
 micro-service. However doing so required a extra step in the adjustment of the docker-compose
-recipe. Once the admin determines a location, copy the [setup folder](./corr-setup) folder over to
+recipe. Once the admin determines a location, copy the [setup folder](corr-setup) folder over to
 that location and copy the path to this folder (your_setup_path). We will use it in the next section.
 
 # Dockercompose recipe
@@ -68,12 +68,12 @@ accessible by docker. Once this is being taken care of, we can now setup the ins
 ## Instance configuration
 
 The CoRR instance frontend has a title shown on the top left corner in the banner. This can be adapted to your needs.
-In your_setup_path/corr-setup/config, edit custom.json. Change the content of the key `name` to what you want displayed.
-The NIST instance is configured to `NIST Demo Instance`. In the CoRR instance footer, a warning content is provided for
+In your_setup_path/corr-setup/config, edit custom.json. Change the content of the key <b>name</b> to what you want displayed.
+The NIST instance is configured to <b>NIST Demo Instance</b>. In the CoRR instance footer, a warning content is provided for
 customization. The current default states that the platform leverages cookies to function. We strongly recommend that the
 admin change this to be adequate to its institutions rules and regulations. This can be done in the same custom.json
-file in the value of the key `warning`. The terms of service of a CoRR instance is also customizable in the value of the
-key `terms`. Again we also strongly recommend changing this before any public access is provided. The other files in
+file in the value of the key <b>warning</b>. The terms of service of a CoRR instance is also customizable in the value of the
+key <b>terms</b>. Again we also strongly recommend changing this before any public access is provided. The other files in
 your_setup_path/corr-setup/config are to be left as is. Editing them belongs to advanced configuration which is not need here.
 
 ## Adminstrator credentials
@@ -89,8 +89,8 @@ terminated, the password fixed and then relaunched to create the admin account.
 
 In the your_setup_path/corr-setup/nginx folder there are three files that must be replaced by the appropriate ones from an
 authorized certificate authority. Before buying a certificate to test the instance in a verified https fashion we suggest
-using services such as [Let's Encrypt](https://letsencrypt.org/) which provide a free short term alternative. The files to
-be replaced are `corr.cer`, `corr.crt`, `corr.key`. When replacing them keep the naming convention as the nginx micro-service
+using services such as [Lets Encrypt](https://letsencrypt.org/) which provide a free short term alternative. The files to
+be replaced are <b>corr.cer</b>, <b>corr.crt</b>, <b>corr.key</b>. When replacing them keep the naming convention as the nginx micro-service
 will be looking for these exactly.
 
 # Instance deployment
@@ -98,10 +98,10 @@ will be looking for these exactly.
 ## Monitoring an instance
 
 To monitor your CoRR instance, there are three folder to look into in your your_setup_path/corr-setup.
-Right after your first launch we recommend looking into the `test` folder. What you are looking for is the passed keyword.
-We are working on more adequate testing. So bare with us while we work on this. Then, the admin should refer to the `log` folder
-regularly. It contains the `access` and `error` of the corrapi, corrcloud, corrview and nginx micro-services logs. A word of warning
-here is that `corrapi-error` and `corrcloud-error` are not only showing `errors` but also log the services workers executions. We
+Right after your first launch we recommend looking into the <b>test<b/> folder. What you are looking for is the passed keyword.
+We are working on more adequate testing. So bare with us while we work on this. Then, the admin should refer to the <b>log</b> folder
+regularly. It contains the <b>access</b> and <b>error<b/> of the corrapi, corrcloud, corrview and nginx micro-services logs. A word of warning
+here is that <b>corrapi-error</b> and <b>corrcloud-error</b> are not only showing <b>errors</b> but also log the services workers executions. We
 apologize for the confusion that this must create. Finally, the corr-storage folder contains the data stored in CoRR in complement to
 the metadata present in the mongodb database.
 
@@ -139,8 +139,8 @@ deployment process:
     $ docker ps
 
 The previous command will list the instance micro-services execution status and health. Please look for health
-to determine that the container passed our health check. You must aim for an `healthy` value here. If it shows
-`unhealthy` instead it means something has gone wrong and we can't reach the service status check url.
+to determine that the container passed our health check. You must aim for an <b>healthy</b> value here. If it shows
+<b>unhealthy</b> instead it means something has gone wrong and we cannot reach the service status check url.
 The CoRR instance micro-services are launched in a specific fashion as following:
 
     $ corrdb --> corrapi --> corrcloud --> corrview --> nginx --> corrtest
@@ -162,7 +162,7 @@ the whole instance and restarting it.
 
 ## Access the instance
 
-Open a browser and go to [CoRR Local](https://0.0.0.0). If you haven't provided verified SSL/TLS certificates and keys,
+Open a browser and go to [CoRR Local](https://0.0.0.0). If you have not provided verified SSL/TLS certificates and keys,
 a security alert will be brought up by the browser. You must add the exception before proceeding. Issues have been reported
 on Safari while none were for other browsers. We recommend trying on other browsers if you are not able to accept the
 exception in a specific one. Please refer to [How to use](USE.md) to understand how to use CoRR as an admin or a user.
@@ -178,8 +178,8 @@ rebuilding the containers.
 
 To change the storage option, the administrator will have to edit the config-(api, cloud) files in your_setup_path/corr-setup/config.
 The section FILE_STORAGE is a dictionary that can be changed. The present version of CoRR v0.2 also support s3 storage. To switch to s3,
-change the values of the keys `type`, `location`, `name`, `id`, `key` to `s3`, `aws_region_name`, `s3_bucket_name`,
-`aws_access_key_id` and `aws_secret_access_key`. Moreover, we recommend providing this content to your `s3` folder files. For more
+change the values of the keys <b>type</b>, <b>location</b>, <b>name</b>, <b>id</b>, <b>key</b> to <b>s3</b>, <b>aws_region_name</b>, <b>s3_bucket_name</b>,
+<b>aws_access_key_id<b> and </b>aws_secret_access_key</b>. Moreover, we recommend providing this content to your <b>s3</b> folder files. For more
 information refer to the [AWS Boto3 documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html).
 Beware that this must be done for both corrapi and corrcloud simultaniously as they must both store data at the same location. Not doing
 so will cause stability issue.
@@ -189,7 +189,7 @@ so will cause stability issue.
 To require account verification before the first login, after registration, the admin must go to the users page and approve them.
 This is the default behavior of the CoRR instance. To allow automatic login on registration and turn down requirement for admin
 initial acceptance, refer to your your_setup_path/corr-setup/config/config/config-(cloud, api).py SECURITY_MANAGEMENT section. Turn the
-`account` key value to 'False' to turn off on registration moderation and true to require it before login.
+<b>account</b> key value to False to turn off on registration moderation and true to require it before login.
 
 ## Platform communication scanning
 
@@ -197,7 +197,7 @@ The corrapi and corrcloud are designed to work with [ClamAV antivirus](http://ww
 sent to these services can be enforced. By default in the current instance this is enabled as it stalls the instance much. Activating
 it provide a greater security regarding what is received from users, tools and what is effectively stored on the system.
 To turn this feature off, go to your_setup_path/corr-setup/config/config/config-(cloud, api).py under the same SECURITY_MANAGEMENT as
-before and change `content` key value to 'False'.
+before and change <b>content</b> key value to False.
 
 ## Platform Responsiveness
 
