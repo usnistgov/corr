@@ -25,6 +25,41 @@ alt="Slack">
 </a>
 </p>
 
+<p align="center">
+<a href="https://github.com/usnistgov/corr-sumatra" target="_blank">
+<img src="https://img.shields.io/badge/corr-sumatra-green.svg"
+alt="CoRR Sumatra Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-reprozip" target="_blank">
+<img src="https://img.shields.io/badge/corr-reprozip-green.svg"
+alt="CoRR ReproZip Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-cde" target="_blank">
+<img src="https://img.shields.io/badge/corr-cde-green.svg"
+alt="CoRR CDE Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-pfhub" target="_blank">
+<img src="https://img.shields.io/badge/corr-pfhub-orange.svg"
+alt="CoRR PFHub Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-noworkflow" target="_blank">
+<img src="https://img.shields.io/badge/corr-noworkflow-red.svg"
+alt="CoRR Noworkflow Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-maestrowf" target="_blank">
+<img src="https://img.shields.io/badge/corr-maestrowf-red.svg"
+alt="CoRR Maestrowf Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-aiida" target="_blank">
+<img src="https://img.shields.io/badge/corr-aiida-red.svg"
+alt="CoRR Aiida Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-panda" target="_blank">
+<img src="https://img.shields.io/badge/corr-panda-red.svg"
+alt="CoRR Panda Integration Status">
+</a>
+</p>
+
 # Launching an instance
 
 CoRR is designed as a web platform. CoRR is not a tool for a single user perspective

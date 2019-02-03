@@ -5,16 +5,6 @@
          class="inline"/>
 </p>
 
-<p align="center"><sup><strong>
-<a href="https://github.com/usnistgov/corr-sumatra">Sumatra</a>
-<a href="https://github.com/usnistgov/corr-reprozip">Reprozip</a>
-<a href="https://github.com/usnistgov/corr-cde">CDE</a>
-<a href="https://github.com/usnistgov/pfhub">PFHub</a>
-<a href="https://github.com/usnistgov/corr-noworkflow">NoWorkflow</a>
-<a href="https://github.com/usnistgov/corr-maestrowf">MaestroWf</a>
-<a href="https://github.com/usnistgov/corr-aiida">Aiida</a>
-<a href="https://github.com/usnistgov/corr-pandaa">Panda</a>
-
 </strong></sup></p>
 
 <p align="center">
@@ -36,6 +26,42 @@ alt="Slack">
 <img src="https://img.shields.io/badge/license-mit-blue.svg" alt="License" height="18">
 </a>
 </p>
+
+<p align="center">
+<a href="https://github.com/usnistgov/corr-sumatra" target="_blank">
+<img src="https://img.shields.io/badge/corr-sumatra-green.svg"
+alt="CoRR Sumatra Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-reprozip" target="_blank">
+<img src="https://img.shields.io/badge/corr-reprozip-green.svg"
+alt="CoRR ReproZip Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-cde" target="_blank">
+<img src="https://img.shields.io/badge/corr-cde-green.svg"
+alt="CoRR CDE Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-pfhub" target="_blank">
+<img src="https://img.shields.io/badge/corr-pfhub-orange.svg"
+alt="CoRR PFHub Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-noworkflow" target="_blank">
+<img src="https://img.shields.io/badge/corr-noworkflow-red.svg"
+alt="CoRR Noworkflow Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-maestrowf" target="_blank">
+<img src="https://img.shields.io/badge/corr-maestrowf-red.svg"
+alt="CoRR Maestrowf Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-aiida" target="_blank">
+<img src="https://img.shields.io/badge/corr-aiida-red.svg"
+alt="CoRR Aiida Integration Status">
+</a>
+<a href="https://github.com/usnistgov/corr-panda" target="_blank">
+<img src="https://img.shields.io/badge/corr-panda-red.svg"
+alt="CoRR Panda Integration Status">
+</a>
+</p>
+
 
 # Overview
 
