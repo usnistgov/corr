@@ -198,3 +198,9 @@ sent to these services can be enforced. By default in the current instance this 
 it provide a greater security regarding what is received from users, tools and what is effectively stored on the system.
 To turn this feature off, go to your_setup_path/corr-setup/config/config/config-(cloud, api).py under the same SECURITY_MANAGEMENT as
 before and change `content` key value to 'False'.
+
+## Platform Responsiveness
+
+Please be advised that due to multiple security policies, the default CoRR instance requires a machine with average capabilities.
+The security features impedding hugely on the platform responsiveness are mostly the full scan on all communications between clients
+and the platforms. In addition to all file uploads, any HTTP request payload is scanned.

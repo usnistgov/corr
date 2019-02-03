@@ -133,6 +133,7 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
         def wrapped_function(*args, **kwargs):
             if fk is not None and app is not None:
                 storage_manager = StorageManager(app)
+                # TODO: include URL and parameters to be scanned also?
                 security = storage_manager.is_safe(fk.request.data)
                 if not security[0]:
                     return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
