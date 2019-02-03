@@ -111,12 +111,6 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
     Returns:
       decorator to wrap on the endpoints.
     """
-    if fk is not None and app is not None:
-        from .managers import StorageManager
-        storage_manager = StorageManager(app)
-        security = storage_manager.is_safe(fk.request.data)
-        if not security[0]:
-            return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
 
     if methods is not None:
         methods = ', '.join(sorted(x.upper() for x in methods))
@@ -136,6 +130,13 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
 
     def decorator(f):
         def wrapped_function(*args, **kwargs):
+            if fk is not None and app is not None:
+                from .managers import StorageManager
+                storage_manager = StorageManager(app)
+                security = storage_manager.is_safe(fk.request.data)
+                if not security[0]:
+                    return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
+                    
             if automatic_options and fk.request.method == 'OPTIONS':
                 resp = app.make_default_options_response()
             else:
