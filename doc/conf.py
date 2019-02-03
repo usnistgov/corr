@@ -109,9 +109,10 @@ html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 html_theme_options = {
     'navbar_title': "*",
     'navbar_links': [
-        ("Launch", "rst/LAUNCH.html", True),
-        ("Use", "rst/USE.html", True),
-        ("Github", "https://github.com/usnistgov/corr/", True),
+        ("0.1", "https://corr.readthedocs.io/en/v0.1", True),
+        ("launch an instance", "rst/LAUNCH.html", True),
+        ("use an instance", "rst/USE.html", True),
+        ("source code", "https://github.com/usnistgov/corr/", True),
         ("corr.nist.gov", "https://corr.nist.gov", True),
     ],
     'navbar_pagenav': False,
@@ -316,8 +317,7 @@ for directory in [rst_directory]:#, db_directory, api_directory, cloud_directory
 files_to_copy = (
     'README.md',
     'LAUNCH.md',
-    'USE.md',
-    'LICENSE'
+    'USE.md'
 )
 
 print("+"*24)

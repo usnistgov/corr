@@ -4,4 +4,4 @@ scipy
 scikit-learn
 sphinxcontrib-napoleon
 nbsphinx
-recommonmark==0.4
+recommonmark==0.5.0
