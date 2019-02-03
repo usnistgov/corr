@@ -2,6 +2,7 @@
 """
 from .models import *
 from .tools import *
+from .managers import StorageManager
 import datetime
 from datetime import date, timedelta
 from calendar import monthrange
@@ -131,12 +132,11 @@ def crossdomain(fk=None, app=None, origin=None, methods=None, headers=None, max_
     def decorator(f):
         def wrapped_function(*args, **kwargs):
             if fk is not None and app is not None:
-                from .managers import StorageManager
                 storage_manager = StorageManager(app)
                 security = storage_manager.is_safe(fk.request.data)
                 if not security[0]:
                     return fk.Response(security[1], status.HTTP_401_UNAUTHORIZED)
-                    
+
             if automatic_options and fk.request.method == 'OPTIONS':
                 resp = app.make_default_options_response()
             else:
