@@ -318,7 +318,7 @@ files_to_copy = (
     'README.md',
     'LAUNCH.md',
     'USE.md',
-    'LICENSE'
+    'LICENSE',
 )
 
 for fpath in files_to_copy:

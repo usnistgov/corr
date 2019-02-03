@@ -1,22 +1,28 @@
-language: python
+env:
+  DOCKER_COMPOSE_VERSION=1.23.2
 
-python:
-  - "2.7"
-
-services: mongodb
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+  - docker-compose --version
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose --version
+  - echo $TRAVIS_BUILD_DIR
 
 # command to install dependencies
-install: 
-  - "pip install -r requirements.txt"
-  - "pip install Lxml==3.4.0"
+install:
+  - docker-compose build -f travis-compose.yaml
 
 before_script:
-  - sleep 15 #mongo may not be responded directly. See http://docs.travis-ci.com/user/database-setup/#MongoDB
-  - mongo --version
+  - docker-compose up -d -f travis-compose.yaml
 
 notifications:
   email: "yannick.congo@gmail.com"
 
 # command to run tests
-script: 
-  - nosetests -w $TRAVIS_BUILD_DIR/ddsmdb/test --with-doctest -v
+script:
+  - cat corr-setup/test/test_corrapi.txt
+  - cart corr-setup/test/test_corrcloud.txt
