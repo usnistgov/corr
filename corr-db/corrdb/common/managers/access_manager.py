@@ -268,6 +268,8 @@ class AccessManager:
 
     def password_check(self, password):
         """Verify the strength of 'password'.
+        Add https://cry.github.io/nbp/ to check for password common.
+        Write nbp.py from nbp.py
         A password is considered strong if:
             8 characters length or more
             1 digit or more
