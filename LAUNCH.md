@@ -116,9 +116,15 @@ your_setup_path/corr-setup/config are to be left as is. Editing them belongs to 
 Before launching the instance, we extremely recommend addressing this. your_setup_path/corr-setup/credentials contains
 tmp_admin.json which allow the admin to provide an email address, a password, a first name and last name. We recommend
 changing at least the email as it WILL CANNOT BE EDITED LATER. Furthermore, we recommend changing every else in the file. The
-password must be at least 12 characters and must contains Upper characters, numbers and special characters. A failure to comply
+password must be at least 8 characters and must contains Upper characters, numbers and special characters. A failure to comply
 with this rule will result in the failure to create the admin account. Thus, the launched instance will have to be
 terminated, the password fixed and then relaunched to create the admin account.
+A password is considered strong if:
+  1. 8 characters length or more
+  2. 1 digit or more
+  3. 1 symbol or more
+  4. 1 uppercase letter or more
+  5. 1 lowercase letter or more
 
 ## HTTPS configuration
 
