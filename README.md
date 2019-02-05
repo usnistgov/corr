@@ -92,7 +92,7 @@ api micro-service (corrapi) which is a restfull service that is the interface de
 tools. The cloud micro-service which is a second restfull service (corrcloud) dedicated to the view
 micro-service (corrview) which is the frontend exposed to web users. Finally a nginx service takes care of
 unifying the access to the corrcloud, corrapi and corrview. Information on how to launch a CoRR instance is
-provided in <a href="./LAUNCH.md">How to use</a> and also in videos (click on the corr youtube badge above.).
+provided in <b>LAUNCH.md</b>How to use</a> and also in videos (click on the corr youtube badge above.).
 </p>
 
 ## Citation
