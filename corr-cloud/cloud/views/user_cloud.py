@@ -12,7 +12,7 @@ from corrdb.common.models import StatModel
 from corrdb.common.models import BundleModel
 from flask_api import status
 import flask as fk
-from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
+from cloud import app, storage_manager, access_manager, cloud_response, CLOUD_URL, CLOUD_VERSION, API_HOST, API_PORT, VIEW_HOST, VIEW_PORT, MODE, ACC_SEC, CNT_SEC
 import datetime
 import simplejson as json
 import traceback
@@ -762,7 +762,7 @@ def user_config(hash_session, tool_id):
         else:
             logAccess(fk, access_resp[1], CLOUD_URL, 'cloud', '/private/<hash_session>/user/config/<tool_id>')
             config_buffer = BytesIO()
-            config_content = {'default':{'app':'', 'api':{'host':'{0}'.format(VIEW_HOST), 'path':'/corr/api/v0.1', 'port':API_PORT, 'key':user_model.api_token}}}
+            config_content = {'default':{'app':'', 'api':{'host':'{0}'.format(VIEW_HOST), 'path':'/corr/api/v'+CLOUD_VERSION, 'port':API_PORT, 'key':user_model.api_token}}}
             tool_name = "generic"
             if tool_id != 'none':
                 tool = ApplicationModel.objects.with_id(tool_id)

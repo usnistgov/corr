@@ -9,7 +9,7 @@ MONGODB_SETTINGS = {
     'port': 27017,
 }
 
-MODE = 'http'
+MODE = 'https'
 
 VIEW_SETTINGS = {
     'host': '0.0.0.0',

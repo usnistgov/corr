@@ -8,7 +8,7 @@ MONGODB_SETTINGS = {
     'port': 27017
 }
 
-MODE = 'http'
+MODE = 'https'
 
 ENVIRONMENT = 'development'
 
